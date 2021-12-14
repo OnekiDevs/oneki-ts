@@ -1,0 +1,28 @@
+{
+  "name": "oneki",
+  "version": "1.0.0",
+  "description": "Module of Oneki Bot in JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OnekiDevs/oneki-js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OnekiDevs/oneki-js/issues"
+  },
+  "homepage": "https://github.com/OnekiDevs/oneki-js#readme",
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "discord.js": "^13.3.1",
+    "dotenv": "^10.0.0",
+    "firebase-admin": "^10.0.0",
+    "nodemon": "^2.0.15"
+  }
+}
