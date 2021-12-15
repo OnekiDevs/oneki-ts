@@ -1,2 +1,2 @@
-# oneki-js
-Module of Oneki Bot in JavaScript
+# oneki-ts
+Module of Oneki Bot in TypeScript
