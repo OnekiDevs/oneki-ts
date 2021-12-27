@@ -1,11 +1,13 @@
 {
   "name": "oneki",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Module of Oneki Bot in JavaScript",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index"
+    "compile": "nodemon -e ts --exec \"npm run build\"",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon -e ts --exec \"npm run build && npm start\""
   },
   "repository": {
     "type": "git",
@@ -19,10 +21,11 @@
   },
   "homepage": "https://github.com/OnekiDevs/oneki-js#readme",
   "dependencies": {
+    "@discordjs/builders": "^0.9.0",
     "cross-env": "^7.0.3",
     "discord.js": "^13.3.1",
     "dotenv": "^10.0.0",
     "firebase-admin": "^10.0.0",
-    "nodemon": "^2.0.15"
+    "ws": "^8.4.0"
   }
 }
