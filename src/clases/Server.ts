@@ -1,13 +1,14 @@
-import { Guild } from "discord.js";
-import { ServerOptions, Client, LangType, GuildDataBaseModel } from "../utils/clases";
+import { Guild, GuildChannel } from "discord.js";
+import { GuildDataBaseModel, Client, LangType, SuggestChannelObject } from "../utils/clases";
 import { firestore } from "firebase-admin";
 
 export class Server {
     guild: Guild;
     private _prefixies: Array<string> = [">", "?"];
     db;
-    private _lang: LangType = LangType.en;
-    constructor(guild: Guild, options?: ServerOptions) {
+    private _lang: LangType = LangType.en; //TODO: utilizar el lenguaje en todos los archivos
+    suggest_channels: SuggestChannelObject[] = [];
+    constructor(guild: Guild, options?: GuildDataBaseModel) {
         this.guild = guild;
         this.db = (guild.client as Client).db?.collection("guilds").doc(guild.id);
 
@@ -18,12 +19,22 @@ export class Server {
 
                 if (data.lang) this._lang = options?.lang && options.lang !== data.lang ? ((obj.lang = options.lang), options.lang) : data.lang;
                 if (data.prefixies)
-                    this._prefixies = options?.prefixies && options.prefixies !== data.prefixies ? ((obj.prefixies = options.prefixies), options.prefixies) : data.prefixies; // TODO: comparar los arrays
+                    this._prefixies =
+                        options?.prefixies && options.prefixies !== data.prefixies /* TODO: comparar los arrays options.prefixies y data.prefixies */
+                            ? ((obj.prefixies = options.prefixies), options.prefixies)
+                            : data.prefixies;
+                if (data?.suggest_channels)
+                    this.suggest_channels =
+                        options?.suggest_channels &&
+                        options.suggest_channels !== data.suggest_channels /* TODO: comparar los arrays options.suggest_channels y data.suggest_channels */
+                            ? ((obj.suggest_channels = options.suggest_channels), options.suggest_channels)
+                            : data.suggest_channels;
 
                 if (Object.values(obj).length > 0) this.db?.update(obj);
             } else {
-                if (options?.lang) (this._lang = obj.lang = options.lang), options.lang;
+                if (options?.lang) this._lang = ((obj.lang = options.lang), options.lang);
                 if (options?.prefixies) this._prefixies = ((obj.prefixies = options.prefixies), options.prefixies);
+                if (options?.suggest_channels) this.suggest_channels = ((obj.suggest_channels = options.suggest_channels), options.suggest_channels);
 
                 if (Object.values(obj).length > 0) this.db?.create(obj);
             }
@@ -32,6 +43,11 @@ export class Server {
 
     get prefixies(): string[] {
         return [`<@!${this.guild.me?.id}>`, `<@${this.guild.me?.id}>`, ...this._prefixies];
+    }
+
+    getPrefixes(onlyDeclared?: boolean): string[] {
+        if (onlyDeclared === undefined || onlyDeclared) return this._prefixies;
+        else return this.prefixies;
     }
 
     setPrefix(prefix: string) {
@@ -103,5 +119,48 @@ export class Server {
                 },
             }),
         );
+    }
+
+    setSuggestChannel(channel: GuildChannel) {
+        this.suggest_channels = [{ channel_id: channel.id, default: true }] as SuggestChannelObject[];
+        (this.guild.client as Client).db
+            ?.collection("guilds")
+            .doc(this.guild.id)
+            .update({ suggest_channels: [{ channel_id: channel.id, default: true }] });
+        (this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: "set_suggest_channel",
+                data: {
+                    channel: channel.id,
+                    default: true,
+                    channels: this.suggest_channels,
+                    from: "module_ts",
+                    guild_id: this.guild.id,
+                },
+            }),
+        );
+    }
+
+    addSuggestChannel(suggestChannelObject: SuggestChannelObject) {
+        if (suggestChannelObject.default) this.suggest_channels = this.suggest_channels.map((i) => ({ ...i, default: false }));
+        this.suggest_channels.push(suggestChannelObject);
+        (this.guild.client as Client).db?.collection("guilds").doc(this.guild.id).update({ suggest_channels: this.suggest_channels });
+        (this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: "set_suggest_channel",
+                data: {
+                    channel: suggestChannelObject.channel_id,
+                    default: suggestChannelObject.default,
+                    alias: suggestChannelObject.alias,
+                    channels: this.suggest_channels,
+                    from: "module_ts",
+                    guild_id: this.guild.id,
+                },
+            }),
+        );
+    }
+
+    removeSuggestChannel(toRemove: string) {
+        
     }
 }

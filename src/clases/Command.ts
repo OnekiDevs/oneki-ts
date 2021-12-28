@@ -70,7 +70,7 @@ export class Command {
      */
     deploy(guild?: Guild) {
         return new Promise<ApplicationCommand>(async (resolve, reject) => {
-            if (guild) {
+            if (guild && this.type === CommandType.guild && (this.guilds.length === 0 || this.guilds.includes(guild.id))) {
                 guild.commands
                     .create(this.getData(guild))
                     .then(this._deployPermission)

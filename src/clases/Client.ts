@@ -8,7 +8,7 @@ export class Client extends BaseClient {
     db;
     version: string = require("../../package.json")?.version ?? "1.0.0";
     commands: CommandManager = new CommandManager(this, join(__dirname, "../commands"));
-    servers: ServerManager = new ServerManager(this)
+    servers: ServerManager = new ServerManager(this);
     websocket: WebSocket = new WebSocket("wss://oneki.herokuapp.com/");
 
     constructor(options: ClientOptions) {
@@ -26,12 +26,18 @@ export class Client extends BaseClient {
         this.websocket.on("open", () => console.log("\x1b[33m%s\x1b[0m", "Socket Conectado!!!"));
         this.websocket.on("close", () => console.error("Socket Cerrado!!!"));
         this.websocket.on("message", () => this._onWebSocketMessage);
+        this.websocket.on("error", () => console.error);
+        setInterval(() => this.websocket.ping(()=>{}), 25000)
     }
 
     private async _onReady() {
-        await this.servers.initialize();
-        this.commands.deploy().then((commands) => console.log("\x1b[32m%s\x1b[0m", "Comandos Desplegados!!"));
-        console.log("\x1b[31m%s\x1b[0m", `${this.user?.username} ${this.version} Listo y Atento!!!`);
+        this.servers.initialize().then(() => {
+            console.log("\x1b[34m%s\x1b[0m", "Servidores Desplegados!!");
+            this.commands.deploy().then((commands) => {
+                console.log("\x1b[32m%s\x1b[0m", "Comandos Desplegados!!");
+                console.log("\x1b[31m%s\x1b[0m", `${this.user?.username} ${this.version} Listo y Atento!!!`);
+            });
+        });
     }
 
     private _onWebSocketMessage(message: string): void {

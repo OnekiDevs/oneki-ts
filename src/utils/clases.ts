@@ -1,15 +1,15 @@
-import { ApplicationCommandPermissionTypes } from "discord.js/typings/enums";
 import { ClientOptions as BaseClientOptions, PermissionResolvable } from "discord.js";
+// import { ApplicationCommandPermissionType } from "discord-api-types";
 
 import { Client } from "../clases/Client";
+import { ApplicationCommandPermissionTypes } from "discord.js/typings/enums";
 export default Client;
 
 export * from "../clases/Client";
 export * from "../clases/Command";
 export * from "../clases/CommandManager";
 export * from "../clases/ServerManager";
-export * from "../clases/Server"
-export * from "../clases/Event"
+export * from "../clases/Server";
 
 export enum CommandType {
     guild,
@@ -32,19 +32,22 @@ export interface CommandOptions {
     description: string;
     defaultPermission?: boolean;
     options?: {};
-    type?: CommandType
+    type?: CommandType;
     public?: boolean;
-    guilds?: Array<string>;
+    guilds?: string[];
     permissions?: PermissionResolvable[];
 }
 
-export interface GuildDataBaseModel {
-    prefixies?: Array<string>;
-    lang?: LangType;
+export interface SuggestChannelObject {
+    channel_id: string;
+    default: boolean;
+    alias?: string;
 }
 
-export interface ServerOptions extends GuildDataBaseModel {
-    checkDB?: boolean;
+export interface GuildDataBaseModel {
+    prefixies?: string[];
+    lang?: LangType;
+    suggest_channels?: SuggestChannelObject[];
 }
 
 export interface ClientOptions extends BaseClientOptions {
