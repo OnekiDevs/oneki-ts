@@ -52,7 +52,7 @@ export class Server {
 
     setPrefix(prefix: string) {
         this._prefixies = [prefix];
-        this.db?.update({ prefix: [prefix] });
+        this.db?.update({ prefix: [prefix] }).catch(() => this.db?.update({ prefix: [prefix] }));
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: "set_prefix",
@@ -67,7 +67,7 @@ export class Server {
 
     addPrefix(prefix: string) {
         this._prefixies.push(prefix);
-        this.db?.update({ prefixies: this._prefixies });
+        this.db?.update({ prefixies: this._prefixies }).catch(() => this.db?.set({ prefixies: this._prefixies }));
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: "add_prefix",
@@ -86,8 +86,8 @@ export class Server {
             this._prefixies.splice(this._prefixies.indexOf(prefix), 1);
             if (this._prefixies.length < 1) {
                 this._prefixies = [">", "?"];
-                this.db?.update({ prefixies: firestore.FieldValue.delete() });
-            } else this.db?.update({ prefixies: firestore.FieldValue.arrayRemove(prefix) });
+                this.db?.update({ prefixies: firestore.FieldValue.delete() }).catch(() => this.db?.set({ prefixies: firestore.FieldValue.delete() }));
+            } else this.db?.update({ prefixies: firestore.FieldValue.arrayRemove(prefix) }).catch(() => this.db?.set({ prefixies: firestore.FieldValue.arrayRemove(prefix) }));
         }
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
@@ -108,7 +108,7 @@ export class Server {
 
     setLang(lang: LangType) {
         this._lang = lang;
-        this.db?.update({ lang });
+        this.db?.update({ lang }).catch(() => this.db?.set({ lang }));
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: "set_lang",
@@ -123,10 +123,9 @@ export class Server {
 
     setSuggestChannel(channel: GuildChannel) {
         this.suggest_channels = [{ channel_id: channel.id, default: true }] as SuggestChannelObject[];
-        (this.guild.client as Client).db
-            ?.collection("guilds")
-            .doc(this.guild.id)
-            .update({ suggest_channels: [{ channel_id: channel.id, default: true }] });
+        this.db
+            ?.update({ suggest_channels: [{ channel_id: channel.id, default: true }] })
+            .catch(() => this.db?.set({ suggest_channels: [{ channel_id: channel.id, default: true }] }));
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: "set_suggest_channel",
@@ -144,7 +143,7 @@ export class Server {
     addSuggestChannel(suggestChannelObject: SuggestChannelObject) {
         if (suggestChannelObject.default) this.suggest_channels = this.suggest_channels.map((i) => ({ ...i, default: false }));
         this.suggest_channels.push(suggestChannelObject);
-        (this.guild.client as Client).db?.collection("guilds").doc(this.guild.id).update({ suggest_channels: this.suggest_channels });
+        this.db?.update({ suggest_channels: this.suggest_channels }).catch(() => this.db?.set({ suggest_channels: this.suggest_channels }));
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: "set_suggest_channel",
@@ -160,7 +159,5 @@ export class Server {
         );
     }
 
-    removeSuggestChannel(toRemove: string) {
-        
-    }
+    removeSuggestChannel(toRemove: string) {}
 }

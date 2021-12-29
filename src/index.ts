@@ -15,6 +15,9 @@ const client: Client = new Client({
     ],
     partials: ["CHANNEL"],
     firebaseToken: JSON.parse(process.env.TOKEN_FIREBASE as string),
+    constants: {
+        newServerLogChannel: '885674115946643458'
+    }
 });
 
 client.login(process.env.TOKEN_DISCORD);

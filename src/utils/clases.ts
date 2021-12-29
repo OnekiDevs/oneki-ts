@@ -50,6 +50,11 @@ export interface GuildDataBaseModel {
     suggest_channels?: SuggestChannelObject[];
 }
 
+export interface ClientConstants {
+    newServerLogChannel?: string;
+}
+
 export interface ClientOptions extends BaseClientOptions {
     firebaseToken?: {};
+    constants?: ClientConstants;
 }

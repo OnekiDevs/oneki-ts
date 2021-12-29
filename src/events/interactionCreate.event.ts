@@ -6,18 +6,17 @@ export default class interactionCreate {
 
     constructor(client: Client) {
         this.client = client;
-    }
-    
-    run(interaction: CommandInteraction): void {
-        if(interaction.isApplicationCommand()){
-            if(this.client.commands.has(interaction.commandName)) {
-                this.client.commands.get(interaction.commandName)?.run(interaction)
-            } else {
-                interaction.reply({ 
-                    content: '`ctrl` + `R`',
-                    ephemeral: true
-                })
+        this.client.on(this.name, (interaction: CommandInteraction) => {
+            if(interaction.isApplicationCommand()){
+                if(this.client.commands.has(interaction.commandName)) {
+                    this.client.commands.get(interaction.commandName)?.run(interaction)
+                } else {
+                    interaction.reply({ 
+                        content: '`ctrl` + `R`',
+                        ephemeral: true
+                    })
+                }
             }
-        }
+        })
     }
 }

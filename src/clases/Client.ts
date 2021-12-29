@@ -1,8 +1,9 @@
 import { Client as BaseClient } from "discord.js";
 import admin from "firebase-admin";
-import { CommandManager, ServerManager, ClientOptions } from "../utils/clases";
+import { CommandManager, ServerManager, ClientOptions, ClientConstants } from "../utils/clases";
 import { join } from "path";
 import { WebSocket } from "ws";
+import {readdirSync} from "fs";
 
 export class Client extends BaseClient {
     db;
@@ -10,6 +11,7 @@ export class Client extends BaseClient {
     commands: CommandManager = new CommandManager(this, join(__dirname, "../commands"));
     servers: ServerManager = new ServerManager(this);
     websocket: WebSocket = new WebSocket("wss://oneki.herokuapp.com/");
+    constants: ClientConstants = {}
 
     constructor(options: ClientOptions) {
         super(options);
@@ -20,22 +22,29 @@ export class Client extends BaseClient {
             });
             this.db = admin.firestore();
         }
+        if (options.constants) this.constants = options.constants;
 
         this.once("ready", this._onReady);
 
-        this.websocket.on("open", () => console.log("\x1b[33m%s\x1b[0m", "Socket Conectado!!!"));
+        this.websocket.on("open", () => {
+            console.log("\x1b[33m%s\x1b[0m", "Socket Conectado!!!")
+            setInterval(() => this.websocket.ping(()=>{}), 25000)
+        });
         this.websocket.on("close", () => console.error("Socket Cerrado!!!"));
         this.websocket.on("message", () => this._onWebSocketMessage);
         this.websocket.on("error", () => console.error);
-        setInterval(() => this.websocket.ping(()=>{}), 25000)
+        
     }
 
     private async _onReady() {
         this.servers.initialize().then(() => {
             console.log("\x1b[34m%s\x1b[0m", "Servidores Desplegados!!");
-            this.commands.deploy().then((commands) => {
+            this.commands.deploy().then(() => {
                 console.log("\x1b[32m%s\x1b[0m", "Comandos Desplegados!!");
-                console.log("\x1b[31m%s\x1b[0m", `${this.user?.username} ${this.version} Listo y Atento!!!`);
+                this.initializeEventListener().then(() => {
+                    console.log("\x1b[35m%s\x1b[0m", `Eventos Cargados!!`);
+                    console.log("\x1b[31m%s\x1b[0m", `${this.user?.username} ${this.version} Listo y Atento!!!`);
+                })
             });
         });
     }
@@ -47,5 +56,13 @@ export class Client extends BaseClient {
         } catch (error) {
             if ((error as string).startsWith("SyntaxError")) console.error("SyntaxError on socket", message);
         }
+    }
+
+    initializeEventListener() {
+        return Promise.all(readdirSync(join(__dirname, '../events')).filter((f) => f.endsWith(".event.js")).map(file => {
+            const event = require(join(__dirname, '../events', file));
+            
+            new event.default(this);
+        }))
     }
 }
