@@ -48,6 +48,7 @@ export interface GuildDataBaseModel {
     prefixies?: string[];
     lang?: LangType;
     suggest_channels?: SuggestChannelObject[];
+    lastSuggestId?: number;
 }
 
 export interface ClientConstants {

@@ -8,6 +8,7 @@ export class Server {
     db;
     private _lang: LangType = LangType.en; //TODO: utilizar el lenguaje en todos los archivos
     suggest_channels: SuggestChannelObject[] = [];
+    lastSuggestId: number = 0;
     constructor(guild: Guild, options?: GuildDataBaseModel) {
         this.guild = guild;
         this.db = (guild.client as Client).db?.collection("guilds").doc(guild.id);
@@ -29,6 +30,7 @@ export class Server {
                         options.suggest_channels !== data.suggest_channels /* TODO: comparar los arrays options.suggest_channels y data.suggest_channels */
                             ? ((obj.suggest_channels = options.suggest_channels), options.suggest_channels)
                             : data.suggest_channels;
+                if (data.lastSuggestId) this.lastSuggestId = data.lastSuggestId;
 
                 if (Object.values(obj).length > 0) this.db?.update(obj);
             } else {

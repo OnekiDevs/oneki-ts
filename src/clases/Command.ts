@@ -69,7 +69,9 @@ export class Command {
      * @returns
      */
     deploy(guild?: Guild) {
-        return new Promise<ApplicationCommand>(async (resolve, reject) => {
+        return new Promise<ApplicationCommand | boolean>(async (resolve, reject) => {
+            const needDeploy = await this.checkDeploy(guild);
+            if(!needDeploy) resolve(false)
             if (guild && this.type === CommandType.guild && (this.guilds.length === 0 || this.guilds.includes(guild.id))) {
                 guild.commands
                     .create(this.getData(guild))
@@ -95,5 +97,9 @@ export class Command {
                     });
             }
         });
+    }
+
+    checkDeploy(guild?: Guild):Promise<boolean> {
+        return new Promise<boolean>((resolve) => resolve(true))
     }
 }
