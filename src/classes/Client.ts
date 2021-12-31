@@ -1,6 +1,6 @@
 import { Client as BaseClient } from "discord.js";
 import admin from "firebase-admin";
-import { CommandManager, ServerManager, ClientOptions, ClientConstants } from "../utils/clases";
+import { CommandManager, ServerManager, ClientOptions, ClientConstants, ButtonManager } from "../utils/classes";
 import { join } from "path";
 import { WebSocket } from "ws";
 import {readdirSync} from "fs";
@@ -9,6 +9,7 @@ export class Client extends BaseClient {
     db;
     version: string = require("../../package.json")?.version ?? "1.0.0";
     commands: CommandManager = new CommandManager(this, join(__dirname, "../commands"));
+    buttons: ButtonManager = new ButtonManager(this, join(__dirname, '../commands'));
     servers: ServerManager = new ServerManager(this);
     websocket: WebSocket = new WebSocket("wss://oneki.herokuapp.com/");
     constants: ClientConstants = {}
@@ -62,7 +63,7 @@ export class Client extends BaseClient {
         return Promise.all(readdirSync(join(__dirname, '../events')).filter((f) => f.endsWith(".event.js")).map(file => {
             const event = require(join(__dirname, '../events', file));
             
-            new event.default(this);
+            this.on(event.name, (...args) => event.run(this, ...args));
         }))
     }
 }

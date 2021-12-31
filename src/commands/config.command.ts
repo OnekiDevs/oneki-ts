@@ -1,5 +1,5 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, Guild, Permissions, TextChannel } from "discord.js";
-import { Command, Client, CommandType, Server, LangType } from "../utils/clases";
+import { Command, Client, CommandType, Server, LangType } from "../utils/classes";
 import { ChannelType } from "discord-api-types";
 import { permissionsError } from "../utils/utils";
 
@@ -15,7 +15,7 @@ export default class Config extends Command {
 
     getData(guild?: Guild): ApplicationCommandDataResolvable {
         const server = this.client.servers.get(guild?.id as string);
-        const suggestChannelsChoices = server?.suggest_channels.map((c) => [c.default ? "default" : c.alias, c.channel_id]);
+        const suggestChannelsChoices = server?.suggestChannels.map((c) => [c.default ? "default" : c.alias, c.channel]);
         return this.baseCommand
             .addSubcommandGroup((subcommandGroup) =>
                 subcommandGroup
@@ -46,9 +46,7 @@ export default class Config extends Command {
                         subcommand
                             .setName("suggest_channel")
                             .setDescription("Aet a unique suggest channel")
-                            .addChannelOption((option) =>
-                                option.setName("channel").setDescription("Channel were the suggest are sent").addChannelType(ChannelType.GuildText).setRequired(true),
-                            ),
+                            .addChannelOption((option) => option.setName("channel").setDescription("Channel were the suggest are sent").addChannelType(ChannelType.GuildText).setRequired(true)),
                     ),
             )
             .addSubcommandGroup((subcommandGroup) =>
@@ -59,15 +57,15 @@ export default class Config extends Command {
                         subcommand
                             .setName("prefix")
                             .setDescription("add a new pfrefix to the bot")
-                            .addStringOption((option) => option.setName("prefix").setDescription("a new prefix").setRequired(true)),
+                            .addStringOption((option) => option.setName("prefix").setDescription("A new prefix").setRequired(true)),
                     )
                     .addSubcommand((subcommand) =>
                         subcommand
                             .setName("suggest_channel")
                             .setDescription("add a new suggest channel")
-                            .addChannelOption((option) => option.setName("channel").setDescription("channel to suggest").setRequired(true).addChannelType(ChannelType.GuildText))
-                            .addStringOption((option) => option.setName("alias").setDescription("name to refired a suggest channel").setRequired(true))
-                            .addBooleanOption((option) => option.setName("default").setDescription("set a default suggestion channel")),
+                            .addChannelOption((option) => option.setName("channel").setDescription("Channel to suggest").setRequired(true).addChannelType(ChannelType.GuildText))
+                            .addStringOption((option) => option.setName("alias").setDescription("Name to refired a suggest channel").setRequired(true))
+                            .addBooleanOption((option) => option.setName("default").setDescription("Set a default suggestion channel")),
                     ),
             )
             .addSubcommandGroup((subcommandGroup) =>
@@ -124,41 +122,42 @@ export default class Config extends Command {
         const member = interaction.guild?.members.cache.get(interaction.user.id);
         if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR);
         const lang = interaction.options.getString("lang") as LangType;
-        if (this.client.servers.has(interaction.guildId)) this.client.servers.get(interaction.guildId)?.setLang(lang);
-        else if (interaction.guild) this.client.servers.set(interaction.guildId, new Server(interaction.guild, { lang }));
+        if (this.client.servers.has(interaction.guildId as string)) this.client.servers.get(interaction.guildId as string)?.setLang(lang);
+        else if (interaction.guild) this.client.servers.set(interaction.guildId as string, new Server(interaction.guild, { lang }));
         interaction.reply("Lenguaje Establecido en `" + lang + "`");
-        //TODO: reiniciar comandos de servidor 
+        this.client.commands.filter((c) => c.type == CommandType.guild).map((c) => c.deploy(interaction.guild as Guild));
     }
 
     setPrefix(interaction: CommandInteraction): any {
         const member = interaction.guild?.members.cache.get(interaction.user.id);
         if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR);
         const prefix: string = interaction.options.getString("prefix", true) as string;
-        if (this.client.servers.has(interaction.guildId)) this.client.servers.get(interaction.guildId)?.setPrefix(prefix);
-        else if (interaction.guild) this.client.servers.set(interaction.guildId, new Server(interaction.guild, { prefixies: [prefix] }));
+        if (this.client.servers.has(interaction.guildId as string)) this.client.servers.get(interaction.guildId as string)?.setPrefix(prefix);
+        else if (interaction.guild) this.client.servers.set(interaction.guildId as string, new Server(interaction.guild, { prefixes: [prefix] }));
         interaction.reply("Prefijo Establecido a `" + prefix + "`");
-        this.deploy(interaction.guild as Guild)
+        this.deploy(interaction.guild as Guild);
     }
 
     setSuggestChannel(interaction: CommandInteraction): any {
         const member = interaction.guild?.members.cache.get(interaction.user.id);
         if (!member?.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) return permissionsError(interaction, Permissions.FLAGS.MANAGE_CHANNELS);
         const channel = interaction.options.getChannel("channel", true) as TextChannel;
-        if (this.client.servers.has(interaction.guildId)) this.client.servers.get(interaction.guildId)?.setSuggestChannel(channel);
-        else if (interaction.guild) this.client.servers.set(interaction.guildId, new Server(interaction.guild, { suggest_channels: [{ channel_id: channel.id, default: true }] }));
+        if (this.client.servers.has(interaction.guildId as string)) this.client.servers.get(interaction.guildId as string)?.setSuggestChannel(channel);
+        else if (interaction.guild) this.client.servers.set(interaction.guildId as string, new Server(interaction.guild, { suggest_channels: [{ channel: channel.id, default: true }] }));
         interaction.reply("Canal " + channel + " Establecido Para Sugerencias");
-        channel.sendTyping().then(() => channel.send("Este canal ahora esta establecido para las sugerencias\npara hacer una sugerencia usa **/suggest**")); //TODO: autoconfigurar el canal
-        this.deploy(interaction.guild as Guild)
+        channel.sendTyping().then(() => channel.send("Este canal ahora esta establecido para las sugerencias\npara hacer una sugerencia usa **/suggest**"));
+        this.deploy(interaction.guild as Guild);
+        channel.setRateLimitPerUser(21600)
     }
 
     addPrefix(interaction: CommandInteraction): any {
         const member = interaction.guild?.members.cache.get(interaction.user.id);
         if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR);
         const prefix: string = interaction.options.getString("prefix", true) as string;
-        if (this.client.servers.has(interaction.guildId)) this.client.servers.get(interaction.guildId)?.addPrefix(prefix);
-        else if (interaction.guild) this.client.servers.set(interaction.guildId, new Server(interaction.guild, { prefixies: [">", "?", prefix] }));
+        if (this.client.servers.has(interaction.guildId as string)) this.client.servers.get(interaction.guildId as string)?.addPrefix(prefix);
+        else if (interaction.guild) this.client.servers.set(interaction.guildId as string, new Server(interaction.guild, { prefixes: [">", "?", prefix] }));
         interaction.reply("Prefijo `" + prefix + "` Agregado\nAhora el bot escucha: `'+this.client.servers.get(interaction.guildId)?.prefixies.join('`, `')+'`'");
-        this.deploy(interaction.guild as Guild)
+        this.deploy(interaction.guild as Guild);
     }
 
     addSuggestChannel(interaction: CommandInteraction): any {
@@ -167,12 +166,11 @@ export default class Config extends Command {
         const channel = interaction.options.getChannel("channel", true) as TextChannel;
         const alias = (interaction.options.getString("alias", true) as string).toLowerCase();
         const isDefault = interaction.options.getBoolean("default") ?? false;
-        if (this.client.servers.has(interaction.guildId))
-            this.client.servers.get(interaction.guildId)?.addSuggestChannel({ channel_id: channel.id, default: isDefault, alias: alias });
-        else if (interaction.guild)
-            this.client.servers.set(interaction.guildId, new Server(interaction.guild, { suggest_channels: [{ channel_id: channel.id, default: isDefault, alias: alias }] }));
-        channel.sendTyping().then(() => channel.send("Este canal ahora esta establecido para las sugerencias\npara hacer una sugerencia usa **/suggest `channel:alias`**")); //TODO: autoconfigurar el canal
-        this.deploy(interaction.guild as Guild)
+        if (this.client.servers.has(interaction.guildId as string)) this.client.servers.get(interaction.guildId as string)?.addSuggestChannel({ channel: channel.id, default: isDefault, alias: alias });
+        else if (interaction.guild) this.client.servers.set(interaction.guildId as string, new Server(interaction.guild, { suggest_channels: [{ channel: channel.id, default: isDefault, alias: alias }] }));
+        channel.sendTyping().then(() => channel.send("Este canal ahora esta establecido para las sugerencias\npara hacer una sugerencia usa **/suggest `channel:alias`**"));
+        this.deploy(interaction.guild as Guild);
+        channel.setRateLimitPerUser(21600)
     }
 
     removeSuggestChannel(interaction: CommandInteraction): any {
@@ -180,19 +178,19 @@ export default class Config extends Command {
         if (!member?.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) return permissionsError(interaction, Permissions.FLAGS.MANAGE_CHANNELS);
         const channelId = interaction.options.getString("channel");
         if (!channelId) return interaction.reply("no existe ningun canal configurado");
-        if (this.client.servers.has(interaction.guildId)) this.client.servers.get(interaction.guildId)?.removeSuggestChannel(channelId);
+        if (this.client.servers.has(interaction.guildId as string)) this.client.servers.get(interaction.guildId as string)?.removeSuggestChannel(channelId);
         else console.error("Remove suggest channel error:\n\tdont exist server class from " + interaction.guild?.name + " server with id " + interaction.guild?.id);
-        interaction.reply('Canal Removido')
-        this.deploy(interaction.guild as Guild)
+        interaction.reply("Canal Removido");
+        this.deploy(interaction.guild as Guild);
     }
 
     removePrefix(interaction: CommandInteraction): any {
         const member = interaction.guild?.members.cache.get(interaction.user.id);
         if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR);
         const prefix = interaction.options.getString("prefix", true);
-        if (this.client.servers.has(interaction.guildId)) this.client.servers.get(interaction.guildId)?.removePrefix(prefix);
-        else if (interaction.guild) this.client.servers.set(interaction.guildId, new Server(interaction.guild, { prefixies: [prefix === ">" ? "?" : ">"] }));
-        interaction.reply('Prefijo Removido\nAhora el bot escucha: `'+this.client.servers.get(interaction.guildId)?.prefixies.join('`, `')+'`')
-        this.deploy(interaction.guild as Guild)
+        if (this.client.servers.has(interaction.guildId as string)) this.client.servers.get(interaction.guildId as string)?.removePrefix(prefix);
+        else if (interaction.guild) this.client.servers.set(interaction.guildId as string, new Server(interaction.guild, { prefixes: [prefix === ">" ? "?" : ">"] }));
+        interaction.reply("Prefijo Removido\nAhora el bot escucha: `" + this.client.servers.get(interaction.guildId as string)?.prefixies.join("`, `") + "`");
+        this.deploy(interaction.guild as Guild);
     }
 }

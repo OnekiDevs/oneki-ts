@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 config();
 
-import { Client } from "./utils/clases";
+import { Client } from "./utils/classes";
 
 const client: Client = new Client({
     intents: [

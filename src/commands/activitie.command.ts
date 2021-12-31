@@ -1,5 +1,5 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, Guild, VoiceChannel, MessageActionRow, MessageButton } from "discord.js";
-import { Command, Client, CommandType } from "../utils/clases";
+import { Command, Client, CommandType } from "../utils/classes";
 import { ChannelType } from "discord-api-types";
 
 export default class Activitie extends Command {
@@ -57,11 +57,9 @@ export default class Activitie extends Command {
             components: [
                 new MessageActionRow().addComponents([
                     new MessageButton().setLabel('join').setStyle("LINK").setURL(`https://discord.com/invite/${invite.code}`),
-                    // new MessageButton().setLabel('').setStyle("PRIMARY").setCustomId(ID),
-                    //TODO: 'make public' & 'show link' button
+                    new MessageButton().setLabel('show link').setStyle('SECONDARY').setCustomId(`act_sl_${invite.code}`)
                 ]),
-            ],
-            ephemeral: true
+            ]
         });
     }
 }

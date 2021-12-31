@@ -1,22 +1,22 @@
 import { CommandInteraction } from "discord.js";
-import {Client} from "../utils/clases"
-export default class interactionCreate {
-    name: string = 'interactionCreate';
-    client: Client;
+import { Client } from "../utils/classes";
 
-    constructor(client: Client) {
-        this.client = client;
-        this.client.on(this.name, (interaction: CommandInteraction) => {
-            if(interaction.isApplicationCommand()){
-                if(this.client.commands.has(interaction.commandName)) {
-                    this.client.commands.get(interaction.commandName)?.run(interaction)
-                } else {
-                    interaction.reply({ 
-                        content: '`ctrl` + `R`',
-                        ephemeral: true
-                    })
-                }
-            }
-        })
+export const name: string = "interactionCreate";
+
+export function run(client: Client, interaction: CommandInteraction) {
+    if (interaction.isButton()) {
+        const name = client.buttons.getName(interaction.customId)
+        if (name) client.buttons.get(name)?.run(interaction)
+        else interaction.deferUpdate()
+    } else if (interaction.isApplicationCommand()) {
+        //isApplicationCommand
+        if (client.commands.has(interaction.commandName)) {
+            client.commands.get(interaction.commandName)?.run(interaction);
+        } else {
+            interaction.reply({
+                content: "`ctrl` + `R`",
+                ephemeral: true,
+            });
+        }
     }
 }

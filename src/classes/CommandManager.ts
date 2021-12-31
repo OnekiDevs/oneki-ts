@@ -1,6 +1,6 @@
 import fs from "fs";
 import { Collection, Guild } from "discord.js";
-import { Command, Client } from "../utils/clases";
+import { Command, Client } from "../utils/classes";
 import {join} from "path"
 
 export class CommandManager extends Collection<string, Command> {

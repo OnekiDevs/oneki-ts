@@ -1,5 +1,5 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, Guild, GuildMember, MessageEmbed, TextChannel } from "discord.js";
-import { Command, Client, CommandType } from "../utils/clases";
+import { Command, Client, CommandType } from "../utils/classes";
 import { checkSend } from "../utils/utils";
 
 export default class Suggest extends Command {
@@ -16,8 +16,8 @@ export default class Suggest extends Command {
         const server = this.client.servers.get(guild?.id as string);
         const command = this.baseCommand;
         command.addStringOption((option) => option.setName("suggest").setDescription("Suggest to send").setRequired(true));
-        if (server && server.suggest_channels.length > 0) {
-            const channels = server.suggest_channels.map((i) => [i.alias ?? "predetermined", i.channel_id]);
+        if (server && server.suggestChannels.length > 0) {
+            const channels = server.suggestChannels.map((i) => [i.alias ?? "predetermined", i.channel]);
             command.addStringOption((option) =>
                 option
                     .setName("channel")
@@ -30,7 +30,7 @@ export default class Suggest extends Command {
 
     run(interaction: CommandInteraction): any {
         const server = this.client.servers.get(interaction.guildId);
-        if (!server || server.suggest_channels.length === 0) {
+        if (!server || server.suggestChannels.length === 0) {
             interaction.reply({
                 content: "Este servidor no tiene un canal de sugerencias establecido",
                 ephemeral: true,
@@ -87,7 +87,7 @@ export default class Suggest extends Command {
     checkDeploy(guild?: Guild): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             const server = this.client.servers.get(guild?.id as string);
-            resolve((server && server.suggest_channels.length == 0) as boolean);
+            resolve((server && server.suggestChannels.length == 0) as boolean);
         });
     }
 }

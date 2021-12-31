@@ -1,15 +1,17 @@
 import { ClientOptions as BaseClientOptions, PermissionResolvable } from "discord.js";
 // import { ApplicationCommandPermissionType } from "discord-api-types";
 
-import { Client } from "../clases/Client";
+import { Client } from "../classes/Client";
 import { ApplicationCommandPermissionTypes } from "discord.js/typings/enums";
 export default Client;
 
-export * from "../clases/Client";
-export * from "../clases/Command";
-export * from "../clases/CommandManager";
-export * from "../clases/ServerManager";
-export * from "../clases/Server";
+export * from "../classes/Client";
+export * from "../classes/Command";
+export * from "../classes/Button";
+export * from "../classes/CommandManager";
+export * from "../classes/ButtonManager";
+export * from "../classes/ServerManager";
+export * from "../classes/Server";
 
 export enum CommandType {
     guild,
@@ -39,16 +41,16 @@ export interface CommandOptions {
 }
 
 export interface SuggestChannelObject {
-    channel_id: string;
+    channel: string;
     default: boolean;
     alias?: string;
 }
 
 export interface GuildDataBaseModel {
-    prefixies?: string[];
+    prefixes?: string[];
     lang?: LangType;
     suggest_channels?: SuggestChannelObject[];
-    lastSuggestId?: number;
+    last_suggest?: number;
 }
 
 export interface ClientConstants {
@@ -58,4 +60,9 @@ export interface ClientConstants {
 export interface ClientOptions extends BaseClientOptions {
     firebaseToken?: {};
     constants?: ClientConstants;
+}
+
+export interface ButtonOptions {
+    regex: RegExp;
+    name: string;
 }
