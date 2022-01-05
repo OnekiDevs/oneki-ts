@@ -76,7 +76,7 @@ export class Client extends BaseClient {
         return Promise.all(readdirSync(join(__dirname, '../events')).filter((f) => f.endsWith(".event.js")).map(file => {
             const event = require(join(__dirname, '../events', file));
             
-            this.on(event.name, (...args) => event.run(this, ...args));
+            this.on(event.name, (...args) => event.run(...args));
         }))
     }
 }

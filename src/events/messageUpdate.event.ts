@@ -21,7 +21,8 @@ export function run(old: Message, msg: Message) {
         embed.addField("Editado en:", msg.channel.toString(), true);
         embed.setTimestamp();
         embed.setThumbnail(msg.author.displayAvatarURL({ dynamic: true }));
-        embed.addField("Escrito el:", `<t:${Math.round(msg.createdTimestamp / 100)}>`);
+        embed.addField("Escrito el:", `<t:${Math.round(msg.createdTimestamp / 100)}>`, true);
+        embed.addField("Editado el:", `<t:${Math.round(Date.now() / 100)}>`, true);
         if (old.content) embed.addField("Antes", "```\n" + old.content + "\n```", false);
         if (msg.content) embed.addField("Despues", "```\n" + msg.content + "\n```", false);
         embed.setFooter({
