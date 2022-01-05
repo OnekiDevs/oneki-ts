@@ -29,13 +29,13 @@ export default class Suggest extends Command {
     }
 
     run(interaction: CommandInteraction): any {
-        const server = this.client.servers.get(interaction.guildId);
+        const server = this.client.servers.get(interaction.guildId as string);
         if (!server || server.suggestChannels.length === 0) {
             interaction.reply({
                 content: "Este servidor no tiene un canal de sugerencias establecido",
                 ephemeral: true,
             });
-            const guild = interaction.guild ?? this.client.guilds.cache.get(interaction.guildId);
+            const guild = interaction.guild ?? this.client.guilds.cache.get(interaction.guildId as string);
             return (
                 guild?.name,
                 guild?.commands.cache.map((c) => {

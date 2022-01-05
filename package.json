@@ -4,10 +4,10 @@
   "description": "Module of Oneki Bot in JavaScript",
   "main": "src/index.ts",
   "scripts": {
-    "compile": "nodemon -e ts --exec \"npm run build\"",
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "nodemon -e ts --exec \"npm run build && npm start\"",
+    "test": "nodemon -e ts --exec \"npm run build && npm start\"",
+    "dev": "nodemon -e ts --exec \"npm run build\"",
     "update": "npm-check -y"
   },
   "repository": {

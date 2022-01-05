@@ -1,5 +1,5 @@
 import { Guild, GuildChannel } from "discord.js";
-import { GuildDataBaseModel, Client, LangType, SuggestChannelObject } from "../utils/classes";
+import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, LogsChannels, LogsChannelsDatabaseModel } from "../utils/classes";
 import { firestore } from "firebase-admin";
 
 export class Server {
@@ -9,6 +9,7 @@ export class Server {
     private _lang: LangType = LangType.en; //TODO: utilizar el lenguaje en todos los archivos
     suggestChannels: SuggestChannelObject[] = [];
     lastSuggestId: number = 0;
+    logsChannels: LogsChannels = {};
     /**
      * New Server object with information and config for the server
      * @param guild The guild to which the Server object will bind
@@ -42,6 +43,24 @@ export class Server {
                     } else this.suggestChannels = data.suggest_channels;
                 }
                 if (data.last_suggest) this.lastSuggestId = data.last_suggest;
+                if (data.logs_channels) {
+                    const { message_update } = data.logs_channels;
+                    if (options?.logs_channels) {
+                        let obj2: LogsChannelsDatabaseModel = {};
+
+                        if (message_update && message_update !== options.logs_channels.message_update) {
+                            this.logsChannels.messageUpdate = message_update;
+                            obj2.message_update = message_update;
+                        } else if (message_update) {
+                            this.logsChannels.messageUpdate = message_update;
+                            obj2.message_update = message_update;
+                        }
+
+                        if (Object.values(obj2).length > 0) obj.logs_channels = obj2;
+                    } else {
+                        if (message_update) this.logsChannels.messageUpdate = message_update;
+                    }
+                }
 
                 if (Object.values(obj).length > 0) this.db?.update(obj);
             } else {
@@ -49,6 +68,10 @@ export class Server {
                 if (options?.prefixes) this._prefixes = ((obj.prefixes = options.prefixes), options.prefixes);
                 if (options?.suggest_channels) this.suggestChannels = ((obj.suggest_channels = options.suggest_channels), options.suggest_channels);
 
+                let obj2: LogsChannelsDatabaseModel = {};
+                if (options?.logs_channels?.message_update) this.logsChannels.messageUpdate = ((obj2.message_update = options.logs_channels.message_update), options.logs_channels.message_update);
+
+                if (Object.values(obj2).length > 0) obj.logs_channels = obj2;
                 if (Object.values(obj).length > 0) this.db?.create(obj);
             }
         });
@@ -165,9 +188,7 @@ export class Server {
      */
     setSuggestChannel(channel: GuildChannel) {
         this.suggestChannels = [{ channel: channel.id, default: true }] as SuggestChannelObject[];
-        this.db
-            ?.update({ suggest_channels: [{ channel_id: channel.id, default: true }] })
-            .catch(() => this.db?.set({ suggest_channels: [{ channel_id: channel.id, default: true }] }));
+        this.db?.update({ suggest_channels: [{ channel_id: channel.id, default: true }] }).catch(() => this.db?.set({ suggest_channels: [{ channel_id: channel.id, default: true }] }));
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: "set_suggest_channel",
@@ -222,6 +243,24 @@ export class Server {
                 from: "mts",
                 data: {
                     channel: idToRemove,
+                    guild: this.guild.id,
+                },
+            }),
+        );
+    }
+
+    setMessageUpdateLog(channel: string) {
+        this.logsChannels.messageUpdate = channel;
+        let data: any = {};
+        data["logs_channels.message_update"] = channel;
+        this.db?.update(data).catch(() => this.db?.set(data));
+        (this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: "set_log",
+                from: "mts",
+                data: {
+                    log: "MESSAGE_UPDATE",
+                    channel: channel,
                     guild: this.guild.id,
                 },
             }),

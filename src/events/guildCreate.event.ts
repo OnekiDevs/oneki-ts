@@ -15,7 +15,7 @@ export async function run(client: Client, guild: Guild) {
             .setThumbnail(guild.iconURL() ?? "")
             .setTitle("Me añadieron en un Nuevo Servidor")
             .setDescription(`ahora estoy en ${client.guilds.cache.size} servidores`)
-            .addField("Servidor", `${guild.name}`, true)
+            .addField("Servidor", `\`\`\`\n${guild.name}\n\`\`\`\``, true)
             .addField("ID", `\`${guild.id}\``, true)
             .addField("Roles", `\`${guild.roles.cache.size}\``, true)
             .addField("Miembros", `\`${guild.memberCount}\``, true)
@@ -26,6 +26,6 @@ export async function run(client: Client, guild: Guild) {
             .setImage(guild.bannerURL() ?? "");
         channel.send({
             embeds: [embed],
-        });
+        });        
     }
 }

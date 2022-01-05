@@ -13,6 +13,7 @@ export class Client extends BaseClient {
     servers: ServerManager = new ServerManager(this);
     websocket: WebSocket = new WebSocket("wss://oneki.herokuapp.com/");
     constants: ClientConstants = {}
+    private _wsInterval = setInterval(()=>{},20000000)
 
     constructor(options: ClientOptions) {
         super(options);
@@ -27,14 +28,26 @@ export class Client extends BaseClient {
 
         this.once("ready", this._onReady);
 
+        this._initWebSocket()
+        
+    }
+
+    private _initWebSocket() {
+      this.websocket = new WebSocket("wss://oneki.herokuapp.com/");
         this.websocket.on("open", () => {
+            console.time('WebSocket Connection')
             console.log("\x1b[33m%s\x1b[0m", "Socket Conectado!!!")
-            setInterval(() => this.websocket.ping(()=>{}), 25000)
+            this._wsInterval = setInterval(() => this.websocket.ping(()=>{}), 20000)
         });
-        this.websocket.on("close", () => console.error("Socket Cerrado!!!"));
+        this.websocket.on("close", () => {
+          clearInterval(this._wsInterval)
+          console.error('Socket Cerrado!!')
+          console.timeEnd('WebSocket Connection')
+          console.log('Reconectando Socket ...')
+          this._initWebSocket()
+        });
         this.websocket.on("message", () => this._onWebSocketMessage);
         this.websocket.on("error", () => console.error);
-        
     }
 
     private async _onReady() {

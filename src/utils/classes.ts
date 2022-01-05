@@ -46,11 +46,16 @@ export interface SuggestChannelObject {
     alias?: string;
 }
 
+export interface LogsChannelsDatabaseModel {
+    message_update?: string
+}
+
 export interface GuildDataBaseModel {
     prefixes?: string[];
     lang?: LangType;
     suggest_channels?: SuggestChannelObject[];
     last_suggest?: number;
+    logs_channels?: LogsChannelsDatabaseModel
 }
 
 export interface ClientConstants {
@@ -65,4 +70,8 @@ export interface ClientOptions extends BaseClientOptions {
 export interface ButtonOptions {
     regex: RegExp;
     name: string;
+}
+
+export interface LogsChannels {
+    messageUpdate?: string;
 }

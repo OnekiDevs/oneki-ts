@@ -2,6 +2,7 @@ import { ApplicationCommandDataResolvable, CommandInteraction, Guild, Permission
 import { Command, Client, CommandType, Server, LangType } from "../utils/classes";
 import { ChannelType } from "discord-api-types";
 import { permissionsError } from "../utils/utils";
+import { SlashCommandSubcommandBuilder } from "@discordjs/builders"
 
 export default class Config extends Command {
     constructor(client: Client) {
@@ -16,6 +17,7 @@ export default class Config extends Command {
     getData(guild?: Guild): ApplicationCommandDataResolvable {
         const server = this.client.servers.get(guild?.id as string);
         const suggestChannelsChoices = server?.suggestChannels.map((c) => [c.default ? "default" : c.alias, c.channel]);
+        const subcommandsLogs = ['message_update'].map(i => new SlashCommandSubcommandBuilder().setName(i).setDescription(`Config ${i} logs`).addChannelOption(option => option.setName('channel').setDescription('channel where the logs are send').setRequired(true).addChannelType(ChannelType.GuildText)))
         return this.baseCommand
             .addSubcommandGroup((subcommandGroup) =>
                 subcommandGroup
@@ -100,7 +102,13 @@ export default class Config extends Command {
                             );
                         return subcommand;
                     }),
-            )
+            ).addSubcommandGroup(subcommandGroup => {
+                subcommandGroup.setName('log').setDescription('Config the logs channels')
+                for (const scl of subcommandsLogs) {
+                    subcommandGroup.addSubcommand(scl)
+                }
+                return subcommandGroup
+            })
             .toJSON() as ApplicationCommandDataResolvable;
     }
 
@@ -115,7 +123,20 @@ export default class Config extends Command {
         } else if (interaction.options.getSubcommandGroup() === "remove") {
             if (interaction.options.getSubcommand() === "prefix") this.removePrefix(interaction);
             else if (interaction.options.getSubcommand() === "suggest_channel") this.removeSuggestChannel(interaction);
+        } else if (interaction.options.getSubcommandGroup() === "log") {
+            if (interaction.options.getSubcommand() == 'message_update') this.setLogMessageUpdate(interaction)
         }
+    }
+
+    setLogMessageUpdate(interaction: CommandInteraction): any {
+        const member = interaction.guild?.members.cache.get(interaction.user.id);
+        if (!member?.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) return permissionsError(interaction, Permissions.FLAGS.MANAGE_MESSAGES);
+        const channel = interaction.options.getChannel('channel') as TextChannel
+        if (this.client.servers.has(interaction.guildId as string)) this.client.servers.get(interaction.guildId as string)?.setMessageUpdateLog(channel.id);
+        else if (interaction.guild) this.client.servers.set(interaction.guildId as string, new Server(interaction.guild, {logs_channels:{message_update: channel.id}}));
+        interaction.reply({
+            content: `Logs establecidos en ${channel}`
+        })
     }
 
     setLanguage(interaction: CommandInteraction): any {
