@@ -4,7 +4,7 @@ import { checkSend } from "../utils/utils";
 
 export const name: string = "messageDelete";
 
-export function run(old: Message, msg: Message) {
+export function run(msg: Message) {
     if (msg.author.bot) return;
 
     if (!(msg.client as Client).servers.has(msg.guild?.id ?? "")) return;
