@@ -48,6 +48,7 @@ export interface SuggestChannelObject {
 
 export interface LogsChannelsDatabaseModel {
     message_update?: string
+    message_delete?: string
 }
 
 export interface GuildDataBaseModel {
@@ -70,8 +71,4 @@ export interface ClientOptions extends BaseClientOptions {
 export interface ButtonOptions {
     regex: RegExp;
     name: string;
-}
-
-export interface LogsChannels {
-    messageUpdate?: string;
 }

@@ -1,5 +1,5 @@
 import { Guild, GuildChannel } from "discord.js";
-import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, LogsChannels, LogsChannelsDatabaseModel } from "../utils/classes";
+import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, LogsChannelsDatabaseModel } from "../utils/classes";
 import { firestore } from "firebase-admin";
 
 export class Server {
@@ -9,7 +9,10 @@ export class Server {
     private _lang: LangType = LangType.en; //TODO: utilizar el lenguaje en todos los archivos
     suggestChannels: SuggestChannelObject[] = [];
     lastSuggestId: number = 0;
-    logsChannels: LogsChannels = {};
+    logsChannels: {
+        messageUpdate?: string;
+        messageDelete?: string;
+    } = {};
     /**
      * New Server object with information and config for the server
      * @param guild The guild to which the Server object will bind
@@ -249,11 +252,16 @@ export class Server {
         );
     }
 
+    private updateChannelsLogsInDB() {
+        let data: any = {};
+        if (this.logsChannels.messageDelete) data["logs_channels.message_delete"] = this.logsChannels.messageDelete;
+        if (this.logsChannels.messageUpdate) data["logs_channels.message_update"] = this.logsChannels.messageUpdate;
+        this.db?.update(data).catch(() => this.db?.set(data));
+    }
+
     setMessageUpdateLog(channel: string) {
         this.logsChannels.messageUpdate = channel;
-        let data: any = {};
-        data["logs_channels.message_update"] = channel;
-        this.db?.update(data).catch(() => this.db?.set(data));
+        this.updateChannelsLogsInDB();
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: "set_log",
@@ -265,5 +273,53 @@ export class Server {
                 },
             }),
         );
+    }
+
+    removeMessageUpdateLog() {
+        (this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: "remove_log",
+                from: "mts",
+                data: {
+                    log: "MESSAGE_UPDATE",
+                    channel: this.logsChannels.messageUpdate,
+                    guild: this.guild.id,
+                },
+            }),
+        );
+        delete this.logsChannels.messageUpdate;
+        this.updateChannelsLogsInDB();
+    }
+
+    setMessageDeleteLog(channel: string) {
+        this.logsChannels.messageDelete = channel;
+        this.updateChannelsLogsInDB();
+        (this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: "set_log",
+                from: "mts",
+                data: {
+                    log: "MESSAGE_DELETE",
+                    channel: channel,
+                    guild: this.guild.id,
+                },
+            }),
+        );
+    }
+
+    removeMessageDeleteLog() {
+        (this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: "remove_log",
+                from: "mts",
+                data: {
+                    log: "MESSAGE_DELETE",
+                    channel: this.logsChannels.messageUpdate,
+                    guild: this.guild.id,
+                },
+            }),
+        );
+        delete this.logsChannels.messageUpdate;
+        this.updateChannelsLogsInDB();
     }
 }
