@@ -11,3 +11,19 @@ export function permissionsError(interaction:CommandInteraction, permissions: Pe
 export function checkSend(channel: TextChannel, member: GuildMember): boolean {
     return channel.permissionsFor(member).has([Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.VIEW_CHANNEL])
 }
+
+/**
+ * generate a string barr progges
+ * @param current the current percentage to show
+ * @param length the length of the barr
+ * @returns a string bar
+ */
+export function filledBar(current: number, length: number = 25): string{
+    const progress = Math.round((length * (current / 100)));
+    const emptyProgress = length - progress;
+    const progressText = '█'.repeat(progress);
+    const emptyProgressText = ' '.repeat(emptyProgress);
+    return progressText + emptyProgressText;
+};
+
+export const pollEmojis = ["🇦", "🇧", "🇨", "🇩", "🇪", "🇫", "🇬", "🇭", "🇮", "🇯", "🇰", "🇱", "🇲", "🇳", "🇴", "🇵", "🇶", "🇷", "🇸", "🇹"];

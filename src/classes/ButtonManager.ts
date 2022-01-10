@@ -1,18 +1,16 @@
 import fs from "fs";
 import { Collection } from "discord.js";
-import { Button, Client } from "../utils/classes";
+import { Button } from "../utils/classes";
 import {join} from "path"
 
 export class ButtonManager extends Collection<string, Button> {
-    client: Client;
 
-    constructor(client: Client, path: string) {
+    constructor(path: string) {
         super();
-        this.client = client;
         for (const file of fs.readdirSync(path).filter((f) => f.endsWith(".buttons.js"))) {            
             const button = require(join(path, file));
             
-            const btn: Button = new button.default(client);
+            const btn: Button = new button.default();
             this.set(btn.name, btn);
         }
     }

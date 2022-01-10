@@ -12,10 +12,10 @@ export default class Suggest extends Command {
         });
     }
 
-    getData(guild?: Guild): ApplicationCommandDataResolvable {
+    async getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
         const server = this.client.servers.get(guild?.id as string);
         const command = this.baseCommand;
-        command.addStringOption((option) => option.setName("suggest").setDescription("Suggest to send").setRequired(true));
+        command.addStringOption((option) => option.setName("suggestion").setDescription("Suggest to send").setRequired(true));
         if (server && server.suggestChannels.length > 0) {
             const channels = server.suggestChannels.map((i) => [i.alias ?? "predetermined", i.channel]);
             command.addStringOption((option) =>
@@ -44,7 +44,7 @@ export default class Suggest extends Command {
             );
         }
         const channelId = interaction.options.getString("channel");
-        const sug = interaction.options.getString("suggest");
+        const sug = interaction.options.getString("suggestion");
         const channel = this.client.channels.cache.get(channelId as string) as TextChannel;
         if (channel && checkSend(channel, interaction.guild?.me as GuildMember)) {
             server.lastSuggestId += 1;

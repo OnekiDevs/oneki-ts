@@ -14,13 +14,30 @@ export * from "../classes/ServerManager";
 export * from "../classes/Server";
 
 export enum CommandType {
-    guild,
+    guild = 1,
     global,
 }
 
 export enum LangType {
     en = "en",
     es = "es",
+}
+
+export interface PollDatabaseModel {
+    guild: string;
+    options: {
+        name: string;
+        value: string;
+        votes: string[];
+    }[];
+    show_results: boolean;
+    title: string;
+    context: string;
+    multiple_choices: boolean;
+    author: string;
+    block_choices: boolean;
+    message: string;
+    channel: string;
 }
 
 export interface CommandPermissions {
@@ -57,6 +74,7 @@ export interface GuildDataBaseModel {
     suggest_channels?: SuggestChannelObject[];
     last_suggest?: number;
     logs_channels?: LogsChannelsDatabaseModel
+    premium?: boolean
 }
 
 export interface ClientConstants {

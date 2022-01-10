@@ -14,7 +14,7 @@ export default class Config extends Command {
         });
     }
 
-    getData(guild?: Guild): ApplicationCommandDataResolvable {
+    getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
         const server = this.client.servers.get(guild?.id as string);
         const suggestChannelsChoices = server?.suggestChannels.map((c) => [c.default ? "default" : c.alias, c.channel]);
         const subcommandsLogs = ["message_update", "message_delete"].map((i) =>
@@ -23,99 +23,105 @@ export default class Config extends Command {
                 .setDescription(`Config ${i} logs`)
                 .addChannelOption((option) => option.setName("channel").setDescription("channel where the logs are send").setRequired(true).addChannelType(ChannelType.GuildText)),
         );
-        return this.baseCommand
-            .addSubcommandGroup((subcommandGroup) =>
-                subcommandGroup
-                    .setName("set") // group
-                    .setDescription("set configs")
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName("language") // command
-                            .setDescription("Set language")
-                            .addStringOption((option) =>
-                                option
-                                    .setName("lang") // option
-                                    .setDescription("Language")
-                                    .setRequired(true)
-                                    .addChoices([
-                                        ["Español", LangType.es],
-                                        ["English", LangType.en],
-                                    ]),
-                            ),
-                    )
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName("prefix")
-                            .setDescription("Set a new unique prefix")
-                            .addStringOption((option) => option.setName("prefix").setDescription("New prefix").setRequired(true)),
-                    )
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName("suggest_channel")
-                            .setDescription("Aet a unique suggest channel")
-                            .addChannelOption((option) => option.setName("channel").setDescription("Channel were the suggest are sent").addChannelType(ChannelType.GuildText).setRequired(true)),
-                    ),
-            )
-            .addSubcommandGroup((subcommandGroup) =>
-                subcommandGroup
-                    .setName("add")
-                    .setDescription("add config")
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName("prefix")
-                            .setDescription("add a new pfrefix to the bot")
-                            .addStringOption((option) => option.setName("prefix").setDescription("A new prefix").setRequired(true)),
-                    )
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName("suggest_channel")
-                            .setDescription("add a new suggest channel")
-                            .addChannelOption((option) => option.setName("channel").setDescription("Channel to suggest").setRequired(true).addChannelType(ChannelType.GuildText))
-                            .addStringOption((option) => option.setName("alias").setDescription("Name to refired a suggest channel").setRequired(true))
-                            .addBooleanOption((option) => option.setName("default").setDescription("Set a default suggestion channel")),
-                    ),
-            )
-            .addSubcommandGroup((subcommandGroup) =>
-                subcommandGroup
-                    .setName("remove")
-                    .setDescription("remove config")
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName("prefix")
-                            .setDescription("remove prefix")
-                            .addStringOption((option) =>
-                                option
+        return new Promise((resolve) =>
+            resolve(
+                this.baseCommand
+                    .addSubcommandGroup((subcommandGroup) =>
+                        subcommandGroup
+                            .setName("set") // group
+                            .setDescription("set configs")
+                            .addSubcommand((subcommand) =>
+                                subcommand
+                                    .setName("language") // command
+                                    .setDescription("Set language")
+                                    .addStringOption((option) =>
+                                        option
+                                            .setName("lang") // option
+                                            .setDescription("Language")
+                                            .setRequired(true)
+                                            .addChoices([
+                                                ["Español", LangType.es],
+                                                ["English", LangType.en],
+                                            ]),
+                                    ),
+                            )
+                            .addSubcommand((subcommand) =>
+                                subcommand
                                     .setName("prefix")
-                                    .setDescription("prefix to remove")
-                                    .addChoices(
-                                        server?.getPrefixes(true).map((i) => [i, i]) ?? [
-                                            [">", ">"],
-                                            ["?", "?"],
-                                        ],
+                                    .setDescription("Set a new unique prefix")
+                                    .addStringOption((option) => option.setName("prefix").setDescription("New prefix").setRequired(true)),
+                            )
+                            .addSubcommand((subcommand) =>
+                                subcommand
+                                    .setName("suggest_channel")
+                                    .setDescription("Aet a unique suggest channel")
+                                    .addChannelOption((option) =>
+                                        option.setName("channel").setDescription("Channel were the suggest are sent").addChannelType(ChannelType.GuildText).setRequired(true),
                                     ),
                             ),
                     )
-                    .addSubcommand((subcommand) => {
-                        subcommand.setName("suggest_channel").setDescription("remove suggestion channel");
-                        if (suggestChannelsChoices && suggestChannelsChoices.length > 0)
-                            subcommand.addStringOption((option) =>
-                                option
-                                    .setName("channel")
-                                    .setDescription("alias of channel to remove")
-                                    .setRequired(true)
-                                    .addChoices(suggestChannelsChoices as [name: string, value: string][]),
-                            );
-                        return subcommand;
-                    }),
-            )
-            .addSubcommandGroup((subcommandGroup) => {
-                subcommandGroup.setName("log").setDescription("Config the logs channels");
-                for (const scl of subcommandsLogs) {
-                    subcommandGroup.addSubcommand(scl);
-                }
-                return subcommandGroup;
-            })
-            .toJSON() as ApplicationCommandDataResolvable;
+                    .addSubcommandGroup((subcommandGroup) =>
+                        subcommandGroup
+                            .setName("add")
+                            .setDescription("add config")
+                            .addSubcommand((subcommand) =>
+                                subcommand
+                                    .setName("prefix")
+                                    .setDescription("add a new pfrefix to the bot")
+                                    .addStringOption((option) => option.setName("prefix").setDescription("A new prefix").setRequired(true)),
+                            )
+                            .addSubcommand((subcommand) =>
+                                subcommand
+                                    .setName("suggest_channel")
+                                    .setDescription("add a new suggest channel")
+                                    .addChannelOption((option) => option.setName("channel").setDescription("Channel to suggest").setRequired(true).addChannelType(ChannelType.GuildText))
+                                    .addStringOption((option) => option.setName("alias").setDescription("Name to refired a suggest channel").setRequired(true))
+                                    .addBooleanOption((option) => option.setName("default").setDescription("Set a default suggestion channel")),
+                            ),
+                    )
+                    .addSubcommandGroup((subcommandGroup) =>
+                        subcommandGroup
+                            .setName("remove")
+                            .setDescription("remove config")
+                            .addSubcommand((subcommand) =>
+                                subcommand
+                                    .setName("prefix")
+                                    .setDescription("remove prefix")
+                                    .addStringOption((option) =>
+                                        option
+                                            .setName("prefix")
+                                            .setDescription("prefix to remove")
+                                            .addChoices(
+                                                server?.getPrefixes(true).map((i) => [i, i]) ?? [
+                                                    [">", ">"],
+                                                    ["?", "?"],
+                                                ],
+                                            ),
+                                    ),
+                            )
+                            .addSubcommand((subcommand) => {
+                                subcommand.setName("suggest_channel").setDescription("remove suggestion channel");
+                                if (suggestChannelsChoices && suggestChannelsChoices.length > 0)
+                                    subcommand.addStringOption((option) =>
+                                        option
+                                            .setName("channel")
+                                            .setDescription("alias of channel to remove")
+                                            .setRequired(true)
+                                            .addChoices(suggestChannelsChoices as [name: string, value: string][]),
+                                    );
+                                return subcommand;
+                            }),
+                    )
+                    .addSubcommandGroup((subcommandGroup) => {
+                        subcommandGroup.setName("log").setDescription("Config the logs channels");
+                        for (const scl of subcommandsLogs) {
+                            subcommandGroup.addSubcommand(scl);
+                        }
+                        return subcommandGroup;
+                    })
+                    .toJSON() as ApplicationCommandDataResolvable,
+            ),
+        );
     }
 
     run(interaction: CommandInteraction) {

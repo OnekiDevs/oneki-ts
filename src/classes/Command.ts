@@ -12,23 +12,23 @@ export class Command {
     type: CommandType = CommandType.global;
     guilds: Array<string> = [];
     public: boolean = true;
-    permissions: PermissionResolvable[] = []
+    permissions: PermissionResolvable[] = [];
 
     constructor(client: Client, options: CommandOptions) {
         this.client = client;
         this.name = options.name;
         this.description = options.description;
         if (options.type) this.type = options.type;
-        if (options.public) this.public = options.public;
+        if (typeof options.public === "boolean") this.public = options.public;
         if (options.guilds) this.guilds = options.guilds;
-        if (options.defaultPermission) this.defaultPermission = options.defaultPermission
-        if (options.permissions) this.permissions.push(...options.permissions)
+        if (typeof options.defaultPermission === "boolean") this.defaultPermission = options.defaultPermission;
+        if (options.permissions) this.permissions.push(...options.permissions);
 
-        if (!this.defaultPermission) this.permissions.push(Permissions.FLAGS.ADMINISTRATOR)
+        if (!this.defaultPermission) this.permissions.push(Permissions.FLAGS.ADMINISTRATOR);
     }
 
-    getData(guild?: Guild): ApplicationCommandDataResolvable {
-        return this.baseCommand.toJSON() as ApplicationCommandDataResolvable;
+    getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
+        return new Promise((resolve) => resolve(this.baseCommand.toJSON() as ApplicationCommandDataResolvable));
     }
 
     run(interaction: CommandInteraction) {
@@ -39,9 +39,9 @@ export class Command {
         return new SlashCommandBuilder().setName(this.name).setDescription(this.description).setDefaultPermission(this.defaultPermission);
     }
 
-    private _deployPermission(command: ApplicationCommand): Promise<ApplicationCommand> {
-        return new Promise<ApplicationCommand>((resolve, reject) => {
-            if (this.public || this.defaultPermission) resolve(command);
+    private _deployPermission(command: ApplicationCommand): Promise<ApplicationCommand> {        
+        return new Promise((resolve, reject) => {            
+            if (this.public || this.defaultPermission) resolve(command); //TODO: Fix it
             let permissions: Array<CommandPermissions> = [
                 {
                     id: command.guild?.ownerId as string,
@@ -49,15 +49,16 @@ export class Command {
                     permission: true,
                 },
             ];
+            let i = 0;
             command.guild?.roles.cache
                 .filter((f) => f.permissions.has(this.permissions))
-                .map((r) =>
-                    permissions.push({
+                .map((r) =>{
+                    if (i++ < 9) permissions.push({
                         id: r.id,
                         type: ApplicationCommandPermissionTypes.ROLE,
                         permission: true,
-                    }),
-                );
+                    })
+                });
             command.permissions.add({ permissions });
             resolve(command);
         });
@@ -71,16 +72,16 @@ export class Command {
     deploy(guild?: Guild) {
         return new Promise<ApplicationCommand | boolean>(async (resolve, reject) => {
             const needDeploy = await this.checkDeploy(guild);
-            if(!needDeploy) resolve(false)
+            if (!needDeploy) resolve(false);
             if (guild && this.type === CommandType.guild && (this.guilds.length === 0 || this.guilds.includes(guild.id))) {
                 guild.commands
-                    .create(this.getData(guild))
-                    .then(this._deployPermission)
+                    .create(await this.getData(guild))
+                    .then((c)=>this._deployPermission(c))
                     .then((command: ApplicationCommand) => resolve(command))
                     .catch((err) => console.error(err.toString(), "/" + this.name, "in", guild.name));
             } else if (this.type === CommandType.global) {
                 try {
-                    const c = await this.client.application?.commands.create(this.getData());
+                    const c = await this.client.application?.commands.create(await this.getData());
                     resolve(c as ApplicationCommand);
                 } catch (error) {
                     reject(error);
@@ -88,18 +89,18 @@ export class Command {
             } else {
                 this.client.guilds.cache
                     .filter((f) => this.public || this.guilds.includes(f.id))
-                    .map((guild: Guild) => {
+                    .map(async (guild: Guild) => {
                         guild.commands
-                            .create(this.getData(guild))
-                            .then(this._deployPermission)
+                            .create(await this.getData(guild))
+                            .then((c)=>this._deployPermission(c))
                             .then((command: ApplicationCommand) => resolve(command))
-                            .catch((err) => console.error(err.toString(), "/" + this.name, "in", guild.name));
+                            .catch((err) => console.error(err.toString(), "/" + this.name, "in", guild.name, err.stack));
                     });
             }
         });
     }
 
-    checkDeploy(guild?: Guild):Promise<boolean> {
-        return new Promise<boolean>((resolve) => resolve(true))
+    checkDeploy(guild?: Guild): Promise<boolean> {
+        return new Promise<boolean>((resolve) => resolve(true));
     }
 }

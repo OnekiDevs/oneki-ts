@@ -3,7 +3,7 @@ import { Button, Client } from "../utils/classes";
 
 export default class Activitie extends Button {
     constructor(client: Client) {
-        super(client, {
+        super({
             name: 'act_sl_',
             regex: /act_sl_.+/gi
         });

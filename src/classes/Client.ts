@@ -9,7 +9,7 @@ export class Client extends BaseClient {
     db;
     version: string = require("../../package.json")?.version ?? "1.0.0";
     commands: CommandManager = new CommandManager(this, join(__dirname, "../commands"));
-    buttons: ButtonManager = new ButtonManager(this, join(__dirname, '../commands'));
+    buttons: ButtonManager = new ButtonManager(join(__dirname, '../commands'));
     servers: ServerManager = new ServerManager(this);
     websocket: WebSocket = new WebSocket("wss://oneki.herokuapp.com/");
     constants: ClientConstants = {}
@@ -17,6 +17,7 @@ export class Client extends BaseClient {
 
     constructor(options: ClientOptions) {
         super(options);
+        
 
         if (options.firebaseToken) {
             admin.initializeApp({

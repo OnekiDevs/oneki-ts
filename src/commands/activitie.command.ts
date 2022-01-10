@@ -12,7 +12,7 @@ export default class Activitie extends Command {
         });
     }
 
-    getData(guild?: Guild): ApplicationCommandDataResolvable {
+    async getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
         return this.baseCommand
             .addStringOption((option) =>
                 option

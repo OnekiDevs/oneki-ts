@@ -13,6 +13,7 @@ export class Server {
         messageUpdate?: string;
         messageDelete?: string;
     } = {};
+    premium: boolean = false;
     /**
      * New Server object with information and config for the server
      * @param guild The guild to which the Server object will bind
@@ -47,7 +48,7 @@ export class Server {
                 }
                 if (data.last_suggest) this.lastSuggestId = data.last_suggest;
                 if (data.logs_channels) {
-                    const { message_update } = data.logs_channels;
+                    const { message_update, message_delete } = data.logs_channels;
                     if (options?.logs_channels) {
                         let obj2: LogsChannelsDatabaseModel = {};
 
@@ -59,20 +60,32 @@ export class Server {
                             obj2.message_update = message_update;
                         }
 
+                        if (message_delete && message_delete !== options.logs_channels.message_delete) {
+                            this.logsChannels.messageDelete = message_delete;
+                            obj2.message_delete = message_delete;
+                        } else if (message_delete) {
+                            this.logsChannels.messageDelete = message_delete;
+                            obj2.message_delete = message_delete;
+                        }
+
                         if (Object.values(obj2).length > 0) obj.logs_channels = obj2;
                     } else {
                         if (message_update) this.logsChannels.messageUpdate = message_update;
+                        if (message_delete) this.logsChannels.messageDelete = message_delete;
                     }
                 }
+                if (data.premium) this.premium = options?.premium && options.premium !== data.premium ? ((obj.premium = options.premium), options.premium) : data.premium;
 
                 if (Object.values(obj).length > 0) this.db?.update(obj);
             } else {
                 if (options?.lang) this._lang = ((obj.lang = options.lang), options.lang);
                 if (options?.prefixes) this._prefixes = ((obj.prefixes = options.prefixes), options.prefixes);
                 if (options?.suggest_channels) this.suggestChannels = ((obj.suggest_channels = options.suggest_channels), options.suggest_channels);
+                if (options?.premium) this.premium = ((obj.premium = options.premium), options.premium);
 
                 let obj2: LogsChannelsDatabaseModel = {};
                 if (options?.logs_channels?.message_update) this.logsChannels.messageUpdate = ((obj2.message_update = options.logs_channels.message_update), options.logs_channels.message_update);
+                if (options?.logs_channels?.message_delete) this.logsChannels.messageDelete = ((obj2.message_delete = options.logs_channels.message_delete), options.logs_channels.message_delete);
 
                 if (Object.values(obj2).length > 0) obj.logs_channels = obj2;
                 if (Object.values(obj).length > 0) this.db?.create(obj);
