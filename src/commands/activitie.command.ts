@@ -6,7 +6,7 @@ export default class Activitie extends Command {
     constructor(client: Client) {
         super(client, {
             name: "activitie",
-            description: "play in the voice channel",
+            description: "Play in the voice channel",
             defaultPermission: true,
             type: CommandType.global,
         });

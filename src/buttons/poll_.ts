@@ -22,7 +22,7 @@ export default class Activitie extends Button {
         data.options = data.options.map((o) => {
             let to = {
                 ...o,
-                votes: o.votes.filter((v) => v !== interaction.user.id),
+                votes: o.votes.filter((v) => data.multiple_choices || v !== interaction.user.id),
             };
             if (to.name === `option_${option}`) to.votes.push(interaction.user.id);
             return to;

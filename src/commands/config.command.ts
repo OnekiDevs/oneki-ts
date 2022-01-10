@@ -21,7 +21,7 @@ export default class Config extends Command {
             new SlashCommandSubcommandBuilder()
                 .setName(i)
                 .setDescription(`Config ${i} logs`)
-                .addChannelOption((option) => option.setName("channel").setDescription("channel where the logs are send").setRequired(true).addChannelType(ChannelType.GuildText)),
+                .addChannelOption((option) => option.setName("channel").setDescription("Channel where the logs are send").setRequired(true).addChannelType(ChannelType.GuildText)),
         );
         return new Promise((resolve) =>
             resolve(
@@ -54,7 +54,7 @@ export default class Config extends Command {
                             .addSubcommand((subcommand) =>
                                 subcommand
                                     .setName("suggest_channel")
-                                    .setDescription("Aet a unique suggest channel")
+                                    .setDescription("Set a unique suggest channel")
                                     .addChannelOption((option) =>
                                         option.setName("channel").setDescription("Channel were the suggest are sent").addChannelType(ChannelType.GuildText).setRequired(true),
                                     ),
@@ -67,13 +67,13 @@ export default class Config extends Command {
                             .addSubcommand((subcommand) =>
                                 subcommand
                                     .setName("prefix")
-                                    .setDescription("add a new pfrefix to the bot")
+                                    .setDescription("Add a new pfrefix to the bot")
                                     .addStringOption((option) => option.setName("prefix").setDescription("A new prefix").setRequired(true)),
                             )
                             .addSubcommand((subcommand) =>
                                 subcommand
                                     .setName("suggest_channel")
-                                    .setDescription("add a new suggest channel")
+                                    .setDescription("Add a new suggest channel")
                                     .addChannelOption((option) => option.setName("channel").setDescription("Channel to suggest").setRequired(true).addChannelType(ChannelType.GuildText))
                                     .addStringOption((option) => option.setName("alias").setDescription("Name to refired a suggest channel").setRequired(true))
                                     .addBooleanOption((option) => option.setName("default").setDescription("Set a default suggestion channel")),
@@ -86,11 +86,11 @@ export default class Config extends Command {
                             .addSubcommand((subcommand) =>
                                 subcommand
                                     .setName("prefix")
-                                    .setDescription("remove prefix")
+                                    .setDescription("Remove prefix")
                                     .addStringOption((option) =>
                                         option
                                             .setName("prefix")
-                                            .setDescription("prefix to remove")
+                                            .setDescription("Prefix to remove")
                                             .addChoices(
                                                 server?.getPrefixes(true).map((i) => [i, i]) ?? [
                                                     [">", ">"],
@@ -100,12 +100,12 @@ export default class Config extends Command {
                                     ),
                             )
                             .addSubcommand((subcommand) => {
-                                subcommand.setName("suggest_channel").setDescription("remove suggestion channel");
+                                subcommand.setName("suggest_channel").setDescription("Remove suggestion channel");
                                 if (suggestChannelsChoices && suggestChannelsChoices.length > 0)
                                     subcommand.addStringOption((option) =>
                                         option
-                                            .setName("channel")
-                                            .setDescription("alias of channel to remove")
+                                            .setName("alias")
+                                            .setDescription("Alias of channel to remove")
                                             .setRequired(true)
                                             .addChoices(suggestChannelsChoices as [name: string, value: string][]),
                                     );
@@ -223,7 +223,7 @@ export default class Config extends Command {
     removeSuggestChannel(interaction: CommandInteraction): any {
         const member = interaction.guild?.members.cache.get(interaction.user.id);
         if (!member?.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) return permissionsError(interaction, Permissions.FLAGS.MANAGE_CHANNELS);
-        const channelId = interaction.options.getString("channel");
+        const channelId = interaction.options.getString("alias");
         if (!channelId) return interaction.reply("no existe ningun canal configurado");
         if (this.client.servers.has(interaction.guildId as string)) this.client.servers.get(interaction.guildId as string)?.removeSuggestChannel(channelId);
         else console.error("Remove suggest channel error:\n\tdont exist server class from " + interaction.guild?.name + " server with id " + interaction.guild?.id);

@@ -1,4 +1,4 @@
-import { ApplicationCommandDataResolvable, MessageButton, MessageActionRow, CommandInteraction, Guild, MessageEmbed, TextChannel, Message } from "discord.js";
+import { ApplicationCommandDataResolvable, MessageButton, MessageActionRow, CommandInteraction, Guild, MessageEmbed, TextChannel } from "discord.js";
 import { Command, Client, CommandType, PollDatabaseModel } from "../utils/classes";
 import { filledBar, pollEmojis as emojis } from "../utils/utils";
 import { time } from "uniqid";
@@ -23,7 +23,7 @@ export default class Poll extends Command {
             .get();
         if (!snap.empty)
             command.addSubcommand((subcommand) => {
-                subcommand.setName("finalize").setDescription("finish a poll");
+                subcommand.setName("finalize").setDescription("Finish a poll");
                 subcommand.addStringOption((option) => {
                     option.setName("id").setDescription("Id of de poll").setRequired(true);
                     snap.forEach((doc) => option.addChoice(doc.id, doc.id));
@@ -34,7 +34,7 @@ export default class Poll extends Command {
         command.addSubcommand((subcommand) => {
             subcommand
                 .setName("make")
-                .setDescription("make a poll")
+                .setDescription("Make a poll")
                 .addStringOption((option) => option.setName("context").setDescription("add a description of context").setRequired(true))
                 .addStringOption((option) => option.setName("title").setDescription("title to show in the poll"))
                 .addBooleanOption((option) => option.setName("block_choice").setDescription("blocks the response so as not to be modified"))
