@@ -7,15 +7,30 @@ export default Client;
 
 export * from "../classes/Client";
 export * from "../classes/Command";
+export * from "../classes/OldCommand";
 export * from "../classes/Button";
+export * from "../classes/Server";
 export * from "../classes/CommandManager";
+export * from "../classes/OldCommandManager"
 export * from "../classes/ButtonManager";
 export * from "../classes/ServerManager";
-export * from "../classes/Server";
 
 export enum CommandType {
     guild = 1,
     global,
+}
+
+export interface oldCommandData {
+    name: string;
+    description: string;
+    category: string;
+    alias: string[];
+    user_permisions: PermissionResolvable[];
+    bot_permisions: PermissionResolvable[];
+    use: string;
+    example: string;
+    module: "mts" | "mpy" | "mrs";
+    type: "slash" | "command";
 }
 
 export enum LangType {
@@ -46,17 +61,6 @@ export interface CommandPermissions {
     permission: boolean;
 }
 
-export interface CommandOptions {
-    name: string;
-    description: string;
-    defaultPermission?: boolean;
-    options?: {};
-    type?: CommandType;
-    public?: boolean;
-    guilds?: string[];
-    permissions?: PermissionResolvable[];
-}
-
 export interface SuggestChannelObject {
     channel: string;
     default: boolean;
@@ -84,6 +88,12 @@ export interface ClientConstants {
 export interface ClientOptions extends BaseClientOptions {
     firebaseToken?: {};
     constants?: ClientConstants;
+    routes?: {
+        commands?: string;
+        oldCommands?: string;
+        events?: string;
+        buttons?: string;
+    }
 }
 
 export interface ButtonOptions {

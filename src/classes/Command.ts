@@ -1,5 +1,5 @@
 import { Guild, CommandInteraction, ApplicationCommandDataResolvable, ApplicationCommand, Permissions, PermissionResolvable } from "discord.js";
-import { Client, CommandType, CommandPermissions, CommandOptions } from "../utils/classes";
+import { Client, CommandType, CommandPermissions } from "../utils/classes";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ApplicationCommandPermissionTypes } from "discord.js/typings/enums";
 
@@ -14,7 +14,19 @@ export class Command {
     public: boolean = true;
     permissions: PermissionResolvable[] = [];
 
-    constructor(client: Client, options: CommandOptions) {
+    constructor(
+        client: Client,
+        options: {
+            name: string;
+            description: string;
+            defaultPermission?: boolean;
+            options?: {};
+            type?: CommandType;
+            public?: boolean;
+            guilds?: string[];
+            permissions?: PermissionResolvable[];
+        },
+    ) {
         this.client = client;
         this.name = options.name;
         this.description = options.description;
@@ -39,8 +51,8 @@ export class Command {
         return new SlashCommandBuilder().setName(this.name).setDescription(this.description).setDefaultPermission(this.defaultPermission);
     }
 
-    private _deployPermission(command: ApplicationCommand): Promise<ApplicationCommand> {        
-        return new Promise((resolve, reject) => {            
+    private _deployPermission(command: ApplicationCommand): Promise<ApplicationCommand> {
+        return new Promise((resolve, reject) => {
             if (this.public || this.defaultPermission) resolve(command); //TODO: Fix it
             let permissions: Array<CommandPermissions> = [
                 {
@@ -52,12 +64,13 @@ export class Command {
             let i = 0;
             command.guild?.roles.cache
                 .filter((f) => f.permissions.has(this.permissions))
-                .map((r) =>{
-                    if (i++ < 9) permissions.push({
-                        id: r.id,
-                        type: ApplicationCommandPermissionTypes.ROLE,
-                        permission: true,
-                    })
+                .map((r) => {
+                    if (i++ < 9)
+                        permissions.push({
+                            id: r.id,
+                            type: ApplicationCommandPermissionTypes.ROLE,
+                            permission: true,
+                        });
                 });
             command.permissions.add({ permissions });
             resolve(command);
@@ -76,7 +89,7 @@ export class Command {
             if (guild && this.type === CommandType.guild && (this.guilds.length === 0 || this.guilds.includes(guild.id))) {
                 guild.commands
                     .create(await this.getData(guild))
-                    .then((c)=>this._deployPermission(c))
+                    .then((c) => this._deployPermission(c))
                     .then((command: ApplicationCommand) => resolve(command))
                     .catch((err) => console.error(err.toString(), "/" + this.name, "in", guild.name));
             } else if (this.type === CommandType.global) {
@@ -92,7 +105,7 @@ export class Command {
                     .map(async (guild: Guild) => {
                         guild.commands
                             .create(await this.getData(guild))
-                            .then((c)=>this._deployPermission(c))
+                            .then((c) => this._deployPermission(c))
                             .then((command: ApplicationCommand) => resolve(command))
                             .catch((err) => console.error(err.toString(), "/" + this.name, "in", guild.name, err.stack));
                     });

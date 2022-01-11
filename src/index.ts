@@ -2,6 +2,7 @@ import { config } from "dotenv";
 config();
 
 import { Client } from "./utils/classes";
+import { join } from "path"
 
 const client: Client = new Client({
     intents: [
@@ -17,6 +18,12 @@ const client: Client = new Client({
     firebaseToken: JSON.parse(process.env.TOKEN_FIREBASE as string),
     constants: {
         newServerLogChannel: '885674115946643458'
+    },
+    routes: {
+        commands: join(__dirname, "commands"),
+        oldCommands: join(__dirname, "oldCommands"),
+        events: join(__dirname, "events"),
+        buttons: join(__dirname, "bittons"),
     }
 });
 
