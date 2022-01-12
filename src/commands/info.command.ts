@@ -42,11 +42,11 @@ export default class Activitie extends Command {
             ${user.flags?.has("BUGHUNTER_LEVEL_2") ? "Cazador de Bugs Nivel 2" : ""}
             ${user.flags?.has("EARLY_VERIFIED_BOT_DEVELOPER") ? "Desarrollador de Bots Verificado" : ""}`,
                 )
-                .addField("ID", user.id, true)
-                .addField("Tag", user.tag, true);
-            if (member.nickname) embed.addField("Nickname", member.nickname, true);
-            embed.addField("Color de Miembro", `${member.displayColor} / ${member.displayHexColor}`, true);
-            if(user.accentColor) embed.addField('Color de Usuario', `${user.accentColor} / ${user.hexAccentColor}`, true)
+                .addField("ID", '```\n'+user.id+'\n```', true)
+                .addField("Tag", '```\n'+user.tag+'\n```', true);
+            if (member.nickname) embed.addField("Nickname", '```\n'+member.nickname+'\n```', true);
+            embed.addField("Color de Miembro", '```\n'+`${member.displayColor} / ${member.displayHexColor}`+'\n```', true);
+            if(user.accentColor) embed.addField('Color de Usuario', '```\n'+`${user.accentColor} / ${user.hexAccentColor}`+'\n```', true)
             embed.addField('Fecha de creación', `<t:${Math.round(user.createdTimestamp/1000)}:d> <t:${Math.round(user.createdTimestamp/1000)}:R>`, true)
             .addField('Entro el', `<t:${Math.round(member.joinedTimestamp??1/1000)}:d> <t:${Math.round(member.joinedTimestamp??1/1000)}:R>`, true)
             .setColor(member.displayColor)

@@ -21,7 +21,7 @@ export class Client extends BaseClient {
 
         this.oldCommands = new OldCommandManager(options.routes?.oldCommands ?? join(__dirname, "../oldCommands"));
         this.commands = new CommandManager(this, options.routes?.commands ?? join(__dirname, "../commands"));
-        this.buttons = new ButtonManager(options.routes?.commands ?? join(__dirname, "../commands"));
+        this.buttons = new ButtonManager(this, options.routes?.buttons ?? join(__dirname, "../commands"));
 
         this.db
             ?.collection("s")

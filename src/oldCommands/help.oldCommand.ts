@@ -45,7 +45,7 @@ export default class Help extends OldCommand {
                         .then((req) => req.json())
                         .then(async (cmds) => {
                             embed.setTitle(`${msg.client.user?.username} Bot command list`);
-                            embed.setDescription("Category: Entertainment\n`<>` Means optional\n`[]` Means mandatory");
+                            embed.setDescription("Category: "+(res as string[])[0]+"\n`<>` Means optional\n`[]` Means mandatory");
                             await Promise.all(
                                 (cmds as oldCommandData[]).map((cmd) => {
                                     embed.addField(
@@ -62,11 +62,11 @@ export default class Help extends OldCommand {
                                 iconURL: msg.client.user?.avatarURL() ?? "",
                             });
                             embed.setThumbnail(msg.client.user?.avatarURL()??'');
-                            let j = 0, k = 0, buttons = [];
+                            let j = 0, k = 0, components = [];
                             for (const i of res as string[]) {
                                 const btn = new MessageButton().setStyle(i==(res as string[])[0]?'SUCCESS':'PRIMARY').setLabel(i).setCustomId(`help_${server?.lang}_${i}`)
-                                if(j==0) buttons.push(new MessageActionRow().addComponents([btn])) 
-                                else buttons[k].addComponents([btn])
+                                if(j==0) components.push(new MessageActionRow().addComponents([btn])) 
+                                else components[k].addComponents([btn])
                                 if (j==4) {
                                     j=0
                                     k++
@@ -74,6 +74,7 @@ export default class Help extends OldCommand {
                             }
                             return msg.reply({
                                 embeds: [embed],
+                                components
                             });
                         });
                 });

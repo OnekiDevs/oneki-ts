@@ -10,6 +10,8 @@ export default class Activitie extends Button {
     }
 
     run(interaction: ButtonInteraction) {
+        console.log('d');
+        
         const [,,code] = interaction.customId.split(/_/gi)
         interaction.reply(`https://discord.com/invite/${code}`);
     }
