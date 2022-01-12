@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message, MessageEmbed, MessageButton, MessageActionRow } from "discord.js";
 import fetch from "node-fetch";
 import { OldCommand, Client, oldCommandData } from "../utils/classes";
 
@@ -62,6 +62,16 @@ export default class Help extends OldCommand {
                                 iconURL: msg.client.user?.avatarURL() ?? "",
                             });
                             embed.setThumbnail(msg.client.user?.avatarURL()??'');
+                            let j = 0, k = 0, buttons = [];
+                            for (const i of res as string[]) {
+                                const btn = new MessageButton().setStyle(i==(res as string[])[0]?'SUCCESS':'PRIMARY').setLabel(i).setCustomId(`help_${server?.lang}_${i}`)
+                                if(j==0) buttons.push(new MessageActionRow().addComponents([btn])) 
+                                else buttons[k].addComponents([btn])
+                                if (j==4) {
+                                    j=0
+                                    k++
+                                } else j++
+                            }
                             return msg.reply({
                                 embeds: [embed],
                             });
