@@ -53,7 +53,7 @@ export class Command {
 
     private _deployPermission(command: ApplicationCommand): Promise<ApplicationCommand> {
         return new Promise((resolve, reject) => {
-            if (this.public || this.defaultPermission) resolve(command); //TODO: Fix it
+            if (this.public || this.defaultPermission) resolve(command);
             let permissions: Array<CommandPermissions> = [
                 {
                     id: command.guild?.ownerId as string,

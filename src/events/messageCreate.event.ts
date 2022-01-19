@@ -3,7 +3,8 @@ import { Client } from "../utils/classes";
 
 export const name: string = "messageCreate";
 
-export async function run(msg: Message) {    
+export async function run(msg: Message) {   
+    if (message.attachments.size > 0) client.emit('messageAttachment', message); 
     const server = (msg.client as Client).servers.get(msg.guildId as string);    
     const prefix = server?.prefixies.find((p) => msg.content.startsWith(p));    
     if (!prefix) return;

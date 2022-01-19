@@ -70,6 +70,7 @@ export interface SuggestChannelObject {
 export interface LogsChannelsDatabaseModel {
     message_update?: string
     message_delete?: string
+    message_attachment?: string
 }
 
 export interface GuildDataBaseModel {

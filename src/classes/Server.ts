@@ -12,6 +12,7 @@ export class Server {
     logsChannels: {
         messageUpdate?: string;
         messageDelete?: string;
+        messageAttachment?: string;
     } = {};
     premium: boolean = false;
     /**
@@ -48,7 +49,7 @@ export class Server {
                 }
                 if (data.last_suggest) this.lastSuggestId = data.last_suggest;
                 if (data.logs_channels) {
-                    const { message_update, message_delete } = data.logs_channels;
+                    const { message_update, message_delete, message_attachment } = data.logs_channels;
                     if (options?.logs_channels) {
                         let obj2: LogsChannelsDatabaseModel = {};
 
@@ -68,10 +69,19 @@ export class Server {
                             obj2.message_delete = message_delete;
                         }
 
+                        if (message_attachment && message_attachment !== options.logs_channels.message_attachment) {
+                            this.logsChannels.messageAttachment = message_attachment;
+                            obj2.message_attachment = message_attachment;
+                        } else if (message_attachment) {
+                            this.logsChannels.messageAttachment = message_attachment;
+                            obj2.message_attachment = message_attachment;
+                        }
+
                         if (Object.values(obj2).length > 0) obj.logs_channels = obj2;
                     } else {
                         if (message_update) this.logsChannels.messageUpdate = message_update;
                         if (message_delete) this.logsChannels.messageDelete = message_delete;
+                        if (message_attachment) this.logsChannels.messageAttachment = message_attachment;
                     }
                 }
                 if (data.premium) this.premium = options?.premium && options.premium !== data.premium ? ((obj.premium = options.premium), options.premium) : data.premium;
@@ -86,6 +96,7 @@ export class Server {
                 let obj2: LogsChannelsDatabaseModel = {};
                 if (options?.logs_channels?.message_update) this.logsChannels.messageUpdate = ((obj2.message_update = options.logs_channels.message_update), options.logs_channels.message_update);
                 if (options?.logs_channels?.message_delete) this.logsChannels.messageDelete = ((obj2.message_delete = options.logs_channels.message_delete), options.logs_channels.message_delete);
+                if (options?.logs_channels?.message_attachment) this.logsChannels.messageAttachment = ((obj2.message_attachment = options.logs_channels.message_attachment), options.logs_channels.message_attachment);
 
                 if (Object.values(obj2).length > 0) obj.logs_channels = obj2;
                 if (Object.values(obj).length > 0) this.db?.create(obj);
@@ -269,6 +280,7 @@ export class Server {
         let data: any = {};
         if (this.logsChannels.messageDelete) data["logs_channels.message_delete"] = this.logsChannels.messageDelete;
         if (this.logsChannels.messageUpdate) data["logs_channels.message_update"] = this.logsChannels.messageUpdate;
+        if (this.logsChannels.messageAttachment) data["logs_channels.message_attachment"] = this.logsChannels.messageAttachment;
         this.db?.update(data).catch(() => this.db?.set(data));
     }
 
@@ -289,6 +301,7 @@ export class Server {
     }
 
     removeMessageUpdateLog() {
+        if (!this.logsChannels.messageUpdate) return;
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: "remove_log",
@@ -321,18 +334,52 @@ export class Server {
     }
 
     removeMessageDeleteLog() {
+        if (!this.logsChannels.messageDelete) return;
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: "remove_log",
                 from: "mts",
                 data: {
                     log: "MESSAGE_DELETE",
-                    channel: this.logsChannels.messageUpdate,
+                    channel: this.logsChannels.messageDelete,
                     guild: this.guild.id,
                 },
             }),
         );
-        delete this.logsChannels.messageUpdate;
+        delete this.logsChannels.messageDelete;
+        this.updateChannelsLogsInDB();
+    }
+
+    setMessageAttachmentLog(channel: string) {
+        this.logsChannels.messageAttachment = channel;
+        this.updateChannelsLogsInDB();
+        (this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: "set_log",
+                from: "mts",
+                data: {
+                    log: "MESSAGE_ATTACHMENT",
+                    channel: channel,
+                    guild: this.guild.id,
+                },
+            }),
+        );
+    }
+
+    removeMessageAttachmentLog() {
+        if (!this.logsChannels.messageAttachment) return;
+        (this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: "remove_log",
+                from: "mts",
+                data: {
+                    log: "MESSAGE_ATTACHMENT",
+                    channel: this.logsChannels.messageAttachment,
+                    guild: this.guild.id,
+                },
+            }),
+        );
+        delete this.logsChannels.messageAttachment;
         this.updateChannelsLogsInDB();
     }
 }
