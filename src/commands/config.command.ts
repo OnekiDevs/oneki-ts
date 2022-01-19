@@ -2,7 +2,6 @@ import {
     ApplicationCommandDataResolvable,
     CommandInteraction,
     Guild,
-    Interaction,
     Permissions,
     TextChannel,
 } from "discord.js";
