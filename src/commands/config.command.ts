@@ -151,7 +151,7 @@ export default class Config extends Command {
                                     .setDescription("Remove log channel")
                                     .addStringOption((option) =>
                                         option
-                                            .setName("logName")
+                                            .setName("logname")
                                             .setDescription("Log name to remove")
                                             .setRequired(true)
                                             .addChoices(logs.map((l) => [l, l])),
@@ -384,7 +384,7 @@ export default class Config extends Command {
     }
 
     removeLogChannel(interaction: CommandInteraction) {
-        const log = interaction.options.getString("logName");
+        const log = interaction.options.getString("logname");
         const server = this.client.servers.get(interaction.guildId as string);
         if (!server) return interaction.reply("Removido");
         if (log === "message_update") server.removeMessageUpdateLog();

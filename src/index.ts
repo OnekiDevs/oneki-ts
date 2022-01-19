@@ -15,7 +15,7 @@ const client: Client = new Client({
         "GUILD_VOICE_STATES",
     ],
     partials: ["CHANNEL"],
-    firebaseToken: JSON.parse(process.env.TOKEN_FIREBASE as string),
+    firebaseToken: JSON.parse(process.env.FIREBASE_TOKEN as string),
     constants: {
         newServerLogChannel: '885674115946643458'
     },
@@ -27,4 +27,4 @@ const client: Client = new Client({
     }
 });
 
-client.login(process.env.TOKEN_DISCORD);
+client.login(process.env.DISCORD_TOKEN);
