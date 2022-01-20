@@ -61,10 +61,12 @@ export default class Poll extends Command {
         let multiple = interaction.options.getBoolean("multiple_choices") ?? false;
         const idPoll = time();
         const embed = new MessageEmbed().setTitle(title).setDescription(context).setURL(`https://oneki.herokuapp.com/poll/${idPoll}`);
+        console.log('data', interaction.options.data[0].options);
         let options = interaction.options.data
             .filter((o) => o.name.startsWith("option_"))
             .sort((a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0))
             .map((o, i) => ({ name: `option_${i + 1}`, value: o.value, votes: [] }));
+        console.log('options', options);
         if (options.length === 1) options.push({ name: "option_2", value: "Other", votes: [] });
         else if (options.length === 0) options.push({ name: "option_1", value: "yes", votes: [] }, { name: "option_2", value: "no", votes: [] });
         const snap = await admin.firestore().collection("polls").where("guild", "==", interaction.guildId).get();

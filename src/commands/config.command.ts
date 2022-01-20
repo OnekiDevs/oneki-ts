@@ -202,7 +202,7 @@ export default class Config extends Command {
                 new Server(interaction.guild, { logs_channels: { message_update: channel.id } }),
             );
         interaction.reply({
-            content: `Logs establecidos en ${channel}`,
+            content: `Logs establecidos en <#${channel.id}>`,
         });
     }
 
@@ -219,7 +219,7 @@ export default class Config extends Command {
                 new Server(interaction.guild, { logs_channels: { message_attachment: channel.id } }),
             );
         interaction.reply({
-            content: `Logs establecidos en ${channel}`,
+            content: `Logs establecidos en <#${channel.id}>`,
         });
     }
 
@@ -236,7 +236,7 @@ export default class Config extends Command {
                 new Server(interaction.guild, { logs_channels: { message_delete: channel.id } }),
             );
         interaction.reply({
-            content: `Logs establecidos en ${channel}`,
+            content: `Logs establecidos en <#${channel.id}>`,
         });
     }
 
@@ -283,7 +283,7 @@ export default class Config extends Command {
                 interaction.guildId as string,
                 new Server(interaction.guild, { suggest_channels: [{ channel: channel.id, default: true }] }),
             );
-        interaction.reply("Canal " + channel + " Establecido Para Sugerencias");
+        interaction.reply("Canal <#" + channel.id + "> Establecido Para Sugerencias");
         channel
             .sendTyping()
             .then(() =>

@@ -28,7 +28,6 @@ export class Server {
             let obj: GuildDataBaseModel = {};
             if (response.exists) {
                 const data: GuildDataBaseModel = response.data() as GuildDataBaseModel;
-
                 if (data.lang) this._lang = options?.lang && options.lang !== data.lang ? ((obj.lang = options.lang), options.lang) : data.lang;
                 if (data.prefixes) {
                     if (options?.prefixes) {
@@ -280,7 +279,7 @@ export class Server {
         let data: any = {};
         if (this.logsChannels.messageDelete) data["logs_channels.message_delete"] = this.logsChannels.messageDelete;
         if (this.logsChannels.messageUpdate) data["logs_channels.message_update"] = this.logsChannels.messageUpdate;
-        if (this.logsChannels.messageAttachment) data["logs_channels.message_attachment"] = this.logsChannels.messageAttachment;
+        if (this.logsChannels.messageAttachment) data["logs_channels.message_attachment"] = this.logsChannels.messageAttachment;        
         this.db?.update(data).catch(() => this.db?.set(data));
     }
 
