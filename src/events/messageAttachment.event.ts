@@ -8,8 +8,9 @@ export const name: string = "messageAttachment";
 export async function run(msg: Message) {
     if (!(msg.client as Client).servers.has(msg.guild?.id ?? "")) return;
     const server = (msg.client as Client).servers.get(msg.guild?.id ?? "");
-    if (!server?.logsChannels.messageDelete) return;
-    const channel: TextChannel = msg.client.channels.cache.get(server.logsChannels.messageDelete) as TextChannel;
+    if (!server?.logsChannels.messageAttachment) return;
+    if (msg.channel.id === server.logsChannels.messageAttachment) return;
+    const channel: TextChannel = msg.client.channels.cache.get(server.logsChannels.messageAttachment) as TextChannel;
     if (channel && checkSend(channel, msg.guild?.me as GuildMember)) {
         channel.send({
             files: msg.attachments.map((attachment) => attachment),
