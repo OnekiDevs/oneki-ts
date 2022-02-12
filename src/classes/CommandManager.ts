@@ -13,11 +13,12 @@ export class CommandManager extends Collection<string, Command> {
             const command = require(join(path, file));
 
             const cmd: Command = new command.default(client);
-            this.set(cmd.name, cmd);
+            this.set(cmd.name, cmd);            
         }
     }
 
     deploy(guild?: Guild) {
-        return Promise.all(this.map((command) => command.deploy(guild)));
+        if(process.env.DEPLOY_COMMANDS == 'true') return Promise.all(this.map((command) => command.deploy(guild)));
+        else return Promise.resolve();
     }
 }

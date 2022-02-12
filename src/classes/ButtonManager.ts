@@ -12,15 +12,6 @@ export class ButtonManager extends Collection<string, Button> {
             const btn: Button = new button.default();
             this.set(btn.name, btn);
         }
-
-        client.on('interactionCreate', (interaction) => {
-            if (interaction.isButton()) {
-                
-                const name = this.getName(interaction.customId)
-                if (name) this.get(name)?.run(interaction)
-                else interaction.deferUpdate()
-            }
-        })
     }
 
     getName(customId: string): string | null {

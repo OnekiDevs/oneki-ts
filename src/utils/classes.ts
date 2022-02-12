@@ -15,6 +15,11 @@ export * from "../classes/OldCommandManager"
 export * from "../classes/ButtonManager";
 export * from "../classes/ServerManager";
 
+export * from "../classes/Player";
+export * from "../classes/UnoCards";
+export * from "../classes/Players";
+export * from "../classes/UnoGame"
+
 export enum CommandType {
     guild = 1,
     global,
@@ -84,6 +89,7 @@ export interface GuildDataBaseModel {
 
 export interface ClientConstants {
     newServerLogChannel?: string;
+    imgChannel?: string;
 }
 
 export interface ClientOptions extends BaseClientOptions {

@@ -32,12 +32,7 @@ export default class Minesweeper extends Command {
             bombas--;
         }
         //recorremos todas las casillas para colocar los mumeros
-        for (let x = 0; x < filas; x++)
-            for (let y = 0, c = 0; y < columnas; matriz[x][y] = c || 9,c=0,y++) 
-                if (matriz[x][y] != 9)
-                    for (let i = -1; i < 2;i++)
-                        for (let j = -1; j < 2; j++) 
-                            if ((matriz[x+i] && matriz[x+i][y+j]) && (matriz[x+i][y+j] == 9)) c++
+        for (let x = 0; x < filas; x++) for (let y = 0, c = 0; y < columnas; matriz[x][y] = c || 9,c=0,y++) if (matriz[x][y] != 9) for (let i = -1; i < 2;i++) for (let j = -1; j < 2; j++) if (matriz[x+i]?.[y+j] == 9) c++;
         //creamos los emojis que remplazarán los muneros
         const choices = [
             "||:zero:||",

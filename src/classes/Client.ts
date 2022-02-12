@@ -1,9 +1,17 @@
-import { Client as BaseClient } from "discord.js";
+import { Client as BaseClient, Collection } from "discord.js";
 import admin from "firebase-admin";
-import { CommandManager, ClientOptions, ServerManager, ClientConstants, ButtonManager, OldCommandManager } from "../utils/classes";
+import {
+    CommandManager,
+    ClientOptions,
+    ServerManager,
+    ClientConstants,
+    ButtonManager,
+    OldCommandManager,
+} from "../utils/classes";
 import { join } from "path";
 import { WebSocket } from "ws";
 import { readdirSync } from "fs";
+import { UnoGame } from "./UnoGame";
 
 export class Client extends BaseClient {
     db;
@@ -16,6 +24,7 @@ export class Client extends BaseClient {
     constants: ClientConstants = {};
     private _wsInterval = setInterval(() => {}, 20000000);
     private _wsintent: number = 1;
+    uno: Collection<string, UnoGame> = new Collection();
 
     constructor(options: ClientOptions) {
         super(options);
@@ -38,40 +47,47 @@ export class Client extends BaseClient {
         }
         if (options.constants) this.constants = options.constants;
 
-        this.once("ready", ()=>this._onReady({eventsPath: options.routes?.events??join(__dirname, '../events')}));
+        this.once("ready", () => this._onReady({ eventsPath: options.routes?.events ?? join(__dirname, "../events") }));
 
         this._initWebSocket();
     }
 
     private _initWebSocket() {
-        this.websocket = new WebSocket("wss://oneki.herokuapp.com/");
-        this.websocket.on("open", () => {
-            console.time("WebSocket Connection");
-            console.log("\x1b[33m%s\x1b[0m", "Socket Conectado!!!");
-            this._wsInterval = setInterval(() => this.websocket.ping(() => {}), 20000);
-            this._wsintent = 1;
-        });
-        this.websocket.on("close", () => {
-            clearInterval(this._wsInterval);
-            console.error("Socket Cerrado!!");
-            console.timeEnd("WebSocket Connection");
-            setTimeout(()=>{
-                console.log("Reconectando Socket ...");
-                this._initWebSocket();
-            }, 1_000*this._wsintent++);
-        });
-        this.websocket.on("message", () => this._onWebSocketMessage);
-        this.websocket.on("error", () => {
-            console.log('Socket no disponible\nReintentando en un momento...');
-                setTimeout(()=>{
-                    console.log('Reconectando Socket...');
+        try {
+            this.websocket = new WebSocket("wss://oneki.herokuapp.com/");
+            this.websocket.on("open", () => {
+                console.time("WebSocket Connection");
+                console.log("\x1b[33m%s\x1b[0m", "Socket Conectado!!!");
+                this._wsInterval = setInterval(() => this.websocket.ping(() => {}), 20000);
+                this._wsintent = 1;
+            });
+            this.websocket.on("close", () => {
+                clearInterval(this._wsInterval);
+                console.error("Socket Cerrado!!");
+                console.timeEnd("WebSocket Connection");
+                setTimeout(() => {
+                    console.log("Reconectando Socket ...");
                     this._initWebSocket();
-                }, 1_000*this._wsintent++)
-        });
+                }, 1_000 * this._wsintent++);
+            });
+            this.websocket.on("message", () => this._onWebSocketMessage);
+            this.websocket.on("error", () => {
+                console.log("Socket no disponible\nReintentando en un momento...");
+                setTimeout(() => {
+                    console.log("Reconectando Socket...");
+                    this._initWebSocket();
+                }, 1_000 * this._wsintent++);
+            });
+        } catch (error) {
+            console.log("Socket no disponible\nReintentando en un momento...");
+                setTimeout(() => {
+                    console.log("Reconectando Socket...");
+                    this._initWebSocket();
+                }, 1_000 * this._wsintent++);
+        }
     }
 
     private async _onReady(options: { eventsPath: string }) {
-        
         this.servers.initialize().then(() => {
             console.log("\x1b[34m%s\x1b[0m", "Servidores Desplegados!!");
             this.commands.deploy().then(() => {

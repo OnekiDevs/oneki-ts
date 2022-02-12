@@ -9,7 +9,7 @@ import {
 } from "discord.js";
 import { Command, Client, CommandType, PollDatabaseModel } from "../utils/classes";
 import { filledBar, pollEmojis as emojis, checkSend } from "../utils/utils";
-import { time } from "uniqid";
+import { randomId } from "../utils/utils";
 import admin from "firebase-admin";
 
 export default class Poll extends Command {
@@ -86,7 +86,7 @@ export default class Poll extends Command {
         let block = interaction.options.getBoolean("block_choice") ?? false;
         let show = interaction.options.getBoolean("show_results") ?? true;
         let multiple = interaction.options.getBoolean("multiple_choices") ?? false;
-        const idPoll = time();
+        const idPoll = randomId();
         const embed = new MessageEmbed()
             .setTitle(title)
             .setDescription(context)

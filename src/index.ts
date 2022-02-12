@@ -17,7 +17,8 @@ const client: Client = new Client({
     partials: ["CHANNEL"],
     firebaseToken: JSON.parse(process.env.FIREBASE_TOKEN as string),
     constants: {
-        newServerLogChannel: '885674115946643458'
+        newServerLogChannel: '885674115946643458',
+        imgChannel: '885674115946643456'
     },
     routes: {
         commands: join(__dirname, "commands"),
