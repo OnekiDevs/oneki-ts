@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node --experimental-fetch dist/index.js",
     "test": "nodemon -e ts --exec \"npm run build && npm start\"",
     "dev": "nodemon -e ts --exec \"npm run build\"",
     "update": "npm-check -y"
@@ -29,11 +29,10 @@
     "discord.js": "13.6.0",
     "dotenv": "16.0.0",
     "firebase-admin": "10.0.2",
-    "node-fetch": "2.6.1",
     "ws": "8.5.0"
   },
   "engines": {
-    "node": "17.4.0",
+    "node": "17.5.0",
     "npm": "8.3.1"
   },
   "devDependencies": {

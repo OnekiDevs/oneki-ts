@@ -1,5 +1,4 @@
 import { Message, MessageEmbed, MessageButton, MessageActionRow } from "discord.js";
-import fetch from "node-fetch";
 import { OldCommand, Client, oldCommandData } from "../utils/classes";
 
 export default class Help extends OldCommand {
