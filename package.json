@@ -1,6 +1,6 @@
 {
   "name": "oneki",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "description": "Module of Oneki Bot in JavaScript",
   "main": "src/index.js",
   "scripts": {
@@ -41,6 +41,7 @@
     "typescript": "4.5.5"
   },
   "prettier": {
-    "semi": false
+    "semi": false,
+    "tabWidth": 4
   }
 }

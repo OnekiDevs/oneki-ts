@@ -73,6 +73,7 @@ export class Player {
                 )
                 .setLabel(`${i.symbol} ${i.color}`)
                 .setCustomId(`uno_${game.id}_${i.id}_${randomId().slice(-2)}`);
+            
             if (j == 0) buttons.push(new MessageActionRow().addComponents([btn]));
             else buttons[k].addComponents([btn]);
             if (j == 4) {

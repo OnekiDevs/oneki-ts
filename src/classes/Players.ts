@@ -24,8 +24,11 @@ export class Players extends Array<Player> {
     first() {
         return this[0]
     }
-    rotate(rigth: boolean){
+    async rotate(rigth: boolean){
+        console.log(this.keys());
         if(rigth) this.push(this.shift()!);
         else this.unshift(this.pop()!)
+        console.log(this.keys());
+        return this
     }
 } 
