@@ -17,7 +17,7 @@ export default class Minesweeper extends Command {
             columnas = 9,
             bombas = 15;
         //se crea una matriz de 9x9
-        var matriz = Array.from({length: filas}, () => new Array(columnas).fill(0))
+        let matriz = Array.from({length: filas}, () => new Array(columnas).fill(0))
         //se colocan bombas aleatoriamente
         while (bombas != 0) {
             let filaRandom = Math.floor(Math.random() * filas);
