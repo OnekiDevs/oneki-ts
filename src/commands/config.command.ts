@@ -223,12 +223,13 @@ export default class Config extends Command {
                             .setName("file")
                             .setDescription("Export the config file")
                     )
-            ).toJSON() 
-            // command.options[5].options[0].options = [{
-            //     type: 11,
-            //     name: 'json',
-            //     description: 'Configuration json file'
-            // }]
+            ).toJSON() as any
+            command.options[5].options[0].options = [{
+                type: 11,
+                name: 'json',
+                description: 'Configuration json file',
+                required: true
+            }]
             // console.log(JSON.stringify(command.options?.[5].options, null, 1));
             
         //TODO delete logs channel
@@ -277,9 +278,9 @@ export default class Config extends Command {
     importConfig(
         interaction: CommandInteraction<import("discord.js").CacheType>
     ) {
-        const op = interaction.options as any
+        // const op = interaction.options as any
         
-        console.log(op._hoistedOptions)
+        // console.log(op._hoistedOptions)
     }
     async exportConfig(
         interaction: CommandInteraction<import("discord.js").CacheType>
