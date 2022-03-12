@@ -6,6 +6,7 @@ export const name: string = "messageCreate"
 
 export async function run(msg: Message) {
     try {
+        console.log(msg.attachments.first())
         if (msg.attachments.size > 0) msg.client.emit("messageAttachment", msg)
         const server = (msg.client as Client).servers.get(msg.guildId as string)
         const prefix = server?.prefixies.find((p) => msg.content.startsWith(p))

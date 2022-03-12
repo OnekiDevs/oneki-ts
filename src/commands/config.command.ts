@@ -2,7 +2,9 @@ import {
     ApplicationCommandDataResolvable,
     CommandInteraction,
     Guild,
+    Message,
     MessageAttachment,
+    MessageEmbed,
     Permissions,
     TextChannel,
 } from "discord.js"
@@ -223,30 +225,40 @@ export default class Config extends Command {
                             .setName("file")
                             .setDescription("Export the config file")
                     )
-            ).toJSON() as any
-            command.options[5].options[0].options = [{
+            )
+            // .addSubcommandGroup((subcommandGroup) =>
+            //     subcommandGroup
+            //         .setName("display")
+            //         .setDescription("display the config")
+            //         .addSubcommand((subcommand) =>
+            //             subcommand
+            //                 .setName("settings")
+            //                 .setDescription("Show the settings")
+            //         )
+            // )
+            .toJSON() as any
+        const _: any = command.options
+            .find((o: any) => o.name === "import")
+            ?.options.find((o: any) => o.name === "file")
+        _.options = [
+            {
                 type: 11,
-                name: 'json',
-                description: 'Configuration json file',
-                required: true
-            }]
-            // console.log(JSON.stringify(command.options?.[5].options, null, 1));
-            
-        //TODO delete logs channel
-        return new Promise((resolve) =>
-            resolve(command)
-        )
+                name: "json",
+                description: "Configuration json file",
+                required: true,
+            },
+        ]
+        // console.log(JSON.stringify(command.options?.[5].options, null, 1))
+        return new Promise((resolve) => resolve(command))
     }
 
     run(interaction: CommandInteraction) {
         if (interaction.options.getSubcommandGroup() === "export") {
-            if (interaction.options.getSubcommand() === "file") {
+            if (interaction.options.getSubcommand() === "file")
                 this.exportConfig(interaction)
-            }
         } else if (interaction.options.getSubcommandGroup() === "import") {
-            if (interaction.options.getSubcommand() === "file") {
+            if (interaction.options.getSubcommand() === "file")
                 this.importConfig(interaction)
-            }
         } else if (interaction.options.getSubcommandGroup() === "set") {
             if (interaction.options.getSubcommand() === "language")
                 this.setLanguage(interaction)
@@ -273,13 +285,35 @@ export default class Config extends Command {
                 this.setLogMessageDelete(interaction)
             if (interaction.options.getSubcommand() == "message_attachment")
                 this.setLogMessageAttachment(interaction)
-        }
+        } /* else if (interaction.options.getSubcommandGroup() === "display") {
+            if (interaction.options.getSubcommand() === "settings")
+                this.displaySettings(interaction)
+        }*/
     }
+    // displaySettings(
+    //     interaction: CommandInteraction<import("discord.js").CacheType>
+    // ) {
+    //     const member = interaction.guild?.members.cache.get(interaction.user.id)
+    //     if (!member) return
+    //     const server = (interaction.client as Client).servers.get(interaction.guildId as string)
+    //     if (!server) (interaction.client as Client).servers.set(new Server())
+    //     interaction.reply({
+    //         embeds: [
+    //             new MessageEmbed()
+    //                 .setAuthor({
+    //                     name: member?.displayName,
+    //                     iconURL: member.displayAvatarURL()
+    //                 })
+    //                 .setTitle(`Settings of the ${interaction.user.username} Bot`)
+    //                 .addField('Prefixies', `\`${server?.prefixies.join('`, `')}\``)
+    //         ]
+    //     })
+    // }
+
     importConfig(
         interaction: CommandInteraction<import("discord.js").CacheType>
     ) {
         // const op = interaction.options as any
-        
         // console.log(op._hoistedOptions)
     }
     async exportConfig(

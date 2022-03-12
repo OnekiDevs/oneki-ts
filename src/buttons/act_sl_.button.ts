@@ -1,18 +1,16 @@
-import { ButtonInteraction } from "discord.js";
-import { Button, Client } from "../utils/classes";
+import { ButtonInteraction } from 'discord.js'
+import { Button } from '../utils/classes'
 
 export default class Activitie extends Button {
-    constructor(client: Client) {
+    constructor() {
         super({
             name: 'act_sl_',
             regex: /act_sl_.+/gi
-        });
+        })
     }
 
     run(interaction: ButtonInteraction) {
-        console.log('d');
-        
         const [,,code] = interaction.customId.split(/_/gi)
-        interaction.reply(`https://discord.com/invite/${code}`);
+        interaction.reply(`https://discord.com/invite/${code}`)
     }
 }

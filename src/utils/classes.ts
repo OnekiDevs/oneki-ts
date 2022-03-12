@@ -103,9 +103,25 @@ export interface ClientOptions extends BaseClientOptions {
         events?: string;
         buttons?: string;
     }
+    i18n: {
+        locales: string[];
+        directory: string;
+        defaultLocale: string;
+        retryInDefaultLocale: boolean;
+        objectNotation: boolean;
+        logWarnFn: anyFunction;
+        logErrorFn: anyFunction;
+        missingKeyFn: anyFunction;
+        mustacheConfig: {
+            tags: [string, string];
+            disable: boolean;
+        }
+    }
 }
 
 export interface ButtonOptions {
     regex: RegExp;
     name: string;
 }
+
+export type anyFunction = (msg: string) => any

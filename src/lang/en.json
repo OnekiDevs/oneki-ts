@@ -1,0 +1,16 @@
+{
+    "help_button": {
+        "embed_title": "{bot} Bot command list",
+        "embed_desciption": "Category: {category}\n`<>` Means optional\n`[]` Means mandatory",
+        "command_field": "{cmd_description}\n**Alias:** {cmd_alias}\n**Use:** `{cmd_prefix}{cmd_use}`"
+    },
+    "poll_button": {
+        "reply": "Voto enviado",
+        "option": "{emoji} Option {number} {value}",
+        "embed_footer": "Poll ID : {id} | {votes} votes | {bot} BOT v{version}"
+    },
+    "uno_button": {
+        "start_out": "You must join the game first",
+        "start_no_host": "Only the host can start the game"
+    }
+}
