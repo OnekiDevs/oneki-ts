@@ -1,24 +1,24 @@
-import fs from "fs";
-import { Collection, Guild } from "discord.js";
-import { Command, Client } from "../utils/classes";
-import { join } from "path";
+import { readdirSync } from 'fs'
+import { Collection, Guild } from 'discord.js'
+import { Command, Client } from '../utils/classes'
+import { join } from 'path'
 
 export class CommandManager extends Collection<string, Command> {
-    client: Client;
+    client: Client
 
     constructor(client: Client, path: string) {
-        super();
-        this.client = client;
-        for (const file of fs.readdirSync(path).filter((f) => f.endsWith(".command.js"))) {
-            const command = require(join(path, file));
-
-            const cmd: Command = new command.default(client);
-            this.set(cmd.name, cmd);
+        super()
+        this.client = client
+        for (const file of readdirSync(path).filter((f) => f.endsWith('.command.js'))) {
+            import(join(path, file)).then(command => {
+                const cmd: Command = new command.default(client)
+                this.set(cmd.name, cmd)
+            })
         }
     }
 
-    deploy(guild?: Guild) {        
-        if (process.env.DEPLOY_COMMANDS == "true") return Promise.all(this.map((command) => command.deploy(guild)));
-        else return Promise.resolve();
+    deploy(guild?: Guild) {
+        if (process.env.DEPLOY_COMMANDS == 'true') return Promise.all(this.map((command) => command.deploy(guild)))
+        else return Promise.resolve()
     }
 }
