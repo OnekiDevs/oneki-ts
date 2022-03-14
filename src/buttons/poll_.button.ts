@@ -41,7 +41,7 @@ export default class Activitie extends Button {
         const embed = new MessageEmbed(interaction.message.embeds[0])
         //modifico embed
         embed.setFooter({
-            text: server.translate('poll_button.embed_footer', {
+            text: server.translate('poll_btn.embed_footer', {
                 id, votes, bot: interaction.client.user?.username, version: (interaction.client as Client).version
             }),
             iconURL: interaction.client.user?.avatarURL() ?? '',
@@ -50,7 +50,7 @@ export default class Activitie extends Button {
             embed.setFields(
                 await Promise.all(
                     data.options.map((o, i) => ({
-                        name: server.translate('poll_button.option', { emoji: emojis[i], number: i + 1, value: o.value }),
+                        name: server.translate('poll_btn.option', { emoji: emojis[i], number: i + 1, value: o.value }),
                         value: `\`${filledBar((o.votes.length / votes) * 100)}\` ${Math.round((o.votes.length / votes) * 100)}%`,
                         inline: false,
                     })),
@@ -66,6 +66,6 @@ export default class Activitie extends Button {
                 })
             })
             .catch((e) => e)
-        interaction.editReply(server.translate('poll_button.reply'))
+        interaction.editReply(server.translate('poll_btn.reply'))
     }
 }

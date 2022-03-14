@@ -1,16 +1,73 @@
 {
-    "help_button": {
+    "------------>>>============ buttons ============<<<------------":"------------>>>============ buttons ============<<<------------",
+    "help_btn": {
         "embed_title": "{bot} Bot command list",
         "embed_desciption": "Category: {category}\n`<>` Means optional\n`[]` Means mandatory",
         "command_field": "{cmd_description}\n**Alias:** {cmd_alias}\n**Use:** `{cmd_prefix}{cmd_use}`"
     },
-    "poll_button": {
+    "poll_btn": {
         "reply": "Voto enviado",
         "option": "{emoji} Option {number} {value}",
         "embed_footer": "Poll ID : {id} | {votes} votes | {bot} BOT v{version}"
     },
-    "uno_button": {
+    "uno_btn": {
         "start_out": "You must join the game first",
         "start_no_host": "Only the host can start the game"
-    }
+    },
+    "------------>>>============ commands ============<<<------------":"------------>>>============ commands ============<<<------------",
+    "activitie_cmd": {
+        "whotout_voice": "Enter a voice channel or specify one",
+        "reply": "Activitie `{activitie}` created in {channel}"
+    },
+    "config_cmd": {
+        "set_log_reply": "Logs set to {channel}",
+        "set_lang":"Language set to `{lang}`",
+        "set_prefix": "Set prefix to `{prefix}`",
+        "config_cmd": {
+            "reply": "Channel {channel} set for suggestions",
+            "message": "This channel is now set to suggestions\nTo make a suggestion use **/suggest**"
+        },
+        "add_prefix": "`{prefix}` prefix added successfully\nNow the bot listens for `{prefixes}`",
+        "remove_prefix": "Removed prefix\nNow the bot listens `{prefixies}`",
+        "add_suggest_channel": {
+            "reply": "Channel {channel} set for {alias} suggestions",
+            "message": "This channel is now set for {alias} suggestions\nTo make a suggestion use **/suggest `channel:{alias}`**"
+        },
+        "remove_suggest_channel": {
+            "dont_exist": "There is no configured channel",
+            "reply": "Channel removed"
+        },
+        "set_suggest_channel": {
+            "reply": "Channel {channel} set for suggestions",
+            "message": "This channel is now set up for suggestions\nTo make a suggestion use **/suggest**"
+        }
+    },
+    "info_cmd": {
+        "member": {
+            "title": "{user}'s info",
+            "member_color": "Member color",
+            "user_color": "User color",
+            "boosting_from": "Boosting from",
+            "roles": "Roles"
+        }
+    },
+    "poll_cmd": {
+        "make": {
+            "dont_premium": "You can only have one survey at a time.\nUpgrade your membership to Premium or end existing Poll",
+            "havent_permissions": "I don't have permission to send messages here",
+            "new_poll": "New poll",
+            "footer": "Poll ID {id} | 0 votes | {bot} Bot v{version}",
+            "reply": "Poll sent"
+        },
+        "finalize": "Finalized"
+    },
+    "suggest_cmd":{
+        "whitout_channel": "This servrt don't have any channel configured",
+        "sent": "Sent suggest",
+        "title": "Suggest #{id}",
+        "error_permissions": "Error, The {channe} channel has estableced for the suggests but I don't have permissions in this channel. {owner}",
+        "missing_channel": "Missing channel"
+    },
+    "------------>>>============ commons ============<<<------------":"------------>>>============ commons ============<<<------------",
+    "footer":"{bot} Bot v{version}"
 }

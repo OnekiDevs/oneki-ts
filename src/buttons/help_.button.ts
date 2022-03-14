@@ -22,13 +22,13 @@ export default class Activitie extends Button {
                 const server = (interaction.client as Client).servers.get(interaction.guildId ?? '')
                 if (!server) return
                 const embed = new MessageEmbed()
-                embed.setTitle(server.translate('help_button.embed_title', { bot: interaction.client.user?.username }))
-                embed.setDescription(server.translate('help_button.embed_description', { category }))
+                embed.setTitle(server.translate('help_btn.embed_title', { bot: interaction.client.user?.username }))
+                embed.setDescription(server.translate('help_btn.embed_description', { category }))
                 await Promise.all(
                     (cmds as oldCommandData[]).map((cmd) => {
                         embed.addField(
                             cmd.name,
-                            server.translate('help_button.command_field', { cmd_description: cmd.description, alias: cmd.alias.length > 0 ? '`' + cmd.alias.join('` `') + '`' : 'none', cmd_prefix: (cmd.type == 'command' ? server?.getPrefixes(true)[0] ?? server?.prefixies[0] : '/'), cmd_use: cmd.use }),
+                            server.translate('help_btn.command_field', { cmd_description: cmd.description, alias: cmd.alias.length > 0 ? '`' + cmd.alias.join('` `') + '`' : 'none', cmd_prefix: (cmd.type == 'command' ? server?.getPrefixes(true)[0] ?? server?.prefixies[0] : '/'), cmd_use: cmd.use }),
                             true,
                         )
                     }),

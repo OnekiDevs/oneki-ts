@@ -1,16 +1,70 @@
 {
-    "help_button": {
+    "------------>>>============ buttons ============<<<------------":"------------>>>============ buttons ============<<<------------",
+    "help_btn": {
         "embed_title": "Lista de comandos de {bot} Bot",
         "embed_desciption": "Categoria: {category}\n`<>` significa obligatorio\n`[]` significa opcional",
         "command_field": "{cmd_description}\n**Alias:** {cmd_alias}\n**Uso:** `{cmd_prefix}{cmd_use}`"
     },
-    "poll_button": {
+    "poll_btn": {
         "reply": "Voto enviado",
         "option": "{emoji} Opción {number} {value}",
         "embed_footer": "Encuesta ID : {id} | {votes} votos | {bot} BOT v{version}"
     },
-    "uno_button": {
+    "uno_btn": {
         "start_out": "Debes unirte a la partida primero",
         "start_no_host": "Sólo el host puede iniciar la partida"
-    }
+    },
+    "------------>>>============ commands ============<<<------------":"------------>>>============ commands ============<<<------------",
+    "activitie_cmd": {
+        "whotout_voice": "Ingresa a un canal de voz o específica uno",
+        "reply": "Actividad `{activitie}` creada en {channel}"
+    },
+    "config_cmd": {
+        "set_log": "Logs establecidos en {channel}",
+        "remove_log": "Log removido",
+        "set_lang":"Lenguaje establecido en `{lang}`",
+        "set_prefix": "Prefijo establecido a `{prefix}`",
+        "add_prefix": "Prefijo `{prefix}` agregado correctamente\nAhora el bot escucha los prefijos `{prefixies}`",
+        "remove_prefix": "Prefijo removido\nAhora el bot escucha `{prefixies}`",
+        "add_suggest_channel": {
+            "reply": "Canal {channel} establecido para las sugerencias de {alias}",
+            "message": "Este canal ahora esta establecido para las sugerencias de {alias}\nPara hacer una sugerencia usa **/suggest `channel:{alias}`**"
+        },
+        "remove_suggest_channel": {
+            "dont_exist": "No existe ningún canal configurado",
+            "reply": "Canal removido"
+        },
+        "set_suggest_channel": {
+            "reply": "Canal {channel} establecido para las sugerencias",
+            "message": "Este canal ahora esta establecido para las sugerencias\nPara hacer una sugerencia usa **/suggest**"
+        }
+    },
+    "info_cmd": {
+        "member": {
+            "title": "Información de {usuario}",
+            "member_color": "Color del miembro",
+            "user_color": "Color de usuario",
+            "boosting_from": "Boosteando desde",
+            "roles": "Roles"
+        }
+    },
+    "poll_cmd": {
+        "make": {
+            "dont_premium": "Solo se puede tener una encuesta a la vez.\nActualize su membresia a Premium o finalize la encuesta existente",
+            "havent_permissions": "No tengo permisos para enviar mensajes aquí",
+            "new_poll": "Nueva encuesta",
+            "footer": "Encuesta ID {id} | 0 votos | {bot} Bot v{version}",
+            "reply": "Encuesta enviada"
+        },
+        "finalize": "Finalizada"
+    },
+    "suggest_cmd":{
+        "whitout_channel": "Este servidor no tiene un canal de sugerencias establecido",
+        "sent":"Sugerencia enviada",
+        "title": "Sugerencia #{id}",
+        "error_permissions": "Error, El canal {channe} esta establecido para sugerencia pero no tengo permisos para acceder. {owner}",
+        "missing_channel": "Canal no encontrado"
+    },
+    "------------>>>============ commons ============<<<------------":"------------>>>============ commons ============<<<------------",
+    "footer":"{bot} Bot v{version}"
 }
