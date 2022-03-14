@@ -2,29 +2,27 @@ import {
     ApplicationCommandDataResolvable,
     CommandInteraction,
     Guild,
-    Message,
     MessageAttachment,
-    MessageEmbed,
     Permissions,
     TextChannel,
-} from "discord.js"
+} from 'discord.js'
 import {
     Command,
     Client,
     CommandType,
     Server,
     LangType,
-} from "../utils/classes"
-import { ChannelType } from "discord-api-types"
-import { permissionsError } from "../utils/utils"
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders"
-import { Buffer } from "buffer"
+} from '../utils/classes'
+import { ChannelType } from 'discord-api-types'
+import { permissionsError } from '../utils/utils'
+import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
+import { Buffer } from 'buffer'
 
 export default class Config extends Command {
     constructor(client: Client) {
         super(client, {
-            name: "config",
-            description: "config",
+            name: 'config',
+            description: 'config',
             defaultPermission: false,
             type: CommandType.guild,
         })
@@ -33,18 +31,18 @@ export default class Config extends Command {
     getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
         const server = this.client.servers.get(guild?.id as string)
         const suggestChannelsChoices = server?.suggestChannels.map((c) => [
-            c.default ? "default" : c.alias,
+            c.default ? 'default' : c.alias,
             c.channel,
         ])
-        const logs = ["message_update", "message_delete", "message_attachment"]
+        const logs = ['message_update', 'message_delete', 'message_attachment']
         const subcommandsLogs = logs.map((i) =>
             new SlashCommandSubcommandBuilder()
                 .setName(i)
                 .setDescription(`Config ${i} logs`)
                 .addChannelOption((option) =>
                     option
-                        .setName("channel")
-                        .setDescription("Channel where the logs are send")
+                        .setName('channel')
+                        .setDescription('Channel where the logs are send')
                         .setRequired(true)
                         .addChannelType(ChannelType.GuildText)
                 )
@@ -52,43 +50,43 @@ export default class Config extends Command {
         const command = this.baseCommand
             .addSubcommandGroup((subcommandGroup) =>
                 subcommandGroup
-                    .setName("set") // group
-                    .setDescription("set configs")
+                    .setName('set') // group
+                    .setDescription('set configs')
                     .addSubcommand((subcommand) =>
                         subcommand
-                            .setName("language") // command
-                            .setDescription("Set language")
+                            .setName('language') // command
+                            .setDescription('Set language')
                             .addStringOption((option) =>
                                 option
-                                    .setName("lang") // option
-                                    .setDescription("Language")
+                                    .setName('lang') // option
+                                    .setDescription('Language')
                                     .setRequired(true)
                                     .addChoices([
-                                        ["Español", LangType.es],
-                                        ["English", LangType.en],
+                                        ['Español', LangType.es],
+                                        ['English', LangType.en],
                                     ])
                             )
                     )
                     .addSubcommand((subcommand) =>
                         subcommand
-                            .setName("prefix")
-                            .setDescription("Set a new unique prefix")
+                            .setName('prefix')
+                            .setDescription('Set a new unique prefix')
                             .addStringOption((option) =>
                                 option
-                                    .setName("prefix")
-                                    .setDescription("New prefix")
+                                    .setName('prefix')
+                                    .setDescription('New prefix')
                                     .setRequired(true)
                             )
                     )
                     .addSubcommand((subcommand) =>
                         subcommand
-                            .setName("suggest_channel")
-                            .setDescription("Set a unique suggest channel")
+                            .setName('suggest_channel')
+                            .setDescription('Set a unique suggest channel')
                             .addChannelOption((option) =>
                                 option
-                                    .setName("channel")
+                                    .setName('channel')
                                     .setDescription(
-                                        "Channel were the suggest are sent"
+                                        'Channel were the suggest are sent'
                                     )
                                     .addChannelType(ChannelType.GuildText)
                                     .setRequired(true)
@@ -97,82 +95,82 @@ export default class Config extends Command {
             )
             .addSubcommandGroup((subcommandGroup) =>
                 subcommandGroup
-                    .setName("add")
-                    .setDescription("add config")
+                    .setName('add')
+                    .setDescription('add config')
                     .addSubcommand((subcommand) =>
                         subcommand
-                            .setName("prefix")
-                            .setDescription("Add a new pfrefix to the bot")
+                            .setName('prefix')
+                            .setDescription('Add a new pfrefix to the bot')
                             .addStringOption((option) =>
                                 option
-                                    .setName("prefix")
-                                    .setDescription("A new prefix")
+                                    .setName('prefix')
+                                    .setDescription('A new prefix')
                                     .setRequired(true)
                             )
                     )
                     .addSubcommand((subcommand) =>
                         subcommand
-                            .setName("suggest_channel")
-                            .setDescription("Add a new suggest channel")
+                            .setName('suggest_channel')
+                            .setDescription('Add a new suggest channel')
                             .addChannelOption((option) =>
                                 option
-                                    .setName("channel")
-                                    .setDescription("Channel to suggest")
+                                    .setName('channel')
+                                    .setDescription('Channel to suggest')
                                     .setRequired(true)
                                     .addChannelType(ChannelType.GuildText)
                             )
                             .addStringOption((option) =>
                                 option
-                                    .setName("alias")
+                                    .setName('alias')
                                     .setDescription(
-                                        "Name to refired a suggest channel"
+                                        'Name to refired a suggest channel'
                                     )
                                     .setRequired(true)
                             )
                             .addBooleanOption((option) =>
                                 option
-                                    .setName("default")
+                                    .setName('default')
                                     .setDescription(
-                                        "Set a default suggestion channel"
+                                        'Set a default suggestion channel'
                                     )
                             )
                     )
             )
             .addSubcommandGroup((subcommandGroup) =>
                 subcommandGroup
-                    .setName("remove")
-                    .setDescription("remove config")
+                    .setName('remove')
+                    .setDescription('remove config')
                     .addSubcommand((subcommand) =>
                         subcommand
-                            .setName("prefix")
-                            .setDescription("Remove prefix")
+                            .setName('prefix')
+                            .setDescription('Remove prefix')
                             .addStringOption((option) =>
                                 option
-                                    .setName("prefix")
-                                    .setDescription("Prefix to remove")
+                                    .setName('prefix')
+                                    .setDescription('Prefix to remove')
                                     .addChoices(
                                         server
                                             ?.getPrefixes(true)
                                             .map((i) => [i, i]) ?? [
-                                            [">", ">"],
-                                            ["?", "?"],
+                                            ['>', '>'],
+                                            ['?', '?'],
                                         ]
                                     )
                             )
                     )
                     .addSubcommand((subcommand) => {
                         subcommand
-                            .setName("suggest_channel")
-                            .setDescription("Remove suggestion channel")
+                            .setName('suggest_channel')
+                            .setDescription('Remove suggestion channel')
                         if (
                             suggestChannelsChoices &&
                             suggestChannelsChoices.length > 0
                         )
                             subcommand.addStringOption((option) =>
                                 option
-                                    .setName("alias")
+                                    .setName('alias')
                                     .setDescription(
-                                        "Alias of channel to remove"
+                                        'Alias of channel to remove'
                                     )
                                     .setRequired(true)
                                     .addChoices(
@@ -186,12 +184,12 @@ export default class Config extends Command {
                     })
                     .addSubcommand((subcommand) =>
                         subcommand
-                            .setName("log")
-                            .setDescription("Remove log channel")
+                            .setName('log')
+                            .setDescription('Remove log channel')
                             .addStringOption((option) =>
                                 option
-                                    .setName("logname")
-                                    .setDescription("Log name to remove")
+                                    .setName('logname')
+                                    .setDescription('Log name to remove')
                                     .setRequired(true)
                                     .addChoices(logs.map((l) => [l, l]))
                             )
@@ -199,8 +197,8 @@ export default class Config extends Command {
             )
             .addSubcommandGroup((subcommandGroup) => {
                 subcommandGroup
-                    .setName("log")
-                    .setDescription("Config the logs channels")
+                    .setName('log')
+                    .setDescription('Config the logs channels')
                 for (const scl of subcommandsLogs) {
                     subcommandGroup.addSubcommand(scl)
                 }
@@ -208,43 +206,32 @@ export default class Config extends Command {
             })
             .addSubcommandGroup((subcommandGroup) =>
                 subcommandGroup
-                    .setName("export")
-                    .setDescription("Export the config file")
+                    .setName('export')
+                    .setDescription('Export the config file')
                     .addSubcommand((subcommand) =>
                         subcommand
-                            .setName("file")
-                            .setDescription("Export the config file")
+                            .setName('file')
+                            .setDescription('Export the config file')
                     )
             )
             .addSubcommandGroup((subcommandGroup) =>
                 subcommandGroup
-                    .setName("import")
-                    .setDescription("Import the config file")
+                    .setName('import')
+                    .setDescription('Import the config file')
                     .addSubcommand((subcommand) =>
                         subcommand
-                            .setName("file")
-                            .setDescription("Export the config file")
+                            .setName('file')
+                            .setDescription('Export the config file')
                     )
-            )
-            // .addSubcommandGroup((subcommandGroup) =>
-            //     subcommandGroup
-            //         .setName("display")
-            //         .setDescription("display the config")
-            //         .addSubcommand((subcommand) =>
-            //             subcommand
-            //                 .setName("settings")
-            //                 .setDescription("Show the settings")
-            //         )
-            // )
-            .toJSON() as any
-        const _: any = command.options
-            .find((o: any) => o.name === "import")
-            ?.options.find((o: any) => o.name === "file")
+            ).toJSON() as any
+        const _ = command.options
+            .find((o: { name: string }) => o.name === 'import')
+            ?.options.find((o: { name: string }) => o.name === 'file')
         _.options = [
             {
                 type: 11,
-                name: "json",
-                description: "Configuration json file",
+                name: 'json',
+                description: 'Configuration json file',
                 required: true,
             },
         ]
@@ -253,80 +240,46 @@ export default class Config extends Command {
     }
 
     run(interaction: CommandInteraction) {
-        if (interaction.options.getSubcommandGroup() === "export") {
-            if (interaction.options.getSubcommand() === "file")
+        if (interaction.options.getSubcommandGroup() === 'export') {
+            if (interaction.options.getSubcommand() === 'file')
                 this.exportConfig(interaction)
-        } else if (interaction.options.getSubcommandGroup() === "import") {
-            if (interaction.options.getSubcommand() === "file")
-                this.importConfig(interaction)
-        } else if (interaction.options.getSubcommandGroup() === "set") {
-            if (interaction.options.getSubcommand() === "language")
+        } else if (interaction.options.getSubcommandGroup() === 'set') {
+            if (interaction.options.getSubcommand() === 'language')
                 this.setLanguage(interaction)
-            else if (interaction.options.getSubcommand() === "prefix")
+            else if (interaction.options.getSubcommand() === 'prefix')
                 this.setPrefix(interaction)
-            else if (interaction.options.getSubcommand() === "suggest_channel")
+            else if (interaction.options.getSubcommand() === 'suggest_channel')
                 this.setSuggestChannel(interaction)
-        } else if (interaction.options.getSubcommandGroup() === "add") {
-            if (interaction.options.getSubcommand() === "prefix")
+        } else if (interaction.options.getSubcommandGroup() === 'add') {
+            if (interaction.options.getSubcommand() === 'prefix')
                 this.addPrefix(interaction)
-            else if (interaction.options.getSubcommand() === "suggest_channel")
+            else if (interaction.options.getSubcommand() === 'suggest_channel')
                 this.addSuggestChannel(interaction)
-        } else if (interaction.options.getSubcommandGroup() === "remove") {
-            if (interaction.options.getSubcommand() === "prefix")
+        } else if (interaction.options.getSubcommandGroup() === 'remove') {
+            if (interaction.options.getSubcommand() === 'prefix')
                 this.removePrefix(interaction)
-            else if (interaction.options.getSubcommand() === "suggest_channel")
+            else if (interaction.options.getSubcommand() === 'suggest_channel')
                 this.removeSuggestChannel(interaction)
-            else if (interaction.options.getSubcommand() === "log")
+            else if (interaction.options.getSubcommand() === 'log')
                 this.removeLogChannel(interaction)
-        } else if (interaction.options.getSubcommandGroup() === "log") {
-            if (interaction.options.getSubcommand() == "message_update")
+        } else if (interaction.options.getSubcommandGroup() === 'log') {
+            if (interaction.options.getSubcommand() == 'message_update')
                 this.setLogMessageUpdate(interaction)
-            if (interaction.options.getSubcommand() == "message_delete")
+            if (interaction.options.getSubcommand() == 'message_delete')
                 this.setLogMessageDelete(interaction)
-            if (interaction.options.getSubcommand() == "message_attachment")
+            if (interaction.options.getSubcommand() == 'message_attachment')
                 this.setLogMessageAttachment(interaction)
-        } /* else if (interaction.options.getSubcommandGroup() === "display") {
-            if (interaction.options.getSubcommand() === "settings")
-                this.displaySettings(interaction)
-        }*/
-    }
-    // displaySettings(
-    //     interaction: CommandInteraction<import("discord.js").CacheType>
-    // ) {
-    //     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    //     if (!member) return
-    //     const server = (interaction.client as Client).servers.get(interaction.guildId as string)
-    //     if (!server) (interaction.client as Client).servers.set(new Server())
-    //     interaction.reply({
-    //         embeds: [
-    //             new MessageEmbed()
-    //                 .setAuthor({
-    //                     name: member?.displayName,
-    //                     iconURL: member.displayAvatarURL()
-    //                 })
-    //                 .setTitle(`Settings of the ${interaction.user.username} Bot`)
-    //                 .addField('Prefixies', `\`${server?.prefixies.join('`, `')}\``)
-    //         ]
-    //     })
-    // }
-
-    importConfig(
-        interaction: CommandInteraction<import("discord.js").CacheType>
-    ) {
-        // const op = interaction.options as any
-        // console.log(op._hoistedOptions)
+        }
     }
     async exportConfig(
-        interaction: CommandInteraction<import("discord.js").CacheType>
+        interaction: CommandInteraction<import('discord.js').CacheType>
     ) {
         await interaction.deferReply()
-        const server = (interaction.client as Client).servers.get(
-            interaction.guildId!
-        )
+        const server = this.client.servers.get(interaction.guildId as string)
         const snap = await server?.db?.get()
         const defaultConfig = {
-            prefixies: [">", "?"],
-            lang: "en",
+            prefixies: ['>', '?'],
+            lang: 'en',
             logs_channels: {
                 message_update: null,
                 message_delete: null,
@@ -376,8 +329,6 @@ export default class Config extends Command {
         })
     }
 
-    createConfig() {}
-
     setLogMessageUpdate(interaction: CommandInteraction): any {
         const member = interaction.guild?.members.cache.get(interaction.user.id)
         if (!member?.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES))
@@ -385,7 +336,7 @@ export default class Config extends Command {
                 interaction,
                 Permissions.FLAGS.MANAGE_MESSAGES
             )
-        const channel = interaction.options.getChannel("channel") as TextChannel
+        const channel = interaction.options.getChannel('channel') as TextChannel
         if (this.client.servers.has(interaction.guildId as string))
             this.client.servers
                 .get(interaction.guildId as string)
@@ -397,9 +348,7 @@ export default class Config extends Command {
                     logs_channels: { message_update: channel.id },
                 })
             )
-        interaction.reply({
-            content: `Logs establecidos en <#${channel.id}>`,
-        })
+        interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_log', { channel }))
     }
 
     setLogMessageAttachment(interaction: CommandInteraction): any {
@@ -409,7 +358,7 @@ export default class Config extends Command {
                 interaction,
                 Permissions.FLAGS.MANAGE_MESSAGES
             )
-        const channel = interaction.options.getChannel("channel") as TextChannel
+        const channel = interaction.options.getChannel('channel') as TextChannel
         if (this.client.servers.has(interaction.guildId as string))
             this.client.servers
                 .get(interaction.guildId as string)
@@ -421,9 +370,7 @@ export default class Config extends Command {
                     logs_channels: { message_attachment: channel.id },
                 })
             )
-        interaction.reply({
-            content: `Logs establecidos en <#${channel.id}>`,
-        })
+        interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_log', { channel }))
     }
 
     setLogMessageDelete(interaction: CommandInteraction): any {
@@ -433,7 +380,7 @@ export default class Config extends Command {
                 interaction,
                 Permissions.FLAGS.MANAGE_MESSAGES
             )
-        const channel = interaction.options.getChannel("channel") as TextChannel
+        const channel = interaction.options.getChannel('channel') as TextChannel
         if (this.client.servers.has(interaction.guildId as string))
             this.client.servers
                 .get(interaction.guildId as string)
@@ -445,9 +392,7 @@ export default class Config extends Command {
                     logs_channels: { message_delete: channel.id },
                 })
             )
-        interaction.reply({
-            content: `Logs establecidos en <#${channel.id}>`,
-        })
+        interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_log', { channel }))
     }
 
     setLanguage(interaction: CommandInteraction): any {
@@ -457,7 +402,7 @@ export default class Config extends Command {
                 interaction,
                 Permissions.FLAGS.ADMINISTRATOR
             )
-        const lang = interaction.options.getString("lang") as LangType
+        const lang = interaction.options.getString('lang') as LangType
         if (this.client.servers.has(interaction.guildId as string))
             this.client.servers
                 .get(interaction.guildId as string)
@@ -467,7 +412,7 @@ export default class Config extends Command {
                 interaction.guildId as string,
                 new Server(interaction.guild, { lang })
             )
-        interaction.reply("Lenguaje Establecido en `" + lang + "`")
+        interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_log', { lang }))
         this.client.commands
             .filter((c) => c.type == CommandType.guild)
             .map((c) => c.deploy(interaction.guild as Guild))
@@ -481,7 +426,7 @@ export default class Config extends Command {
                 Permissions.FLAGS.ADMINISTRATOR
             )
         const prefix: string = interaction.options.getString(
-            "prefix",
+            'prefix',
             true
         ) as string
         if (this.client.servers.has(interaction.guildId as string))
@@ -493,7 +438,7 @@ export default class Config extends Command {
                 interaction.guildId as string,
                 new Server(interaction.guild, { prefixes: [prefix] })
             )
-        interaction.reply("Prefijo Establecido a `" + prefix + "`")
+        interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_log', { prefix }))
         this.deploy(interaction.guild as Guild)
     }
 
@@ -505,7 +450,7 @@ export default class Config extends Command {
                 Permissions.FLAGS.MANAGE_CHANNELS
             )
         const channel = interaction.options.getChannel(
-            "channel",
+            'channel',
             true
         ) as TextChannel
         if (this.client.servers.has(interaction.guildId as string))
@@ -519,15 +464,11 @@ export default class Config extends Command {
                     suggest_channels: [{ channel: channel.id, default: true }],
                 })
             )
-        interaction.reply(
-            "Canal <#" + channel.id + "> Establecido Para Sugerencias"
-        )
+        interaction.reply(this.client.servers.get(interaction.guildId!)!.translate('config_cmd.config_cmd.reply', { channel }))
         channel
             .sendTyping()
             .then(() =>
-                channel.send(
-                    "Este canal ahora esta establecido para las sugerencias\npara hacer una sugerencia usa **/suggest**"
-                )
+                channel.send(this.client.servers.get(interaction.guildId!)!.translate('config_cmd.config_cmd.message'))
             )
         this.deploy(interaction.guild as Guild)
         channel.setRateLimitPerUser(21600)
@@ -541,7 +482,7 @@ export default class Config extends Command {
                 Permissions.FLAGS.ADMINISTRATOR
             )
         const prefix: string = interaction.options.getString(
-            "prefix",
+            'prefix',
             true
         ) as string
         if (this.client.servers.has(interaction.guildId as string))
@@ -551,13 +492,9 @@ export default class Config extends Command {
         else if (interaction.guild)
             this.client.servers.set(
                 interaction.guildId as string,
-                new Server(interaction.guild, { prefixes: [">", "?", prefix] })
+                new Server(interaction.guild, { prefixes: ['>', '?', prefix] })
             )
-        interaction.reply(
-            "Prefijo `" +
-                prefix +
-                "` Agregado\nAhora el bot escucha: `'+this.client.servers.get(interaction.guildId)?.prefixies.join('`, `')+'`'"
-        )
+        interaction.reply(this.client.servers.get(interaction.guildId!)!.translate('config_cmd.add_prefix', { prefix, prefixies: this.client.servers.get(interaction.guildId!)!.prefixies }))
         this.deploy(interaction.guild as Guild)
     }
 
@@ -569,13 +506,13 @@ export default class Config extends Command {
                 Permissions.FLAGS.MANAGE_CHANNELS
             )
         const channel = interaction.options.getChannel(
-            "channel",
+            'channel',
             true
         ) as TextChannel
         const alias = (
-            interaction.options.getString("alias", true) as string
+            interaction.options.getString('alias', true) as string
         ).toLowerCase()
-        const isDefault = interaction.options.getBoolean("default") ?? false
+        const isDefault = interaction.options.getBoolean('default') ?? false
         if (this.client.servers.has(interaction.guildId as string))
             this.client.servers
                 .get(interaction.guildId as string)
@@ -597,13 +534,10 @@ export default class Config extends Command {
                     ],
                 })
             )
+        interaction.reply(this.client.servers.get(interaction.guildId!)!.translate('config_cmd.add_suggest_channel.reply', { channel, alias })))
         channel
             .sendTyping()
-            .then(() =>
-                channel.send(
-                    "Este canal ahora esta establecido para las sugerencias\npara hacer una sugerencia usa **/suggest `channel:alias`**"
-                )
-            )
+            .then(() => channel.send(this.client.servers.get(interaction.guildId!)!.translate('config_cmd.add_suggest_channel.message', { channel, alias })))
         this.deploy(interaction.guild as Guild)
         channel.setRateLimitPerUser(21600)
     }
@@ -615,21 +549,13 @@ export default class Config extends Command {
                 interaction,
                 Permissions.FLAGS.MANAGE_CHANNELS
             )
-        const channelId = interaction.options.getString("alias")
-        if (!channelId)
-            return interaction.reply("no existe ningun canal configurado")
-        if (this.client.servers.has(interaction.guildId as string))
-            this.client.servers
-                .get(interaction.guildId as string)
-                ?.removeSuggestChannel(channelId)
-        else
-            console.error(
-                "Remove suggest channel error:\n\tdont exist server class from " +
-                    interaction.guild?.name +
-                    " server with id " +
-                    interaction.guild?.id
-            )
-        interaction.reply("Canal Removido")
+        let server = this.client.servers.get(interaction.guildId!)
+        if (!server) server = new Server(interaction.guild!)
+        const channelId = interaction.options.getString('alias')
+        if (!channelId) return interaction.reply(server.translate('config_cmd.remove_suggest_channel.dont_exist'))
+        server.removeSuggestChannel(channelId)
+        this.client.servers.set(interaction.guildId!, server)
+        interaction.reply(server.translate('config_cmd.remove_suggest_channel.dont_exist'))
         this.deploy(interaction.guild as Guild)
     }
 
@@ -640,7 +566,7 @@ export default class Config extends Command {
                 interaction,
                 Permissions.FLAGS.ADMINISTRATOR
             )
-        const prefix = interaction.options.getString("prefix", true)
+        const prefix = interaction.options.getString('prefix', true)
         if (this.client.servers.has(interaction.guildId as string))
             this.client.servers
                 .get(interaction.guildId as string)
@@ -649,27 +575,25 @@ export default class Config extends Command {
             this.client.servers.set(
                 interaction.guildId as string,
                 new Server(interaction.guild, {
-                    prefixes: [prefix === ">" ? "?" : ">"],
+                    prefixes: [prefix === '>' ? '?' : '>'],
                 })
             )
-        interaction.reply(
-            "Prefijo Removido\nAhora el bot escucha: `" +
-                this.client.servers
-                    .get(interaction.guildId as string)
-                    ?.prefixies.join("`, `") +
-                "`"
-        )
+        interaction.reply(this.client.servers.get(interaction.guildId!)!.translate('remove_prefix'))
         this.deploy(interaction.guild as Guild)
     }
 
     removeLogChannel(interaction: CommandInteraction) {
-        const log = interaction.options.getString("logname")
-        const server = this.client.servers.get(interaction.guildId as string)
-        if (!server) return interaction.reply("Removido")
-        if (log === "message_update") server.removeMessageUpdateLog()
-        else if (log === "message_delete") server.removeMessageDeleteLog()
-        else if (log === "message_attachment")
+        const log = interaction.options.getString('logname')
+        let server = this.client.servers.get(interaction.guildId as string)
+        if (!server) {
+            server = new Server(interaction.guild!)
+            this.client.servers.set(interaction.guildId!, server)
+            return interaction.reply(server.translate('config_cmd.remove_log'))
+        }
+        if (log === 'message_update') server.removeMessageUpdateLog()
+        else if (log === 'message_delete') server.removeMessageDeleteLog()
+        else if (log === 'message_attachment')
             server.removeMessageAttachmentLog()
-        return interaction.reply("Log Removido")
+        return interaction.reply(server.translate('config_cmd.remove_log'))
     }
 }

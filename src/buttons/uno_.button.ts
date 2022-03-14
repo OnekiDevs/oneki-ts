@@ -29,12 +29,12 @@ export default class Uno extends Button {
                 uno.emit('start')
             } else if (uno.players.has(interaction.user.id)) {
                 interaction.reply({
-                    content: server.translate('uno_button.start_no_host'),
+                    content: server.translate('uno_btn.start_no_host'),
                     ephemeral: true,
                 })
             } else
                 interaction.reply({
-                    content: server.translate('uno_button.start_out'),
+                    content: server.translate('uno_btn.start_out'),
                     ephemeral: true,
                 })
         } else if (option === 'mc') {

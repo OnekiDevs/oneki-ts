@@ -8,9 +8,9 @@ export class Server {
     guild: Guild
     private _prefixes: Array<string> = ['>', '?']
     db
-    private _lang: LangType = LangType.en //TODO: utilizar el lenguaje en todos los archivos
+    private _lang: LangType = LangType.en
     suggestChannels: SuggestChannelObject[] = []
-    lastSuggestId = 0
+    private _lastSuggestId = 0
     logsChannels: {
         messageUpdate?: string;
         messageDelete?: string;
@@ -105,6 +105,18 @@ export class Server {
         })
 
         this._i18n.configure((guild.client as Client).i18nConfig)
+    }
+
+    /**
+     * Returns a number of the last suggest id
+     */
+    get lastSuggestId() {
+        return this._lastSuggestId
+    }
+
+    set lastSuggestId(n) {
+        this._lastSuggestId = n
+        //TODO set in the db
     }
 
     /**
