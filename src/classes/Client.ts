@@ -49,7 +49,8 @@ export class Client extends BaseClient {
         this.buttons = new ButtonManager(this, options.routes?.buttons ?? join(__dirname, '../commands'))
 
         this.i18nConfig = options.i18n
-        import('../../package.json').then(({version}) => this.version = version??'1.0.0')
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        this.version = require('../../package.json').version??'1.0.0'
         this.db
             ?.collection('s')
             .get()

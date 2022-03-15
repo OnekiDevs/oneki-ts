@@ -6,7 +6,7 @@ export default class Activitie extends Button {
     constructor() {
         super({
             name: 'poll_',
-            regex: /poll_.{8}_option_\d{1,2}/gi,
+            regex: /poll_.{8}_option_\d{1,2}/i,
         })
     }
 

@@ -24,6 +24,7 @@ export async function run(guild: Guild) {
             (guild.client as Client).constants.newServerLogChannel ?? ''
         ) as TextChannel
         if (channel && checkSend(channel, guild.me as GuildMember)) {
+            const [u, b] = guild.members.cache.partition(m => !m.user.bot)!
             const owner = await (guild.client as Client).users.fetch(
                 guild.ownerId
             )
@@ -35,13 +36,13 @@ export async function run(guild: Guild) {
                         (guild.client as Client).guilds.cache.size
                     } servidores`
                 )
-                .addField('Servidor', `\`\`\`\n${guild.name}\n\`\`\`\``, true)
-                .addField('ID', `\`${guild.id}\``, true)
+                .addField('Servidor', `\`\`\`\n${guild.name}\n\`\`\``, true)
+                .addField('ID', `\`\`\`${guild.id}\`\`\``, true)
                 .addField('Roles', `\`${guild.roles.cache.size}\``, true)
-                .addField('Miembros', `\`${guild.memberCount}\``, true)
+                .addField('Miembros', `\`\`\`Users: ${u.size}\nBots: ${b.size}\`\`\``, true)
                 .addField(
                     'Dueño',
-                    `\`${owner.username}#${owner.discriminator}\``,
+                    `\`${owner.username}#${owner.discriminator}\n${owner.id}\``,
                     true
                 )
                 .setTimestamp()

@@ -13,7 +13,6 @@ import {
     Server,
     LangType,
 } from '../utils/classes'
-import { ChannelType } from 'discord-api-types'
 import { permissionsError } from '../utils/utils'
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
 import { Buffer } from 'buffer'
@@ -44,7 +43,7 @@ export default class Config extends Command {
                         .setName('channel')
                         .setDescription('Channel where the logs are send')
                         .setRequired(true)
-                        .addChannelType(ChannelType.GuildText)
+                        .addChannelType(0)
                 )
         )
         const command = this.baseCommand
@@ -88,7 +87,7 @@ export default class Config extends Command {
                                     .setDescription(
                                         'Channel were the suggest are sent'
                                     )
-                                    .addChannelType(ChannelType.GuildText)
+                                    .addChannelType(0)
                                     .setRequired(true)
                             )
                     )
@@ -117,7 +116,7 @@ export default class Config extends Command {
                                     .setName('channel')
                                     .setDescription('Channel to suggest')
                                     .setRequired(true)
-                                    .addChannelType(ChannelType.GuildText)
+                                    .addChannelType(0)
                             )
                             .addStringOption((option) =>
                                 option
@@ -534,7 +533,7 @@ export default class Config extends Command {
                     ],
                 })
             )
-        interaction.reply(this.client.servers.get(interaction.guildId!)!.translate('config_cmd.add_suggest_channel.reply', { channel, alias })))
+        interaction.reply(this.client.servers.get(interaction.guildId!)!.translate('config_cmd.add_suggest_channel.reply', { channel, alias }))
         channel
             .sendTyping()
             .then(() => channel.send(this.client.servers.get(interaction.guildId!)!.translate('config_cmd.add_suggest_channel.message', { channel, alias })))

@@ -1,6 +1,6 @@
 {
   "name": "oneki",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "description": "Module of Oneki Bot in JavaScript",
   "main": "src/index.js",
   "scripts": {
@@ -25,7 +25,6 @@
     "@discordjs/builders": "0.12.0",
     "canvas": "2.9.0",
     "cross-env": "7.0.3",
-    "discord-api-types": "0.29.0",
     "discord.js": "13.6.0",
     "dotenv": "16.0.0",
     "firebase-admin": "10.0.2",

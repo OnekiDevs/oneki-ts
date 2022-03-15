@@ -5,7 +5,7 @@ export default class Activitie extends Button {
     constructor() {
         super({
             name: 'help_',
-            regex: /help_(es|en)_.+/gi,
+            regex: /help_(es|en)_.+/i,
         })
     }
 

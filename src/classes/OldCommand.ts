@@ -1,17 +1,21 @@
-import { Message } from "discord.js";
+import { Message } from 'discord.js'
+import { Client } from './Client'
 
 export class OldCommand {
-    name: string = "ping";
-    description: string = "pong";
+    name = 'ping'
+    description = 'pong'
     alias: string[] = []
+    client: Client
 
     constructor(options: {
         name: string;
         description: string;
         alias?: string[];
+        client: Client;
     }) {
-        this.name = options.name;
-        this.description = options.description;
+        this.client = options.client
+        this.name = options.name
+        this.description = options.description
         if(options.alias) this.alias = options.alias
     }
 
