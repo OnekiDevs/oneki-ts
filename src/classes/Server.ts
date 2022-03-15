@@ -429,7 +429,7 @@ export class Server {
      * @param {string} params - if is nesesary
      * @returns {string} string
      */
-    translate(phrase: string, params?: object): string{
+    translate(phrase: string, params?: object): string{        
         if (params) return this._i18n.__mf({phrase, locale:this.lang}, params) ?? ''
         return this._i18n.__({phrase, locale:this.lang}) ?? ''
     }

@@ -13,6 +13,8 @@ import { join } from 'path'
 import { WebSocket } from 'ws'
 import { readdirSync } from 'fs'
 import { UnoGame } from './UnoGame'
+import jlen from '../lang/en.json'
+import jles from '../lang/es.json'
 
 export class Client extends BaseClient {
     db
@@ -43,10 +45,14 @@ export class Client extends BaseClient {
 
     constructor(options: ClientOptions) {
         super(options)
+        console.log(options.routes?.commands ?? join(__dirname, '../commands'), 'sdfgh')
+
+        console.log(JSON.stringify(jlen, () => ''))
+        console.log(JSON.stringify(jles, () => ''))
 
         this.oldCommands = new OldCommandManager(options.routes?.oldCommands ?? join(__dirname, '../oldCommands'))
         this.commands = new CommandManager(this, options.routes?.commands ?? join(__dirname, '../commands'))
-        this.buttons = new ButtonManager(this, options.routes?.buttons ?? join(__dirname, '../commands'))
+        this.buttons = new ButtonManager(this, options.routes?.buttons ?? join(__dirname, '../buttons'))
 
         this.i18nConfig = options.i18n
         // eslint-disable-next-line @typescript-eslint/no-var-requires
