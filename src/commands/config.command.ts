@@ -411,7 +411,7 @@ export default class Config extends Command {
                 interaction.guildId as string,
                 new Server(interaction.guild, { lang })
             )
-        interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_log', { lang }))
+        interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_lang', { lang }))
         this.client.commands
             .filter((c) => c.type == CommandType.guild)
             .map((c) => c.deploy(interaction.guild as Guild))
