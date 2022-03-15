@@ -54,11 +54,11 @@ export default class Suggest extends Command {
                     name:interaction.user.username,
                     iconURL: interaction.user.displayAvatarURL()
                 })
-                .setTitle(server.translate('suggest_cmd.sent', {id:server?.lastSuggestId}))
+                .setTitle(server.translate('suggest_cmd.title', { id:server?.lastSuggestId }))
                 .setColor(16313844)
                 .setDescription(sug as string)
                 .setFooter({
-                    text: server.translate('footer', {bot:this.client.user?.username, version:this.client.version}),
+                    text: server.translate('footer', { bot:this.client.user?.username, version:this.client.version }),
                     iconURL: this.client.user?.avatarURL() as string
                 })
                 .setTimestamp()
@@ -66,9 +66,9 @@ export default class Suggest extends Command {
                 .send({
                     embeds: [embed],
                 })
-                .then((msg) =>{
+                .then((msg) =>{ 
                     msg.startThread({
-                        name: server!.translate('suggest_cmd.sent', {id:server?.lastSuggestId}),
+                        name: server!.translate('suggest_cmd.sent', { id:server?.lastSuggestId }),
                     })
                     server?.db?.collection('suggests').doc(`suggest_${server.lastSuggestId}`).set({ 
                         author: interaction.user.id, 
@@ -85,9 +85,9 @@ export default class Suggest extends Command {
             })
         } else if (!channelId || !channel) {
             server.removeSuggestChannel(channelId as string)
-            return interaction.reply({ content: server.translate('suggest_cmd.missing_channel'), ephemeral: true });
-            (interaction.client as Client).commands.get(interaction.commandName)?.deploy(interaction.guild as Guild);
-            (interaction.client as Client).commands.get('config')?.deploy(interaction.guild as Guild)
+            return interaction.reply({ content: server.translate('suggest_cmd.missing_channel'), ephemeral: true })
+            ;(interaction.client as Client).commands.get(interaction.commandName)?.deploy(interaction.guild as Guild)
+            ;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild as Guild)
         }
     }
 

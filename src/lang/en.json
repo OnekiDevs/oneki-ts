@@ -68,6 +68,23 @@
         "error_permissions": "Error, The {channe} channel has estableced for the suggests but I don't have permissions in this channel. {owner}",
         "missing_channel": "Missing channel"
     },
+    "------------>>>============ olds ============<<<------------":"------------>>>============ olds ============<<<------------",
+    "emoji_old": {
+        "missing": "Emoji not found",
+        "link": "Link",
+        "forget": "You forgot to mention an emoji"
+    },
+    "uno_old": {
+        "updating": "Updating cards...",
+        "gg": "GG, you've won",
+        "waiting": "Waiting for players, minimum 2 required",
+        "end": "Game over\nWinner: {user}",
+        "turn": "{user}'s turn",
+        "join": "Join",
+        "start": "Start game",
+        "show": "Show cards",
+        "eat": "Eat cards"
+    },
     "------------>>>============ commons ============<<<------------":"------------>>>============ commons ============<<<------------",
     "footer":"{bot} Bot v{version}"
 }

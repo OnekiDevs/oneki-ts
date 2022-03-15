@@ -6,7 +6,7 @@ export default class Uno extends Button {
     constructor() {
         super({
             name: 'uno_',
-            regex: /uno_.{8}_.{2}(_.{2})?$/gi,
+            regex: /uno_.{8}_.{2}(_.{2})?$/i,
         })
     }
 

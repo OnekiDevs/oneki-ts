@@ -27,7 +27,7 @@ export default class Activitie extends Command {
                         option.setName('member').setDescription('member to fetch')
                     )
             )
-            .toJSON() as ApplicationCommandDataResolvable
+            .toJSON()
     }
 
     async run(interaction: CommandInteraction): Promise<any> {

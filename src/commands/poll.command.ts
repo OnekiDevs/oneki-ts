@@ -113,9 +113,8 @@ export default class Poll extends Command {
             })),
         )
 
-        const buttons = [new MessageActionRow()],
-            i = 1,
-            j = 0
+        const buttons = [new MessageActionRow()]
+        let i = 1, j = 0
 
         for (const option of options) {
             if (i % 5 === 0) buttons.push(new MessageActionRow())

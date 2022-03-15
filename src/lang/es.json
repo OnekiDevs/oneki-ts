@@ -65,6 +65,23 @@
         "error_permissions": "Error, El canal {channe} esta establecido para sugerencia pero no tengo permisos para acceder. {owner}",
         "missing_channel": "Canal no encontrado"
     },
+    "------------>>>============ olds ============<<<------------":"------------>>>============ olds ============<<<------------",
+    "emoji_old": {
+        "missing": "Emoji no encontrado",
+        "link": "Enlace",
+        "forget": "Olvidaste mencionar un emoji"
+    },
+    "uno_old": {
+        "updating": "Actualizando cartas ...",
+        "gg": "GG, has ganado",
+        "waiting": "Esperando jugadores, se requieren minimo 2",
+        "end": "Partida terminada\nGanador: {user}",
+        "turn": "Turno de {user}",
+        "join": "Unirme",
+        "start": "Iniciar partida",
+        "show": "Mostrar cartas",
+        "eat": "Comar cartas"
+    },
     "------------>>>============ commons ============<<<------------":"------------>>>============ commons ============<<<------------",
     "footer":"{bot} Bot v{version}"
 }

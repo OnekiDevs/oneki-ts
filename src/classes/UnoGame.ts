@@ -4,26 +4,34 @@ import {
     MessageActionRow,
     MessageButton,
     MessageEmbed,
-} from "discord.js"
-import { Client, Player, Players, UnoCard, randomCard } from "../utils/classes"
-import { MessageButtonStyles } from "discord.js/typings/enums"
-import { randomId, imgToLink } from "../utils/utils"
-import EventEmitter from "events"
+} from 'discord.js'
+import { Client, Player, Players, UnoCard, randomCard, Server } from '../utils/classes'
+import { MessageButtonStyles } from 'discord.js/typings/enums'
+import { randomId, imgToLink } from '../utils/utils'
+import EventEmitter from 'events'
 
 export class UnoGame extends EventEmitter {
     host: Player
     client: Client
     players: Players = new Players()
-    status: string = "waiting"
+    status = 'waiting'
     id: string = randomId()
-    minPlayers: number = 2
+    minPlayers = 2
     message!: Message
     actualCard: UnoCard
-    direction: boolean = true
-    winner: Player | undefined;
+    direction = true
+    winner: Player | undefined
+    server: Server
 
     constructor(msg: Message, client: Client) {
         super()
+
+        const server = client.servers.get(msg.guildId!)
+        if (server) this.server = server
+        else {
+            this.server = new Server(msg.guild!)
+            client.servers.set(msg.guildId!, this.server)
+        }
 
         this.host = new Player(msg.author.id)
         this.client = client
@@ -34,15 +42,15 @@ export class UnoGame extends EventEmitter {
 
         this.client.uno.set(this.id, this)
 
-        this.on("join", (player) => {
+        this.on('join', (player) => {
             this.players.add(player)
             this.message?.edit(this.embed)
         })
 
-        this.on("eat", async (player: Player) => {
+        this.on('eat', async (player: Player) => {
             player.addCard(randomCard())
             const nesesitoAyuda = await player.interaction?.editReply({
-                content: "Actualizando cartas",
+                content: this.server.translate('uno_old.updating'),
                 components: [],
             })
             if (!nesesitoAyuda) return
@@ -53,12 +61,12 @@ export class UnoGame extends EventEmitter {
             await player.interaction?.editReply({ content, components })
         })
 
-        this.on("start", () => {
-            this.status = "started"
+        this.on('start', () => {
+            this.status = 'started'
             this.message?.edit(this.embed)
         })
 
-        this.on("showCards", async (player: Player) => {
+        this.on('showCards', async (player: Player) => {
             const cards = await player.cardsToImage(),
                 components = player.cardsToButtons(this),
                 content = await imgToLink(cards, this.client)
@@ -67,7 +75,7 @@ export class UnoGame extends EventEmitter {
         })
 
         this.on(
-            "play",
+            'play',
             async (
                 player: Player,
                 card: UnoCard,
@@ -81,26 +89,26 @@ export class UnoGame extends EventEmitter {
 
                 if (player.cards.length === 0) {
                     player.interaction?.editReply({
-                        content: "GG, has ganado",
+                        content: this.server.translate('uno_old.gg'),
                         components: [],
                     })
                     this.winner = player
-                    this.status = "end"
+                    this.status = 'end'
                     this.message.edit(this.embed)
                     return
                 }
 
                 await player.interaction?.editReply({
-                    content: "Actualizando cartas ...",
+                    content: this.server.translate('uno_old.updating'),
                     components: [],
                 })
 
                 this.actualCard = card
                 let cards, components, content
-                if (card.symbol == "+2") {
+                if (card.symbol == '+2') {
                     await this.players.rotate(this.direction)
                     await this.turn.interaction?.editReply({
-                        content: "Actualizando cartas",
+                        content: this.server.translate('uno_old.updating'),
                         components: [],
                     })
                     this.turn.addCard(randomCard())
@@ -109,20 +117,20 @@ export class UnoGame extends EventEmitter {
                     content = await imgToLink(cards, this.client)
                     components = this.turn.cardsToButtons(this)
                     this.turn.interaction?.editReply({ content, components })
-                } else if (card.symbol == "reverse") {
+                } else if (card.symbol == 'reverse') {
                     this.direction = !this.direction
                     await this.players.rotate(this.direction)
                     components = this.turn.cardsToButtons(this)
                     this.turn.interaction?.editReply({ components })
-                } else if (card.symbol == "cancell") {
+                } else if (card.symbol == 'cancell') {
                     await this.players.rotate(this.direction)
                     await this.players.rotate(this.direction)
                     components = this.turn.cardsToButtons(this)
                     this.turn.interaction?.editReply({ components })
-                } else if (card.id == "p4") {
+                } else if (card.id == 'p4') {
                     await this.players.rotate(this.direction)
                     await this.turn.interaction?.editReply({
-                        content: "Actualizando cartas",
+                        content: this.server.translate('uno_old.updating'),
                         components: [],
                     })
                     this.turn.addCard(randomCard())
@@ -154,49 +162,46 @@ export class UnoGame extends EventEmitter {
         components?: MessageActionRow[]
     } {
         const embed = new MessageEmbed()
-            .setTitle("Uno Game v1")
+            .setTitle('Uno Game v1')
             .setDescription(
-                this.status == "waiting"
-                    ? "Esperando jugadores, se requieren minimo 2"
-                    : (this.status === "end"
-                          ? `Partida terminada\nGanador: ${this.winner}`
-                          : `Turno de ${this.turn}`)
+                this.status == 'waiting'
+                    ? this.server.translate('uno_old.waiting')
+                    : (this.status === 'end'
+                        ? this.server.translate('uno_old.end', { user: this.winner })
+                        : this.server.translate('uno_old.turn', { user: this.turn }))
             )
-            .addField("Host", String(this.host), true)
-            .addField("Jugadores", String(this.players), true)
-            .setFooter({
-                text:
-                    this.client.user?.username + " Bot v" + this.client.version,
-            })
+            .addField('Host', String(this.host), true)
+            .addField('Jugadores', String(this.players), true)
+            .setFooter({ text: this.server.translate('footer', { bot: this.client.user?.username, version: this.client.version }) })
         const buttons = new MessageActionRow()
-        if (this.status == "waiting")
+        if (this.status == 'waiting')
             buttons.addComponents([
                 new MessageButton()
-                    .setLabel("Unirme")
+                    .setLabel(this.server.translate('uno_old.join'))
                     .setStyle(MessageButtonStyles.SUCCESS)
                     .setCustomId(`uno_${this.id}_jn`),
                 new MessageButton()
-                    .setLabel("Iniciar Partida")
+                    .setLabel(this.server.translate('uno_old.start'))
                     .setStyle(MessageButtonStyles.PRIMARY)
                     .setCustomId(`uno_${this.id}_st`)
                     .setDisabled(this.players.size < this.minPlayers),
             ])
-        else{
+        else {
             embed.setImage(this.actualCard.url)
             buttons.addComponents(
                 new MessageButton()
-                    .setLabel("Mostrar Cartas")
+                    .setLabel(this.server.translate('uno_old.show'))
                     .setStyle(MessageButtonStyles.PRIMARY)
                     .setCustomId(`uno_${this.id}_mc`),
                 new MessageButton()
-                    .setLabel("Comer Cartas")
+                    .setLabel(this.server.translate('uno_old.eat'))
                     .setStyle(MessageButtonStyles.PRIMARY)
                     .setCustomId(`uno_${this.id}_ea`)
             )
         }
         return {
             embeds: [embed],
-            components: this.status === "end" ? undefined : [buttons],
+            components: this.status === 'end' ? undefined : [buttons],
         }
     }
 }

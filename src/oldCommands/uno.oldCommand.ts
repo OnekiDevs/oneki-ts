@@ -1,17 +1,18 @@
-import { Message } from "discord.js";
-import { UnoGame } from "../classes/UnoGame";
-import { OldCommand, Client } from "../utils/classes";
+import { Message } from 'discord.js'
+import { UnoGame } from '../classes/UnoGame'
+import { OldCommand, Client } from '../utils/classes'
 
 export default class Help extends OldCommand {
     constructor(client: Client) {
         super({
-            name: "uno",
-            description: "Generate a uno game",
-            alias: ["1"],
-        });
+            name: 'uno',
+            description: 'Generate a uno game',
+            alias: ['1'],
+            client
+        })
     }
 
     async run(msg: Message, args?: string[]) {
-        new UnoGame(msg, msg.client as Client);
+        new UnoGame(msg, msg.client as Client)
     }
 }
