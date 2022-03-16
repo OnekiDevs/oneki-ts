@@ -1,24 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import {
     ApplicationCommandDataResolvable,
     CommandInteraction,
-    Guild,
-    MessageAttachment,
-    Permissions,
-    TextChannel,
+    Guild
 } from 'discord.js'
 import {
     Command,
     Client,
     CommandType,
-    Server,
     LangType,
 } from '../utils/classes'
-import { permissionsError } from '../utils/utils'
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
-import { Buffer } from 'buffer'
 
 export default class Config extends Command {
     constructor(client: Client) {
@@ -259,86 +251,12 @@ export default class Config extends Command {
     }
 
     run(interaction: CommandInteraction) {
-        /* eslint indent: [2, 4, {"SwitchCase": 1}] */
-        const subCommand = interaction.options.getSubcommand()
-        switch(interaction.options.getSubcommandGroup()){
-            case 'remove':
-                if (subCommand === 'prefix')
-                    this.removePrefix(interaction)
-                if (subCommand === 'suggest_channel')
-                    this.removeSuggestChannel(interaction)
-                if (subCommand === 'log')
-                    this.removeLogChannel(interaction)
-                if (subCommand === 'birthday_channel')
-                    this.removeBirthdayChannel(interaction)
-                break
-            default: 
-                try {
-                    import(`./config/${interaction.options.getSubcommandGroup()}`).then(scg => scg[subCommand](interaction))
-                } catch (e) {
-                    // no se ha implementado
-                }
+        const subcommand = interaction.options.getSubcommand()
+        const subcommandGroup = interaction.options.getSubcommandGroup()
+        try {
+            import(`./config/${subcommandGroup}`).then(scg => scg[subcommand](interaction))
+        } catch (e) {
+            // no se ha implementado
         }
-    }
-
-    removeSuggestChannel(interaction: CommandInteraction): any {
-        const member = interaction.guild?.members.cache.get(interaction.user.id)
-        if (!member?.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS))
-            return permissionsError(
-                interaction,
-                Permissions.FLAGS.MANAGE_CHANNELS
-            )
-        let server = this.client.servers.get(interaction.guildId!)
-        if (!server) server = new Server(interaction.guild!)
-        const channelId = interaction.options.getString('alias')
-        if (!channelId) return interaction.reply(server.translate('config_cmd.remove_suggest_channel.dont_exist'))
-        server.removeSuggestChannel(channelId)
-        this.client.servers.set(interaction.guildId!, server)
-        interaction.reply(server.translate('config_cmd.remove_suggest_channel.dont_exist'))
-        this.deploy(interaction.guild as Guild)
-    }
-
-    removePrefix(interaction: CommandInteraction): any {
-        const member = interaction.guild?.members.cache.get(interaction.user.id)
-        if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR))
-            return permissionsError(
-                interaction,
-                Permissions.FLAGS.ADMINISTRATOR
-            )
-        const prefix = interaction.options.getString('prefix', true)
-        if (this.client.servers.has(interaction.guildId as string))
-            this.client.servers
-                .get(interaction.guildId as string)
-                ?.removePrefix(prefix)
-        else if (interaction.guild)
-            this.client.servers.set(
-                interaction.guildId as string,
-                new Server(interaction.guild, {
-                    prefixes: [prefix === '>' ? '?' : '>'],
-                })
-            )
-        interaction.reply(this.client.servers.get(interaction.guildId!)!.translate('remove_prefix'))
-        this.deploy(interaction.guild as Guild)
-    }
-
-    removeLogChannel(interaction: CommandInteraction) {
-        const log = interaction.options.getString('logname')
-        let server = this.client.servers.get(interaction.guildId as string)
-        if (!server) {
-            server = new Server(interaction.guild!)
-            this.client.servers.set(interaction.guildId!, server)
-            return interaction.reply(server.translate('config_cmd.remove_log'))
-        }
-        if (log === 'message_update') server.removeMessageUpdateLog()
-        else if (log === 'message_delete') server.removeMessageDeleteLog()
-        else if (log === 'message_attachment')
-            server.removeMessageAttachmentLog()
-        return interaction.reply(server.translate('config_cmd.remove_log'))
-    }
-
-    removeBirthdayChannel(interaction: CommandInteraction) {
-        const server = this.client.servers.get(interaction.guildId!)!
-        server.removeBirthdayChannel()
-        interaction.reply(server.translate('config_cmd.remove_birthday'))
     }
 }
