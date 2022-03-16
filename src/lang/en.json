@@ -20,7 +20,8 @@
         "reply": "Activitie `{activitie}` created in {channel}"
     },
     "config_cmd": {
-        "set_log_reply": "Logs set to {channel}",
+        "set_log": "Logs set to {channel}",
+        "remove_log": "Log removed",
         "set_lang":"Language set to `{lang}`",
         "set_prefix": "Set prefix to `{prefix}`",
         "add_prefix": "`{prefix}` prefix added successfully\nNow the bot listens for `{prefixes}`",
