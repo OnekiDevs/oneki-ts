@@ -1,6 +1,6 @@
 import { Message, MessageAttachment, Permissions } from 'discord.js'
-import { OldCommand, Client, Server } from '../utils/classes'
-import { permissionsError } from '../utils/utils'
+import { OldCommand, Client, Server } from '../utils/classes.js'
+import { permissionsError } from '../utils/utils.js'
 import JSZip from 'jszip'
 
 export default class DownloadEmojis extends OldCommand {

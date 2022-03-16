@@ -1,6 +1,6 @@
 import { ButtonInteraction, TextChannel, MessageEmbed } from 'discord.js'
-import { Button, Client, PollDatabaseModel } from '../utils/classes'
-import { pollEmojis as emojis, filledBar } from '../utils/utils'
+import { Button, Client, PollDatabaseModel } from '../utils/classes.js'
+import { pollEmojis as emojis, filledBar } from '../utils/utils.js'
 
 export default class Activitie extends Button {
     constructor() {
@@ -34,7 +34,7 @@ export default class Activitie extends Button {
             ?.collection('polls')
             .doc(id)
             .update(data)
-            .catch((e) => (interaction.client as Client).db?.collection('polls').doc(id).set(data))
+            .catch((e: any) => (interaction.client as Client).db?.collection('polls').doc(id).set(data))
         let votes = 0
         await Promise.all(data.options.map((o) => (votes += o.votes.length)))
         //obtengo embed

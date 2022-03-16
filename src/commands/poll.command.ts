@@ -7,9 +7,8 @@ import {
     MessageEmbed,
     TextChannel,
 } from 'discord.js'
-import { Command, Client, CommandType, PollDatabaseModel } from '../utils/classes'
-import { filledBar, pollEmojis as emojis, checkSend } from '../utils/utils'
-import { randomId } from '../utils/utils'
+import { Command, Client, CommandType, PollDatabaseModel } from '../utils/classes.js'
+import { filledBar, pollEmojis as emojis, checkSend, randomId } from '../utils/utils.js'
 import admin from 'firebase-admin'
 
 export default class Poll extends Command {

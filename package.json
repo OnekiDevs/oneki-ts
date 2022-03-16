@@ -3,6 +3,7 @@
   "version": "0.15.1",
   "description": "Module of Oneki Bot in JavaScript",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node --experimental-fetch dist/index.js",
@@ -23,17 +24,14 @@
   "homepage": "https://github.com/OnekiDevs/oneki-ts#readme",
   "dependencies": {
     "@discordjs/builders": "0.12.0",
-    "@types/webshot-node": "^0.18.1",
     "canvas": "2.9.0",
-    "capture-website": "^1.4.0",
+    "capture-website": "2.3.0",
     "cross-env": "7.0.3",
     "discord.js": "13.6.0",
     "dotenv": "16.0.0",
     "firebase-admin": "10.0.2",
     "i18n": "0.14.2",
-    "jszip": "^3.7.1",
-    "webshot": "^0.18.0",
-    "webshot-node": "^0.18.2",
+    "jszip": "3.7.1",
     "ws": "8.5.0"
   },
   "engines": {
@@ -47,6 +45,6 @@
     "@typescript-eslint/parser": "^5.14.0",
     "eslint": "8.11.0",
     "nodemon": "2.0.15",
-    "typescript": "4.5.5"
+    "typescript": "^4.7.0-dev.20220316"
   }
 }

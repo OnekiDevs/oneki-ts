@@ -9,7 +9,7 @@ import {
     Client,
     CommandType,
     LangType,
-} from '../utils/classes'
+} from '../utils/classes.js'
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
 
 export default class Config extends Command {

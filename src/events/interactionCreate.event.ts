@@ -1,6 +1,6 @@
 import { ButtonInteraction, CommandInteraction } from 'discord.js'
-import { Client } from '../utils/classes'
-import { sendError } from '../utils/utils'
+import { Client } from '../utils/classes.js'
+import { sendError } from '../utils/utils.js'
 
 export const name = 'interactionCreate'
 
@@ -22,6 +22,6 @@ export async function run(interaction: CommandInteraction | ButtonInteraction) {
             else interaction.deferUpdate()        
         }
     } catch (error) {
-        sendError(interaction.client as Client, error as Error, __filename)
+        sendError(interaction.client as Client, error as Error, import.meta.url)
     }
 }

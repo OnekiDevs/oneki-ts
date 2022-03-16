@@ -1,5 +1,5 @@
 import { Message, MessageEmbed, MessageButton, MessageActionRow } from 'discord.js'
-import { OldCommand, Client, oldCommandData, Server } from '../utils/classes'
+import { OldCommand, Client, oldCommandData, Server } from '../utils/classes.js'
 
 export default class Help extends OldCommand {
     constructor(client: Client) {

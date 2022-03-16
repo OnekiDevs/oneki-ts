@@ -1,13 +1,13 @@
-import { Client } from "../utils/classes"
-import { TextChannel, GuildMember, MessageEmbed, Message } from "discord.js"
-import { checkSend, sendError } from "../utils/utils"
+import { Client } from '../utils/classes.js'
+import { TextChannel, GuildMember, MessageEmbed, Message } from 'discord.js'
+import { checkSend, sendError } from '../utils/utils.js'
 
-export const name: string = "messageAttachment"
+export const name = 'messageAttachment'
 
 export async function run(msg: Message) {
     try {
-        if (!(msg.client as Client).servers.has(msg.guild?.id ?? "")) return
-        const server = (msg.client as Client).servers.get(msg.guild?.id ?? "")
+        if (!(msg.client as Client).servers.has(msg.guild?.id ?? '')) return
+        const server = (msg.client as Client).servers.get(msg.guild?.id ?? '')
         if (!server?.logsChannels.messageAttachment) return
         if (msg.channel.id === server.logsChannels.messageAttachment) return
         const channel: TextChannel = msg.client.channels.cache.get(
@@ -23,9 +23,9 @@ export async function run(msg: Message) {
                         )
                         .setThumbnail(msg.member?.displayAvatarURL() as string)
                         .addField(
-                            "Canal",
+                            'Canal',
                             `${msg.channel} | ${
-                                (msg.channel as TextChannel).name ?? ""
+                                (msg.channel as TextChannel).name ?? ''
                             }`
                         )
                         .setURL(msg.url),
@@ -50,6 +50,6 @@ export async function run(msg: Message) {
             server.removeMessageDeleteLog()
         }
     } catch (error) {
-        sendError(msg.client as Client, error as Error, __filename)
+        sendError(msg.client as Client, error as Error, import.meta.url)
     }
 }

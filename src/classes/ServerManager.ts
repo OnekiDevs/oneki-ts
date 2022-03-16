@@ -1,5 +1,5 @@
 import { Collection, Guild } from "discord.js";
-import { Server, Client } from "../utils/classes";
+import { Server, Client } from "../utils/classes.js";
 
 export class ServerManager extends Collection<string, Server> {
     client: Client;

@@ -1,5 +1,5 @@
 import { Guild, CommandInteraction, ApplicationCommandDataResolvable, ApplicationCommand, Permissions, PermissionResolvable } from "discord.js";
-import { Client, CommandType, CommandPermissions } from "../utils/classes";
+import { Client, CommandType, CommandPermissions } from "../utils/classes.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ApplicationCommandPermissionTypes } from "discord.js/typings/enums";
 

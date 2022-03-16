@@ -1,5 +1,11 @@
+import { getFirestore, Firestore } from 'firebase-admin/firestore'
 import { Client as BaseClient, Collection } from 'discord.js'
-import admin from 'firebase-admin'
+import { initializeApp, cert } from 'firebase-admin/app'
+import { createRequire } from 'module'
+import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
+import { readdirSync } from 'fs'
+import { WebSocket } from 'ws'
 import {
     CommandManager,
     ClientOptions,
@@ -7,18 +13,16 @@ import {
     ClientConstants,
     ButtonManager,
     OldCommandManager,
-    anyFunction
-} from '../utils/classes'
-import { join } from 'path'
-import { WebSocket } from 'ws'
-import { readdirSync } from 'fs'
-import { UnoGame } from './UnoGame'
-import jlen from '../lang/en.json'
-import jles from '../lang/es.json'
+    anyFunction,
+    UnoGame
+} from '../utils/classes.js'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const version = createRequire(import.meta.url)('../../package.json').version
 
 export class Client extends BaseClient {
-    db
-    version!: string
+    db: Firestore
+    version: string
     i18nConfig: {
         locales: string[];
         directory: string;
@@ -47,28 +51,17 @@ export class Client extends BaseClient {
         super(options)
         console.log(options.routes?.commands ?? join(__dirname, '../commands'), 'sdfgh')
 
-        console.log(JSON.stringify(jlen, () => ''))
-        console.log(JSON.stringify(jles, () => ''))
-
         this.oldCommands = new OldCommandManager(this, options.routes?.oldCommands ?? join(__dirname, '../oldCommands'))
         this.commands = new CommandManager(this, options.routes?.commands ?? join(__dirname, '../commands'))
         this.buttons = new ButtonManager(this, options.routes?.buttons ?? join(__dirname, '../buttons'))
 
         this.i18nConfig = options.i18n
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        this.version = require('../../package.json').version??'1.0.0'
-        this.db
-            ?.collection('s')
-            .get()
-            .then((s) => {
-                s.forEach((s) => { })
-            })
-        if (options.firebaseToken) {
-            admin.initializeApp({
-                credential: admin.credential.cert(options.firebaseToken),
-            })
-            this.db = admin.firestore()
-        }
+        this.version = version??'1.0.0'
+
+        this.db = getFirestore(initializeApp({
+            credential: cert(options.firebaseToken),
+        }))
+
         if (options.constants) this.constants = options.constants
 
         this.once('ready', () => this._onReady({ eventsPath: options.routes?.events ?? join(__dirname, '../events') }))
@@ -138,7 +131,7 @@ export class Client extends BaseClient {
             readdirSync(path)
                 .filter((f) => f.endsWith('.event.js'))
                 .map(async (file) => {
-                    const event = await import(join(path, file))
+                    const event = await import('file:///'+join(path, file))
 
                     this.on(event.name, (...args) => event.run(...args))
                 }),

@@ -1,5 +1,5 @@
 import { Message, MessageEmbed } from 'discord.js'
-import { OldCommand, Client, Server } from '../utils/classes'
+import { OldCommand, Client, Server } from '../utils/classes.js'
 
 export default class Emoji extends OldCommand {
     constructor(client: Client) {

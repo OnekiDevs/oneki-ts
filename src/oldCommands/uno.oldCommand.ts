@@ -1,6 +1,6 @@
 import { Message } from 'discord.js'
-import { UnoGame } from '../classes/UnoGame'
-import { OldCommand, Client, Server } from '../utils/classes'
+import { UnoGame } from '../classes/UnoGame.js'
+import { OldCommand, Client, Server } from '../utils/classes.js'
 
 export default class Help extends OldCommand {
     constructor(client: Client) {

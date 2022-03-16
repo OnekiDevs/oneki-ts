@@ -1,6 +1,6 @@
 import { ButtonInteraction } from 'discord.js'
-import { Button, Client } from '../utils/classes'
-import { Player } from '../classes/Player'
+import { Button, Client } from '../utils/classes.js'
+import { Player } from '../classes/Player.js'
 
 export default class Uno extends Button {
     constructor() {

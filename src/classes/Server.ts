@@ -1,6 +1,6 @@
 import { Guild, GuildChannel } from 'discord.js'
-import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, LogsChannelsDatabaseModel } from '../utils/classes'
-import { firestore } from 'firebase-admin'
+import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, LogsChannelsDatabaseModel } from '../utils/classes.js'
+import { FieldValue } from 'firebase-admin/firestore'
 import i18n from 'i18n'
 
 export class Server {
@@ -25,9 +25,9 @@ export class Server {
      */
     constructor(guild: Guild, options?: GuildDataBaseModel) {
         this.guild = guild
-        this.db = (guild.client as Client).db?.collection('guilds').doc(guild.id)
+        this.db = (guild.client as Client).db.collection('guilds').doc(guild.id)
 
-        this.db?.get().then((response) => {
+        this.db.get().then((response) => {
             const obj: GuildDataBaseModel = {}
             if (response.exists) {
                 const data: GuildDataBaseModel = response.data() as GuildDataBaseModel
@@ -96,7 +96,7 @@ export class Server {
                 }
                 if (data.premium) this.premium = options?.premium && options.premium !== data.premium ? ((obj.premium = options.premium), options.premium) : data.premium
 
-                if (Object.values(obj).length > 0) this.db?.update(obj)
+                if (Object.values(obj).length > 0) this.db.update(obj)
             } else {
                 if (options?.lang) this._lang = ((obj.lang = options.lang), options.lang)
                 if (options?.prefixes) this._prefixes = ((obj.prefixes = options.prefixes), options.prefixes)
@@ -110,7 +110,7 @@ export class Server {
                 if (options?.logs_channels?.birthday_channel) this.logsChannels.birthdayChannel = ((obj2.birthday_channel = options.logs_channels.birthday_channel), options.logs_channels.birthday_channel)
 
                 if (Object.values(obj2).length > 0) obj.logs_channels = obj2
-                if (Object.values(obj).length > 0) this.db?.create(obj)
+                if (Object.values(obj).length > 0) this.db.create(obj)
             }
         })
 
@@ -152,7 +152,7 @@ export class Server {
      */
     setPrefix(prefix: string) {
         this._prefixes = [prefix]
-        this.db?.update({ prefix: [prefix] }).catch(() => this.db?.update({ prefix: [prefix] }));
+        this.db.update({ prefix: [prefix] }).catch(() => this.db.update({ prefix: [prefix] }));
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_prefix',
@@ -171,7 +171,7 @@ export class Server {
      */
     addPrefix(prefix: string) {
         this._prefixes.push(prefix)
-        this.db?.update({ prefixies: this._prefixes }).catch(() => this.db?.set({ prefixies: this._prefixes }));
+        this.db.update({ prefixies: this._prefixes }).catch(() => this.db.set({ prefixies: this._prefixes }));
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'add_prefix',
@@ -193,8 +193,10 @@ export class Server {
             this._prefixes.splice(this._prefixes.indexOf(prefix), 1)
             if (this._prefixes.length < 1) {
                 this._prefixes = ['>', '?']
-                this.db?.update({ prefixies: firestore.FieldValue.delete() }).catch(() => this.db?.set({ prefixies: firestore.FieldValue.delete() }))
-            } else this.db?.update({ prefixies: firestore.FieldValue.arrayRemove(prefix) }).catch(() => this.db?.set({ prefixies: firestore.FieldValue.arrayRemove(prefix) }))
+                this.db.update({ prefixies: FieldValue.delete() })
+                    .catch(() => this.db.set({ prefixies: FieldValue.delete() }))
+            } else this.db.update({ prefixies: FieldValue.arrayRemove(prefix) })
+                .catch(() => this.db.set({ prefixies: FieldValue.arrayRemove(prefix) }))
         }
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
@@ -221,7 +223,7 @@ export class Server {
      */
     setLang(lang: LangType) {
         this._lang = lang
-        this.db?.update({ lang }).catch(() => this.db?.set({ lang }));
+        this.db.update({ lang }).catch(() => this.db.set({ lang }));
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_guild_lang',
@@ -240,7 +242,7 @@ export class Server {
      */
     setSuggestChannel(channel: GuildChannel) {
         this.suggestChannels = [{ channel: channel.id, default: true }] as SuggestChannelObject[]
-        this.db?.update({ suggest_channels: [{ channel_id: channel.id, default: true }] }).catch(() => this.db?.set({ suggest_channels: [{ channel_id: channel.id, default: true }] }));
+        this.db.update({ suggest_channels: [{ channel_id: channel.id, default: true }] }).catch(() => this.db.set({ suggest_channels: [{ channel_id: channel.id, default: true }] }));
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_suggest_channel',
@@ -260,7 +262,7 @@ export class Server {
     addSuggestChannel(suggestChannelObject: SuggestChannelObject) {
         if (suggestChannelObject.default) this.suggestChannels = this.suggestChannels.map((i) => ({ ...i, default: false }))
         this.suggestChannels.push(suggestChannelObject)
-        this.db?.update({ suggest_channels: this.suggestChannels }).catch(() => this.db?.set({ suggest_channels: this.suggestChannels }));
+        this.db.update({ suggest_channels: this.suggestChannels }).catch(() => this.db.set({ suggest_channels: this.suggestChannels }));
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'add_suggest_channel',
@@ -288,7 +290,7 @@ export class Server {
             })
             .filter((c) => c)
         this.suggestChannels = newChannels as SuggestChannelObject[]
-        this.db?.update({ suggest_channels: this.suggestChannels }).catch(() => this.db?.set({ suggest_channels: this.suggestChannels }));
+        this.db.update({ suggest_channels: this.suggestChannels }).catch(() => this.db.set({ suggest_channels: this.suggestChannels }));
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'remove_suggest_channel',
@@ -312,7 +314,7 @@ export class Server {
         if (this.logsChannels.birthdayChannel) data['logs_channels.birthday_channel'] = this.logsChannels.birthdayChannel  
         if (this.logsChannels.messageDelete) data['logs_channels.message_delete'] = this.logsChannels.messageDelete  
         if (!data.logs_channels) data.logs_channels = {}
-        this.db?.update(data).catch(() => this.db?.set(data))
+        this.db.update(data).catch(() => this.db.set(data))
     }
 
     /**
@@ -321,7 +323,7 @@ export class Server {
      */
     setMessageUpdateLog(channel: string) {
         this.logsChannels.messageUpdate = channel
-        this.db?.update({ ['logs_channels.message_update']: channel }).catch(() => this.db?.set({ ['logs_channels.message_update']: channel }))
+        this.db.update({ ['logs_channels.message_update']: channel }).catch(() => this.db.set({ ['logs_channels.message_update']: channel }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_log',
@@ -361,7 +363,7 @@ export class Server {
      */
     setMessageDeleteLog(channel: string) {
         this.logsChannels.messageDelete = channel
-        this.db?.update({ ['logs_channels.message_delete']: channel }).catch(() => this.db?.set({ ['logs_channels.message_delete']: channel }))
+        this.db.update({ ['logs_channels.message_delete']: channel }).catch(() => this.db.set({ ['logs_channels.message_delete']: channel }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_log',
@@ -401,7 +403,7 @@ export class Server {
      */
     setMessageAttachmentLog(channel: string) {
         this.logsChannels.messageAttachment = channel
-        this.db?.update({ ['logs_channels.message_attachment']: channel }).catch(() => this.db?.set({ ['logs_channels.message_attachment']: channel }))
+        this.db.update({ ['logs_channels.message_attachment']: channel }).catch(() => this.db.set({ ['logs_channels.message_attachment']: channel }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_log',
@@ -453,7 +455,7 @@ export class Server {
      */
     setBirthdayChannel(birthdayChannel: string){
         this.logsChannels.birthdayChannel = birthdayChannel
-        this.db?.update({ ['logs_channels.birthday_channel']: birthdayChannel }).catch(() => this.db?.set({ ['logs_channels.birthday_channel']: birthdayChannel }))
+        this.db.update({ ['logs_channels.birthday_channel']: birthdayChannel }).catch(() => this.db.set({ ['logs_channels.birthday_channel']: birthdayChannel }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_log',

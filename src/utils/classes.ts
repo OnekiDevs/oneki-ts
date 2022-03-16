@@ -1,24 +1,23 @@
 import { ClientOptions as BaseClientOptions, PermissionResolvable } from 'discord.js'
-// import { ApplicationCommandPermissionType } from "discord-api-types";
 
-import { Client } from '../classes/Client'
+import { Client } from '../classes/Client.js'
 import { ApplicationCommandPermissionTypes } from 'discord.js/typings/enums'
 export default Client
 
-export * from '../classes/Client'
-export * from '../classes/Command'
-export * from '../classes/OldCommand'
-export * from '../classes/Button'
-export * from '../classes/Server'
-export * from '../classes/CommandManager'
-export * from '../classes/OldCommandManager'
-export * from '../classes/ButtonManager'
-export * from '../classes/ServerManager'
+export * from '../classes/Client.js'
+export * from '../classes/Command.js'
+export * from '../classes/OldCommand.js'
+export * from '../classes/Button.js'
+export * from '../classes/Server.js'
+export * from '../classes/CommandManager.js'
+export * from '../classes/OldCommandManager.js'
+export * from '../classes/ButtonManager.js'
+export * from '../classes/ServerManager.js'
 
-export * from '../classes/Player'
-export * from '../classes/UnoCards'
-export * from '../classes/Players'
-export * from '../classes/UnoGame'
+export * from '../classes/Player.js'
+export * from '../classes/UnoCards.js'
+export * from '../classes/Players.js'
+export * from '../classes/UnoGame.js'
 
 export enum CommandType {
     guild = 1,
@@ -97,7 +96,7 @@ export interface ClientConstants {
 
 export interface ClientOptions extends BaseClientOptions {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    firebaseToken?: any;
+    firebaseToken: any;
     constants?: ClientConstants;
     routes?: {
         commands?: string;
