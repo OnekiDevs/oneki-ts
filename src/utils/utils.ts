@@ -9,7 +9,7 @@ import {
     Guild,
     Message
 } from 'discord.js'
-import { Server, Client } from './classes.js'
+import { Server, Client, GuildDataBaseModel } from './classes.js'
 import { fileURLToPath } from 'url'
 
 export function capitalize(input: string): string {
@@ -126,8 +126,8 @@ export async function sendError(client: Client, error: Error, file: string) {
     })
 }
 
-export function newServer(guild: Guild): Server {
-    const server = new Server(guild);
+export function newServer(guild: Guild, data?: GuildDataBaseModel): Server {
+    const server = new Server(guild, data);
     (guild.client as Client).servers.set(guild.id, server)
     return server
 }

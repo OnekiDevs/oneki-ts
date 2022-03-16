@@ -263,7 +263,7 @@ export default class Config extends Command {
         const subcommand = interaction.options.getSubcommand()
         const subcommandGroup = interaction.options.getSubcommandGroup()
         try {
-            import(`./config/${subcommandGroup}`).then(scg => scg[subcommand](interaction))
+            import(`./config/${subcommandGroup}.js`).then(scg => scg[subcommand](interaction)).catch(()=>{})
         } catch (e) {
             // no se ha implementado
         }
