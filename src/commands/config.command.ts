@@ -262,12 +262,6 @@ export default class Config extends Command {
         /* eslint indent: [2, 4, {"SwitchCase": 1}] */
         const subCommand = interaction.options.getSubcommand()
         switch(interaction.options.getSubcommandGroup()){
-            case 'add':
-                if (subCommand === 'prefix')
-                    this.addPrefix(interaction)
-                if (subCommand === 'suggest_channel')
-                    this.addSuggestChannel(interaction)
-                break
             case 'remove':
                 if (subCommand === 'prefix')
                     this.removePrefix(interaction)
@@ -285,74 +279,6 @@ export default class Config extends Command {
                     // no se ha implementado
                 }
         }
-    }
-
-    addPrefix(interaction: CommandInteraction): any {
-        const member = interaction.guild?.members.cache.get(interaction.user.id)
-        if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR))
-            return permissionsError(
-                interaction,
-                Permissions.FLAGS.ADMINISTRATOR
-            )
-        const prefix: string = interaction.options.getString(
-            'prefix',
-            true
-        ) as string
-        if (this.client.servers.has(interaction.guildId as string))
-            this.client.servers
-                .get(interaction.guildId as string)
-                ?.addPrefix(prefix)
-        else if (interaction.guild)
-            this.client.servers.set(
-                interaction.guildId as string,
-                new Server(interaction.guild, { prefixes: ['>', '?', prefix] })
-            )
-        interaction.reply(this.client.servers.get(interaction.guildId!)!.translate('config_cmd.add_prefix', { prefix, prefixies: this.client.servers.get(interaction.guildId!)!.prefixies }))
-        this.deploy(interaction.guild as Guild)
-    }
-
-    addSuggestChannel(interaction: CommandInteraction): any {
-        const member = interaction.guild?.members.cache.get(interaction.user.id)
-        if (!member?.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS))
-            return permissionsError(
-                interaction,
-                Permissions.FLAGS.MANAGE_CHANNELS
-            )
-        const channel = interaction.options.getChannel(
-            'channel',
-            true
-        ) as TextChannel
-        const alias = (
-            interaction.options.getString('alias', true) as string
-        ).toLowerCase()
-        const isDefault = interaction.options.getBoolean('default') ?? false
-        if (this.client.servers.has(interaction.guildId as string))
-            this.client.servers
-                .get(interaction.guildId as string)
-                ?.addSuggestChannel({
-                    channel: channel.id,
-                    default: isDefault,
-                    alias: alias,
-                })
-        else if (interaction.guild)
-            this.client.servers.set(
-                interaction.guildId as string,
-                new Server(interaction.guild, {
-                    suggest_channels: [
-                        {
-                            channel: channel.id,
-                            default: isDefault,
-                            alias: alias,
-                        },
-                    ],
-                })
-            )
-        interaction.reply(this.client.servers.get(interaction.guildId!)!.translate('config_cmd.add_suggest_channel.reply', { channel, alias }))
-        channel
-            .sendTyping()
-            .then(() => channel.send(this.client.servers.get(interaction.guildId!)!.translate('config_cmd.add_suggest_channel.message', { channel, alias })))
-        this.deploy(interaction.guild as Guild)
-        channel.setRateLimitPerUser(21600)
     }
 
     removeSuggestChannel(interaction: CommandInteraction): any {
