@@ -23,10 +23,6 @@
         "set_log_reply": "Logs set to {channel}",
         "set_lang":"Language set to `{lang}`",
         "set_prefix": "Set prefix to `{prefix}`",
-        "config_cmd": {
-            "reply": "Channel {channel} set for suggestions",
-            "message": "This channel is now set to suggestions\nTo make a suggestion use **/suggest**"
-        },
         "add_prefix": "`{prefix}` prefix added successfully\nNow the bot listens for `{prefixes}`",
         "remove_prefix": "Removed prefix\nNow the bot listens `{prefixies}`",
         "add_suggest_channel": {

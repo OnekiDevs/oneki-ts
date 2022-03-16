@@ -266,16 +266,6 @@ export default class Config extends Command {
                 if(subCommand === 'file')
                     this.exportConfig(interaction)
                 break
-            case 'set':
-                if (subCommand === 'language')
-                    this.setLanguage(interaction)
-                if (subCommand === 'prefix')
-                    this.setPrefix(interaction)
-                if (subCommand === 'suggest_channel')
-                    this.setSuggestChannel(interaction)
-                if (subCommand === 'birthday_channel')
-                    this.setBirthdayChannel(interaction)
-                break
             case 'add':
                 if (subCommand === 'prefix')
                     this.addPrefix(interaction)
@@ -299,6 +289,9 @@ export default class Config extends Command {
                     this.setLogMessageDelete(interaction)
                 if (subCommand == 'message_attachment')
                     this.setLogMessageAttachment(interaction)
+                break
+            default: 
+                import(`./config/${interaction.options.getSubcommandGroup()}`).then(scg => scg[subCommand](interaction))
         }
     }
     
@@ -424,94 +417,6 @@ export default class Config extends Command {
                 })
             )
         interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_log', { channel }))
-    }
-
-    setLanguage(interaction: CommandInteraction): any {
-        const member = interaction.guild?.members.cache.get(interaction.user.id)
-        if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR))
-            return permissionsError(
-                interaction,
-                Permissions.FLAGS.ADMINISTRATOR
-            )
-        const lang = interaction.options.getString('lang') as LangType
-        if (this.client.servers.has(interaction.guildId as string))
-            this.client.servers
-                .get(interaction.guildId as string)
-                ?.setLang(lang)
-        else if (interaction.guild)
-            this.client.servers.set(
-                interaction.guildId as string,
-                new Server(interaction.guild, { lang })
-            )
-        
-        console.log('mensaje:',this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_lang', { lang }))
-        interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_lang', { lang }))
-        this.client.commands
-            .filter((c) => c.type == CommandType.guild)
-            .map((c) => c.deploy(interaction.guild as Guild))
-    }
-
-    setPrefix(interaction: CommandInteraction): any {
-        const member = interaction.guild?.members.cache.get(interaction.user.id)
-        if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR))
-            return permissionsError(
-                interaction,
-                Permissions.FLAGS.ADMINISTRATOR
-            )
-        const prefix: string = interaction.options.getString(
-            'prefix',
-            true
-        ) as string
-        if (this.client.servers.has(interaction.guildId as string))
-            this.client.servers
-                .get(interaction.guildId as string)
-                ?.setPrefix(prefix)
-        else if (interaction.guild)
-            this.client.servers.set(
-                interaction.guildId as string,
-                new Server(interaction.guild, { prefixes: [prefix] })
-            )
-        interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_log', { prefix }))
-        this.deploy(interaction.guild as Guild)
-    }
-
-    setSuggestChannel(interaction: CommandInteraction): any {
-        const member = interaction.guild?.members.cache.get(interaction.user.id)
-        if (!member?.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS))
-            return permissionsError(
-                interaction,
-                Permissions.FLAGS.MANAGE_CHANNELS
-            )
-        const channel = interaction.options.getChannel(
-            'channel',
-            true
-        ) as TextChannel
-        if (this.client.servers.has(interaction.guildId as string))
-            this.client.servers
-                .get(interaction.guildId as string)
-                ?.setSuggestChannel(channel)
-        else if (interaction.guild)
-            this.client.servers.set(
-                interaction.guildId as string,
-                new Server(interaction.guild, {
-                    suggest_channels: [{ channel: channel.id, default: true }],
-                })
-            )
-        interaction.reply(this.client.servers.get(interaction.guildId!)!.translate('config_cmd.config_cmd.reply', { channel }))
-        channel
-            .sendTyping()
-            .then(() =>
-                channel.send(this.client.servers.get(interaction.guildId!)!.translate('config_cmd.config_cmd.message'))
-            )
-        this.deploy(interaction.guild as Guild)
-        channel.setRateLimitPerUser(21600)
-    }
-
-    setBirthdayChannel(interaction: CommandInteraction): any {
-        const birthdayChannel = interaction.options.getChannel('channel')!
-        const server = this.client.servers.get(interaction.guildId!)!
-        server.setBirthdayChannel(birthdayChannel.id)
-        interaction.reply(server.translate('config_cmd.set_birthday', { channel: birthdayChannel?.toString() }))
     }
 
     addPrefix(interaction: CommandInteraction): any {
