@@ -282,14 +282,6 @@ export default class Config extends Command {
                 if (subCommand === 'birthday_channel')
                     this.removeBirthdayChannel(interaction)
                 break
-            case 'log':
-                if (subCommand == 'message_update')
-                    this.setLogMessageUpdate(interaction)
-                if (subCommand == 'message_delete')
-                    this.setLogMessageDelete(interaction)
-                if (subCommand == 'message_attachment')
-                    this.setLogMessageAttachment(interaction)
-                break
             default: 
                 import(`./config/${interaction.options.getSubcommandGroup()}`).then(scg => scg[subCommand](interaction))
         }
@@ -351,72 +343,6 @@ export default class Config extends Command {
                 ),
             ],
         })
-    }
-
-    setLogMessageUpdate(interaction: CommandInteraction): any {
-        const member = interaction.guild?.members.cache.get(interaction.user.id)
-        if (!member?.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES))
-            return permissionsError(
-                interaction,
-                Permissions.FLAGS.MANAGE_MESSAGES
-            )
-        const channel = interaction.options.getChannel('channel') as TextChannel
-        if (this.client.servers.has(interaction.guildId as string))
-            this.client.servers
-                .get(interaction.guildId as string)
-                ?.setMessageUpdateLog(channel.id)
-        else if (interaction.guild)
-            this.client.servers.set(
-                interaction.guildId as string,
-                new Server(interaction.guild, {
-                    logs_channels: { message_update: channel.id },
-                })
-            )
-        interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_log', { channel }))
-    }
-
-    setLogMessageAttachment(interaction: CommandInteraction): any {
-        const member = interaction.guild?.members.cache.get(interaction.user.id)
-        if (!member?.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES))
-            return permissionsError(
-                interaction,
-                Permissions.FLAGS.MANAGE_MESSAGES
-            )
-        const channel = interaction.options.getChannel('channel') as TextChannel
-        if (this.client.servers.has(interaction.guildId as string))
-            this.client.servers
-                .get(interaction.guildId as string)
-                ?.setMessageAttachmentLog(channel.id)
-        else if (interaction.guild)
-            this.client.servers.set(
-                interaction.guildId as string,
-                new Server(interaction.guild, {
-                    logs_channels: { message_attachment: channel.id },
-                })
-            )
-        interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_log', { channel }))
-    }
-
-    setLogMessageDelete(interaction: CommandInteraction): any {
-        const member = interaction.guild?.members.cache.get(interaction.user.id)
-        if (!member?.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES))
-            return permissionsError(
-                interaction,
-                Permissions.FLAGS.MANAGE_MESSAGES
-            )
-        const channel = interaction.options.getChannel('channel') as TextChannel
-        if (this.client.servers.has(interaction.guildId as string))
-            this.client.servers
-                .get(interaction.guildId as string)
-                ?.setMessageDeleteLog(channel.id)
-        else if (interaction.guild)
-            this.client.servers.set(
-                interaction.guildId as string,
-                new Server(interaction.guild, {
-                    logs_channels: { message_delete: channel.id },
-                })
-            )
-        interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_log', { channel }))
     }
 
     addPrefix(interaction: CommandInteraction): any {
