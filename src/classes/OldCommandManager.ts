@@ -1,16 +1,15 @@
 import fs from 'fs'
 import { Collection } from 'discord.js'
-import { OldCommand } from '../utils/classes'
+import { OldCommand, Client } from '../utils/classes'
 import {join} from 'path'
 
 export class OldCommandManager extends Collection<string, OldCommand> {
 
-    constructor(path: string) {
+    constructor(client: Client, path: string) {
         super()
-        console.log('PATH HOLAOHLAHGOASOLOASDOASDOASDOASDOASDOASDOSAODASODASODASODASODAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:',path)
         for (const file of fs.readdirSync(path).filter((f) => f.endsWith('.oldCommand.js'))) {            
             import(join(path, file)).then(command => {
-                const cmd: OldCommand = new command.default()
+                const cmd: OldCommand = new command.default(client)
                 this.set(cmd.name, cmd)
             })
         }        

@@ -10,6 +10,8 @@ export class CommandManager extends Collection<string, Command> {
         super()
         console.log('PATH DE COMMANDMANAGER:',path)
         this.client = client
+        console.log(path)
+        
         for (const file of readdirSync(path).filter((f) => f.endsWith('.command.js'))) {
             import(join(path, file)).then(command => {
                 const cmd: Command = new command.default(client)

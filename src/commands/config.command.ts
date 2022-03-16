@@ -301,6 +301,7 @@ export default class Config extends Command {
                     this.setLogMessageAttachment(interaction)
         }
     }
+    
     async exportConfig(
         interaction: CommandInteraction<import('discord.js').CacheType>
     ) {

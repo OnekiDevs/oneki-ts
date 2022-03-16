@@ -5,9 +5,10 @@ import {
     GuildMember,
     Permissions,
     MessageAttachment,
-    MessageEmbed
+    MessageEmbed,
+    Guild
 } from 'discord.js'
-import Client from './classes'
+import { Server, Client } from './classes'
 
 export function capitalize(input: string): string {
     return (
@@ -116,4 +117,10 @@ export async function sendError(client: Client, error: Error, file: string) {
                 .setDescription(`\`\`\`cmd\n${error.stack}\n\`\`\``),
         ],
     })
+}
+
+export function newServer(guild: Guild): Server {
+    const server = new Server(guild);
+    (guild.client as Client).servers.set(guild.id, server)
+    return server
 }
