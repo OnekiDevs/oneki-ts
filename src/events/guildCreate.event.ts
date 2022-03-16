@@ -1,6 +1,6 @@
 import { Guild, GuildMember, MessageEmbed, TextChannel } from 'discord.js'
-import { Client, Server } from '../utils/classes'
-import { checkSend, sendError } from '../utils/utils'
+import { Client, Server } from '../utils/classes.js'
+import { checkSend, sendError } from '../utils/utils.js'
 
 export const name = 'guildCreate'
 
@@ -59,6 +59,6 @@ export async function run(guild: Guild) {
             })
         }
     } catch (error) {
-        sendError(guild.client as Client, error as Error, __filename)
+        sendError(guild.client as Client, error as Error, import.meta.url)
     }
 }

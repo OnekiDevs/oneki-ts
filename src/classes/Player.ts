@@ -1,7 +1,7 @@
 import { ButtonInteraction, MessageButton, MessageActionRow } from "discord.js";
 import canvas from "canvas";
-import { UnoCard, randomCard, UnoGame } from "../utils/classes";
-import { randomId } from "../utils/utils";
+import { UnoCard, randomCard, UnoGame } from "../utils/classes.js";
+import { randomId } from "../utils/utils.js";
 import { MessageButtonStyles } from "discord.js/typings/enums";
 
 export class Player {

@@ -1,6 +1,6 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, Guild, GuildMember, MessageEmbed, TextChannel } from 'discord.js'
-import { Command, Client, CommandType, Server } from '../utils/classes'
-import { checkSend } from '../utils/utils'
+import { Command, Client, CommandType, Server } from '../utils/classes.js'
+import { checkSend } from '../utils/utils.js'
 
 export default class Suggest extends Command {
     constructor(client: Client) {

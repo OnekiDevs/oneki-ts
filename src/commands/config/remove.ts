@@ -1,6 +1,6 @@
 import { Permissions, CommandInteraction } from 'discord.js'
-import { newServer, permissionsError } from '../../utils/utils'
-import { Client } from '../../utils/classes'
+import { newServer, permissionsError } from '../../utils/utils.js'
+import { Client } from '../../utils/classes.js'
 
 export function suggest_channel(interaction: CommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)

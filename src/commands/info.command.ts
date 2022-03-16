@@ -5,7 +5,7 @@ import {
     GuildMember,
     MessageEmbed,
 } from 'discord.js'
-import { Command, Client, CommandType, Server } from '../utils/classes'
+import { Command, Client, CommandType, Server } from '../utils/classes.js'
 
 export default class Activitie extends Command {
     constructor(client: Client) {

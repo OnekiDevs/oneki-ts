@@ -1,5 +1,5 @@
 import { ButtonInteraction } from 'discord.js'
-import { Button } from '../utils/classes'
+import { Button } from '../utils/classes.js'
 
 export default class Activitie extends Button {
     constructor() {

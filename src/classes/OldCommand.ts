@@ -1,5 +1,5 @@
 import { Message } from 'discord.js'
-import { Client, Server } from '../utils/classes'
+import { Client, Server } from '../utils/classes.js'
 
 export class OldCommand {
     name = 'ping'

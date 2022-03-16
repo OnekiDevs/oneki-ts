@@ -1,6 +1,6 @@
 import { Message } from 'discord.js'
-import { Client } from '../utils/classes'
-import { sendError } from '../utils/utils'
+import { Client } from '../utils/classes.js'
+import { sendError } from '../utils/utils.js'
 
 export const name = 'messageCreate'
 
@@ -13,6 +13,6 @@ export async function run(msg: Message) {
         const args = msg.content.slice(prefix?.length).split(/ /gi)
         msg.client.emit('command', msg, args.shift(), args)
     } catch (error) {
-        sendError(msg.client as Client, error as Error, __filename)
+        sendError(msg.client as Client, error as Error, import.meta.url)
     }
 }

@@ -1,6 +1,6 @@
 import { Message } from 'discord.js'
-import { Client } from '../utils/classes'
-import { newServer, sendError } from '../utils/utils'
+import { Client } from '../utils/classes.js'
+import { newServer, sendError } from '../utils/utils.js'
 
 export const name = 'command'
 
@@ -13,6 +13,6 @@ export async function run(msg: Message<true>, command: string, args?: string[]) 
         if (!server) server = newServer(msg.guild)
         cmd.run(msg, server, args)
     } catch (error) {
-        sendError(msg.client as Client, error as Error, __filename)
+        sendError(msg.client as Client, error as Error, import.meta.url)
     }
 }

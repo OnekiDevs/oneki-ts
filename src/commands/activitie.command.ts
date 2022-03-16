@@ -1,5 +1,5 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, VoiceChannel, MessageActionRow, MessageButton } from 'discord.js'
-import { Command, Client, CommandType } from '../utils/classes'
+import { Command, Client, CommandType } from '../utils/classes.js'
 
 export default class Activitie extends Command {
     constructor(client: Client) {

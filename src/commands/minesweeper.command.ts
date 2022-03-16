@@ -1,5 +1,5 @@
 import { CommandInteraction } from 'discord.js'
-import { Command, Client, CommandType } from '../utils/classes'
+import { Command, Client, CommandType } from '../utils/classes.js'
 
 export default class Minesweeper extends Command {
     constructor(client: Client) {

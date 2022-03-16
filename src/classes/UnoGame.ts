@@ -5,9 +5,9 @@ import {
     MessageButton,
     MessageEmbed,
 } from 'discord.js'
-import { Client, Player, Players, UnoCard, randomCard, Server } from '../utils/classes'
+import { Client, Player, Players, UnoCard, randomCard, Server } from '../utils/classes.js'
 import { MessageButtonStyles } from 'discord.js/typings/enums'
-import { randomId, imgToLink } from '../utils/utils'
+import { randomId, imgToLink } from '../utils/utils.js'
 import EventEmitter from 'events'
 
 export class UnoGame extends EventEmitter {

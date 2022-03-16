@@ -1,6 +1,6 @@
 import { CommandInteraction, Permissions, TextChannel } from 'discord.js'
-import { permissionsError, newServer } from '../../utils/utils'
-import { Client, LangType } from '../../utils/classes'
+import { permissionsError, newServer } from '../../utils/utils.js'
+import { Client, LangType } from '../../utils/classes.js'
 
 export function language(interaction: CommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)

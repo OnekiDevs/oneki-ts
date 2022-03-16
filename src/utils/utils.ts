@@ -9,7 +9,8 @@ import {
     Guild,
     Message
 } from 'discord.js'
-import { Server, Client } from './classes'
+import { Server, Client } from './classes.js'
+import { fileURLToPath } from 'url'
 
 export function capitalize(input: string): string {
     return (
@@ -116,7 +117,7 @@ export async function sendError(client: Client, error: Error, file: string) {
                 .setTitle('New Error Detected')
                 .addField('Error Type', '```cmd\n' + error.name + '\n```', true)
                 .addField('Error Message', '```cmd\n' + error.message + '\n```', true)
-                .addField('Error In', '```cmd\n'+file+'\n```', true),
+                .addField('Error In', '```cmd\n'+fileURLToPath(file)+'\n```', true),
             new MessageEmbed()
                 .setColor('YELLOW')
                 .setTitle('Error Stack')
