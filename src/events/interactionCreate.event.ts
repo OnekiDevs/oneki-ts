@@ -6,7 +6,7 @@ export const name = 'interactionCreate'
 
 export async function run(interaction: CommandInteraction | ButtonInteraction) {    
     try {
-        if (interaction.isApplicationCommand()) {        
+        if (interaction.isApplicationCommand()) {
             //isApplicationCommand
             if ((interaction.client as Client).commands.has(interaction.commandName)) {
                 (interaction.client as Client).commands.get(interaction.commandName)?.run(interaction)
