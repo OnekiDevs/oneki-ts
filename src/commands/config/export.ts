@@ -8,9 +8,6 @@ export async function file(interaction: CommandInteraction<'cached'>) {
     if (!server) server = newServer(interaction.guild)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     await interaction.deferReply()
-    const channel = interaction.options.getChannel('channel') as TextChannel
-    server.setMessageUpdateLog(channel.id)
-    interaction.reply(server.translate('config_cmd.set_log', { channel }))
     const snap = await server.db?.get()
     const defaultConfig = {
         prefixies: ['>', '?'],
