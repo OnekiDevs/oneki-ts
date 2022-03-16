@@ -51,6 +51,10 @@ export class Client extends BaseClient {
         console.log(JSON.stringify(jles, () => ''))
 
         this.oldCommands = new OldCommandManager(options.routes?.oldCommands ?? join(__dirname, '../oldCommands'))
+        console.log('COSO DE CLIENT:')
+        console.log('primero',options.routes?.commands)
+        console.log('segundo:',join(__dirname, '../commands'))
+        console.log('todo',options.routes?.commands ?? join(__dirname, '../commands'))
         this.commands = new CommandManager(this, options.routes?.commands ?? join(__dirname, '../commands'))
         this.buttons = new ButtonManager(this, options.routes?.buttons ?? join(__dirname, '../buttons'))
 

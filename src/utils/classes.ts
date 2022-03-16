@@ -1,24 +1,24 @@
-import { ClientOptions as BaseClientOptions, PermissionResolvable } from "discord.js";
+import { ClientOptions as BaseClientOptions, PermissionResolvable } from 'discord.js'
 // import { ApplicationCommandPermissionType } from "discord-api-types";
 
-import { Client } from "../classes/Client";
-import { ApplicationCommandPermissionTypes } from "discord.js/typings/enums";
-export default Client;
+import { Client } from '../classes/Client'
+import { ApplicationCommandPermissionTypes } from 'discord.js/typings/enums'
+export default Client
 
-export * from "../classes/Client";
-export * from "../classes/Command";
-export * from "../classes/OldCommand";
-export * from "../classes/Button";
-export * from "../classes/Server";
-export * from "../classes/CommandManager";
-export * from "../classes/OldCommandManager"
-export * from "../classes/ButtonManager";
-export * from "../classes/ServerManager";
+export * from '../classes/Client'
+export * from '../classes/Command'
+export * from '../classes/OldCommand'
+export * from '../classes/Button'
+export * from '../classes/Server'
+export * from '../classes/CommandManager'
+export * from '../classes/OldCommandManager'
+export * from '../classes/ButtonManager'
+export * from '../classes/ServerManager'
 
-export * from "../classes/Player";
-export * from "../classes/UnoCards";
-export * from "../classes/Players";
-export * from "../classes/UnoGame"
+export * from '../classes/Player'
+export * from '../classes/UnoCards'
+export * from '../classes/Players'
+export * from '../classes/UnoGame'
 
 export enum CommandType {
     guild = 1,
@@ -34,13 +34,13 @@ export interface oldCommandData {
     bot_permisions: PermissionResolvable[];
     use: string;
     example: string;
-    module: "mts" | "mpy" | "mrs";
-    type: "slash" | "command";
+    module: 'mts' | 'mpy' | 'mrs';
+    type: 'slash' | 'command';
 }
 
 export enum LangType {
-    en = "en",
-    es = "es",
+    en = 'en',
+    es = 'es',
 }
 
 export interface PollDatabaseModel {
@@ -73,9 +73,10 @@ export interface SuggestChannelObject {
 }
 
 export interface LogsChannelsDatabaseModel {
-    message_update?: string
-    message_delete?: string
-    message_attachment?: string
+    message_update?: string;
+    message_delete?: string;
+    message_attachment?: string;
+    birthday_channel?: string;
 }
 
 export interface GuildDataBaseModel {
@@ -83,8 +84,8 @@ export interface GuildDataBaseModel {
     lang?: LangType;
     suggest_channels?: SuggestChannelObject[];
     last_suggest?: number;
-    logs_channels?: LogsChannelsDatabaseModel
-    premium?: boolean
+    logs_channels?: LogsChannelsDatabaseModel;
+    premium?: boolean;
 }
 
 export interface ClientConstants {
@@ -95,7 +96,8 @@ export interface ClientConstants {
 }
 
 export interface ClientOptions extends BaseClientOptions {
-    firebaseToken?: {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    firebaseToken?: any;
     constants?: ClientConstants;
     routes?: {
         commands?: string;
@@ -124,4 +126,5 @@ export interface ButtonOptions {
     name: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type anyFunction = (msg: string) => any

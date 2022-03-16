@@ -40,7 +40,9 @@
         "set_suggest_channel": {
             "reply": "Channel {channel} set for suggestions",
             "message": "This channel is now set up for suggestions\nTo make a suggestion use **/suggest**"
-        }
+        },
+        "set_birthday": "Channel {channel} set for celebrating users birthdays",
+        "remove_birthday": "You just deleted the birthday channel. From now on users won't get notified on their birthdays."
     },
     "info_cmd": {
         "member": {
