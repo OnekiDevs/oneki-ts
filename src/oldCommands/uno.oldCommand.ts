@@ -1,6 +1,6 @@
 import { Message } from 'discord.js'
 import { UnoGame } from '../classes/UnoGame'
-import { OldCommand, Client } from '../utils/classes'
+import { OldCommand, Client, Server } from '../utils/classes'
 
 export default class Help extends OldCommand {
     constructor(client: Client) {
@@ -12,7 +12,7 @@ export default class Help extends OldCommand {
         })
     }
 
-    async run(msg: Message, args?: string[]) {
+    async run(msg: Message, server: Server, args?: string[]) {
         new UnoGame(msg, msg.client as Client)
     }
 }

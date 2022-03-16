@@ -1,5 +1,5 @@
 import { Message } from 'discord.js'
-import { Client } from './Client'
+import { Client, Server } from '../utils/classes'
 
 export class OldCommand {
     name = 'ping'
@@ -19,7 +19,7 @@ export class OldCommand {
         if(options.alias) this.alias = options.alias
     }
 
-    run(msg: Message, args?: string[]) {
+    run(msg: Message, server: Server, args?: string[]) {
         msg.reply('pong')
     }
 
