@@ -4,6 +4,7 @@ config()
 import { Client } from './utils/classes'
 import { join } from 'path'
 
+console.log('holi')
 const client: Client = new Client({
     intents: [
         'DIRECT_MESSAGES',

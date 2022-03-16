@@ -37,7 +37,9 @@
         "set_suggest_channel": {
             "reply": "Canal {channel} establecido para las sugerencias",
             "message": "Este canal ahora esta establecido para las sugerencias\nPara hacer una sugerencia usa **/suggest**"
-        }
+        },
+        "set_birthday": "Canal {channel} establecido para celebrar los cumpleaños de los usuarios",
+        "remove_birthday": "Has eliminado el canal de cumpleaños. A partir de ahora los usuarios dejarán de recibir notificaciones en sus cumpleaños."
     },
     "info_cmd": {
         "member": {

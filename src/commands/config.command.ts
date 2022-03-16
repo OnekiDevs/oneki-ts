@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import {
     ApplicationCommandDataResolvable,
     CommandInteraction,
@@ -85,8 +88,20 @@ export default class Config extends Command {
                                 option
                                     .setName('channel')
                                     .setDescription(
-                                        'Channel were the suggest are sent'
+                                        'Channel where the suggest are sent'
                                     )
+                                    .addChannelType(0)
+                                    .setRequired(true)
+                            )
+                    )
+                    .addSubcommand((subcommand) =>
+                        subcommand
+                            .setName('birthday_channel')
+                            .setDescription('Set a channel to say happy birthday to your users')
+                            .addChannelOption(option => 
+                                option
+                                    .setName('channel')
+                                    .setDescription('The channel to use')
                                     .addChannelType(0)
                                     .setRequired(true)
                             )
@@ -99,7 +114,7 @@ export default class Config extends Command {
                     .addSubcommand((subcommand) =>
                         subcommand
                             .setName('prefix')
-                            .setDescription('Add a new pfrefix to the bot')
+                            .setDescription('Add a new prefix to the bot')
                             .addStringOption((option) =>
                                 option
                                     .setName('prefix')
@@ -193,6 +208,11 @@ export default class Config extends Command {
                                     .addChoices(logs.map((l) => [l, l]))
                             )
                     )
+                    .addSubcommand(subcommand =>
+                        subcommand
+                            .setName('birthday_channel')
+                            .setDescription('Remove the channel to celebrate user\'s birthdays')
+                    )
             )
             .addSubcommandGroup((subcommandGroup) => {
                 subcommandGroup
@@ -239,35 +259,46 @@ export default class Config extends Command {
     }
 
     run(interaction: CommandInteraction) {
-        if (interaction.options.getSubcommandGroup() === 'export') {
-            if (interaction.options.getSubcommand() === 'file')
-                this.exportConfig(interaction)
-        } else if (interaction.options.getSubcommandGroup() === 'set') {
-            if (interaction.options.getSubcommand() === 'language')
-                this.setLanguage(interaction)
-            else if (interaction.options.getSubcommand() === 'prefix')
-                this.setPrefix(interaction)
-            else if (interaction.options.getSubcommand() === 'suggest_channel')
-                this.setSuggestChannel(interaction)
-        } else if (interaction.options.getSubcommandGroup() === 'add') {
-            if (interaction.options.getSubcommand() === 'prefix')
-                this.addPrefix(interaction)
-            else if (interaction.options.getSubcommand() === 'suggest_channel')
-                this.addSuggestChannel(interaction)
-        } else if (interaction.options.getSubcommandGroup() === 'remove') {
-            if (interaction.options.getSubcommand() === 'prefix')
-                this.removePrefix(interaction)
-            else if (interaction.options.getSubcommand() === 'suggest_channel')
-                this.removeSuggestChannel(interaction)
-            else if (interaction.options.getSubcommand() === 'log')
-                this.removeLogChannel(interaction)
-        } else if (interaction.options.getSubcommandGroup() === 'log') {
-            if (interaction.options.getSubcommand() == 'message_update')
-                this.setLogMessageUpdate(interaction)
-            if (interaction.options.getSubcommand() == 'message_delete')
-                this.setLogMessageDelete(interaction)
-            if (interaction.options.getSubcommand() == 'message_attachment')
-                this.setLogMessageAttachment(interaction)
+        /* eslint indent: [2, 4, {"SwitchCase": 1}] */
+        const subCommand = interaction.options.getSubcommand()
+        switch(interaction.options.getSubcommandGroup()){
+            case 'export':
+                if(subCommand === 'file')
+                    this.exportConfig(interaction)
+                break
+            case 'set':
+                if (subCommand === 'language')
+                    this.setLanguage(interaction)
+                if (subCommand === 'prefix')
+                    this.setPrefix(interaction)
+                if (subCommand === 'suggest_channel')
+                    this.setSuggestChannel(interaction)
+                if (subCommand === 'birthday_channel')
+                    this.setBirthdayChannel(interaction)
+                break
+            case 'add':
+                if (subCommand === 'prefix')
+                    this.addPrefix(interaction)
+                if (subCommand === 'suggest_channel')
+                    this.addSuggestChannel(interaction)
+                break
+            case 'remove':
+                if (subCommand === 'prefix')
+                    this.removePrefix(interaction)
+                if (subCommand === 'suggest_channel')
+                    this.removeSuggestChannel(interaction)
+                if (subCommand === 'log')
+                    this.removeLogChannel(interaction)
+                if (subCommand === 'birthday_channel')
+                    this.removeBirthdayChannel(interaction)
+                break
+            case 'log':
+                if (subCommand == 'message_update')
+                    this.setLogMessageUpdate(interaction)
+                if (subCommand == 'message_delete')
+                    this.setLogMessageDelete(interaction)
+                if (subCommand == 'message_attachment')
+                    this.setLogMessageAttachment(interaction)
         }
     }
     async exportConfig(
@@ -411,6 +442,8 @@ export default class Config extends Command {
                 interaction.guildId as string,
                 new Server(interaction.guild, { lang })
             )
+        
+        console.log('mensaje:',this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_lang', { lang }))
         interaction.reply(this.client.servers.get(interaction.guildId as string)!.translate('config_cmd.set_lang', { lang }))
         this.client.commands
             .filter((c) => c.type == CommandType.guild)
@@ -471,6 +504,13 @@ export default class Config extends Command {
             )
         this.deploy(interaction.guild as Guild)
         channel.setRateLimitPerUser(21600)
+    }
+
+    setBirthdayChannel(interaction: CommandInteraction): any {
+        const birthdayChannel = interaction.options.getChannel('channel')!
+        const server = this.client.servers.get(interaction.guildId!)!
+        server.setBirthdayChannel(birthdayChannel.id)
+        interaction.reply(server.translate('config_cmd.set_birthday', { channel: birthdayChannel?.toString() }))
     }
 
     addPrefix(interaction: CommandInteraction): any {
@@ -594,5 +634,11 @@ export default class Config extends Command {
         else if (log === 'message_attachment')
             server.removeMessageAttachmentLog()
         return interaction.reply(server.translate('config_cmd.remove_log'))
+    }
+
+    removeBirthdayChannel(interaction: CommandInteraction) {
+        const server = this.client.servers.get(interaction.guildId!)!
+        server.removeBirthdayChannel()
+        interaction.reply(server.translate('config_cmd.remove_birthday'))
     }
 }
