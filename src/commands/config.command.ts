@@ -262,10 +262,6 @@ export default class Config extends Command {
         /* eslint indent: [2, 4, {"SwitchCase": 1}] */
         const subCommand = interaction.options.getSubcommand()
         switch(interaction.options.getSubcommandGroup()){
-            case 'export':
-                if(subCommand === 'file')
-                    this.exportConfig(interaction)
-                break
             case 'add':
                 if (subCommand === 'prefix')
                     this.addPrefix(interaction)
@@ -283,66 +279,12 @@ export default class Config extends Command {
                     this.removeBirthdayChannel(interaction)
                 break
             default: 
-                import(`./config/${interaction.options.getSubcommandGroup()}`).then(scg => scg[subCommand](interaction))
+                try {
+                    import(`./config/${interaction.options.getSubcommandGroup()}`).then(scg => scg[subCommand](interaction))
+                } catch (e) {
+                    // no se ha implementado
+                }
         }
-    }
-    
-    async exportConfig(
-        interaction: CommandInteraction<import('discord.js').CacheType>
-    ) {
-        await interaction.deferReply()
-        const server = this.client.servers.get(interaction.guildId as string)
-        const snap = await server?.db?.get()
-        const defaultConfig = {
-            prefixies: ['>', '?'],
-            lang: 'en',
-            logs_channels: {
-                message_update: null,
-                message_delete: null,
-                message_attachment: null,
-            },
-            suggest_channels: [
-                {
-                    channel: null,
-                    default: false,
-                    alias: null,
-                },
-            ],
-        }
-        if (!snap?.exists)
-            return interaction.editReply({
-                files: [
-                    new MessageAttachment(
-                        Buffer.from(JSON.stringify(defaultConfig, null, 4)),
-                        `${interaction.guild?.name}_${interaction.client.user?.username}_config.json`
-                    ),
-                ],
-            })
-        const sc = snap.data()
-        console.log(snap.id, snap.data())
-        if (!sc) return
-        if (sc.prefixies) defaultConfig.prefixies = sc.prefixies
-        if (sc.lang) defaultConfig.lang = sc.lang
-        if (sc.logs_channels) {
-            const lg = sc.logs_channels
-            if (lg.message_update)
-                defaultConfig.logs_channels.message_update = lg.message_update
-            if (lg.message_attachment)
-                defaultConfig.logs_channels.message_attachment =
-                    lg.message_attachment
-            if (lg.message_delete)
-                defaultConfig.logs_channels.message_delete = lg.message_delete
-        }
-        if (sc.suggest_channels && sc.suggest_channels.length > 0)
-            defaultConfig.suggest_channels = sc.suggest_channels
-        return interaction.editReply({
-            files: [
-                new MessageAttachment(
-                    Buffer.from(JSON.stringify(defaultConfig, null, 4)),
-                    `${interaction.guild?.name}_${interaction.client.user?.username}_config.json`
-                ),
-            ],
-        })
     }
 
     addPrefix(interaction: CommandInteraction): any {
