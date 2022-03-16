@@ -18,7 +18,7 @@ export class CommandManager extends Collection<string, Command> {
         }
     }
 
-    deploy(guild?: Guild) {
+    deploy(guild?: Guild) {    
         if (process.env.DEPLOY_COMMANDS == 'true') return Promise.all(this.map((command) => command.deploy(guild)))
         else return Promise.resolve()
     }
