@@ -36,7 +36,6 @@ export async function file(interaction: CommandInteraction<'cached'>) {
             ],
         })
     const sc = snap.data()
-    console.log(snap.id, snap.data())
     if (!sc) return
     if (sc.prefixies) defaultConfig.prefixies = sc.prefixies
     if (sc.lang) defaultConfig.lang = sc.lang
