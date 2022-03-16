@@ -10,7 +10,7 @@ export default class SS extends Command {
             description: 'make a fake ss',
             type: CommandType.guild,
             public: false,
-            guilds: ['834440041010561074', '885674114310881362']
+            guilds: []
         })
     }
 
@@ -37,7 +37,8 @@ export default class SS extends Command {
         
         const ss = await cw.buffer('https://oneki.herokuapp.com/api/fakeDiscordMessage?' + params, {
             height: Math.round(((text.length * 50) / 140) + 50),
-            width: 500
+            width: 500,
+
         })
         interaction.editReply({
             files: [new MessageAttachment(ss, 'ss.jpg')]
