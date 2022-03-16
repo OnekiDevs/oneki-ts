@@ -1,4 +1,4 @@
-import { Permissions, CommandInteraction, TextChannel } from 'discord.js'
+import { Permissions, CommandInteraction } from 'discord.js'
 import { newServer, permissionsError } from '../../utils/utils'
 import { Client } from '../../utils/classes'
 

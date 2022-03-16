@@ -41,201 +41,210 @@ export default class Config extends Command {
                         .addChannelType(0)
                 )
         )
+
         const command = this.baseCommand
-            .addSubcommandGroup((subcommandGroup) =>
-                subcommandGroup
-                    .setName('set') // group
-                    .setDescription('set configs')
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName('language') // command
-                            .setDescription('Set language')
-                            .addStringOption((option) =>
-                                option
-                                    .setName('lang') // option
-                                    .setDescription('Language')
-                                    .setRequired(true)
-                                    .addChoices([
-                                        ['Español', LangType.es],
-                                        ['English', LangType.en],
-                                    ])
-                            )
-                    )
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName('prefix')
-                            .setDescription('Set a new unique prefix')
-                            .addStringOption((option) =>
-                                option
-                                    .setName('prefix')
-                                    .setDescription('New prefix')
-                                    .setRequired(true)
-                            )
-                    )
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName('suggest_channel')
-                            .setDescription('Set a unique suggest channel')
-                            .addChannelOption((option) =>
-                                option
-                                    .setName('channel')
-                                    .setDescription(
-                                        'Channel where the suggest are sent'
-                                    )
-                                    .addChannelType(0)
-                                    .setRequired(true)
-                            )
-                    )
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName('birthday_channel')
-                            .setDescription('Set a channel to say happy birthday to your users')
-                            .addChannelOption(option => 
-                                option
-                                    .setName('channel')
-                                    .setDescription('The channel to use')
-                                    .addChannelType(0)
-                                    .setRequired(true)
-                            )
-                    )
-            )
-            .addSubcommandGroup((subcommandGroup) =>
-                subcommandGroup
-                    .setName('add')
-                    .setDescription('add config')
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName('prefix')
-                            .setDescription('Add a new prefix to the bot')
-                            .addStringOption((option) =>
-                                option
-                                    .setName('prefix')
-                                    .setDescription('A new prefix')
-                                    .setRequired(true)
-                            )
-                    )
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName('suggest_channel')
-                            .setDescription('Add a new suggest channel')
-                            .addChannelOption((option) =>
-                                option
-                                    .setName('channel')
-                                    .setDescription('Channel to suggest')
-                                    .setRequired(true)
-                                    .addChannelType(0)
-                            )
-                            .addStringOption((option) =>
-                                option
-                                    .setName('alias')
-                                    .setDescription(
-                                        'Name to refired a suggest channel'
-                                    )
-                                    .setRequired(true)
-                            )
-                            .addBooleanOption((option) =>
-                                option
-                                    .setName('default')
-                                    .setDescription(
-                                        'Set a default suggestion channel'
-                                    )
-                            )
-                    )
-            )
-            .addSubcommandGroup((subcommandGroup) =>
-                subcommandGroup
-                    .setName('remove')
-                    .setDescription('remove config')
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName('prefix')
-                            .setDescription('Remove prefix')
-                            .addStringOption((option) =>
-                                option
-                                    .setName('prefix')
-                                    .setDescription('Prefix to remove')
-                                    .addChoices(
-                                        server
-                                            ?.getPrefixes(true)
-                                            .map((i) => [i, i]) ?? [
-                                            ['>', '>'],
-                                            ['?', '?'],
-                                        ]
-                                    )
-                            )
-                    )
-                    .addSubcommand((subcommand) => {
-                        subcommand
-                            .setName('suggest_channel')
-                            .setDescription('Remove suggestion channel')
-                        if (
-                            suggestChannelsChoices &&
-                            suggestChannelsChoices.length > 0
+
+        command.addSubcommandGroup((subcommandGroup) =>
+            subcommandGroup
+                .setName('set') // group
+                .setDescription('set configs')
+                .addSubcommand((subcommand) =>
+                    subcommand
+                        .setName('language') // command
+                        .setDescription('Set language')
+                        .addStringOption((option) =>
+                            option
+                                .setName('lang') // option
+                                .setDescription('Language')
+                                .setRequired(true)
+                                .addChoices([
+                                    ['Español', LangType.es],
+                                    ['English', LangType.en],
+                                ])
                         )
-                            subcommand.addStringOption((option) =>
-                                option
-                                    .setName('alias')
-                                    .setDescription(
-                                        'Alias of channel to remove'
-                                    )
-                                    .setRequired(true)
-                                    .addChoices(
-                                        suggestChannelsChoices as [
-                                            name: string,
-                                            value: string
-                                        ][]
-                                    )
-                            )
-                        return subcommand
-                    })
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName('log')
-                            .setDescription('Remove log channel')
-                            .addStringOption((option) =>
-                                option
-                                    .setName('logname')
-                                    .setDescription('Log name to remove')
-                                    .setRequired(true)
-                                    .addChoices(logs.map((l) => [l, l]))
-                            )
+                )
+                .addSubcommand((subcommand) =>
+                    subcommand
+                        .setName('prefix')
+                        .setDescription('Set a new unique prefix')
+                        .addStringOption((option) =>
+                            option
+                                .setName('prefix')
+                                .setDescription('New prefix')
+                                .setRequired(true)
+                        )
+                )
+                .addSubcommand((subcommand) =>
+                    subcommand
+                        .setName('suggest_channel')
+                        .setDescription('Set a unique suggest channel')
+                        .addChannelOption((option) =>
+                            option
+                                .setName('channel')
+                                .setDescription(
+                                    'Channel where the suggest are sent'
+                                )
+                                .addChannelType(0)
+                                .setRequired(true)
+                        )
+                )
+                .addSubcommand((subcommand) =>
+                    subcommand
+                        .setName('birthday_channel')
+                        .setDescription('Set a channel to say happy birthday to your users')
+                        .addChannelOption(option => 
+                            option
+                                .setName('channel')
+                                .setDescription('The channel to use')
+                                .addChannelType(0)
+                                .setRequired(true)
+                        )
+                )
+        )
+
+        command.addSubcommandGroup((subcommandGroup) =>
+            subcommandGroup
+                .setName('add')
+                .setDescription('add config')
+                .addSubcommand((subcommand) =>
+                    subcommand
+                        .setName('prefix')
+                        .setDescription('Add a new prefix to the bot')
+                        .addStringOption((option) =>
+                            option
+                                .setName('prefix')
+                                .setDescription('A new prefix')
+                                .setRequired(true)
+                        )
+                )
+                .addSubcommand((subcommand) =>
+                    subcommand
+                        .setName('suggest_channel')
+                        .setDescription('Add a new suggest channel')
+                        .addChannelOption((option) =>
+                            option
+                                .setName('channel')
+                                .setDescription('Channel to suggest')
+                                .setRequired(true)
+                                .addChannelType(0)
+                        )
+                        .addStringOption((option) =>
+                            option
+                                .setName('alias')
+                                .setDescription(
+                                    'Name to refired a suggest channel'
+                                )
+                                .setRequired(true)
+                        )
+                        .addBooleanOption((option) =>
+                            option
+                                .setName('default')
+                                .setDescription(
+                                    'Set a default suggestion channel'
+                                )
+                        )
+                )
+        )
+
+        command.addSubcommandGroup((subcommandGroup) =>
+            subcommandGroup
+                .setName('remove')
+                .setDescription('remove config')
+                .addSubcommand((subcommand) =>
+                    subcommand
+                        .setName('prefix')
+                        .setDescription('Remove prefix')
+                        .addStringOption((option) =>
+                            option
+                                .setName('prefix')
+                                .setDescription('Prefix to remove')
+                                .addChoices(
+                                    server
+                                        ?.getPrefixes(true)
+                                        .map((i) => [i, i]) ?? [
+                                        ['>', '>'],
+                                        ['?', '?'],
+                                    ]
+                                )
+                        )
+                )
+                .addSubcommand((subcommand) => {
+                    subcommand
+                        .setName('suggest_channel')
+                        .setDescription('Remove suggestion channel')
+                    if (
+                        suggestChannelsChoices &&
+                        suggestChannelsChoices.length > 0
                     )
-                    .addSubcommand(subcommand =>
-                        subcommand
-                            .setName('birthday_channel')
-                            .setDescription('Remove the channel to celebrate user\'s birthdays')
-                    )
-            )
-            .addSubcommandGroup((subcommandGroup) => {
-                subcommandGroup
-                    .setName('log')
-                    .setDescription('Config the logs channels')
-                for (const scl of subcommandsLogs) {
-                    subcommandGroup.addSubcommand(scl)
-                }
-                return subcommandGroup
-            })
-            .addSubcommandGroup((subcommandGroup) =>
-                subcommandGroup
-                    .setName('export')
-                    .setDescription('Export the config file')
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName('file')
-                            .setDescription('Export the config file')
-                    )
-            )
-            .addSubcommandGroup((subcommandGroup) =>
-                subcommandGroup
-                    .setName('import')
-                    .setDescription('Import the config file')
-                    .addSubcommand((subcommand) =>
-                        subcommand
-                            .setName('file')
-                            .setDescription('Export the config file')
-                    )
-            ).toJSON() as any
-        const _ = command.options
+                        subcommand.addStringOption((option) =>
+                            option
+                                .setName('alias')
+                                .setDescription(
+                                    'Alias of channel to remove'
+                                )
+                                .setRequired(true)
+                                .addChoices(
+                                    suggestChannelsChoices as [
+                                        name: string,
+                                        value: string
+                                    ][]
+                                )
+                        )
+                    return subcommand
+                })
+                .addSubcommand((subcommand) =>
+                    subcommand
+                        .setName('log')
+                        .setDescription('Remove log channel')
+                        .addStringOption((option) =>
+                            option
+                                .setName('logname')
+                                .setDescription('Log name to remove')
+                                .setRequired(true)
+                                .addChoices(logs.map((l) => [l, l]))
+                        )
+                )
+                .addSubcommand(subcommand =>
+                    subcommand
+                        .setName('birthday_channel')
+                        .setDescription('Remove the channel to celebrate user\'s birthdays')
+                )
+        )
+
+        command.addSubcommandGroup((subcommandGroup) => {
+            subcommandGroup
+                .setName('log')
+                .setDescription('Config the logs channels')
+            for (const scl of subcommandsLogs) {
+                subcommandGroup.addSubcommand(scl)
+            }
+            return subcommandGroup
+        })
+
+        command.addSubcommandGroup((subcommandGroup) =>
+            subcommandGroup
+                .setName('export')
+                .setDescription('Export the config file')
+                .addSubcommand((subcommand) =>
+                    subcommand
+                        .setName('file')
+                        .setDescription('Export the config file')
+                )
+        )
+
+        command.addSubcommandGroup((subcommandGroup) =>
+            subcommandGroup
+                .setName('import')
+                .setDescription('Import the config file')
+                .addSubcommand((subcommand) =>
+                    subcommand
+                        .setName('file')
+                        .setDescription('Export the config file')
+                )
+        )
+        
+        const cmd = command.toJSON() as any
+        const _ = cmd.options
             .find((o: { name: string }) => o.name === 'import')
             ?.options.find((o: { name: string }) => o.name === 'file')
         _.options = [
@@ -247,7 +256,7 @@ export default class Config extends Command {
             },
         ]
         // console.log(JSON.stringify(command.options?.[5].options, null, 1))
-        return new Promise((resolve) => resolve(command))
+        return new Promise((resolve) => resolve(cmd))
     }
 
     run(interaction: CommandInteraction) {

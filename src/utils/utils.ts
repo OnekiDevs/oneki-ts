@@ -6,7 +6,8 @@ import {
     Permissions,
     MessageAttachment,
     MessageEmbed,
-    Guild
+    Guild,
+    Message
 } from 'discord.js'
 import { Server, Client } from './classes'
 
@@ -16,11 +17,16 @@ export function capitalize(input: string): string {
     )
 }
 
+/**
+ * Send a error message to the user
+ * @param {CommandInteraction | Message} interaction - The Message or Interaction to reply
+ * @param {PermissionResolvable[] | PermissionResolvable} permissions - Missiings permissions 
+ */
 export function permissionsError(
-    interaction: CommandInteraction,
+    interaction: CommandInteraction | Message,
     permissions: PermissionResolvable[] | PermissionResolvable
 ): any {
-    return interaction.reply({
+    interaction.reply({
         content: `No tiienes los permissions suficientes, necesitas \`${
             Array.isArray(permissions)
                 ? permissions.map((p) => p).join('`, `')

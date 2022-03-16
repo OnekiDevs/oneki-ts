@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from 'discord.js'
 import { OldCommand, Client, Server } from '../utils/classes'
 
-export default class Help extends OldCommand {
+export default class Emoji extends OldCommand {
     constructor(client: Client) {
         super({
             name: 'emoji',
@@ -11,12 +11,7 @@ export default class Help extends OldCommand {
         })
     }
 
-    async run(msg: Message, args?: string[]) {
-        let server = this.client.servers.get(msg.guildId!)
-        if (!server) {
-            server = new Server(msg.guild!)
-            this.client.servers.set(msg.guildId!, server)
-        }
+    async run(msg: Message, server: Server, args?: string[]) {
         const emojiString = (msg.content.match(/<a?:(.+):\d{18}>/) ?? args)?.[0]
         const emojiId = (emojiString ?? '').replace(/<a?:(.+):/, '').replace(/>/, '')
         if (args && args[0] && /\d{18}/.test(emojiId)) {

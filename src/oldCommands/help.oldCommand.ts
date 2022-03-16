@@ -1,5 +1,5 @@
 import { Message, MessageEmbed, MessageButton, MessageActionRow } from 'discord.js'
-import { OldCommand, Client, oldCommandData } from '../utils/classes'
+import { OldCommand, Client, oldCommandData, Server } from '../utils/classes'
 
 export default class Help extends OldCommand {
     constructor(client: Client) {
@@ -11,10 +11,9 @@ export default class Help extends OldCommand {
         })
     }
 
-    async run(msg: Message, args?: string[]) {
+    async run(msg: Message, server: Server, args?: string[]) {
         const embed = new MessageEmbed()
         let general = false
-        const server = (msg.client as Client).servers.get(msg.guildId as string)
         if (args?.length) {
             const req = await fetch(`https://oneki.herokuapp.com/api/lang/${server?.lang}/cmd/?command=${args[0]}`)
             if (!req.ok) general = true
