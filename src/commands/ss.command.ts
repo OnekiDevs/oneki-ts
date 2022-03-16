@@ -8,10 +8,9 @@ export default class SS extends Command {
         super(client, {
             name: 'ss',
             description: 'make a fake ss',
-            defaultPermission: false,
             type: CommandType.guild,
             public: false,
-            guilds: ['834440041010561074']
+            guilds: ['834440041010561074', '885674114310881362']
         })
     }
 
