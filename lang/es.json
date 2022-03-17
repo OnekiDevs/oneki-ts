@@ -72,6 +72,11 @@
         "remove": "A partir de ahora no recibirás notificaciones por tu cumpleaños",
         "error": "Lo siento, no puedo entender eso. Por favor, comprueba que hayas escrito tu fecha de cumpleaños como en este ejemplo: `5/22`"
     },
+    "ban_cmf": {
+        "user_permissions": "No tienes permisos suficientes",
+        "bot_permissions": "No tengo permisos suficientes",
+        "reply": "{user} ha sido baneado correctamente"
+    },
     "------------>>>============ olds ============<<<------------":"------------>>>============ olds ============<<<------------",
     "emoji_old": {
         "missing": "Emoji no encontrado",

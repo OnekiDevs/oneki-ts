@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Client as BaseClient, Collection, Guild } from 'discord.js'
 import { getFirestore, Firestore } from 'firebase-admin/firestore'
-import { Client as BaseClient, Collection, TextChannel } from 'discord.js'
+import { Server, GuildDataBaseModel } from '../utils/classes.js'
 import { initializeApp, cert } from 'firebase-admin/app'
 import { createRequire } from 'module'
 import { join, dirname } from 'path'
@@ -17,7 +17,6 @@ import {
     anyFunction,
     UnoGame
 } from '../utils/classes.js'
-import { sleep } from '../utils/utils.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const version = createRequire(import.meta.url)('../../package.json').version
@@ -52,6 +51,7 @@ export class Client extends BaseClient {
     constructor(options: ClientOptions) {
         super(options)
         console.log(options.routes?.commands ?? join(__dirname, '../commands'), 'sdfgh')
+
         this.oldCommands = new OldCommandManager(this, options.routes?.oldCommands ?? join(__dirname, '../oldCommands'))
         this.commands = new CommandManager(this, options.routes?.commands ?? join(__dirname, '../commands'))
         this.buttons = new ButtonManager(this, options.routes?.buttons ?? join(__dirname, '../buttons'))
@@ -112,8 +112,7 @@ export class Client extends BaseClient {
                 console.log('\x1b[32m%s\x1b[0m', 'Comandos Desplegados!!')
                 this.initializeEventListener(options.eventsPath).then(() => {
                     console.log('\x1b[35m%s\x1b[0m', 'Eventos Cargados!!')
-                    console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
-                    sleep(5000).then(() => this._checkBirthdays())
+                    console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Listo y Atento!!!`)
                 })
             })
         })
@@ -140,51 +139,15 @@ export class Client extends BaseClient {
         )
     }
 
-    private async _checkBirthdays(){
-        console.log('checking birthdays')
-        const usersSnap = await this.db.collection('users').get()
-        usersSnap.forEach(async user => {
-            const birthday = user.data().birthday
-            const [ month, day, year ] = birthday.split('/')
-
-            //Check if it's the user's birthday
-            if(year > new Date().getFullYear()) return
-            if(month != new Date().getMonth() + 1 || day != new Date().getDate()) return
-
-            //Celebrate user's birthday
-            //TODO: fix it
-            this.servers.map(async server => {
-                const birthdayChannel = server.logsChannels.birthdayChannel
-                if(!birthdayChannel) return console.log('se esta deteniendo en el birthdaychannel',birthdayChannel)
-
-                /* Revisar si el usuario está en el servidor */
-                let member = server.guild.members.cache.get(user.id)
-                if(!member) member = await server.guild.members.fetch(user.id) //Si no está en la cache
-                if(!member) return console.log('se esta deteniendo en member')//Si no está tampoco en la API retornamos
-
-                /* Revisar si el canal sigue existiendo y obtenerlo */
-                let channel = server.guild.channels.cache.get(birthdayChannel) as TextChannel
-                if(!channel) channel = await server.guild.channels.fetch(birthdayChannel) as TextChannel
-                if(!channel){ //Si no está tampoco en la API lo borramos de la base de datos
-                    server.removeBirthdayChannel()
-                    delete server.logsChannels.birthdayChannel
-                    console.log('se esta deteniendo en el canal')
-                    return
-                } 
-                console.log('el identificador',server.logsChannels.birthdayMessage!.replaceAll('{username}',`<@${user.id}>`))
-                channel.send(server.logsChannels.birthdayMessage!.replaceAll('{username}',`<@${user.id}>`))
-            })
-
-            //Update user's birthday
-            console.log('year',year)
-            console.log('parseintyear',parseInt(year))
-            console.log('parseintyearmas1',parseInt(year)+1)
-            const newBirthday = `${month}/${day}/${parseInt(year) + 1}`
-            this.db.collection('users').doc(user.id).update({ birthday: newBirthday })
-        })
-
-        setTimeout(() => {
-            this._checkBirthdays()
-        }, 86400000)
+    /**
+     * Return a new Server cached
+     * @param {Guild} guild 
+     * @param {GuildDataBaseModel} data 
+     * @returns {Server}
+     */
+    newServer(guild: Guild, data?: GuildDataBaseModel): Server {
+        const server = new Server(guild, data)
+        this.servers.set(guild.id, server)
+        return server
     }
 }
