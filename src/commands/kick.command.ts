@@ -22,12 +22,12 @@ export default class Ban extends Command {
     async run(interaction: CommandInteraction<'cached'>) {
         const member = interaction.options.getMember('member') as GuildMember
         const reason = interaction.options.getString('reason') as string
-        const server = (interaction.client as Client).servers.get(interaction.guildId)
-        if (!server) (interaction.client as Client).newServer(interaction.guild)
+        let server = (interaction.client as Client).servers.get(interaction.guildId)
+        if (!server) server = (interaction.client as Client).newServer(interaction.guild)
 
         if (interaction.member.roles.highest.comparePositionTo(member.roles.highest) <= 0)
             return interaction.reply({
-                content: server.translate('kick_cmf.user_permissions'),
+                content: server.translate('kick_cmd.user_permissions'),
                 ephemeral: true
             })
 
@@ -35,7 +35,7 @@ export default class Ban extends Command {
 
         await interaction.guild.members.kick(member, reason)
 
-        interaction.reply(server.translate('kick_cmf.reply', { user: member }))
+        interaction.reply(server.translate('kick_cmd.reply', { user: member }))
 
         //TODO Implementar notas aqui
     }

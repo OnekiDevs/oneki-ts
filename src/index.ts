@@ -4,7 +4,6 @@ config()
 import { Client } from './utils/classes.js'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { newServer } from './utils/utils.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -87,7 +86,8 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
         prefixies, lang, logs_channels
     }
 
-    newServer(client.guilds.cache.get(interaction.guild_id)!, obj) 
+    const guild = await client.guilds.cache.get(interaction.guild_id)
+    if (guild) client.newServer(guild, obj) 
     
     await fetch(`https://discord.com/api/v10/webhooks/${client.user?.id}/${interaction.token}/messages/@original`, {
         method: 'PATCH',

@@ -1,13 +1,8 @@
-<<<<<<< HEAD
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Client as BaseClient, Collection, TextChannel, Guild } from 'discord.js'
 import { getFirestore, Firestore } from 'firebase-admin/firestore'
-import { Client as BaseClient, Collection, TextChannel } from 'discord.js'
-=======
-import { Client as BaseClient, Collection, Guild } from 'discord.js'
-import { getFirestore, Firestore } from 'firebase-admin/firestore'
-import { Server, GuildDataBaseModel } from '../utils/classes.js'
->>>>>>> 0e27eb350700c97edcd01e12407838069fc00b77
 import { initializeApp, cert } from 'firebase-admin/app'
+import { sleep } from '../utils/utils.js'
 import { createRequire } from 'module'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -21,9 +16,10 @@ import {
     ButtonManager,
     OldCommandManager,
     anyFunction,
-    UnoGame
+    UnoGame,
+    GuildDataBaseModel,
+    Server
 } from '../utils/classes.js'
-import { sleep } from '../utils/utils.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const version = createRequire(import.meta.url)('../../package.json').version
@@ -193,7 +189,8 @@ export class Client extends BaseClient {
         setTimeout(() => {
             this._checkBirthdays()
         }, 86400000)
-
+    }
+    
     /**
      * Return a new Server cached
      * @param {Guild} guild 
