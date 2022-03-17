@@ -37,7 +37,7 @@ export async function suggest_channel(interaction: CommandInteraction<'cached'>)
     } catch (error) {
         //TODO manejar este error
     }
-    ;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild) //TODO cambiar a autocompletado
+    (interaction.client as Client).commands.get('config')?.deploy(interaction.guild) //TODO cambiar a autocompletado
 }
 
 export function birthday_channel(interaction: CommandInteraction<'cached'>) {

@@ -67,6 +67,11 @@
         "error_permissions": "Error, The {channe} channel has estableced for the suggests but I don't have permissions in this channel. {owner}",
         "missing_channel": "Missing channel"
     },
+    "birthday_cmd": {
+        "set": "Your birthdate has been set to {birthday}",
+        "remove": "From now on, you will not recieve notifications in your birthday",
+        "error": "Sorry, I can't understand that. Please check that you wrote your birthday like in this example: `5/22`"
+    },
     "------------>>>============ olds ============<<<------------":"------------>>>============ olds ============<<<------------",
     "emoji_old": {
         "missing": "Emoji not found",

@@ -43,7 +43,7 @@ export class Client extends BaseClient {
     servers: ServerManager = new ServerManager(this)
     websocket: WebSocket = new WebSocket('wss://oneki.herokuapp.com/')
     constants: ClientConstants = {}
-    private _wsInterval = setInterval(() => { }, 20000000)
+    private _wsInterval = setInterval(() => '', 20000000)
     private _wsintent = 1
     uno: Collection<string, UnoGame> = new Collection()
 
@@ -75,7 +75,7 @@ export class Client extends BaseClient {
             this.websocket.on('open', () => {
                 console.time('WebSocket Connection')
                 console.log('\x1b[33m%s\x1b[0m', 'Socket Conectado!!!')
-                this._wsInterval = setInterval(() => this.websocket.ping(() => { }), 20000)
+                this._wsInterval = setInterval(() => this.websocket.ping(() => ''), 20000)
                 this._wsintent = 1
             })
             this.websocket.on('close', () => {
