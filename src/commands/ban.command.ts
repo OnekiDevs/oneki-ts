@@ -24,12 +24,12 @@ export default class Ban extends Command {
         const member = interaction.options.getMember('member') as GuildMember
         const reason = interaction.options.getString('reason') as string
         const days = interaction.options.getInteger('days') as number
-        const server = (interaction.client as Client).servers.get(interaction.guildId)
-        if (!server) (interaction.client as Client).newServer(interaction.guild)
+        let server = (interaction.client as Client).servers.get(interaction.guildId)
+        if (!server) server = (interaction.client as Client).newServer(interaction.guild)
 
         if (interaction.member.roles.highest.comparePositionTo(member.roles.highest) <= 0)
             return interaction.reply({
-                content: server.translate('ban_cmf.user_permissions'),
+                content: server.translate('ban_cmd.user_permissions'),
                 ephemeral: true
             })
 
@@ -37,7 +37,7 @@ export default class Ban extends Command {
 
         await interaction.guild.members.ban(member, { reason, days })
 
-        interaction.reply(server.translate('ban_cmf.reply', { user: member }))
+        interaction.reply(server.translate('ban_cmd.reply', { user: member }))
 
         //TODO Implementar notas aqui
     }

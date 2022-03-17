@@ -32,9 +32,11 @@ export function message_attachment(interaction: CommandInteraction<'cached'>) {
     interaction.reply(server.translate('config_cmd.set_log', { channel }))
 }
 
-export function auto(interaction: CommandInteraction<'cached'>) {
+export async function auto(interaction: CommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = (interaction.client as Client).servers.get(interaction.guildId)
+    let server = (interaction.client as Client).servers.get(interaction.guildId)
+    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const category = (interaction.options.getChannel('category') ?? interaction.guild.channels.create('logs', {
         type: 4,
@@ -44,16 +46,16 @@ export function auto(interaction: CommandInteraction<'cached'>) {
             type: 'role'
         }]
     })) as CategoryChannel
-    category.createChannel('messages', {
+
+    const cm = await category.createChannel('messages', {
         type: 0
-    }).then(channel => {
-        server.setMessageDeleteLog(channel.id)
-        server.setMessageUpdateLog(channel.id)
     })
-    category.createChannel('attachments', {
+    server.setMessageDeleteLog(cm.id)
+    server.setMessageUpdateLog(cm.id)
+
+    const ca = await category.createChannel('attachments', {
         type: 0,
         nsfw: true
-    }).then(channel => {
-        server.setMessageAttachmentLog(channel.id)
     })
+    server.setMessageAttachmentLog(ca.id)
 }
