@@ -1,4 +1,4 @@
-import { ApplicationCommandDataResolvable, CommandInteraction, Guild, MessageAttachment } from 'discord.js'
+import { ApplicationCommandDataResolvable, CommandInteraction, MessageAttachment } from 'discord.js'
 import { Command, Client, CommandType } from '../utils/classes.js'
 
 import cw from 'capture-website'

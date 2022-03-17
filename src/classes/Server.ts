@@ -510,6 +510,6 @@ export class Server {
     }
 
     startEmojiAnalisis(){
-        if (this.emojiAnalisisActivated) console.log('')
+        console.log('')
     }
 }
