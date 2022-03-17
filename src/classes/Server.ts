@@ -2,7 +2,6 @@ import { Guild, GuildChannel } from 'discord.js'
 import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, LogsChannelsDatabaseModel } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import i18n from 'i18n'
-
 export class Server {
     private _i18n = i18n
     guild: Guild
@@ -508,5 +507,9 @@ export class Server {
         )
         delete this.logsChannels.birthdayChannel
         this.updateChannelsLogsInDB()
+    }
+
+    startEmojiAnalisis(){
+        if (this.emojiAnalisisActivated) console.log('')
     }
 }

@@ -12,7 +12,7 @@ export default class Help extends OldCommand {
         })
     }
 
-    async run(msg: Message, server: Server, args?: string[]) {
+    async run(msg: Message<true>, server: Server, args?: string[]) {
         new UnoGame(msg, msg.client as Client)
     }
 }
