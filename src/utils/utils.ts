@@ -12,6 +12,10 @@ import {
 import { Server, Client, GuildDataBaseModel } from './classes.js'
 import { fileURLToPath } from 'url'
 
+export function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 export function capitalize(input: string): string {
     return (
         input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase()

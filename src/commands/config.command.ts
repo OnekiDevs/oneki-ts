@@ -100,6 +100,17 @@ export default class Config extends Command {
                                 .setRequired(true)
                         )
                 )
+                .addSubcommand((subcommand) =>
+                    subcommand
+                        .setName('birthday_message')
+                        .setDescription('Change your happy birthday\'s announcement')
+                        .addStringOption(option => 
+                            option
+                                .setName('message')
+                                .setDescription('The message to use when sending the message')
+                                .setRequired(true)
+                        )
+                )
         )
 
         command.addSubcommandGroup((subcommandGroup) =>

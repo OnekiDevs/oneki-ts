@@ -13,6 +13,7 @@ export class ServerManager extends Collection<string, Server> {
         return Promise.all(this.client.guilds?.cache.map((guild: Guild) => this.set(guild.id, new Server(guild))))
     }
 
+    /*
     get(key: string): Server {
         let s = super.get(key)
         if (s) return s
@@ -21,4 +22,5 @@ export class ServerManager extends Collection<string, Server> {
         this.set(guild.id, s)
         return s
     }
+    */
 }

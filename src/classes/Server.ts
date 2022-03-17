@@ -16,6 +16,7 @@ export class Server {
         messageDelete?: string;
         messageAttachment?: string;
         birthdayChannel?: string;
+        birthdayMessage?: string;
     } = {}
     premium = false
     /**
@@ -463,6 +464,26 @@ export class Server {
                 data: {
                     log: 'BIRTHDAY_CHANNEL',
                     channel: birthdayChannel,
+                    guild: this.guild.id,
+                },
+            }),
+        )
+    }
+
+    /**
+     * Set the server's birthday message
+     * @param {string} birthdayMessage - The message to use
+     */
+    setBirthdayMessage(birthdayMessage: string){
+        this.logsChannels.birthdayMessage = birthdayMessage
+        this.db.update({ ['logs_channels.birthday_message']: birthdayMessage }).catch(() => this.db.set({ ['logs_channels.birthday_message']: birthdayMessage }))
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'set_log',
+                from: 'mts',
+                data: {
+                    log: 'BIRTHDAY_CHANNEL',
+                    channel: birthdayMessage,
                     guild: this.guild.id,
                 },
             }),
