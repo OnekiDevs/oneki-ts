@@ -80,6 +80,10 @@
         "user_permissions": "No tienes permisos suficientes para patear a ese usuario",
         "reply": "{user} ha sido pateado correctamente"
     },
+    "timeout_cmf": {
+        "user_permissions": "No tienes permisos suficientes para aislar a ese usuario",
+        "reply": "{user} ha sido aislado correctamente"
+    },
     "------------>>>============ olds ============<<<------------":"------------>>>============ olds ============<<<------------",
     "emoji_old": {
         "missing": "Emoji no encontrado",

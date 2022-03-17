@@ -1,4 +1,4 @@
-import { ApplicationCommandDataResolvable, CommandInteraction, Guild, GuildMember, Permissions } from 'discord.js'
+import { ApplicationCommandDataResolvable, CommandInteraction, GuildMember, Permissions } from 'discord.js'
 import { Command, Client, CommandType } from '../utils/classes.js'
 import { permissionsError } from '../utils/utils.js'
 
@@ -27,18 +27,18 @@ export default class Ban extends Command {
         const server = (interaction.client as Client).servers.get(interaction.guildId)
         if (!server) (interaction.client as Client).newServer(interaction.guild)
 
-        if (interaction.member.roles.highest.comparePositionTo(member.roles.highest) <= 0) return interaction.reply({
-            content: server.translate('ban_cmf.user_permissions'),
-            ephemeral: true
-        })
+        if (interaction.member.roles.highest.comparePositionTo(member.roles.highest) <= 0)
+            return interaction.reply({
+                content: server.translate('ban_cmf.user_permissions'),
+                ephemeral: true
+            })
 
         if (!member.bannable) return permissionsError(interaction, Permissions.FLAGS.BAN_MEMBERS)
 
         await interaction.guild.members.ban(member, { reason, days })
 
-        interaction.reply(server.translate('ban_cmf.reply'))
+        interaction.reply(server.translate('ban_cmf.reply', { user: member }))
 
         //TODO Implementar notas aqui
     }
 }
-

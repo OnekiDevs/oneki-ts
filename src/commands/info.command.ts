@@ -1,7 +1,6 @@
 import {
     ApplicationCommandDataResolvable,
     CommandInteraction,
-    Guild,
     GuildMember,
     MessageEmbed,
 } from 'discord.js'
