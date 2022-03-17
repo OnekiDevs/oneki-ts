@@ -1,5 +1,6 @@
+import { Client as BaseClient, Collection, Guild } from 'discord.js'
 import { getFirestore, Firestore } from 'firebase-admin/firestore'
-import { Client as BaseClient, Collection } from 'discord.js'
+import { Server, GuildDataBaseModel } from '../utils/classes.js'
 import { initializeApp, cert } from 'firebase-admin/app'
 import { createRequire } from 'module'
 import { join, dirname } from 'path'
@@ -42,7 +43,7 @@ export class Client extends BaseClient {
     buttons: ButtonManager
     servers: ServerManager = new ServerManager(this)
     websocket: WebSocket = new WebSocket('wss://oneki.herokuapp.com/')
-    constants: ClientConstants = {}
+    constants: ClientConstants
     private _wsInterval = setInterval(() => '', 20000000)
     private _wsintent = 1
     uno: Collection<string, UnoGame> = new Collection()
@@ -62,7 +63,7 @@ export class Client extends BaseClient {
             credential: cert(options.firebaseToken),
         }))
 
-        if (options.constants) this.constants = options.constants
+        this.constants = options.constants
 
         this.once('ready', () => this._onReady({ eventsPath: options.routes?.events ?? join(__dirname, '../events') }))
 
@@ -136,5 +137,17 @@ export class Client extends BaseClient {
                     this.on(event.name, (...args) => event.run(...args))
                 }),
         )
+    }
+
+    /**
+     * Return a new Server cached
+     * @param {Guild} guild 
+     * @param {GuildDataBaseModel} data 
+     * @returns {Server}
+     */
+    newServer(guild: Guild, data?: GuildDataBaseModel): Server {
+        const server = new Server(guild, data)
+        this.servers.set(guild.id, server)
+        return server
     }
 }

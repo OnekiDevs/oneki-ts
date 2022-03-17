@@ -8,7 +8,7 @@ export default class SS extends Command {
         super(client, {
             name: 'ss',
             description: 'make a fake ss',
-            defaultPermission: false,
+            defaultPermission: true,
             type: CommandType.guild
         })
     }
