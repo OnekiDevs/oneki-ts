@@ -73,9 +73,12 @@
         "error": "Lo siento, no puedo entender eso. Por favor, comprueba que hayas escrito tu fecha de cumpleaños como en este ejemplo: `5/22`"
     },
     "ban_cmf": {
-        "user_permissions": "No tienes permisos suficientes",
-        "bot_permissions": "No tengo permisos suficientes",
+        "user_permissions": "No tienes permisos suficientes para banear a ese usuario",
         "reply": "{user} ha sido baneado correctamente"
+    },
+    "kick_cmf": {
+        "user_permissions": "No tienes permisos suficientes para patear a ese usuario",
+        "reply": "{user} ha sido pateado correctamente"
     },
     "------------>>>============ olds ============<<<------------":"------------>>>============ olds ============<<<------------",
     "emoji_old": {

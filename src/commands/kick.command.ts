@@ -5,8 +5,8 @@ import { permissionsError } from '../utils/utils.js'
 export default class Ban extends Command {
     constructor(client: Client) {
         super(client, {
-            name: 'ban',
-            description: 'Ban a memeber',
+            name: 'kick',
+            description: 'Kick a memeber',
             defaultPermission: false,
             type: CommandType.guild
         })
@@ -14,29 +14,27 @@ export default class Ban extends Command {
 
     async getData(): Promise<ApplicationCommandDataResolvable> {
         return this.baseCommand
-            .addUserOption(option => option.setName('member').setDescription('The member to ban').setRequired(true))
-            .addStringOption(option => option.setName('reason').setDescription('The reason to ban'))
-            .addIntegerOption(option => option.setName('days').setDescription('The reason to ban'))
+            .addUserOption(option => option.setName('member').setDescription('The member to kick').setRequired(true))
+            .addStringOption(option => option.setName('reason').setDescription('The reason to kick'))
             .toJSON()
     }
 
     async run(interaction: CommandInteraction<'cached'>) {
         const member = interaction.options.getMember('member') as GuildMember
         const reason = interaction.options.getString('reason') as string
-        const days = interaction.options.getInteger('days') as number
         const server = (interaction.client as Client).servers.get(interaction.guildId)
         if (!server) (interaction.client as Client).newServer(interaction.guild)
 
         if (interaction.member.roles.highest.comparePositionTo(member.roles.highest) <= 0) return interaction.reply({
-            content: server.translate('ban_cmf.user_permissions'),
+            content: server.translate('kick_cmf.user_permissions'),
             ephemeral: true
         })
 
         if (!member.bannable) return permissionsError(interaction, Permissions.FLAGS.BAN_MEMBERS)
 
-        await interaction.guild.members.ban(member, { reason, days })
+        await interaction.guild.members.kick(member, reason)
 
-        interaction.reply(server.translate('ban_cmf.reply'))
+        interaction.reply(server.translate('kick_cmf.reply'))
 
         //TODO Implementar notas aqui
     }

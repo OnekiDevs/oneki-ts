@@ -13,7 +13,7 @@ export default class SS extends Command {
         })
     }
 
-    async getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
+    async getData(): Promise<ApplicationCommandDataResolvable> {
         return this.baseCommand
             .addStringOption(option => option.setName('text').setDescription('Text to show').setRequired(true))
             .addUserOption(option => option.setName('user').setDescription('The user to show'))
