@@ -42,16 +42,18 @@ export async function suggest_channel(interaction: CommandInteraction<'cached'>)
 }
 
 export function birthday_channel(interaction: CommandInteraction<'cached'>) {
+    interaction.deferReply()
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     let server = (interaction.client as Client).servers.get(interaction.guildId)
     if (!server) server = newServer(interaction.guild)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const birthdayChannel = interaction.options.getChannel('channel') as TextChannel
     server.setBirthdayChannel(birthdayChannel.id)
-    interaction.reply(server.translate('config_cmd.set_birthday', { channel: birthdayChannel?.toString() }))
+    interaction.editReply(server.translate('config_cmd.set_birthday', { channel: birthdayChannel?.toString() }))
 }
 
 export function birthday_message(interaction: CommandInteraction<'cached'>){
+    interaction.deferReply()
     let server = (interaction.client as Client).servers.get(interaction.guildId)
     if (!server) server = newServer(interaction.guild)
 
@@ -60,5 +62,5 @@ export function birthday_message(interaction: CommandInteraction<'cached'>){
 
     const birthdayMessage = interaction.options.getString('message')!
     server.setBirthdayMessage(birthdayMessage)
-    interaction.reply(server.translate('config_cmd.set_message', { message: birthdayMessage }))
+    interaction.editReply(server.translate('config_cmd.set_message', { message: birthdayMessage }))
 }
