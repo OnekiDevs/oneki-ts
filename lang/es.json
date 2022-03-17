@@ -89,6 +89,8 @@
         "show": "Mostrar cartas",
         "eat": "Comar cartas"
     },
+    "emote_analize_old": "Iniciando análisis",
     "------------>>>============ commons ============<<<------------":"------------>>>============ commons ============<<<------------",
-    "footer":"{bot} Bot v{version}"
+    "footer":"{bot} Bot v{version}",
+    "premium": "Actualize su membresia a Premium para usar esta caracteristica"
 }

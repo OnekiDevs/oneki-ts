@@ -89,6 +89,8 @@
         "show": "Show cards",
         "eat": "Eat cards"
     },
+    "emote_analize_old": "Starting analysis",
     "------------>>>============ commons ============<<<------------":"------------>>>============ commons ============<<<------------",
-    "footer":"{bot} Bot v{version}"
+    "footer":"{bot} Bot v{version}",
+    "premium": "Upgrade your membership to Premium to use this feature"
 }
