@@ -17,7 +17,7 @@ export default class Activitie extends Command {
         })
     }
 
-    async getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
+    async getData(): Promise<ApplicationCommandDataResolvable> {
         return this.baseCommand
             .addSubcommand((subcommand) =>
                 subcommand

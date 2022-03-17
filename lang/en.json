@@ -77,6 +77,10 @@
         "bot_permissions": "I do not have sufficient permissions",
         "reply": "{user} has been successfully banned"
     },
+    "kick_cmf": {
+        "user_permissions": "You do not have sufficient permissions",
+        "reply": "{user} has been successfully kicked"
+    },
     "------------>>>============ olds ============<<<------------":"------------>>>============ olds ============<<<------------",
     "emoji_old": {
         "missing": "Emoji not found",
