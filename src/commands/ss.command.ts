@@ -1,4 +1,4 @@
-import { ApplicationCommandDataResolvable, CommandInteraction, Guild, MessageAttachment } from 'discord.js'
+import { ApplicationCommandDataResolvable, CommandInteraction, MessageAttachment } from 'discord.js'
 import { Command, Client, CommandType } from '../utils/classes.js'
 
 import cw from 'capture-website'
@@ -8,12 +8,12 @@ export default class SS extends Command {
         super(client, {
             name: 'ss',
             description: 'make a fake ss',
-            defaultPermission: false,
+            defaultPermission: true,
             type: CommandType.guild
         })
     }
 
-    async getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
+    async getData(): Promise<ApplicationCommandDataResolvable> {
         return this.baseCommand
             .addStringOption(option => option.setName('text').setDescription('Text to show').setRequired(true))
             .addUserOption(option => option.setName('user').setDescription('The user to show'))

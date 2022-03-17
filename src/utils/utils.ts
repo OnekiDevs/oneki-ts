@@ -130,6 +130,12 @@ export async function sendError(client: Client, error: Error, file: string) {
     })
 }
 
+/**
+ * @deprecated Now use <client>.newServer(guild: Guild, data?: GuildDataBaseModel)
+ * @param {Guild} guild 
+ * @param {GuildDataBaseModel} data 
+ * @returns {Server}
+ */
 export function newServer(guild: Guild, data?: GuildDataBaseModel): Server {
     const server = new Server(guild, data);
     (guild.client as Client).servers.set(guild.id, server)

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
 	"------------>>>============ buttons ============<<<------------": "------------>>>============ buttons ============<<<------------",
 	"help_btn": {
 		"embed_title": "Lista de comandos de {bot} Bot",
@@ -92,4 +93,112 @@
 	},
 	"------------>>>============ commons ============<<<------------": "------------>>>============ commons ============<<<------------",
 	"footer": "{bot} Bot v{version}"
+=======
+    "------------>>>============ buttons ============<<<------------":"------------>>>============ buttons ============<<<------------",
+    "help_btn": {
+        "embed_title": "Lista de comandos de {bot} Bot",
+        "embed_desciption": "Categoria: {category}\n`<>` significa obligatorio\n`[]` significa opcional",
+        "command_field": "{cmd_description}\n**Alias:** {cmd_alias}\n**Uso:** `{cmd_prefix}{cmd_use}`"
+    },
+    "poll_btn": {
+        "reply": "Voto enviado",
+        "option": "{emoji} Opción {number} {value}",
+        "embed_footer": "Encuesta ID : {id} | {votes} votos | {bot} BOT v{version}"
+    },
+    "uno_btn": {
+        "start_out": "Debes unirte a la partida primero",
+        "start_no_host": "Sólo el host puede iniciar la partida"
+    },
+    "------------>>>============ commands ============<<<------------":"------------>>>============ commands ============<<<------------",
+    "activitie_cmd": {
+        "whotout_voice": "Ingresa a un canal de voz o específica uno",
+        "reply": "Actividad `{activitie}` creada en {channel}"
+    },
+    "config_cmd": {
+        "set_log": "Logs establecidos en {channel}",
+        "remove_log": "Log removido",
+        "set_lang":"Lenguaje establecido en `{lang}`",
+        "set_prefix": "Prefijo establecido a `{prefix}`",
+        "add_prefix": "Prefijo `{prefix}` agregado correctamente\nAhora el bot escucha los prefijos `{prefixies}`",
+        "remove_prefix": "Prefijo removido\nAhora el bot escucha `{prefixies}`",
+        "add_suggest_channel": {
+            "reply": "Canal {channel} establecido para las sugerencias de {alias}",
+            "message": "Este canal ahora esta establecido para las sugerencias de {alias}\nPara hacer una sugerencia usa **/suggest `channel:{alias}`**"
+        },
+        "remove_suggest_channel": {
+            "dont_exist": "No existe ningún canal configurado",
+            "reply": "Canal removido"
+        },
+        "set_suggest_channel": {
+            "reply": "Canal {channel} establecido para las sugerencias",
+            "message": "Este canal ahora esta establecido para las sugerencias\nPara hacer una sugerencia usa **/suggest**"
+        },
+        "set_birthday": "Canal {channel} establecido para celebrar los cumpleaños de los usuarios",
+        "remove_birthday": "Has eliminado el canal de cumpleaños. A partir de ahora los usuarios dejarán de recibir notificaciones en sus cumpleaños."
+    },
+    "info_cmd": {
+        "member": {
+            "title": "Información de {usuario}",
+            "member_color": "Color del miembro",
+            "user_color": "Color de usuario",
+            "boosting_from": "Boosteando desde",
+            "roles": "Roles"
+        }
+    },
+    "poll_cmd": {
+        "make": {
+            "dont_premium": "Solo se puede tener una encuesta a la vez.\nActualize su membresia a Premium o finalize la encuesta existente",
+            "havent_permissions": "No tengo permisos para enviar mensajes aquí",
+            "new_poll": "Nueva encuesta",
+            "footer": "Encuesta ID {id} | 0 votos | {bot} Bot v{version}",
+            "reply": "Encuesta enviada"
+        },
+        "finalize": "Finalizada"
+    },
+    "suggest_cmd":{
+        "whitout_channel": "Este servidor no tiene un canal de sugerencias establecido",
+        "sent":"Sugerencia enviada",
+        "title": "Sugerencia #{id}",
+        "error_permissions": "Error, El canal {channe} esta establecido para sugerencia pero no tengo permisos para acceder. {owner}",
+        "missing_channel": "Canal no encontrado"
+    },
+    "birthday_cmd": {
+        "set": "Tu fecha de cumpleaños ha sido cambiada a {birthday}",
+        "remove": "A partir de ahora no recibirás notificaciones por tu cumpleaños",
+        "error": "Lo siento, no puedo entender eso. Por favor, comprueba que hayas escrito tu fecha de cumpleaños como en este ejemplo: `5/22`"
+    },
+    "ban_cmf": {
+        "user_permissions": "No tienes permisos suficientes para banear a ese usuario",
+        "reply": "{user} ha sido baneado correctamente"
+    },
+    "kick_cmf": {
+        "user_permissions": "No tienes permisos suficientes para patear a ese usuario",
+        "reply": "{user} ha sido pateado correctamente"
+    },
+    "timeout_cmf": {
+        "user_permissions": "No tienes permisos suficientes para aislar a ese usuario",
+        "reply": "{user} ha sido aislado correctamente"
+    },
+    "------------>>>============ olds ============<<<------------":"------------>>>============ olds ============<<<------------",
+    "emoji_old": {
+        "missing": "Emoji no encontrado",
+        "link": "Enlace",
+        "forget": "Olvidaste mencionar un emoji"
+    },
+    "uno_old": {
+        "updating": "Actualizando cartas ...",
+        "gg": "GG, has ganado",
+        "waiting": "Esperando jugadores, se requieren minimo 2",
+        "end": "Partida terminada\nGanador: {user}",
+        "turn": "Turno de {user}",
+        "join": "Unirme",
+        "start": "Iniciar partida",
+        "show": "Mostrar cartas",
+        "eat": "Comar cartas"
+    },
+    "emote_analize_old": "Iniciando análisis",
+    "------------>>>============ commons ============<<<------------":"------------>>>============ commons ============<<<------------",
+    "footer":"{bot} Bot v{version}",
+    "premium": "Actualize su membresia a Premium para usar esta caracteristica"
+>>>>>>> 0e27eb350700c97edcd01e12407838069fc00b77
 }

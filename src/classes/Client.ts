@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { getFirestore, Firestore } from 'firebase-admin/firestore'
 import { Client as BaseClient, Collection, TextChannel } from 'discord.js'
+=======
+import { Client as BaseClient, Collection, Guild } from 'discord.js'
+import { getFirestore, Firestore } from 'firebase-admin/firestore'
+import { Server, GuildDataBaseModel } from '../utils/classes.js'
+>>>>>>> 0e27eb350700c97edcd01e12407838069fc00b77
 import { initializeApp, cert } from 'firebase-admin/app'
 import { createRequire } from 'module'
 import { join, dirname } from 'path'
@@ -140,6 +146,7 @@ export class Client extends BaseClient {
         )
     }
 
+
     private async _checkBirthdays(){
         console.log('checking birthdays')
         const usersSnap = await this.db.collection('users').get()
@@ -186,5 +193,17 @@ export class Client extends BaseClient {
         setTimeout(() => {
             this._checkBirthdays()
         }, 86400000)
+
+    /**
+     * Return a new Server cached
+     * @param {Guild} guild 
+     * @param {GuildDataBaseModel} data 
+     * @returns {Server}
+     */
+    newServer(guild: Guild, data?: GuildDataBaseModel): Server {
+        const server = new Server(guild, data)
+        this.servers.set(guild.id, server)
+        return server
+
     }
 }
