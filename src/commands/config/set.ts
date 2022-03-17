@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { CommandInteraction, Permissions, TextChannel } from 'discord.js'
 import { permissionsError, newServer } from '../../utils/utils.js'
 import { Client, LangType } from '../../utils/classes.js'
@@ -48,4 +49,16 @@ export function birthday_channel(interaction: CommandInteraction<'cached'>) {
     const birthdayChannel = interaction.options.getChannel('channel') as TextChannel
     server.setBirthdayChannel(birthdayChannel.id)
     interaction.reply(server.translate('config_cmd.set_birthday', { channel: birthdayChannel?.toString() }))
+}
+
+export function birthday_message(interaction: CommandInteraction<'cached'>){
+    let server = (interaction.client as Client).servers.get(interaction.guildId)
+    if (!server) server = newServer(interaction.guild)
+
+    const member = interaction.guild?.members.cache.get(interaction.user.id)
+    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+
+    const birthdayMessage = interaction.options.getString('message')!
+    server.setBirthdayMessage(birthdayMessage)
+    interaction.reply(server.translate('config_cmd.set_message', { message: birthdayMessage }))
 }
