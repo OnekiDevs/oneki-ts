@@ -85,18 +85,18 @@ export function randomId() {
 }
 
 export function imgToLink(img: Buffer, client: Client): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-        const channel = client.channels.cache.get(client.constants.imgChannel!)
+    return new Promise((resolve, reject) => {
+        const channel = client.channels.cache.get(client.constants.imgChannel)
 
-        let msg
         if (channel)
-            msg = await (channel as TextChannel).send({
+            (channel as TextChannel).send({
                 files: [new MessageAttachment(img)],
+            }).then(msg => {
+                resolve(msg.attachments.first()?.url??'')
+            }).catch(() => {
+                reject('No message')
             })
         else reject('No channel')
-
-        if (msg) resolve(msg.attachments.first()!.url)
-        else reject('No message')
     })
 }
 

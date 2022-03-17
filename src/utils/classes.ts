@@ -88,10 +88,10 @@ export interface GuildDataBaseModel {
 }
 
 export interface ClientConstants {
-    newServerLogChannel?: string;
-    imgChannel?: string;
-    errorChannel?: string;
-    jsDiscordRoll?: string;
+    newServerLogChannel: string;
+    imgChannel: string;
+    errorChannel: string;
+    jsDiscordRoll: string;
 }
 
 export interface ClientOptions extends BaseClientOptions {

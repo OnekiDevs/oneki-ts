@@ -67,6 +67,11 @@
         "error_permissions": "Error, El canal {channe} esta establecido para sugerencia pero no tengo permisos para acceder. {owner}",
         "missing_channel": "Canal no encontrado"
     },
+    "birthday_cmd": {
+        "set": "Tu fecha de cumpleaños ha sido cambiada a {birthday}",
+        "remove": "A partir de ahora no recibirás notificaciones por tu cumpleaños",
+        "error": "Lo siento, no puedo entender eso. Por favor, comprueba que hayas escrito tu fecha de cumpleaños como en este ejemplo: `5/22`"
+    },
     "------------>>>============ olds ============<<<------------":"------------>>>============ olds ============<<<------------",
     "emoji_old": {
         "missing": "Emoji no encontrado",
