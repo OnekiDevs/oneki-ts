@@ -144,38 +144,36 @@ export class Client extends BaseClient {
 
 
     private async _checkBirthdays(){
-        console.log('checking birthdays')
         const usersSnap = await this.db.collection('users').get()
         usersSnap.forEach(async user => {
+            
             const birthday = user.data().birthday
+            if (!birthday) return
             const [ month, day, year ] = birthday.split('/')
 
             //Check if it's the user's birthday
-            if(year > new Date().getFullYear()) return
-            if(month != new Date().getMonth() + 1 || day != new Date().getDate()) return
-
+            if(parseInt(year) > new Date().getFullYear()) return
+            if(parseInt(month) != new Date().getMonth() + 1 || parseInt(day) != new Date().getDate()) return
+            
             //Celebrate user's birthday
             //TODO: fix it
             this.servers.map(async server => {
+                console.log(server.logsChannels)
+                
                 const birthdayChannel = server.logsChannels.birthdayChannel
-                if(!birthdayChannel) return console.log('se esta deteniendo en el birthdaychannel',birthdayChannel)
+                if(!birthdayChannel) return
 
                 /* Revisar si el usuario está en el servidor */
                 let member = server.guild.members.cache.get(user.id)
                 if(!member) member = await server.guild.members.fetch(user.id) //Si no está en la cache
-                if(!member) return console.log('se esta deteniendo en member')//Si no está tampoco en la API retornamos
+                if(!member) return //Si no está tampoco en la API retornamos
 
                 /* Revisar si el canal sigue existiendo y obtenerlo */
                 let channel = server.guild.channels.cache.get(birthdayChannel) as TextChannel
                 if(!channel) channel = await server.guild.channels.fetch(birthdayChannel) as TextChannel
-                if(!channel){ //Si no está tampoco en la API lo borramos de la base de datos
-                    server.removeBirthdayChannel()
-                    delete server.logsChannels.birthdayChannel
-                    console.log('se esta deteniendo en el canal')
-                    return
-                } 
-                console.log('el identificador',server.logsChannels.birthdayMessage!.replaceAll('{username}',`<@${user.id}>`))
-                channel.send(server.logsChannels.birthdayMessage!.replaceAll('{username}',`<@${user.id}>`))
+                if(!channel) return server.removeBirthdayChannel() //Si no está tampoco en la API lo borramos de la base de datos
+                
+                channel.send(server.logsChannels.birthdayMessage?.replaceAll('{username}',`<@${user.id}>`)??`Feliz cumpleaños <@${user.id}>!!`)
             })
 
             //Update user's birthday
