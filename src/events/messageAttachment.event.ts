@@ -1,11 +1,12 @@
-import { Client } from '../utils/classes.js'
 import { TextChannel, GuildMember, MessageEmbed, Message } from 'discord.js'
 import { checkSend, sendError } from '../utils/utils.js'
+import { Client } from '../utils/classes.js'
 
 export const name = 'messageAttachment'
 
 export async function run(msg: Message) {
     try {
+        if (!msg.guild) return
         if (!(msg.client as Client).servers.has(msg.guild?.id ?? '')) return
         const server = (msg.client as Client).servers.get(msg.guild?.id ?? '')
         if (!server?.logsChannels.messageAttachment) return
@@ -44,8 +45,8 @@ export async function run(msg: Message) {
                     content: `El canal <#${server.logsChannels.messageDelete}> esta configurado para mostrar logs de Attachments, sin embargo no tengo acceso a ese canal o no existe.\nSe eliminara de la configuracion, para volver a activarlo debe ejecutar el comando **/config log message_attachment** nuevamente`,
                 })
             else {
-                //TODO terminar
-                //mandar una aviso al servidor
+                const channel = msg.guild.channels.cache.find(c => c.isText() && checkSend(c as TextChannel, msg.guild?.me as GuildMember))
+                if (channel) (channel as TextChannel).send(`El canal <#${server.logsChannels.messageDelete}> esta configurado para mostrar logs de attachments, sin embargo no tengo acceso a ese canal o no existe.\nSe eliminara de la configuracion, para volver a activarlo debe ejecutar el comando **/config log message_attachment** nuevamente`)
             }
             server.removeMessageDeleteLog()
         }

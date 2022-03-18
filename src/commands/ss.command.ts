@@ -1,6 +1,5 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, MessageAttachment } from 'discord.js'
 import { Command, Client, CommandType } from '../utils/classes.js'
-
 import cw from 'capture-website'
 
 export default class SS extends Command {
@@ -9,7 +8,7 @@ export default class SS extends Command {
             name: 'ss',
             description: 'make a fake ss',
             defaultPermission: true,
-            type: CommandType.guild
+            type: CommandType.global
         })
     }
 
@@ -20,7 +19,7 @@ export default class SS extends Command {
             .toJSON()
     }
 
-    async run(interaction: CommandInteraction<'cached'>): Promise<any> {
+    async run(interaction: CommandInteraction<'cached'>) {
         await interaction.deferReply()
         const member = interaction.options.getMember('user') ?? interaction.member
         const text = interaction.options.getString('text') as string

@@ -1,20 +1,21 @@
-import { Client } from '../utils/classes.js'
 import { MessageEmbed, Message, TextChannel, GuildMember } from 'discord.js'
 import { sendError, checkSend } from '../utils/utils.js'
+import { Client } from '../utils/classes.js'
 
 export const name = 'messageDelete'
 
 export function run(msg: Message) {
     try {
         if (msg.author.bot) return
+        if (!msg.guild) return
 
-        if (!(msg.client as Client).servers.has(msg.guild?.id ?? '')) return
-        const server = (msg.client as Client).servers.get(msg.guild?.id ?? '')
+        if (!(msg.client as Client).servers.has(msg.guild.id)) return
+        const server = (msg.client as Client).servers.get(msg.guild.id ?? '')
         if (!server?.logsChannels.messageDelete) return
         const channel: TextChannel = msg.client.channels.cache.get(
             server.logsChannels.messageDelete
         ) as TextChannel
-        if (channel && checkSend(channel, msg.guild?.me as GuildMember)) {
+        if (channel && checkSend(channel, msg.guild.me as GuildMember)) {
             const embed = new MessageEmbed()
             embed.setTitle('Mensaje Eliminado') //LANG:
             embed.setURL(msg.url)
@@ -41,19 +42,11 @@ export function run(msg: Message) {
             })
             channel.send({ embeds: [embed], content: msg.author.id })
         } else {
-            if (
-                msg.guild?.publicUpdatesChannel &&
-                checkSend(
-                    msg.guild?.publicUpdatesChannel,
-                    msg.guild.me as GuildMember
-                )
-            )
-                msg.guild?.publicUpdatesChannel.send({
-                    content: `El canal <#${server.logsChannels.messageDelete}> esta configurado para mostrar logs de mensajes eliminados, sin embargo no tengo acceso a ese canal o no existe.\nSe eliminara de la configuracion, para volver a activarlo debe ejecutar el comando **/config log message_delete** nuevamente`,
-                })
+            if (msg.guild.publicUpdatesChannel && checkSend(msg.guild.publicUpdatesChannel, msg.guild.me as GuildMember))
+                msg.guild.publicUpdatesChannel.send(`El canal <#${server.logsChannels.messageDelete}> esta configurado para mostrar logs de mensajes eliminados, sin embargo no tengo acceso a ese canal o no existe.\nSe eliminara de la configuracion, para volver a activarlo debe ejecutar el comando **/config log message_delete** nuevamente`)
             else {
-                //TODO terminar
-                //mandar una aviso al servidor
+                const channel = msg.guild.channels.cache.find(c => c.isText() && checkSend(c as TextChannel, msg.guild?.me as GuildMember))
+                if (channel) (channel as TextChannel).send(`El canal <#${server.logsChannels.messageDelete}> esta configurado para mostrar logs de mensajes eliminados, sin embargo no tengo acceso a ese canal o no existe.\nSe eliminara de la configuracion, para volver a activarlo debe ejecutar el comando **/config log message_delete** nuevamente`)
             }
             server.removeMessageDeleteLog()
         }
