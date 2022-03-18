@@ -153,7 +153,7 @@ export class Client extends BaseClient {
 
             //Check if it's the user's birthday
             if(year > new Date().getFullYear()) return
-            if(month != new Date().getMonth() + 1 || day != new Date().getDate()) return
+            if(month > new Date().getMonth() + 1 || day > new Date().getDate()) return
             
             //Celebrate user's birthday
             this.servers.map(async server => {
