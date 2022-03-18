@@ -1,5 +1,5 @@
-import { ButtonInteraction } from "discord.js";
-import { ButtonOptions } from "../utils/classes.js";
+import { ButtonInteraction } from 'discord.js'
+import { ButtonOptions } from '../utils/classes.js'
 
 export class Button {
     regex: RegExp;
@@ -11,6 +11,6 @@ export class Button {
     }
 
     run(interaction: ButtonInteraction) {
-        interaction.reply("pong");
+        interaction.reply('pong')
     }
 }
