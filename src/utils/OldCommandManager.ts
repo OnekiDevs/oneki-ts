@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { Collection } from 'discord.js'
-import { OldCommand, Client } from '../utils/classes.js'
+import { OldCommand, Client } from './classes.js'
 import {join} from 'path'
 
 export class OldCommandManager extends Collection<string, OldCommand> {

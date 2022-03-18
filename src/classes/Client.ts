@@ -2,7 +2,6 @@
 import { Client as BaseClient, Collection, TextChannel, Guild } from 'discord.js'
 import { getFirestore, Firestore } from 'firebase-admin/firestore'
 import { initializeApp, cert } from 'firebase-admin/app'
-import { sleep } from '../utils/utils.js'
 import { createRequire } from 'module'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -17,7 +16,6 @@ import {
     OldCommandManager,
     anyFunction,
     UnoGame,
-    GuildDataBaseModel,
     Server
 } from '../utils/classes.js'
 
@@ -53,10 +51,10 @@ export class Client extends BaseClient {
 
     constructor(options: ClientOptions) {
         super(options)
-        console.log(options.routes?.commands ?? join(__dirname, '../commands'), 'sdfgh')
-        this.oldCommands = new OldCommandManager(this, options.routes?.oldCommands ?? join(__dirname, '../oldCommands'))
-        this.commands = new CommandManager(this, options.routes?.commands ?? join(__dirname, '../commands'))
-        this.buttons = new ButtonManager(this, options.routes?.buttons ?? join(__dirname, '../buttons'))
+        
+        this.oldCommands = new OldCommandManager(this, options.routes.oldCommands)
+        this.commands = new CommandManager(this, options.routes.commands)
+        this.buttons = new ButtonManager(this, options.routes.buttons)
 
         this.i18nConfig = options.i18n
         this.version = version??'1.0.0'
@@ -108,17 +106,18 @@ export class Client extends BaseClient {
     }
 
     private async _onReady(options: { eventsPath: string }) {
-        this.servers.initialize().then(() => {
-            console.log('\x1b[34m%s\x1b[0m', 'Servidores Desplegados!!')
-            this.commands.deploy().then(() => {
-                console.log('\x1b[32m%s\x1b[0m', 'Comandos Desplegados!!')
-                this.initializeEventListener(options.eventsPath).then(() => {
-                    console.log('\x1b[35m%s\x1b[0m', 'Eventos Cargados!!')
-                    console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
-                    sleep(5000).then(() => this._checkBirthdays())
-                })
-            })
-        })
+        await this.servers.initialize()
+        console.log('\x1b[34m%s\x1b[0m', 'Servidores Desplegados!!')
+
+        await this.commands.deploy()
+        console.log('\x1b[32m%s\x1b[0m', 'Comandos Desplegados!!')
+
+        await this.initializeEventListener(options.eventsPath)
+        console.log('\x1b[35m%s\x1b[0m', 'Eventos Cargados!!')
+        
+        console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
+        
+        this._checkBirthdays()
     }
 
     private _onWebSocketMessage(message: string): void {
@@ -156,7 +155,6 @@ export class Client extends BaseClient {
             if(parseInt(month) != new Date().getMonth() + 1 || parseInt(day) != new Date().getDate()) return
             
             //Celebrate user's birthday
-            //TODO: fix it
             this.servers.map(async server => {
                 console.log(server.logsChannels)
                 
@@ -195,10 +193,9 @@ export class Client extends BaseClient {
      * @param {GuildDataBaseModel} data 
      * @returns {Server}
      */
-    newServer(guild: Guild, data?: GuildDataBaseModel): Server {
-        const server = new Server(guild, data)
+    newServer(guild: Guild): Server {
+        const server = new Server(guild)
         this.servers.set(guild.id, server)
         return server
-
     }
 }

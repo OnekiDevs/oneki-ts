@@ -9,7 +9,7 @@ export function language(interaction: CommandInteraction<'cached'>) {
     if (!server) server = newServer(interaction.guild)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const lang = interaction.options.getString('lang') as LangType
-    server.setLang(lang)
+    server.lang = lang
     interaction.reply(server.translate('config_cmd.set_lang', { lang }))
 }
 
