@@ -1,9 +1,10 @@
-import { config } from 'dotenv'
-config()
-
 import { Client } from './utils/classes.js'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { Guild } from 'discord.js'
+import { config } from 'dotenv'
+
+config()
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -51,7 +52,17 @@ client.login(process.env.DISCORD_TOKEN)
 
 client.ws.on('INTERACTION_CREATE', async interaction => {
     if (interaction.type !== 2) return
-    const { data: {name: commandName, options: [{name: subcommandGroup, options:[{name: subcommand}]}]} } = interaction
+    const {
+        data: {
+            name: commandName,
+            options: [
+                {
+                    name: subcommandGroup,
+                    options: [{ name: subcommand }]
+                }
+            ]
+        }
+    } = interaction
     if (!(commandName === 'config' && subcommandGroup === 'import' && subcommand === 'file')) return
     const command = interaction.data.options[0].options[0]
     await fetch(`https://discord.com/api/v10/interactions/${interaction.id}/${interaction.token}/callback`, {
@@ -81,14 +92,25 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
         )
 
     const req = await fetch(interaction.data.resolved.attachments[command.options[0].value].url)
-    const { prefixies, lang, logs_channels } = await req.json()
-    const obj = {
-        prefixies, lang, logs_channels
-    }
+    const guild = (await client.guilds.fetch(interaction.guild_id)) as Guild
+    let server = client.servers.get(guild.id)
+    if (!server) server = client.newServer(guild)
 
-    const guild = await client.guilds.cache.get(interaction.guild_id)
-    if (guild) client.newServer(guild, obj) 
-    
+    const { prefixies, lang, logs_channels } = await req.json()
+
+    if (prefixies) server.prefixies = prefixies
+    if (lang) server.lang = lang
+    if (logs_channels) {
+        const { message_update, message_delete, message_attachment, birthday_channel, birthday_message } = logs_channels
+
+        if (message_update) server.setMessageDeleteLog(message_update)
+        if (message_delete) server.setMessageDeleteLog(message_delete)
+        if (message_attachment) server.setMessageAttachmentLog(message_attachment)
+        if (birthday_channel) server.setBirthdayChannel(birthday_channel)
+        if (birthday_message) server.setBirthdayMessage(birthday_message)
+    }
+    server.syncDB(true)
+
     await fetch(`https://discord.com/api/v10/webhooks/${client.user?.id}/${interaction.token}/messages/@original`, {
         method: 'PATCH',
         body: JSON.stringify({

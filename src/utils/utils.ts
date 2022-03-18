@@ -1,3 +1,5 @@
+import { Server, Client } from './classes.js'
+import { fileURLToPath } from 'url'
 import {
     PermissionResolvable,
     CommandInteraction,
@@ -9,8 +11,6 @@ import {
     Guild,
     Message
 } from 'discord.js'
-import { Server, Client, GuildDataBaseModel } from './classes.js'
-import { fileURLToPath } from 'url'
 
 export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms))
@@ -136,8 +136,8 @@ export async function sendError(client: Client, error: Error, file: string) {
  * @param {GuildDataBaseModel} data 
  * @returns {Server}
  */
-export function newServer(guild: Guild, data?: GuildDataBaseModel): Server {
-    const server = new Server(guild, data);
+export function newServer(guild: Guild): Server {
+    const server = new Server(guild);
     (guild.client as Client).servers.set(guild.id, server)
     return server
 }

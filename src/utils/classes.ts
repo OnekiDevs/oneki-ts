@@ -9,10 +9,10 @@ export * from '../classes/Command.js'
 export * from '../classes/OldCommand.js'
 export * from '../classes/Button.js'
 export * from '../classes/Server.js'
-export * from '../classes/CommandManager.js'
-export * from '../classes/OldCommandManager.js'
-export * from '../classes/ButtonManager.js'
-export * from '../classes/ServerManager.js'
+export * from '../handlers/CommandManager.js'
+export * from './OldCommandManager.js'
+export * from '../handlers/ButtonManager.js'
+export * from './ServerManager.js'
 
 export * from '../classes/Player.js'
 export * from '../classes/UnoCards.js'
@@ -99,11 +99,11 @@ export interface ClientOptions extends BaseClientOptions {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     firebaseToken: any;
     constants: ClientConstants;
-    routes?: {
-        commands?: string;
-        oldCommands?: string;
-        events?: string;
-        buttons?: string;
+    routes: {
+        commands: string;
+        oldCommands: string;
+        events: string;
+        buttons: string;
     }
     i18n: {
         locales: string[];

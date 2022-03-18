@@ -3,8 +3,7 @@ import {
     GuildDataBaseModel,
     Client,
     LangType,
-    SuggestChannelObject,
-    LogsChannelsDatabaseModel
+    SuggestChannelObject
 } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import i18n from 'i18n'
@@ -29,143 +28,54 @@ export class Server {
      * @param guild The guild to which the Server object will bind
      * @param options
      */
-    constructor(guild: Guild, options?: GuildDataBaseModel) {
+    constructor(guild: Guild) {
         this.guild = guild
         this.db = (guild.client as Client).db.collection('guilds').doc(guild.id)
-
-        this.db.get().then(response => {
-            const obj: GuildDataBaseModel = {}
-            if (response.exists) {
-                const data: GuildDataBaseModel = response.data() as GuildDataBaseModel
-                if (data.lang)
-                    this._lang =
-                        options?.lang && options.lang !== data.lang
-                            ? ((obj.lang = options.lang), options.lang)
-                            : data.lang
-                if (data.prefixes) {
-                    if (options?.prefixes) {
-                        const optpr = options.prefixes.sort()
-                        const dtpr = data.prefixes.sort()
-                        if (optpr.length !== dtpr.length || !optpr.every((v, i) => v === dtpr[i]))
-                            obj.prefixes = options.prefixes
-                        this._prefixes = options.prefixes
-                    } else this._prefixes = data.prefixes
-                }
-                if (data.suggest_channels) {
-                    if (options?.suggest_channels) {
-                        const optsc = options.suggest_channels.sort()
-                        const dtsc = data.suggest_channels.sort()
-                        if (
-                            optsc.length !== dtsc.length ||
-                            !optsc.every(
-                                (v, i) =>
-                                    v.channel === dtsc[i].channel &&
-                                    v.default === dtsc[i].default &&
-                                    v.alias === dtsc[i].alias
-                            )
-                        )
-                            obj.suggest_channels = options.suggest_channels
-                        this.suggestChannels = options.suggest_channels
-                    } else this.suggestChannels = data.suggest_channels
-                }
-                if (data.last_suggest) this.lastSuggestId = data.last_suggest
-                if (data.logs_channels) {
-                    const { message_update, message_delete, message_attachment, birthday_channel, birthday_message } = data.logs_channels
-                    if (options?.logs_channels) {
-                        const obj2: LogsChannelsDatabaseModel = {}
-
-                        if (message_update && message_update !== options.logs_channels.message_update) {
-                            this.logsChannels.messageUpdate = message_update
-                            obj2.message_update = message_update
-                        } else if (message_update) {
-                            this.logsChannels.messageUpdate = message_update
-                            obj2.message_update = message_update
-                        }
-
-                        if (message_delete && message_delete !== options.logs_channels.message_delete) {
-                            this.logsChannels.messageDelete = message_delete
-                            obj2.message_delete = message_delete
-                        } else if (message_delete) {
-                            this.logsChannels.messageDelete = message_delete
-                            obj2.message_delete = message_delete
-                        }
-
-                        if (message_attachment && message_attachment !== options.logs_channels.message_attachment) {
-                            this.logsChannels.messageAttachment = message_attachment
-                            obj2.message_attachment = message_attachment
-                        } else if (message_attachment) {
-                            this.logsChannels.messageAttachment = message_attachment
-                            obj2.message_attachment = message_attachment
-                        }
-
-                        if (birthday_channel && birthday_channel !== options.logs_channels.birthday_channel) {
-                            this.logsChannels.birthdayChannel = birthday_channel
-                            obj2.birthday_channel = birthday_channel
-                        } else if (birthday_channel) {
-                            this.logsChannels.birthdayChannel = birthday_channel
-                            obj2.birthday_channel = birthday_channel
-                        }
-
-                        if (birthday_message && birthday_message !== options.logs_channels.birthday_message) {
-                            this.logsChannels.birthdayMessage = birthday_message
-                            obj2.birthday_channel = birthday_message
-                        } else if (birthday_message) {
-                            this.logsChannels.birthdayChannel = birthday_message
-                            obj2.birthday_channel = birthday_message
-                        }
-
-                        if (Object.values(obj2).length > 0) obj.logs_channels = obj2
-                    } else {
-                        if (message_update) this.logsChannels.messageUpdate = message_update
-                        if (message_delete) this.logsChannels.messageDelete = message_delete
-                        if (message_delete) this.logsChannels.messageDelete = message_delete
-                        if (birthday_channel) this.logsChannels.birthdayChannel = birthday_channel
-                        if (birthday_message) this.logsChannels.birthdayMessage = birthday_message
-                    }
-                }
-                if (data.premium)
-                    this.premium =
-                        options?.premium && options.premium !== data.premium
-                            ? ((obj.premium = options.premium), options.premium)
-                            : data.premium
-
-                if (Object.values(obj).length > 0) this.db.update(obj)
-            } else {
-                if (options?.lang) this._lang = ((obj.lang = options.lang), options.lang)
-                if (options?.prefixes) this._prefixes = ((obj.prefixes = options.prefixes), options.prefixes)
-                if (options?.suggest_channels)
-                    this.suggestChannels = ((obj.suggest_channels = options.suggest_channels), options.suggest_channels)
-                if (options?.premium) this.premium = ((obj.premium = options.premium), options.premium)
-
-                const obj2: LogsChannelsDatabaseModel = {}
-                if (options?.logs_channels?.message_update)
-                    this.logsChannels.messageUpdate =
-                        ((obj2.message_update = options.logs_channels.message_update),
-                        options.logs_channels.message_update)
-                if (options?.logs_channels?.message_delete)
-                    this.logsChannels.messageDelete =
-                        ((obj2.message_delete = options.logs_channels.message_delete),
-                        options.logs_channels.message_delete)
-                if (options?.logs_channels?.message_attachment)
-                    this.logsChannels.messageAttachment =
-                        ((obj2.message_attachment = options.logs_channels.message_attachment),
-                        options.logs_channels.message_attachment)
-                if (options?.logs_channels?.birthday_channel)
-                    this.logsChannels.birthdayChannel =
-                        ((obj2.birthday_channel = options.logs_channels.birthday_channel),
-                        options.logs_channels.birthday_channel)
-                if (options?.logs_channels?.birthday_channel)
-                    this.logsChannels.birthdayMessage =
-                        ((obj2.birthday_message = options.logs_channels.birthday_message),
-                        options.logs_channels.birthday_message)
-
-                if (Object.values(obj2).length > 0) obj.logs_channels = obj2
-                if (Object.values(obj).length > 0) this.db.create(obj)
-            }
-            console.log(this.logsChannels, 'server', this.guild.id)
-        })
-
         this._i18n.configure((guild.client as Client).i18nConfig)
+    }
+
+    async syncDB(dataPriority?: boolean): Promise<void> {
+        const db = await this.db.get()
+        if (!db.exists || dataPriority) {
+            const obj = this.toDBObject()
+            this.db.set(obj)
+            return Promise.resolve()
+        }
+        const data = db.data() as GuildDataBaseModel
+        if (data.lang) this.lang = data.lang
+        if (data.premium) this.premium = true
+        if (data.last_suggest) this.lastSuggestId = data.last_suggest
+        if (data.suggest_channels) this.suggestChannels = data.suggest_channels
+        if (data.logs_channels) {
+            const { message_update, message_delete, message_attachment, birthday_channel, birthday_message } = data.logs_channels
+
+            if (message_update) this.logsChannels.messageUpdate = message_update
+            if (message_delete) this.logsChannels.messageDelete = message_delete
+            if (message_attachment) this.logsChannels.messageAttachment = message_attachment
+            if (birthday_channel) this.logsChannels.birthdayChannel = birthday_channel
+            if (birthday_message) this.logsChannels.birthdayMessage = birthday_message
+        }
+        return Promise.resolve()
+    }
+
+    toDBObject(): GuildDataBaseModel {
+        const obj: GuildDataBaseModel = {}
+        if (JSON.stringify(this.getPrefixes(true)) !== JSON.stringify(['?','>'])) obj.prefixes = this._prefixes
+        if (this.lang !== LangType.en) obj.lang = this.lang
+        if (this.lastSuggestId) obj.last_suggest = this.lastSuggestId
+        if (this.suggestChannels) obj.suggest_channels = this.suggestChannels
+        if (this.logsChannels) {
+            const { messageUpdate, messageDelete, messageAttachment, birthdayChannel, birthdayMessage } = this.logsChannels
+            obj.logs_channels = {}
+
+            if (messageUpdate) obj.logs_channels.message_update = messageUpdate
+            if (messageDelete) obj.logs_channels.message_delete = messageDelete
+            if (messageAttachment) obj.logs_channels.message_attachment = messageAttachment
+            if (birthdayChannel) obj.logs_channels.birthday_channel = birthdayChannel
+            if (birthdayMessage) obj.logs_channels.birthday_message = birthdayMessage
+        }
+
+        return obj
     }
 
     /**
@@ -175,9 +85,9 @@ export class Server {
         return this._lastSuggestId
     }
 
-    set lastSuggestId(n) {
+    set lastSuggestId(n: number) {
         this._lastSuggestId = n
-        //TODO set in the db
+        this.db.update({last_suggest:n}).catch(()=>this.db.set({last_suggest:n}))
     }
 
     /**
@@ -185,6 +95,10 @@ export class Server {
      */
     get prefixies(): string[] {
         return [`<@!${this.guild.me?.id}>`, `<@${this.guild.me?.id}>`, ...this._prefixes]
+    }
+
+    set prefixies(value: string[]) {
+        this._prefixes = value
     }
 
     /**
@@ -267,15 +181,11 @@ export class Server {
     /**
      * Return a lang of the guild for the Server.lang
      */
-    get lang(): string {
+    get lang(): LangType {
         return this._lang
     }
 
-    /**
-     * Set a new language for the guild in the Server.lang
-     * @param {string} lang - lang to set
-     */
-    setLang(lang: LangType) {
+    set lang(lang: LangType) {
         this._lang = lang
         this.db.update({ lang }).catch(() => this.db.set({ lang }))
         ;(this.guild.client as Client).websocket.send(
