@@ -41,21 +41,21 @@ export async function suggest_channel(interaction: CommandInteraction<'cached'>)
     (interaction.client as Client).commands.get('config')?.deploy(interaction.guild) //TODO cambiar a autocompletado
 }
 
-export function birthday_channel(interaction: CommandInteraction<'cached'>) {
-    interaction.deferReply()
+export async function birthday_channel(interaction: CommandInteraction<'cached'>) {
+    await interaction.deferReply()
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = newServer(interaction.guild)
+    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const birthdayChannel = interaction.options.getChannel('channel') as TextChannel
     server.setBirthdayChannel(birthdayChannel.id)
     interaction.editReply(server.translate('config_cmd.set_birthday', { channel: birthdayChannel?.toString() }))
 }
 
-export function birthday_message(interaction: CommandInteraction<'cached'>){
-    interaction.deferReply()
+export async function birthday_message(interaction: CommandInteraction<'cached'>){
+    await interaction.deferReply()
     let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = newServer(interaction.guild)
+    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
 
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)

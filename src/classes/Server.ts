@@ -1,5 +1,11 @@
 import { Guild, GuildChannel } from 'discord.js'
-import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, LogsChannelsDatabaseModel } from '../utils/classes.js'
+import {
+    GuildDataBaseModel,
+    Client,
+    LangType,
+    SuggestChannelObject,
+    LogsChannelsDatabaseModel
+} from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import i18n from 'i18n'
 export class Server {
@@ -11,11 +17,11 @@ export class Server {
     suggestChannels: SuggestChannelObject[] = []
     private _lastSuggestId = 0
     logsChannels: {
-        messageUpdate?: string;
-        messageDelete?: string;
-        messageAttachment?: string;
-        birthdayChannel?: string;
-        birthdayMessage?: string;
+        messageUpdate?: string
+        messageDelete?: string
+        messageAttachment?: string
+        birthdayChannel?: string
+        birthdayMessage?: string
     } = {}
     premium = false
     /**
@@ -27,16 +33,21 @@ export class Server {
         this.guild = guild
         this.db = (guild.client as Client).db.collection('guilds').doc(guild.id)
 
-        this.db.get().then((response) => {
+        this.db.get().then(response => {
             const obj: GuildDataBaseModel = {}
             if (response.exists) {
                 const data: GuildDataBaseModel = response.data() as GuildDataBaseModel
-                if (data.lang) this._lang = options?.lang && options.lang !== data.lang ? ((obj.lang = options.lang), options.lang) : data.lang
+                if (data.lang)
+                    this._lang =
+                        options?.lang && options.lang !== data.lang
+                            ? ((obj.lang = options.lang), options.lang)
+                            : data.lang
                 if (data.prefixes) {
                     if (options?.prefixes) {
                         const optpr = options.prefixes.sort()
                         const dtpr = data.prefixes.sort()
-                        if (optpr.length !== dtpr.length || !optpr.every((v, i) => v === dtpr[i])) obj.prefixes = options.prefixes
+                        if (optpr.length !== dtpr.length || !optpr.every((v, i) => v === dtpr[i]))
+                            obj.prefixes = options.prefixes
                         this._prefixes = options.prefixes
                     } else this._prefixes = data.prefixes
                 }
@@ -44,14 +55,22 @@ export class Server {
                     if (options?.suggest_channels) {
                         const optsc = options.suggest_channels.sort()
                         const dtsc = data.suggest_channels.sort()
-                        if (optsc.length !== dtsc.length || !optsc.every((v, i) => v.channel === dtsc[i].channel && v.default === dtsc[i].default && v.alias === dtsc[i].alias))
+                        if (
+                            optsc.length !== dtsc.length ||
+                            !optsc.every(
+                                (v, i) =>
+                                    v.channel === dtsc[i].channel &&
+                                    v.default === dtsc[i].default &&
+                                    v.alias === dtsc[i].alias
+                            )
+                        )
                             obj.suggest_channels = options.suggest_channels
                         this.suggestChannels = options.suggest_channels
                     } else this.suggestChannels = data.suggest_channels
                 }
                 if (data.last_suggest) this.lastSuggestId = data.last_suggest
                 if (data.logs_channels) {
-                    const { message_update, message_delete, message_attachment, birthday_channel } = data.logs_channels
+                    const { message_update, message_delete, message_attachment, birthday_channel, birthday_message } = data.logs_channels
                     if (options?.logs_channels) {
                         const obj2: LogsChannelsDatabaseModel = {}
 
@@ -87,31 +106,63 @@ export class Server {
                             obj2.birthday_channel = birthday_channel
                         }
 
+                        if (birthday_message && birthday_message !== options.logs_channels.birthday_message) {
+                            this.logsChannels.birthdayMessage = birthday_message
+                            obj2.birthday_channel = birthday_message
+                        } else if (birthday_message) {
+                            this.logsChannels.birthdayChannel = birthday_message
+                            obj2.birthday_channel = birthday_message
+                        }
+
                         if (Object.values(obj2).length > 0) obj.logs_channels = obj2
                     } else {
                         if (message_update) this.logsChannels.messageUpdate = message_update
                         if (message_delete) this.logsChannels.messageDelete = message_delete
-                        if (message_attachment) this.logsChannels.messageAttachment = message_attachment
+                        if (message_delete) this.logsChannels.messageDelete = message_delete
+                        if (birthday_channel) this.logsChannels.birthdayChannel = birthday_channel
+                        if (birthday_message) this.logsChannels.birthdayMessage = birthday_message
                     }
                 }
-                if (data.premium) this.premium = options?.premium && options.premium !== data.premium ? ((obj.premium = options.premium), options.premium) : data.premium
+                if (data.premium)
+                    this.premium =
+                        options?.premium && options.premium !== data.premium
+                            ? ((obj.premium = options.premium), options.premium)
+                            : data.premium
 
                 if (Object.values(obj).length > 0) this.db.update(obj)
             } else {
                 if (options?.lang) this._lang = ((obj.lang = options.lang), options.lang)
                 if (options?.prefixes) this._prefixes = ((obj.prefixes = options.prefixes), options.prefixes)
-                if (options?.suggest_channels) this.suggestChannels = ((obj.suggest_channels = options.suggest_channels), options.suggest_channels)
+                if (options?.suggest_channels)
+                    this.suggestChannels = ((obj.suggest_channels = options.suggest_channels), options.suggest_channels)
                 if (options?.premium) this.premium = ((obj.premium = options.premium), options.premium)
 
                 const obj2: LogsChannelsDatabaseModel = {}
-                if (options?.logs_channels?.message_update) this.logsChannels.messageUpdate = ((obj2.message_update = options.logs_channels.message_update), options.logs_channels.message_update)
-                if (options?.logs_channels?.message_delete) this.logsChannels.messageDelete = ((obj2.message_delete = options.logs_channels.message_delete), options.logs_channels.message_delete)
-                if (options?.logs_channels?.message_attachment) this.logsChannels.messageAttachment = ((obj2.message_attachment = options.logs_channels.message_attachment), options.logs_channels.message_attachment)
-                if (options?.logs_channels?.birthday_channel) this.logsChannels.birthdayChannel = ((obj2.birthday_channel = options.logs_channels.birthday_channel), options.logs_channels.birthday_channel)
+                if (options?.logs_channels?.message_update)
+                    this.logsChannels.messageUpdate =
+                        ((obj2.message_update = options.logs_channels.message_update),
+                        options.logs_channels.message_update)
+                if (options?.logs_channels?.message_delete)
+                    this.logsChannels.messageDelete =
+                        ((obj2.message_delete = options.logs_channels.message_delete),
+                        options.logs_channels.message_delete)
+                if (options?.logs_channels?.message_attachment)
+                    this.logsChannels.messageAttachment =
+                        ((obj2.message_attachment = options.logs_channels.message_attachment),
+                        options.logs_channels.message_attachment)
+                if (options?.logs_channels?.birthday_channel)
+                    this.logsChannels.birthdayChannel =
+                        ((obj2.birthday_channel = options.logs_channels.birthday_channel),
+                        options.logs_channels.birthday_channel)
+                if (options?.logs_channels?.birthday_channel)
+                    this.logsChannels.birthdayMessage =
+                        ((obj2.birthday_message = options.logs_channels.birthday_message),
+                        options.logs_channels.birthday_message)
 
                 if (Object.values(obj2).length > 0) obj.logs_channels = obj2
                 if (Object.values(obj).length > 0) this.db.create(obj)
             }
+            console.log(this.logsChannels, 'server', this.guild.id)
         })
 
         this._i18n.configure((guild.client as Client).i18nConfig)
@@ -152,16 +203,16 @@ export class Server {
      */
     setPrefix(prefix: string) {
         this._prefixes = [prefix]
-        this.db.update({ prefix: [prefix] }).catch(() => this.db.update({ prefix: [prefix] }));
-        (this.guild.client as Client).websocket.send(
+        this.db.update({ prefix: [prefix] }).catch(() => this.db.update({ prefix: [prefix] }))
+        ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_prefix',
                 from: 'mts',
                 data: {
                     prefix: prefix,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
     }
 
@@ -171,16 +222,16 @@ export class Server {
      */
     addPrefix(prefix: string) {
         this._prefixes.push(prefix)
-        this.db.update({ prefixies: this._prefixes }).catch(() => this.db.set({ prefixies: this._prefixes }));
-        (this.guild.client as Client).websocket.send(
+        this.db.update({ prefixies: this._prefixes }).catch(() => this.db.set({ prefixies: this._prefixes }))
+        ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'add_prefix',
                 from: 'mts',
                 data: {
                     prefix: prefix,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
     }
 
@@ -193,10 +244,13 @@ export class Server {
             this._prefixes.splice(this._prefixes.indexOf(prefix), 1)
             if (this._prefixes.length < 1) {
                 this._prefixes = ['>', '?']
-                this.db.update({ prefixies: FieldValue.delete() })
+                this.db
+                    .update({ prefixies: FieldValue.delete() })
                     .catch(() => this.db.set({ prefixies: FieldValue.delete() }))
-            } else this.db.update({ prefixies: FieldValue.arrayRemove(prefix) })
-                .catch(() => this.db.set({ prefixies: FieldValue.arrayRemove(prefix) }))
+            } else
+                this.db
+                    .update({ prefixies: FieldValue.arrayRemove(prefix) })
+                    .catch(() => this.db.set({ prefixies: FieldValue.arrayRemove(prefix) }))
         }
         (this.guild.client as Client).websocket.send(
             JSON.stringify({
@@ -204,9 +258,9 @@ export class Server {
                 from: 'mts',
                 data: {
                     prefix: prefix,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
     }
 
@@ -223,16 +277,16 @@ export class Server {
      */
     setLang(lang: LangType) {
         this._lang = lang
-        this.db.update({ lang }).catch(() => this.db.set({ lang }));
-        (this.guild.client as Client).websocket.send(
+        this.db.update({ lang }).catch(() => this.db.set({ lang }))
+        ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_guild_lang',
                 from: 'mts',
                 data: {
                     lang,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
     }
 
@@ -242,16 +296,18 @@ export class Server {
      */
     setSuggestChannel(channel: GuildChannel) {
         this.suggestChannels = [{ channel: channel.id, default: true }] as SuggestChannelObject[]
-        this.db.update({ suggest_channels: [{ channel_id: channel.id, default: true }] }).catch(() => this.db.set({ suggest_channels: [{ channel_id: channel.id, default: true }] }));
-        (this.guild.client as Client).websocket.send(
+        this.db
+            .update({ suggest_channels: [{ channel_id: channel.id, default: true }] })
+            .catch(() => this.db.set({ suggest_channels: [{ channel_id: channel.id, default: true }] }))
+        ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_suggest_channel',
                 from: 'mts',
                 data: {
                     channel: channel.id,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
     }
 
@@ -260,10 +316,13 @@ export class Server {
      * @param {SuggestChannelObject} suggestChannelObject - the information to add
      */
     addSuggestChannel(suggestChannelObject: SuggestChannelObject) {
-        if (suggestChannelObject.default) this.suggestChannels = this.suggestChannels.map((i) => ({ ...i, default: false }))
+        if (suggestChannelObject.default)
+            this.suggestChannels = this.suggestChannels.map(i => ({ ...i, default: false }))
         this.suggestChannels.push(suggestChannelObject)
-        this.db.update({ suggest_channels: this.suggestChannels }).catch(() => this.db.set({ suggest_channels: this.suggestChannels }));
-        (this.guild.client as Client).websocket.send(
+        this.db
+            .update({ suggest_channels: this.suggestChannels })
+            .catch(() => this.db.set({ suggest_channels: this.suggestChannels }))
+        ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'add_suggest_channel',
                 from: 'mts',
@@ -271,9 +330,9 @@ export class Server {
                     channel: suggestChannelObject.channel,
                     default: suggestChannelObject.default,
                     alias: suggestChannelObject.alias,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
     }
 
@@ -282,48 +341,54 @@ export class Server {
      * @param {string} idToRemove - id of channel to remove
      */
     removeSuggestChannel(idToRemove: string) {
-        if (!this.suggestChannels.find((c) => c.channel == idToRemove)) return
+        if (!this.suggestChannels.find(c => c.channel == idToRemove)) return
         const newChannels = this.suggestChannels
-            .map((c) => {
+            .map(c => {
                 if (c.channel == idToRemove) return false
                 return c
             })
-            .filter((c) => c)
+            .filter(c => c)
         this.suggestChannels = newChannels as SuggestChannelObject[]
-        this.db.update({ suggest_channels: this.suggestChannels }).catch(() => this.db.set({ suggest_channels: this.suggestChannels }));
-        (this.guild.client as Client).websocket.send(
+        this.db
+            .update({ suggest_channels: this.suggestChannels })
+            .catch(() => this.db.set({ suggest_channels: this.suggestChannels }))
+        ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'remove_suggest_channel',
                 from: 'mts',
                 data: {
                     channel: idToRemove,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
     }
 
     /**
      * Sync the server config with the data base
      */
-
     private updateChannelsLogsInDB() {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data: any = {}
         if (this.logsChannels.messageUpdate) data['logs_channels.message_update'] = this.logsChannels.messageUpdate
-        if (this.logsChannels.messageAttachment) data['logs_channels.message_attachment'] = this.logsChannels.messageAttachment
-        if (this.logsChannels.birthdayChannel) data['logs_channels.birthday_channel'] = this.logsChannels.birthdayChannel  
-        if (this.logsChannels.messageDelete) data['logs_channels.message_delete'] = this.logsChannels.messageDelete  
+        if (this.logsChannels.messageAttachment)
+            data['logs_channels.message_attachment'] = this.logsChannels.messageAttachment
+        if (this.logsChannels.birthdayChannel)
+            data['logs_channels.birthday_channel'] = this.logsChannels.birthdayChannel
+        if (this.logsChannels.messageDelete) data['logs_channels.message_delete'] = this.logsChannels.messageDelete
         if (!data.logs_channels) data.logs_channels = {}
         this.db.update(data).catch(() => this.db.set(data))
     }
 
     /**
      * Set a Message Update Log
-     * @param {string} channel - id of the channel to set 
+     * @param {string} channel - id of the channel to set
      */
     setMessageUpdateLog(channel: string) {
         this.logsChannels.messageUpdate = channel
-        this.db.update({ ['logs_channels.message_update']: channel }).catch(() => this.db.set({ ['logs_channels.message_update']: channel }))
+        this.db
+            .update({ ['logs_channels.message_update']: channel })
+            .catch(() => this.db.set({ ['logs_channels.message_update']: channel }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_log',
@@ -331,9 +396,9 @@ export class Server {
                 data: {
                     log: 'MESSAGE_UPDATE',
                     channel: channel,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
     }
 
@@ -341,17 +406,17 @@ export class Server {
      * Remove the Message Update Log
      */
     removeMessageUpdateLog() {
-        if (!this.logsChannels.messageUpdate) return;
-        (this.guild.client as Client).websocket.send(
+        if (!this.logsChannels.messageUpdate) return
+        ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
                 data: {
                     log: 'MESSAGE_UPDATE',
                     channel: this.logsChannels.messageUpdate,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
         delete this.logsChannels.messageUpdate
         this.updateChannelsLogsInDB()
@@ -359,11 +424,13 @@ export class Server {
 
     /**
      * Set a Message Delete Log
-     * @param {string} channel - id of the channel to set 
+     * @param {string} channel - id of the channel to set
      */
     setMessageDeleteLog(channel: string) {
         this.logsChannels.messageDelete = channel
-        this.db.update({ ['logs_channels.message_delete']: channel }).catch(() => this.db.set({ ['logs_channels.message_delete']: channel }))
+        this.db
+            .update({ ['logs_channels.message_delete']: channel })
+            .catch(() => this.db.set({ ['logs_channels.message_delete']: channel }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_log',
@@ -371,9 +438,9 @@ export class Server {
                 data: {
                     log: 'MESSAGE_DELETE',
                     channel: channel,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
     }
 
@@ -381,17 +448,17 @@ export class Server {
      * Remove the Message Delete Log
      */
     removeMessageDeleteLog() {
-        if (!this.logsChannels.messageDelete) return;
-        (this.guild.client as Client).websocket.send(
+        if (!this.logsChannels.messageDelete) return
+        ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
                 data: {
                     log: 'MESSAGE_DELETE',
                     channel: this.logsChannels.messageDelete,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
         delete this.logsChannels.messageDelete
         this.updateChannelsLogsInDB()
@@ -399,11 +466,13 @@ export class Server {
 
     /**
      * Set a Message Attachments Log
-     * @param {string} channel - id of the channel to set 
+     * @param {string} channel - id of the channel to set
      */
     setMessageAttachmentLog(channel: string) {
         this.logsChannels.messageAttachment = channel
-        this.db.update({ ['logs_channels.message_attachment']: channel }).catch(() => this.db.set({ ['logs_channels.message_attachment']: channel }))
+        this.db
+            .update({ ['logs_channels.message_attachment']: channel })
+            .catch(() => this.db.set({ ['logs_channels.message_attachment']: channel }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_log',
@@ -411,9 +480,9 @@ export class Server {
                 data: {
                     log: 'MESSAGE_ATTACHMENT',
                     channel,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
     }
 
@@ -421,41 +490,42 @@ export class Server {
      * Remove the Message Attachments Log
      */
     removeMessageAttachmentLog() {
-        if (!this.logsChannels.messageAttachment) return;
-        (this.guild.client as Client).websocket.send(
+        if (!this.logsChannels.messageAttachment) return
+        ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
                 data: {
                     log: 'MESSAGE_ATTACHMENT',
                     channel: this.logsChannels.messageAttachment,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
         delete this.logsChannels.messageAttachment
         this.updateChannelsLogsInDB()
     }
 
-
     /**
      * Get a response in the language set on the server
-     * @param {string} phrase - phrase to translate 
+     * @param {string} phrase - phrase to translate
      * @param {string} params - if is nesesary
      * @returns {string} string
      */
-    translate(phrase: string, params?: object): string{        
-        if (params) return this._i18n.__mf({phrase, locale:this.lang}, params) ?? ''
-        return this._i18n.__({phrase, locale:this.lang}) ?? ''
+    translate(phrase: string, params?: object): string {
+        if (params) return this._i18n.__mf({ phrase, locale: this.lang }, params) ?? ''
+        return this._i18n.__({ phrase, locale: this.lang }) ?? ''
     }
 
     /**
      * Set the server's birthday channel
      * @param {string} birthdayChannel - The channel id to use
      */
-    setBirthdayChannel(birthdayChannel: string){
+    setBirthdayChannel(birthdayChannel: string) {
         this.logsChannels.birthdayChannel = birthdayChannel
-        this.db.update({ ['logs_channels.birthday_channel']: birthdayChannel }).catch(() => this.db.set({ ['logs_channels.birthday_channel']: birthdayChannel }))
+        this.db
+            .update({ ['logs_channels.birthday_channel']: birthdayChannel })
+            .catch(() => this.db.set({ ['logs_channels.birthday_channel']: birthdayChannel }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_log',
@@ -463,9 +533,9 @@ export class Server {
                 data: {
                     log: 'BIRTHDAY_CHANNEL',
                     channel: birthdayChannel,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
     }
 
@@ -473,43 +543,45 @@ export class Server {
      * Set the server's birthday message
      * @param {string} birthdayMessage - The message to use
      */
-    setBirthdayMessage(birthdayMessage: string){
+    setBirthdayMessage(birthdayMessage: string) {
         this.logsChannels.birthdayMessage = birthdayMessage
-        this.db.update({ ['logs_channels.birthday_message']: birthdayMessage }).catch(() => this.db.set({ ['logs_channels.birthday_message']: birthdayMessage }))
+        this.db
+            .update({ ['logs_channels.birthday_message']: birthdayMessage })
+            .catch(() => this.db.set({ logs_channels: { birthday_message: birthdayMessage } }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_log',
                 from: 'mts',
                 data: {
-                    log: 'BIRTHDAY_CHANNEL',
-                    channel: birthdayMessage,
-                    guild: this.guild.id,
-                },
-            }),
+                    log: 'BIRTHDAY_MESSAGE',
+                    message: birthdayMessage,
+                    guild: this.guild.id
+                }
+            })
         )
     }
 
     /**
      * Remove server's birthday channel
      */
-    removeBirthdayChannel(){
-        if (!this.logsChannels.birthdayChannel) return;
-        (this.guild.client as Client).websocket.send(
+    removeBirthdayChannel() {
+        if (!this.logsChannels.birthdayChannel) return
+        ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
                 data: {
                     log: 'BIRTHDAY_CHANNEL_DELETE',
                     channel: this.logsChannels.birthdayChannel,
-                    guild: this.guild.id,
-                },
-            }),
+                    guild: this.guild.id
+                }
+            })
         )
         delete this.logsChannels.birthdayChannel
         this.updateChannelsLogsInDB()
     }
 
-    startEmojiAnalisis(){
+    startEmojiAnalisis() {
         console.log('')
     }
 }

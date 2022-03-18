@@ -76,6 +76,7 @@ export interface LogsChannelsDatabaseModel {
     message_delete?: string;
     message_attachment?: string;
     birthday_channel?: string;
+    birthday_message?: string;
 }
 
 export interface GuildDataBaseModel {
