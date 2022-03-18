@@ -143,6 +143,7 @@ export class Client extends BaseClient {
 
 
     private async _checkBirthdays(){
+        console.log('\x1b[34m%s\x1b[0m','Revisando cumpleaños...')
         const usersSnap = await this.db.collection('users').get()
         usersSnap.forEach(async user => {
             
@@ -151,19 +152,17 @@ export class Client extends BaseClient {
             const [ month, day, year ] = birthday.split('/')
 
             //Check if it's the user's birthday
-            if(parseInt(year) > new Date().getFullYear()) return
-            if(parseInt(month) != new Date().getMonth() + 1 || parseInt(day) != new Date().getDate()) return
+            if(year > new Date().getFullYear()) return
+            if(month != new Date().getMonth() + 1 || day != new Date().getDate()) return
             
             //Celebrate user's birthday
             this.servers.map(async server => {
-                console.log(server.logsChannels)
-                
                 const birthdayChannel = server.logsChannels.birthdayChannel
                 if(!birthdayChannel) return
 
                 /* Revisar si el usuario está en el servidor */
                 let member = server.guild.members.cache.get(user.id)
-                if(!member) member = await server.guild.members.fetch(user.id) //Si no está en la cache
+                if(!member) member = await server.guild.members.fetch(user.id)
                 if(!member) return //Si no está tampoco en la API retornamos
 
                 /* Revisar si el canal sigue existiendo y obtenerlo */
@@ -171,13 +170,10 @@ export class Client extends BaseClient {
                 if(!channel) channel = await server.guild.channels.fetch(birthdayChannel) as TextChannel
                 if(!channel) return server.removeBirthdayChannel() //Si no está tampoco en la API lo borramos de la base de datos
                 
-                channel.send(server.logsChannels.birthdayMessage?.replaceAll('{username}',`<@${user.id}>`)??`Feliz cumpleaños <@${user.id}>!!`)
+                channel.send(server.logsChannels.birthdayMessage?.replaceAll('{username}',`<@${user.id}>`) ?? server.translate('birthday_cmd.defaultMessage', { username: `<@${user.id}>` }))
             })
 
             //Update user's birthday
-            console.log('year',year)
-            console.log('parseintyear',parseInt(year))
-            console.log('parseintyearmas1',parseInt(year)+1)
             const newBirthday = `${month}/${day}/${parseInt(year) + 1}`
             this.db.collection('users').doc(user.id).update({ birthday: newBirthday })
         })

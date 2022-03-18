@@ -71,21 +71,22 @@
 	"birthday_cmd": {
 		"set": "Your birthdate has been set to {birthday}",
 		"remove": "From now on, you will not recieve notifications in your birthday",
-		"error": "Sorry, I can't understand that. Please check that you wrote your birthday like in this example: `MONTH/DAY`"
+		"error": "Sorry, I can't understand that. Please check that you wrote your birthday like in this example: `MONTH/DAY`",
+		"defaultMessage": "¡Happy birthday {username}!"
 	},
-    "ban_cmd": {
-        "user_permissions": "You do not have sufficient permissions",
-        "bot_permissions": "I do not have sufficient permissions",
-        "reply": "{user} has been successfully banned"
-    },
-    "kick_cmd": {
-        "user_permissions": "You do not have sufficient permissions",
-        "reply": "{user} has been successfully kicked"
-    },
-    "timeout_cmd": {
-        "user_permissions": "You do not have sufficient permissions",
-        "reply": "{user} has been successfully aislated"
-    },
+	"ban_cmd": {
+		"user_permissions": "You do not have sufficient permissions",
+		"bot_permissions": "I do not have sufficient permissions",
+		"reply": "{user} has been successfully banned"
+	},
+	"kick_cmd": {
+		"user_permissions": "You do not have sufficient permissions",
+		"reply": "{user} has been successfully kicked"
+	},
+	"timeout_cmd": {
+		"user_permissions": "You do not have sufficient permissions",
+		"reply": "{user} has been successfully aislated"
+	},
 	"------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
 	"emoji_old": {
 		"missing": "Emoji not found",
@@ -104,7 +105,7 @@
 		"eat": "Eat cards"
 	},
 	"emote_analize_old": "Starting analysis",
-    "------------>>>============ commons ============<<<------------":"------------>>>============ commons ============<<<------------",
-    "footer":"{bot} Bot v{version}",
-    "premium": "Upgrade your membership to Premium to use this feature"
+	"------------>>>============ commons ============<<<------------": "------------>>>============ commons ============<<<------------",
+	"footer": "{bot} Bot v{version}",
+	"premium": "Upgrade your membership to Premium to use this feature"
 }

@@ -71,7 +71,8 @@
 	"birthday_cmd": {
 		"set": "Tu fecha de cumpleaños ha sido cambiada a {birthday}",
 		"remove": "A partir de ahora no recibirás notificaciones por tu cumpleaños",
-		"error": "Lo siento, no puedo entender eso. Por favor, comprueba que hayas escrito tu fecha de cumpleaños como en este ejemplo: `MES/DÍA`"
+		"error": "Lo siento, no puedo entender eso. Por favor, comprueba que hayas escrito tu fecha de cumpleaños como en este ejemplo: `MES/DÍA`",
+		"defaultMessage": "¡Feliz cumpleaños {username}!"
 	},
     "ban_cmd": {
         "user_permissions": "No tienes permisos suficientes para banear a ese usuario",
