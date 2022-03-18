@@ -7,6 +7,7 @@ export const name = 'messageUpdate'
 export function run(old: Message, msg: Message) {
     try {
         if (msg.author.bot) return
+        if (!msg.guild) return
         if (!(msg.client as Client).servers.has(msg.guild?.id ?? '')) return
         const server = (msg.client as Client).servers.get(msg.guild?.id ?? '')
         if (!server?.logsChannels.messageUpdate) return
@@ -62,8 +63,8 @@ export function run(old: Message, msg: Message) {
                     content: `El canal <#${server.logsChannels.messageUpdate}> esta configurado para mostrar logs de mensajes editados, sin embargo no tengo acceso a ese canal o no existe.\nSe eliminara de la configuracion, para volver a activarlo debe ejecutar el comando **/config log message_update** nuevamente`,
                 })
             else {
-                //TODO terminar
-                //mandar una aviso al servidor
+                const channel = msg.guild.channels.cache.find(c => c.isText() && checkSend(c as TextChannel, msg.guild?.me as GuildMember))
+                if (channel) (channel as TextChannel).send(`El canal <#${server.logsChannels.messageDelete}> esta configurado para mostrar logs de mensajes editados, sin embargo no tengo acceso a ese canal o no existe.\nSe eliminara de la configuracion, para volver a activarlo debe ejecutar el comando **/config log message_update** nuevamente`)
             }
             server.removeMessageUpdateLog()
         }
