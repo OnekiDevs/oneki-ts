@@ -63,6 +63,7 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
             ] = [{ name: 'no', options: [{ name: 'no' }] }]
         }
     } = interaction
+    
     if (!(commandName === 'config' && subcommandGroup === 'import' && subcommand === 'file')) return
     const command = interaction.data.options[0].options[0]
     await fetch(`https://discord.com/api/v10/interactions/${interaction.id}/${interaction.token}/callback`, {

@@ -89,6 +89,8 @@ export interface GuildDataBaseModel {
         message?: string;
     }
     emoji_analisis_enabled?: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    emoji_statistics?: any
 }
 
 export interface ClientConstants {

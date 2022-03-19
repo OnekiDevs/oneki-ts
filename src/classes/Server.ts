@@ -1,4 +1,4 @@
-import { Guild, GuildChannel } from 'discord.js'
+import { Guild, GuildChannel, Message } from 'discord.js'
 import { GuildDataBaseModel, Client, LangType, SuggestChannelObject } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import i18n from 'i18n'
@@ -21,6 +21,9 @@ export class Server {
         message?: string
     } = {}
     premium = false
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    emojiStatistics: any = {}
+    emojiTimeout?: NodeJS.Timer
     /**
      * New Server object with information and config for the server
      * @param guild The guild to which the Server object will bind
@@ -56,13 +59,13 @@ export class Server {
         }
         if (data.birthday?.channel) this.birthday.channel = data.birthday.channel
         if (data.birthday?.message) this.birthday.message = data.birthday.message
-
+        if (data.emoji_statistics) this.emojiStatistics = data.emoji_statistics      
         if (data.emoji_analisis_enabled && data.premium) this.startEmojiAnalisis()
 
         return Promise.resolve()
     }
 
-    toDBObject(): GuildDataBaseModel {
+    toDBObject(toPublic?: boolean): GuildDataBaseModel {
         const obj: GuildDataBaseModel = {}
         if (JSON.stringify(this.getPrefixes(true)) !== JSON.stringify(['?', '>'])) obj.prefixes = this._prefixes
         if (this.lang !== LangType.en) obj.lang = this.lang
@@ -80,6 +83,8 @@ export class Server {
         if (this.birthday?.channel) obj.birthday.channel = this.birthday.channel
         if (this.birthday?.message) obj.birthday.message = this.birthday.message
         if (this.emojiAnalisisEnabled) obj.emoji_analisis_enabled = true
+        if (toPublic && this.emojiStatistics) obj.emoji_statistics = this.emojiStatistics
+        if (toPublic) obj.premium = this.premium
 
         return obj
     }
@@ -519,12 +524,50 @@ export class Server {
         if (this.emojiAnalisisEnabled) return
         else this.emojiAnalisisEnabled = true
         this.db.update({ emoji_analisis_enabled: true }).catch(() => this.db.set({ emoji_analisis_enabled: true }))
-        console.log('start enoji analisis')
+        
+        this.emojiTimeout = setInterval(() => {
+            this.db.update({
+                emoji_statistics: this.emojiStatistics
+            })
+        }, 600_000)
         
         this.guild.client.on('messageCreate', msg => {
             if (!msg.guild) return
+            if (!msg.content) return
 
-            console.log('emoji', msg)
+            const emojis = msg.content.match(/<a?:[a-z_]+:\d{18}>/gi)
+            if (!emojis) return
+
+            const ids = emojis?.map(e => e.replace(/<a?:[a-z_]+:(?<id>\d{18})>/i, '$<id>'))
+
+            for (const id of ids) {
+                const emoji = msg.guild.emojis.cache.get(id)
+                if (emoji) this.emojiStatistics[id] = this.emojiStatistics[id] ? this.emojiStatistics[id]++ : 1
+            }
         })
+    }
+
+    stopEmojiAnalisis() {
+        this.emojiAnalisisEnabled = false
+        this.db.update({ emoji_analisis_enabled: false }).catch(() => this.db.set({ emoji_analisis_enabled: false }))
+        
+        if (this.emojiTimeout) clearInterval(this.emojiTimeout)
+        
+        this.guild.client.removeListener('messageCreate', this.emojiAnalisis)
+    }
+
+    emojiAnalisis(msg: Message){
+        if (!msg.guild) return
+        if (!msg.content) return
+
+        const emojis = msg.content.match(/<a?:[a-z_]+:\d{18}>/gi)
+        if (!emojis) return
+
+        const ids = emojis?.map(e => e.replace(/<a?:[a-z_]+:(?<id>\d{18})>/i, '$<id>'))
+
+        for (const id of ids) {
+            const emoji = msg.guild.emojis.cache.get(id)
+            if (emoji) this.emojiStatistics[id] = this.emojiStatistics[id] ? this.emojiStatistics[id]++ : 1
+        }
     }
 }
