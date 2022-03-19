@@ -1,4 +1,4 @@
-import { Server, Client } from './classes.js'
+import { Server, Client } from '../utils/classes.js'
 import { Collection } from 'discord.js'
 
 export class ServerManager extends Collection<string, Server> {

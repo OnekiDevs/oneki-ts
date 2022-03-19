@@ -1,7 +1,7 @@
+import { Guild, Intents } from 'discord.js'
 import { Client } from './utils/classes.js'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { Guild } from 'discord.js'
 import { config } from 'dotenv'
 
 config()
@@ -10,13 +10,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const client: Client = new Client({
     intents: [
-        'DIRECT_MESSAGES',
-        'GUILD_MESSAGES',
-        'GUILDS',
-        'GUILD_WEBHOOKS',
-        'GUILD_BANS',
-        'GUILD_MESSAGE_REACTIONS',
-        'GUILD_VOICE_STATES'
+        Intents.FLAGS.DIRECT_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_WEBHOOKS,
+        Intents.FLAGS.GUILD_BANS,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+        Intents.FLAGS.GUILD_VOICE_STATES
     ],
     partials: ['CHANNEL'],
     firebaseToken: JSON.parse(process.env.FIREBASE_TOKEN as string),
