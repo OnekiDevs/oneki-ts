@@ -118,6 +118,9 @@ export class Client extends BaseClient {
         console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
         
         this._checkBirthdays()
+        const guild = this.guilds.cache.get('885674114310881362')!
+        const member = guild.members.cache.get('954574842034802759')!
+        this.emit('guildMemberAdd', member)
     }
 
     private _onWebSocketMessage(message: string): void {

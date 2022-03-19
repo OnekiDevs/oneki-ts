@@ -9,7 +9,7 @@ export function file(interaction: CommandInteraction<'cached'>) {
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const prefix = interaction.options.getString('prefix') as string
     server.addPrefix(prefix)
-    interaction.reply(server.translate('config_cmd.add_prefix', { prefix, prefixies: server.prefixies }))
+    interaction.reply(server.translate('config_cmd.add_prefix', { prefix, prefixies: server.prefixes }))
     ;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
 }
 

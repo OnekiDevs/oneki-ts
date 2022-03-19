@@ -22,8 +22,8 @@ export default class Help extends OldCommand {
                 embed.setTitle(`Command ${res.name}`)
                 embed.setDescription(`\`<>\` Means optional\n\`[]\` Means mandatory\n${res.description}`)
                 embed.addField('Alias:', `\`${res.alias.join('` `')}\``, true)
-                embed.addField('Use:', `\`\`\`\n${res.type == 'slash' ? '/' : server?.getPrefixes(true)[0] ?? server?.prefixies[0]}${res.use}\n\`\`\``, true)
-                embed.addField('Example:', `\`\`\`\n${res.type == 'slash' ? '/' : server?.getPrefixes(true)[0] ?? server?.prefixies[0]}${res.example}\n\`\`\``, true)
+                embed.addField('Use:', `\`\`\`\n${res.type == 'slash' ? '/' : server?.getPrefixes(true)[0] ?? server?.prefixes[0]}${res.use}\n\`\`\``, true)
+                embed.addField('Example:', `\`\`\`\n${res.type == 'slash' ? '/' : server?.getPrefixes(true)[0] ?? server?.prefixes[0]}${res.example}\n\`\`\``, true)
                 if (res.user_permisions.length > 0) embed.addField('Permissions required:', `\`${res.user_permisions.join('` `')}\``, true)
                 embed.setFooter({
                     text: `${msg.client.user?.username} Bot v${(msg.client as Client).version}`,
@@ -50,7 +50,7 @@ export default class Help extends OldCommand {
                                     embed.addField(
                                         cmd.name,
                                         `${cmd.description}\n**Alias:** ${cmd.alias.length > 0 ? '`' + cmd.alias.join('` `') + '`' : 'none'}\n**Use:** \`${
-                                            cmd.type == 'command' ? server?.getPrefixes(true)[0] ?? server?.prefixies[0] : '/'
+                                            cmd.type == 'command' ? server?.getPrefixes(true)[0] ?? server?.prefixes[0] : '/'
                                         }${cmd.use}\``,
                                         true,
                                     )

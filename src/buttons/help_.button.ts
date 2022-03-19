@@ -28,7 +28,7 @@ export default class Activitie extends Button {
                     (cmds as oldCommandData[]).map((cmd) => {
                         embed.addField(
                             cmd.name,
-                            server.translate('help_btn.command_field', { cmd_description: cmd.description, alias: cmd.alias.length > 0 ? '`' + cmd.alias.join('` `') + '`' : 'none', cmd_prefix: (cmd.type == 'command' ? server?.getPrefixes(true)[0] ?? server?.prefixies[0] : '/'), cmd_use: cmd.use }),
+                            server.translate('help_btn.command_field', { cmd_description: cmd.description, alias: cmd.alias.length > 0 ? '`' + cmd.alias.join('` `') + '`' : 'none', cmd_prefix: (cmd.type == 'command' ? server?.getPrefixes(true)[0] ?? server?.prefixes[0] : '/'), cmd_use: cmd.use }),
                             true,
                         )
                     }),
