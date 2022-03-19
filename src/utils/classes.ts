@@ -88,6 +88,7 @@ export interface GuildDataBaseModel {
         channel?: string;
         message?: string;
     }
+    emoji_analisis_enabled?: boolean;
 }
 
 export interface ClientConstants {

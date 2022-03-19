@@ -61,7 +61,8 @@ export default class Help extends OldCommand {
                                 iconURL: msg.client.user?.avatarURL() ?? '',
                             })
                             embed.setThumbnail(msg.client.user?.avatarURL()??'')
-                            let j = 0, k = 0, components = []
+                            let j = 0, k = 0
+                            const components = []
                             for (const i of res as string[]) {
                                 const btn = new MessageButton().setStyle(i==(res as string[])[0]?'SUCCESS':'PRIMARY').setLabel(i).setCustomId(`help_${server?.lang}_${i}`)
                                 if(j==0) components.push(new MessageActionRow().addComponents([btn])) 
