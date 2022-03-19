@@ -1,13 +1,9 @@
 import { Guild, GuildChannel } from 'discord.js'
-import {
-    GuildDataBaseModel,
-    Client,
-    LangType,
-    SuggestChannelObject
-} from '../utils/classes.js'
+import { GuildDataBaseModel, Client, LangType, SuggestChannelObject } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import i18n from 'i18n'
 export class Server {
+    emojiAnalisisEnabled = false
     private _i18n = i18n
     guild: Guild
     private _prefixes: Array<string> = ['>', '?']
@@ -21,8 +17,8 @@ export class Server {
         messageAttachment?: string
     } = {}
     birthday: {
-        channel?: string;
-        message?: string;
+        channel?: string
+        message?: string
     } = {}
     premium = false
     /**
@@ -61,12 +57,14 @@ export class Server {
         if (data.birthday?.channel) this.birthday.channel = data.birthday.channel
         if (data.birthday?.message) this.birthday.message = data.birthday.message
 
+        if (data.emoji_analisis_enabled && data.premium) this.startEmojiAnalisis()
+
         return Promise.resolve()
     }
 
     toDBObject(): GuildDataBaseModel {
         const obj: GuildDataBaseModel = {}
-        if (JSON.stringify(this.getPrefixes(true)) !== JSON.stringify(['?','>'])) obj.prefixes = this._prefixes
+        if (JSON.stringify(this.getPrefixes(true)) !== JSON.stringify(['?', '>'])) obj.prefixes = this._prefixes
         if (this.lang !== LangType.en) obj.lang = this.lang
         if (this.lastSuggestId) obj.last_suggest = this.lastSuggestId
         if (this.suggestChannels) obj.suggest_channels = this.suggestChannels
@@ -81,6 +79,7 @@ export class Server {
         obj.birthday = {}
         if (this.birthday?.channel) obj.birthday.channel = this.birthday.channel
         if (this.birthday?.message) obj.birthday.message = this.birthday.message
+        if (this.emojiAnalisisEnabled) obj.emoji_analisis_enabled = true
 
         return obj
     }
@@ -94,7 +93,7 @@ export class Server {
 
     set lastSuggestId(n: number) {
         this._lastSuggestId = n
-        this.db.update({last_suggest:n}).catch(()=>this.db.set({last_suggest:n}))
+        this.db.update({ last_suggest: n }).catch(() => this.db.set({ last_suggest: n }))
     }
 
     /**
@@ -288,7 +287,8 @@ export class Server {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data: any = {}
         if (this.logsChannels.messageUpdate) data['logs_channels.message_update'] = this.logsChannels.messageUpdate
-        if (this.logsChannels.messageAttachment) data['logs_channels.message_attachment'] = this.logsChannels.messageAttachment
+        if (this.logsChannels.messageAttachment)
+            data['logs_channels.message_attachment'] = this.logsChannels.messageAttachment
         if (this.logsChannels.messageDelete) data['logs_channels.message_delete'] = this.logsChannels.messageDelete
         if (!data.logs_channels) data.logs_channels = {}
         this.db.update(data).catch(() => this.db.set(data))
@@ -516,6 +516,15 @@ export class Server {
     }
 
     startEmojiAnalisis() {
-        console.log('')
+        if (this.emojiAnalisisEnabled) return
+        else this.emojiAnalisisEnabled = true
+        this.db.update({ emoji_analisis_enabled: true }).catch(() => this.db.set({ emoji_analisis_enabled: true }))
+        console.log('start enoji analisis')
+        
+        this.guild.client.on('messageCreate', msg => {
+            if (!msg.guild) return
+
+            console.log('emoji', msg)
+        })
     }
 }

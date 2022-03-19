@@ -13,7 +13,6 @@ export default class Help extends OldCommand {
     }
 
     async run(msg: Message<true>, server: Server, args?: string[]) {
-        return //TODO terminar
         if (!server.premium) return msg.reply(server.translate('premium'))
         if (msg.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(msg, Permissions.FLAGS.ADMINISTRATOR)
         msg.reply(server.translate('emote_analize_old'))

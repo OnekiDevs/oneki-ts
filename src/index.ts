@@ -60,7 +60,7 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
                     name: subcommandGroup,
                     options: [{ name: subcommand }]
                 }
-            ]
+            ] = [{ name: 'no', options: [{ name: 'no' }] }]
         }
     } = interaction
     if (!(commandName === 'config' && subcommandGroup === 'import' && subcommand === 'file')) return
