@@ -49,7 +49,7 @@ export async function birthday_channel(interaction: CommandInteraction<'cached'>
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const birthdayChannel = interaction.options.getChannel('channel') as TextChannel
     server.setBirthdayChannel(birthdayChannel.id)
-    interaction.editReply(server.translate('config_cmd.set_birthday', { channel: birthdayChannel?.toString() }))
+    interaction.editReply(server.translate('config_cmd.birthday.set_channel', { channel: birthdayChannel?.toString() }))
 }
 
 export async function birthday_message(interaction: CommandInteraction<'cached'>){
@@ -62,5 +62,5 @@ export async function birthday_message(interaction: CommandInteraction<'cached'>
 
     const birthdayMessage = interaction.options.getString('message')!
     server.setBirthdayMessage(birthdayMessage)
-    interaction.editReply(server.translate('config_cmd.set_message', { message: birthdayMessage }))
+    interaction.editReply(server.translate('config_cmd.birthday.set_message', { message: birthdayMessage }))
 }

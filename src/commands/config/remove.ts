@@ -43,7 +43,7 @@ export function birthday_channel(interaction: CommandInteraction<'cached'>) {
     if (!server) server = newServer(interaction.guild)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     server.removeBirthdayChannel()
-    interaction.reply(server.translate('config_cmd.remove_birthday'))
+    interaction.reply(server.translate('config_cmd.birthday.remove_channel'))
 }
 
 
