@@ -118,9 +118,6 @@ export class Client extends BaseClient {
         console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
         
         this._checkBirthdays()
-        const guild = this.guilds.cache.get('885674114310881362')!
-        const member = guild.members.cache.get('954574842034802759')!
-        this.emit('guildMemberAdd', member)
     }
 
     private _onWebSocketMessage(message: string): void {
@@ -157,7 +154,6 @@ export class Client extends BaseClient {
             //Check if it's the user's birthday
             if(year > new Date().getFullYear()) return
             if(month > new Date().getMonth() + 1 || day > new Date().getDate()) return
-            
             //Celebrate user's birthday
             this.servers.map(async server => {
                 const birthdayChannel = server.birthday.channel
@@ -172,8 +168,8 @@ export class Client extends BaseClient {
                 let channel = server.guild.channels.cache.get(birthdayChannel) as TextChannel
                 if(!channel) channel = await server.guild.channels.fetch(birthdayChannel) as TextChannel
                 if(!channel) return server.removeBirthdayChannel() //Si no está tampoco en la API lo borramos de la base de datos
-                
-                channel.send(server.birthday.message?.replaceAll('{username}',`<@${user.id}>`) ?? server.translate('birthday_cmd.defaultMessage', { username: `<@${user.id}>` }))
+
+                channel.send(server.birthday.message?.replaceAll('{username}',`<@${user.id}>`) ?? server.translate('birthday_cmd.default_message', { username: `<@${user.id}>` }))
             })
 
             //Update user's birthday

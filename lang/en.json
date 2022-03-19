@@ -38,9 +38,11 @@
 			"reply": "Channel {channel} set for suggestions",
 			"message": "This channel is now set up for suggestions\nTo make a suggestion use **/suggest**"
 		},
-		"set_birthday": "Channel {channel} set for celebrating users birthdays",
-		"remove_birthday": "You just deleted the birthday channel. From now on users won't get notified on their birthdays.",
-		"set_message": "El anuncio que se enviará cuando cada usuario cumpla años ha sido cambiado por: {message}"
+		"birthday": {
+			"set_channel": "Channel {channel} set for celebrating users birthdays",
+			"remove_channel": "You just deleted the birthday channel. From now on users won't get notified on their birthdays.",
+			"set_message": "The announcement that will be sent when it's a user's birthday has been set to: {message}"
+		}
 	},
 	"info_cmd": {
 		"member": {
@@ -72,7 +74,7 @@
 		"set": "Your birthdate has been set to {birthday}",
 		"remove": "From now on, you will not recieve notifications in your birthday",
 		"error": "Sorry, I can't understand that. Please check that you wrote your birthday like in this example: `MONTH/DAY`",
-		"defaultMessage": "¡Happy birthday {username}!"
+		"default_message": "¡Happy birthday {username}!"
 	},
 	"ban_cmd": {
 		"user_permissions": "You do not have sufficient permissions",

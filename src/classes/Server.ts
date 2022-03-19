@@ -442,7 +442,7 @@ export class Server {
             .catch(() => this.db.set({ ['birthday.channel']: birthdayChannel }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
-                event: 'set_birthday',
+                event: 'set_birthdaychannel',
                 from: 'mts',
                 data: {
                     log: 'BIRTHDAY_CHANNEL',
@@ -464,7 +464,7 @@ export class Server {
             .catch(() => this.db.set({ ['birthday.message']: birthdayMessage }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
-                event: 'set_birthday',
+                event: 'set_birthdaymessage',
                 from: 'mts',
                 data: {
                     log: 'BIRTHDAY_MESSAGE',
