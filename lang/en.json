@@ -42,6 +42,12 @@
 			"set_channel": "Channel {channel} set for celebrating users birthdays",
 			"remove_channel": "You just deleted the birthday channel. From now on users won't get notified on their birthdays.",
 			"set_message": "The announcement that will be sent when it's a user's birthday has been set to: {message}"
+		},
+		"invites": {
+			"default_message": "¡{invited} has joined the server! *He has been by {inviter} **Total invites**: {invites}*",
+			"set_message": "The announcement that will get sent when a user is invited by another has been set to {message}",
+			"cant_find_inviter": "{invited} has joined the server. ´I couldn't figure out who invited him.´",
+			"set_channel": "The channel for recieving invitations has been set to {channel}"
 		}
 	},
 	"info_cmd": {
