@@ -112,7 +112,10 @@
 		"show": "Show cards",
 		"eat": "Eat cards"
 	},
-	"emote_analize_old": "Starting analysis",
+	"emote_analize_old": {
+		"start": "Starting analysis",
+		"end": "Stoping analysis"
+	},
 	"------------>>>============ commons ============<<<------------": "------------>>>============ commons ============<<<------------",
 	"footer": "{bot} Bot v{version}",
 	"premium": "Upgrade your membership to Premium to use this feature"
