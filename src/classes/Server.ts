@@ -19,8 +19,10 @@ export class Server {
         messageUpdate?: string
         messageDelete?: string
         messageAttachment?: string
-        birthdayChannel?: string
-        birthdayMessage?: string
+    } = {}
+    birthday: {
+        channel?: string;
+        message?: string;
     } = {}
     premium = false
     /**
@@ -36,25 +38,29 @@ export class Server {
 
     async syncDB(dataPriority?: boolean): Promise<void> {
         const db = await this.db.get()
+
         if (!db.exists || dataPriority) {
             const obj = this.toDBObject()
             this.db.set(obj)
             return Promise.resolve()
         }
+
         const data = db.data() as GuildDataBaseModel
+
         if (data.lang) this.lang = data.lang
         if (data.premium) this.premium = true
         if (data.last_suggest) this.lastSuggestId = data.last_suggest
         if (data.suggest_channels) this.suggestChannels = data.suggest_channels
         if (data.logs_channels) {
-            const { message_update, message_delete, message_attachment, birthday_channel, birthday_message } = data.logs_channels
+            const { message_update, message_delete, message_attachment } = data.logs_channels
 
             if (message_update) this.logsChannels.messageUpdate = message_update
             if (message_delete) this.logsChannels.messageDelete = message_delete
             if (message_attachment) this.logsChannels.messageAttachment = message_attachment
-            if (birthday_channel) this.logsChannels.birthdayChannel = birthday_channel
-            if (birthday_message) this.logsChannels.birthdayMessage = birthday_message
         }
+        if (data.birthday?.channel) this.birthday.channel = data.birthday.channel
+        if (data.birthday?.message) this.birthday.message = data.birthday.message
+
         return Promise.resolve()
     }
 
@@ -65,15 +71,16 @@ export class Server {
         if (this.lastSuggestId) obj.last_suggest = this.lastSuggestId
         if (this.suggestChannels) obj.suggest_channels = this.suggestChannels
         if (this.logsChannels) {
-            const { messageUpdate, messageDelete, messageAttachment, birthdayChannel, birthdayMessage } = this.logsChannels
+            const { messageUpdate, messageDelete, messageAttachment } = this.logsChannels
             obj.logs_channels = {}
 
             if (messageUpdate) obj.logs_channels.message_update = messageUpdate
             if (messageDelete) obj.logs_channels.message_delete = messageDelete
             if (messageAttachment) obj.logs_channels.message_attachment = messageAttachment
-            if (birthdayChannel) obj.logs_channels.birthday_channel = birthdayChannel
-            if (birthdayMessage) obj.logs_channels.birthday_message = birthdayMessage
         }
+        obj.birthday = {}
+        if (this.birthday?.channel) obj.birthday.channel = this.birthday.channel
+        if (this.birthday?.message) obj.birthday.message = this.birthday.message
 
         return obj
     }
@@ -93,11 +100,11 @@ export class Server {
     /**
      * Return all the prefixes that the bot listens to in the guild
      */
-    get prefixies(): string[] {
+    get prefixes(): string[] {
         return [`<@!${this.guild.me?.id}>`, `<@${this.guild.me?.id}>`, ...this._prefixes]
     }
 
-    set prefixies(value: string[]) {
+    set prefixes(value: string[]) {
         this._prefixes = value
     }
 
@@ -108,7 +115,7 @@ export class Server {
      */
     getPrefixes(onlyDeclared?: boolean): string[] {
         if (onlyDeclared === undefined || onlyDeclared) return this._prefixes
-        else return this.prefixies
+        else return this.prefixes
     }
 
     /**
@@ -281,10 +288,7 @@ export class Server {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data: any = {}
         if (this.logsChannels.messageUpdate) data['logs_channels.message_update'] = this.logsChannels.messageUpdate
-        if (this.logsChannels.messageAttachment)
-            data['logs_channels.message_attachment'] = this.logsChannels.messageAttachment
-        if (this.logsChannels.birthdayChannel)
-            data['logs_channels.birthday_channel'] = this.logsChannels.birthdayChannel
+        if (this.logsChannels.messageAttachment) data['logs_channels.message_attachment'] = this.logsChannels.messageAttachment
         if (this.logsChannels.messageDelete) data['logs_channels.message_delete'] = this.logsChannels.messageDelete
         if (!data.logs_channels) data.logs_channels = {}
         this.db.update(data).catch(() => this.db.set(data))
@@ -432,13 +436,13 @@ export class Server {
      * @param {string} birthdayChannel - The channel id to use
      */
     setBirthdayChannel(birthdayChannel: string) {
-        this.logsChannels.birthdayChannel = birthdayChannel
+        this.birthday.channel = birthdayChannel
         this.db
-            .update({ ['logs_channels.birthday_channel']: birthdayChannel })
-            .catch(() => this.db.set({ ['logs_channels.birthday_channel']: birthdayChannel }))
+            .update({ ['birthday.channel']: birthdayChannel })
+            .catch(() => this.db.set({ ['birthday.channel']: birthdayChannel }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
-                event: 'set_log',
+                event: 'set_birthday',
                 from: 'mts',
                 data: {
                     log: 'BIRTHDAY_CHANNEL',
@@ -454,13 +458,13 @@ export class Server {
      * @param {string} birthdayMessage - The message to use
      */
     setBirthdayMessage(birthdayMessage: string) {
-        this.logsChannels.birthdayMessage = birthdayMessage
+        this.birthday.message = birthdayMessage
         this.db
-            .update({ ['logs_channels.birthday_message']: birthdayMessage })
-            .catch(() => this.db.set({ logs_channels: { birthday_message: birthdayMessage } }))
+            .update({ ['birthday.message']: birthdayMessage })
+            .catch(() => this.db.set({ ['birthday.message']: birthdayMessage }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
-                event: 'set_log',
+                event: 'set_birthday',
                 from: 'mts',
                 data: {
                     log: 'BIRTHDAY_MESSAGE',
@@ -475,19 +479,39 @@ export class Server {
      * Remove server's birthday channel
      */
     removeBirthdayChannel() {
-        if (!this.logsChannels.birthdayChannel) return
+        if (!this.birthday.channel) return
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
-                event: 'remove_log',
+                event: 'remove_birthday',
                 from: 'mts',
                 data: {
-                    log: 'BIRTHDAY_CHANNEL_DELETE',
-                    channel: this.logsChannels.birthdayChannel,
+                    log: 'BIRTHDAY_CHANNEL',
+                    channel: this.birthday.channel,
                     guild: this.guild.id
                 }
             })
         )
-        delete this.logsChannels.birthdayChannel
+        delete this.birthday.channel
+        this.updateChannelsLogsInDB()
+    }
+
+    /**
+     * Remove server's birthday message
+     */
+    removeBirthdayMessage() {
+        if (!this.birthday.message) return
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'remove_birthday',
+                from: 'mts',
+                data: {
+                    log: 'BIRTHDAY_MESSAGE',
+                    message: this.birthday.message,
+                    guild: this.guild.id
+                }
+            })
+        )
+        delete this.birthday.message
         this.updateChannelsLogsInDB()
     }
 

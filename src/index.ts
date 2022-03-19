@@ -96,18 +96,22 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
     let server = client.servers.get(guild.id)
     if (!server) server = client.newServer(guild)
 
-    const { prefixies, lang, logs_channels } = await req.json()
+    const { prefixes, lang, logs_channels, birthday } = await req.json()
 
-    if (prefixies) server.prefixies = prefixies
+    if (prefixes) server.prefixes = prefixes
     if (lang) server.lang = lang
     if (logs_channels) {
-        const { message_update, message_delete, message_attachment, birthday_channel, birthday_message } = logs_channels
+        const { message_update, message_delete, message_attachment } = logs_channels
 
         if (message_update) server.setMessageDeleteLog(message_update)
         if (message_delete) server.setMessageDeleteLog(message_delete)
         if (message_attachment) server.setMessageAttachmentLog(message_attachment)
-        if (birthday_channel) server.setBirthdayChannel(birthday_channel)
-        if (birthday_message) server.setBirthdayMessage(birthday_message)
+    }
+    if (birthday) {
+        const { message, channel } = birthday
+
+        if (channel) server.setBirthdayChannel(channel)
+        if (message) server.setBirthdayMessage(message)
     }
     server.syncDB(true)
 

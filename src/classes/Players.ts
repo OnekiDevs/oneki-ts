@@ -1,4 +1,4 @@
-import { Player } from './Player.js';
+import { Player } from './Player.js'
 
 export class Players extends Array<Player> {
 
@@ -7,16 +7,16 @@ export class Players extends Array<Player> {
     }
     
     add(player: Player) {
-        this.push(player);
+        this.push(player)
     }
     get(id: string){
-        return this.find(p=>p.id==id);
+        return this.find(p=>p.id==id)
     }
     has(id: string){
         return !!this.find(p=>p.id==id)
     }
     toString() {
-        return this.map(p => `${p}`).join(', ');
+        return this.map(p => `${p}`).join(', ')
     }
     get size(){
         return this.length
@@ -25,10 +25,10 @@ export class Players extends Array<Player> {
         return this[0]
     }
     async rotate(rigth: boolean){
-        console.log(this.keys());
-        if(rigth) this.push(this.shift()!);
+        console.log(this.keys())
+        if(rigth) this.push(this.shift()!)
         else this.unshift(this.pop()!)
-        console.log(this.keys());
+        console.log(this.keys())
         return this
     }
 } 
