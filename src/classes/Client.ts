@@ -157,7 +157,7 @@ export class Client extends BaseClient {
             
             //Celebrate user's birthday
             this.servers.map(async server => {
-                const birthdayChannel = server.logsChannels.birthdayChannel
+                const birthdayChannel = server.birthday.channel
                 if(!birthdayChannel) return
 
                 /* Revisar si el usuario está en el servidor */
@@ -170,7 +170,7 @@ export class Client extends BaseClient {
                 if(!channel) channel = await server.guild.channels.fetch(birthdayChannel) as TextChannel
                 if(!channel) return server.removeBirthdayChannel() //Si no está tampoco en la API lo borramos de la base de datos
                 
-                channel.send(server.logsChannels.birthdayMessage?.replaceAll('{username}',`<@${user.id}>`) ?? server.translate('birthday_cmd.defaultMessage', { username: `<@${user.id}>` }))
+                channel.send(server.birthday.message?.replaceAll('{username}',`<@${user.id}>`) ?? server.translate('birthday_cmd.defaultMessage', { username: `<@${user.id}>` }))
             })
 
             //Update user's birthday

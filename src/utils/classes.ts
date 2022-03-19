@@ -75,8 +75,6 @@ export interface LogsChannelsDatabaseModel {
     message_update?: string;
     message_delete?: string;
     message_attachment?: string;
-    birthday_channel?: string;
-    birthday_message?: string;
 }
 
 export interface GuildDataBaseModel {
@@ -86,6 +84,10 @@ export interface GuildDataBaseModel {
     last_suggest?: number;
     logs_channels?: LogsChannelsDatabaseModel;
     premium?: boolean;
+    birthday?: {
+        channel?: string;
+        message?: string;
+    }
 }
 
 export interface ClientConstants {

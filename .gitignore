@@ -4,3 +4,4 @@ node_modules
 dist
 *.js
 commmands_exported.json
+scripts/lang
