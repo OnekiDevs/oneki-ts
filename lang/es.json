@@ -46,7 +46,7 @@
 		"invites": {
 			"default_message": "¡{invited} ha entrado al servidor! *Ha sido invitado por {inviter}*",
 			"set_message": "El anuncio que se enviará cuando un usuario sea invitado por otro ha sido cambiado a {message}",
-			"cant_find_inviter": "{invited} ha entrado al servidor. ´No pude encontrar quién lo invitó.´",
+			"cant_find_inviter": "{invited} ha entrado al servidor. `No pude encontrar quién lo invitó.`",
 			"set_channel": "El canal para recibir notificaciones de invitaciones ha sido cambiado a {channel}"
 		}
 	},
