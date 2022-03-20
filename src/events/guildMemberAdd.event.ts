@@ -1,15 +1,26 @@
 import { GuildMember, TextBasedChannel } from "discord.js";
+import { Client } from "../classes/Client";
 
 export const name = 'guildMemberAdd'
 
 export async function run(member: GuildMember) {
-    const guild = member.guild
+    const { client, guild } = member
     const invites = await guild.invites.fetch()
-    console.log(invites)
-    //const inviteCounter = {}
+    const inviteCounter = {}
+    let server = (client as Client).servers.get(guild.id)
+    if(!server){
+        server = (client as Client).newServer(guild)
+    }
 
     invites.map(invite => {
-        
+        const uses = invite.uses
+        const inviter = invite.inviter!
+        const username = inviter.username
+        const discriminator = inviter.discriminator
+        const name = `${username}#${discriminator}`
+
+
+        console.log(uses, username, discriminator)
     })
     
     
