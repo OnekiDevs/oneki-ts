@@ -1,4 +1,5 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, VoiceChannel, MessageActionRow, MessageButton } from 'discord.js'
+import { ChannelType } from 'discord-api-types'
 import { Command, Client, CommandType } from '../utils/classes.js'
 
 export default class Activitie extends Command {
@@ -35,7 +36,7 @@ export default class Activitie extends Command {
                         ['CG4 Prod', '832025144389533716/CG4 Prod'],
                     ]),
             )
-            .addChannelOption((option) => option.setName('channel').setDescription('voice channel').addChannelType(2))
+            .addChannelOption((option: any) => option.setName('channel').setDescription('voice channel').addChannelType(ChannelType.GuildVoice))
             .toJSON() as ApplicationCommandDataResolvable
     }
 
