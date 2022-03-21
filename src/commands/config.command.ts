@@ -2,7 +2,6 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, Guild } from 'discord.js'
 import { Command, Client, CommandType, LangType } from '../utils/classes.js'
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
-import { ChannelType } from 'discord-api-types'
 
 export default class Config extends Command {
     constructor(client: Client) {
@@ -22,12 +21,12 @@ export default class Config extends Command {
             new SlashCommandSubcommandBuilder()
                 .setName(i)
                 .setDescription(`Config ${i} logs`)
-                .addChannelOption((option: any) =>
+                .addChannelOption(option =>
                     option
                         .setName('channel')
                         .setDescription('Channel where the logs are send')
                         .setRequired(true)
-                        .addChannelType(ChannelType.GuildText)
+                        .addChannelType(0)
                 )
         )
 
@@ -64,11 +63,11 @@ export default class Config extends Command {
                     subcommand
                         .setName('suggest_channel')
                         .setDescription('Set a unique suggest channel')
-                        .addChannelOption((option: any) =>
+                        .addChannelOption(option =>
                             option
                                 .setName('channel')
                                 .setDescription('Channel where the suggest are sent')
-                                .addChannelType(ChannelType.GuildText)
+                                .addChannelType(0)
                                 .setRequired(true)
                         )
                 )
@@ -76,11 +75,11 @@ export default class Config extends Command {
                     subcommand
                         .setName('birthday_channel')
                         .setDescription('Set a channel to say happy birthday to your users')
-                        .addChannelOption((option: any) =>
+                        .addChannelOption(option =>
                             option
                                 .setName('channel')
                                 .setDescription('The channel to use')
-                                .addChannelType(ChannelType.GuildText)
+                                .addChannelType(0)
                                 .setRequired(true)
                         )
                 )
@@ -113,12 +112,12 @@ export default class Config extends Command {
                     subcommand
                         .setName('suggest_channel')
                         .setDescription('Add a new suggest channel')
-                        .addChannelOption((option: any) =>
+                        .addChannelOption(option =>
                             option
                                 .setName('channel')
                                 .setDescription('Channel to suggest')
                                 .setRequired(true)
-                                .addChannelType(ChannelType.GuildText)
+                                .addChannelType(0)
                         )
                         .addStringOption(option =>
                             option
@@ -192,7 +191,7 @@ export default class Config extends Command {
                 subcommand
                     .setName('auto')
                     .setDescription('Configure logs automatically')
-                    .addChannelOption((option: any) => option.setName('category').setDescription('Category to use').addChannelType(ChannelType.GuildCategory))
+                    .addChannelOption(option => option.setName('category').setDescription('Category to use').addChannelType(4))
             )
             return subcommandGroup
         })
