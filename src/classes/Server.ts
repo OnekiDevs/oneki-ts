@@ -224,8 +224,8 @@ export class Server {
     setSuggestChannel(channel: GuildChannel) {
         this.suggestChannels = [{ channel: channel.id, default: true }] as SuggestChannelObject[]
         this.db
-            .update({ suggest_channels: [{ channel_id: channel.id, default: true }] })
-            .catch(() => this.db.set({ suggest_channels: [{ channel_id: channel.id, default: true }] }))
+            .update({ suggest_channels: [{ channel: channel.id, default: true }] })
+            .catch(() => this.db.set({ suggest_channels: [{ channel: channel.id, default: true }] }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_suggest_channel',

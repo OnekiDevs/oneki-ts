@@ -18,7 +18,6 @@ export default class Config extends Command {
         const server = this.client.servers.get(guild?.id as string)
         const suggestChannelsChoices = server?.suggestChannels.map(c => {
             console.log(c)
-            
             return [c.default ? 'default' : c.alias, c.channel]
         })
         const logs = ['message_update', 'message_delete', 'message_attachment']
