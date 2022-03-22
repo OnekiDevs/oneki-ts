@@ -22,6 +22,8 @@ export default class Config extends Command {
             console.log(c)
             return [c.default ? 'default' : c.alias, c.channel??c.channel_id as string]
         }))
+        console.log(suggestChannelsChoices, guild.id)
+        
         const logs = ['message_update', 'message_delete', 'message_attachment']
         const subcommandsLogs = logs.map(i =>
             new SlashCommandSubcommandBuilder()
