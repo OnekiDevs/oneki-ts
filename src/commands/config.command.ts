@@ -228,7 +228,7 @@ export default class Config extends Command {
                 required: true
             }
         ]
-        fs.writeFile('./config'+guild?.id+'.json', JSON.stringify(cmd, null, 4), ()=>'')
+        // fs.writeFile('./config'+guild?.id+'.json', JSON.stringify(cmd, null, 4), ()=>'')
         // console.log(JSON.stringify(command.options?.[5].options, null, 1))
         return new Promise(resolve => resolve(cmd))
     }

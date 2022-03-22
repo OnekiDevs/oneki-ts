@@ -1,43 +1,24 @@
-// import { GuildMember, TextBasedChannel } from "discord.js";
-// import { Client } from "../classes/Client";
+import { GuildMember, /*TextChannel*/} from 'discord.js'
+// import { Client } from '../classes/Client'
 
 export const name = 'guildMemberAdd'
 
-export async function run() {
+export async function run(member: GuildMember) {
     // const { client, guild } = member
     // const invites = await guild.invites.fetch()
-    // // const inviteCounter = {}
     // let server = (client as Client).servers.get(guild.id)
-    // if(!server){
-    //     server = (client as Client).newServer(guild)
-    // }
+    // if (!server) server = (client as Client).newServer(guild)
 
-    // invites.map(invite => {
-    //     // const uses = invite.uses
-    //     // const inviter = invite.inviter!
-    //     // const username = inviter.username
-    //     // const discriminator = inviter.discriminator
-    //     // const name = `${username}#${discriminator}`
-
-
-    //     // console.log(uses, username, discriminator)
+    // const invite = invites.find(i => {
+    //     const inv = server?.invites.find(j=>j.code === i.code)
+    //     return !!(inv && inv.count < i.memberCount)
     // })
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    // const channel = guild.channels.cache.get('885674115615301650') as TextBasedChannel
-    // channel.send('puta madre otro test más')
+
+    // if (!invite) return // no se encontro
+    // const inviter = invite.inviter??'Server'
+    // // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    // server.invites.find(i => i.code = invite.code)!.count ++
+
+    // const channel = guild.channels.cache.get('885674115615301650') as TextChannel
+    // channel.send(`invited: ${member}\ninviter: ${inviter}`)
 }

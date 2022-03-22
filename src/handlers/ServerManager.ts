@@ -12,7 +12,7 @@ export class ServerManager extends Collection<string, Server> {
     initialize() {
         return Promise.all(this.client.guilds?.cache.map(async (guild) => {
             const server = new Server(guild)
-            await server.syncDB()
+            await server.init()
             return this.set(guild.id, server)
         }))
     }

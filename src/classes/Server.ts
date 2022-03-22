@@ -1,8 +1,9 @@
-import { Guild, GuildChannel, Message } from 'discord.js'
-import { GuildDataBaseModel, Client, LangType, SuggestChannelObject } from '../utils/classes.js'
+import { Guild, GuildChannel, Invite, Message } from 'discord.js'
+import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, ServerInvite } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import i18n from 'i18n'
 export class Server {
+    invites: ServerInvite = []
     rejectSug(id: string) {
         throw new Error('Method not implemented.'+id)
     }
@@ -41,6 +42,10 @@ export class Server {
         this._i18n.configure((guild.client as Client).i18nConfig)
     }
 
+    init() {
+        return Promise.all([ this.syncDB() ])
+    }
+
     async syncDB(dataPriority?: boolean): Promise<void> {
         const db = await this.db.get()
 
@@ -67,6 +72,8 @@ export class Server {
         if (data.birthday?.message) this.birthday.message = data.birthday.message
         if (data.emoji_statistics) this.emojiStatistics = data.emoji_statistics      
         if (data.emoji_analisis_enabled && data.premium) this.startEmojiAnalisis()
+
+
 
         return Promise.resolve()
     }
@@ -562,7 +569,7 @@ export class Server {
         this.guild.client.removeListener('messageCreate', this.emojiAnalisis)
     }
 
-    emojiAnalisis(msg: Message){
+    emojiAnalisis(msg: Message) {
         if (!msg.guild) return
         if (!msg.content) return
 
@@ -575,5 +582,20 @@ export class Server {
             const emoji = msg.guild.emojis.cache.get(id)
             if (emoji) this.emojiStatistics[id] = this.emojiStatistics[id] ? this.emojiStatistics[id]++ : 1
         }
+    }
+
+    /**
+     * Get the Guild invites and parse it
+     * @returns {Promise<ServerInvite>} - Invites parsed
+     */
+    async getInvites(): Promise<ServerInvite> {
+        const invites = await this.guild.invites.fetch()
+        this.invites = await Promise.all(invites
+            .map((i: Invite) => ({ 
+                user: i.inviterId??'server', 
+                count: i.memberCount,
+                code: i.code
+            })))
+        return Promise.resolve(this.invites)
     }
 }

@@ -69,7 +69,7 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
             'Content-Type': 'application/json'
         }
     })
-    
+
     if (!(interaction.data.resolved.attachments[command.options[0].value].filename as string).endsWith('.json'))
         return fetch(
             `https://discord.com/api/v10/webhooks/${client.user?.id}/${interaction.token}/messages/@original`,
