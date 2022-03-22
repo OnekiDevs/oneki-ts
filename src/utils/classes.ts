@@ -67,6 +67,7 @@ export interface CommandPermissions {
 
 export interface SuggestChannelObject {
     channel: string;
+    channel_id?: string;
     default: boolean;
     alias?: string;
 }
