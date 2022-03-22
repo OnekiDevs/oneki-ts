@@ -51,8 +51,6 @@ export class Server {
         }
 
         const data = db.data() as GuildDataBaseModel
-
-        console.log('server', data.suggest_channels, db.id)
         
         if (data.lang) this.lang = data.lang
         if (data.premium) this.premium = true

@@ -51,21 +51,15 @@ const client: Client = new Client({
 client.login(process.env.DISCORD_TOKEN)
 
 client.ws.on('INTERACTION_CREATE', async interaction => {
-    if (interaction.type !== 2) return
-    const {
-        data: {
-            name: commandName,
-            options: [
-                {
-                    name: subcommandGroup,
-                    options: [{ name: subcommand }]
-                }
-            ] = [{ name: 'no', options: [{ name: 'no' }] }]
-        }
-    } = interaction
-    
-    if (!(commandName === 'config' && subcommandGroup === 'import' && subcommand === 'file')) return
+
+    if (interaction.type !== 2) return    
+
+    if (interaction.data.name !== 'config') return
+    if (interaction.data.options?.[0].name !== 'import') return
+    if (interaction.data.options?.[0].options?.[0].name !== 'file') return
+
     const command = interaction.data.options[0].options[0]
+
     await fetch(`https://discord.com/api/v10/interactions/${interaction.id}/${interaction.token}/callback`, {
         method: 'POST',
         body: JSON.stringify({
@@ -75,6 +69,7 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
             'Content-Type': 'application/json'
         }
     })
+    
     if (!(interaction.data.resolved.attachments[command.options[0].value].filename as string).endsWith('.json'))
         return fetch(
             `https://discord.com/api/v10/webhooks/${client.user?.id}/${interaction.token}/messages/@original`,
