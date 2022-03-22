@@ -19,10 +19,8 @@ export default class Config extends Command {
         let server = this.client.servers.get(guild.id)
         if (!server) server = this.client.newServer(guild)
         const suggestChannelsChoices = await Promise.all(server.suggestChannels.map(c => {
-            console.log(c)
             return [c.default ? 'default' : c.alias, c.channel??c.channel_id as string]
         }))
-        console.log(suggestChannelsChoices, guild.id)
         
         const logs = ['message_update', 'message_delete', 'message_attachment']
         const subcommandsLogs = logs.map(i =>
@@ -168,11 +166,7 @@ export default class Config extends Command {
                                 .setDescription('Alias of channel to remove')
                                 .setRequired(true)
                                 .addChoices(suggestChannelsChoices as [name: string, value: string][])
-                        )
-                    console.log(subcommand)
-                    
-                    console.log(suggestChannelsChoices && suggestChannelsChoices.length > 0, suggestChannelsChoices, guild?.id)
-                    
+                        )                    
                     return subcommand
                 })
                 .addSubcommand(subcommand =>

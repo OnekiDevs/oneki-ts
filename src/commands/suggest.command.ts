@@ -17,9 +17,7 @@ export default class Suggest extends Command {
         const command = this.baseCommand
         command.addStringOption((option) => option.setName('suggestion').setDescription('Suggest to send').setRequired(true))
         if (server && server.suggestChannels.length > 0) {
-            const channels = server.suggestChannels.map((i) => [i.alias ?? 'predetermined', i.channel??i.channel_id])
-            console.log(channels, guild.id)
-            
+            const channels = server.suggestChannels.map((i) => [i.alias ?? 'predetermined', i.channel??i.channel_id])            
             command.addStringOption((option) =>
                 option
                     .setName('channel')

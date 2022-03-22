@@ -303,7 +303,7 @@ export class Server {
         if (this.logsChannels.messageAttachment)
             data['logs_channels.message_attachment'] = this.logsChannels.messageAttachment
         if (this.logsChannels.messageDelete) data['logs_channels.message_delete'] = this.logsChannels.messageDelete
-        if (!data.logs_channels) data.logs_channels = {}
+        if (!data.logs_channels) data.logs_channels = FieldValue.delete()
         this.db.update(data).catch(() => this.db.set(data))
     }
 

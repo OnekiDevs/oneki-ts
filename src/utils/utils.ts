@@ -106,11 +106,9 @@ export function imgToLink(img: Buffer, client: Client): Promise<string> {
 
 export async function sendError(client: Client, error: Error, file: string) {
     console.log(
-        '\x1b[31m%s\x1b[0m',
-        '*****************************************************************\n',
+        '\x1b[31m*****************************************************************\x1b[0m',
         error,
-        '\x1b[31m%s\x1b[0m',
-        '*****************************************************************'
+        '\x1b[31m*****************************************************************\x1b[0m',
     )
     const channel = await client.channels.fetch(client.constants.errorChannel as string)
     if (channel) (channel as TextChannel).send({
