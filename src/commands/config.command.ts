@@ -16,6 +16,7 @@ export default class Config extends Command {
     getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
         const server = this.client.servers.get(guild?.id as string)
         const suggestChannelsChoices = server?.suggestChannels.map(c => [c.default ? 'default' : c.alias, c.channel])
+        console.log(suggestChannelsChoices)
         const logs = ['message_update', 'message_delete', 'message_attachment']
         const subcommandsLogs = logs.map(i =>
             new SlashCommandSubcommandBuilder()

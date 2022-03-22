@@ -3,6 +3,12 @@ import { GuildDataBaseModel, Client, LangType, SuggestChannelObject } from '../u
 import { FieldValue } from 'firebase-admin/firestore'
 import i18n from 'i18n'
 export class Server {
+    rejectSug(id: string) {
+        throw new Error('Method not implemented.'+id)
+    }
+    aceptSug(id: string) {
+        throw new Error('Method not implemented.'+id)
+    }
     emojiAnalisisEnabled = false
     private _i18n = i18n
     guild: Guild
