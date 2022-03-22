@@ -52,6 +52,8 @@ export class Server {
 
         const data = db.data() as GuildDataBaseModel
 
+        console.log(data.suggest_channels)
+        
         if (data.lang) this.lang = data.lang
         if (data.premium) this.premium = true
         if (data.last_suggest) this.lastSuggestId = data.last_suggest

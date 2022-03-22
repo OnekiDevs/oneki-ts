@@ -14,12 +14,14 @@ export default class Config extends Command {
         })
     }
 
-    getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
-        const server = this.client.servers.get(guild?.id as string)
-        const suggestChannelsChoices = server?.suggestChannels.map(c => {
+    async getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
+        if (!guild) return this.baseCommand.toJSON() as any
+        let server = this.client.servers.get(guild.id)
+        if (!server) server = this.client.newServer(guild)
+        const suggestChannelsChoices = await Promise.all(server.suggestChannels.map(c => {
             console.log(c)
             return [c.default ? 'default' : c.alias, c.channel]
-        })
+        }))
         const logs = ['message_update', 'message_delete', 'message_attachment']
         const subcommandsLogs = logs.map(i =>
             new SlashCommandSubcommandBuilder()
