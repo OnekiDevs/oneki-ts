@@ -12,12 +12,14 @@ export default class Suggest extends Command {
         })
     }
 
-    async getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
+    async getData(guild: Guild): Promise<ApplicationCommandDataResolvable> {
         const server = this.client.servers.get(guild?.id as string)
         const command = this.baseCommand
         command.addStringOption((option) => option.setName('suggestion').setDescription('Suggest to send').setRequired(true))
         if (server && server.suggestChannels.length > 0) {
-            const channels = server.suggestChannels.map((i) => [i.alias ?? 'predetermined', i.channel])
+            const channels = server.suggestChannels.map((i) => [i.alias ?? 'predetermined', i.channel??i.channel_id])
+            console.log(channels, guild.id)
+            
             command.addStringOption((option) =>
                 option
                     .setName('channel')
@@ -28,7 +30,7 @@ export default class Suggest extends Command {
         return command.toJSON() as ApplicationCommandDataResolvable
     }
 
-    run(interaction: CommandInteraction): any {
+    run(interaction: CommandInteraction<'cached'>): any {
         let server = this.client.servers.get(interaction.guildId as string)
         if (!server || server.suggestChannels.length === 0) {
             server = new Server(interaction.guild!)

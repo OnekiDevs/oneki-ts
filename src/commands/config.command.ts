@@ -169,6 +169,8 @@ export default class Config extends Command {
                                 .setRequired(true)
                                 .addChoices(suggestChannelsChoices as [name: string, value: string][])
                         )
+                    console.log(subcommand)
+                    
                     console.log(suggestChannelsChoices && suggestChannelsChoices.length > 0, suggestChannelsChoices, guild?.id)
                     
                     return subcommand
