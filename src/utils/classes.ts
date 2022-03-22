@@ -24,6 +24,8 @@ export enum CommandType {
     global,
 }
 
+export type ServerInvite = { user: string; count: number; code:string }[];
+
 export interface oldCommandData {
     name: string;
     description: string;
@@ -67,6 +69,7 @@ export interface CommandPermissions {
 
 export interface SuggestChannelObject {
     channel: string;
+    channel_id?: string;
     default: boolean;
     alias?: string;
 }

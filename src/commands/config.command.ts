@@ -2,6 +2,7 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, Guild } from 'discord.js'
 import { Command, Client, CommandType, LangType } from '../utils/classes.js'
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
+import fs from 'fs'
 
 export default class Config extends Command {
     constructor(client: Client) {
@@ -13,9 +14,14 @@ export default class Config extends Command {
         })
     }
 
-    getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
-        const server = this.client.servers.get(guild?.id as string)
-        const suggestChannelsChoices = server?.suggestChannels.map(c => [c.default ? 'default' : c.alias, c.channel])
+    async getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
+        if (!guild) return this.baseCommand.toJSON() as any
+        let server = this.client.servers.get(guild.id)
+        if (!server) server = this.client.newServer(guild)
+        const suggestChannelsChoices = await Promise.all(server.suggestChannels.map(c => {
+            return [c.default ? 'default' : c.alias, c.channel??c.channel_id as string]
+        }))
+        
         const logs = ['message_update', 'message_delete', 'message_attachment']
         const subcommandsLogs = logs.map(i =>
             new SlashCommandSubcommandBuilder()
@@ -160,7 +166,7 @@ export default class Config extends Command {
                                 .setDescription('Alias of channel to remove')
                                 .setRequired(true)
                                 .addChoices(suggestChannelsChoices as [name: string, value: string][])
-                        )
+                        )                    
                     return subcommand
                 })
                 .addSubcommand(subcommand =>
@@ -222,6 +228,7 @@ export default class Config extends Command {
                 required: true
             }
         ]
+        // fs.writeFile('./config'+guild?.id+'.json', JSON.stringify(cmd, null, 4), ()=>'')
         // console.log(JSON.stringify(command.options?.[5].options, null, 1))
         return new Promise(resolve => resolve(cmd))
     }
