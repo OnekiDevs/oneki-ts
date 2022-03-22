@@ -2,6 +2,7 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, Guild } from 'discord.js'
 import { Command, Client, CommandType, LangType } from '../utils/classes.js'
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
+import fs from 'fs'
 
 export default class Config extends Command {
     constructor(client: Client) {
@@ -15,8 +16,11 @@ export default class Config extends Command {
 
     getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
         const server = this.client.servers.get(guild?.id as string)
-        const suggestChannelsChoices = server?.suggestChannels.map(c => [c.default ? 'default' : c.alias, c.channel])
-        console.log(suggestChannelsChoices)
+        const suggestChannelsChoices = server?.suggestChannels.map(c => {
+            console.log(c)
+            
+            return [c.default ? 'default' : c.alias, c.channel]
+        })
         const logs = ['message_update', 'message_delete', 'message_attachment']
         const subcommandsLogs = logs.map(i =>
             new SlashCommandSubcommandBuilder()
@@ -162,6 +166,8 @@ export default class Config extends Command {
                                 .setRequired(true)
                                 .addChoices(suggestChannelsChoices as [name: string, value: string][])
                         )
+                    console.log(suggestChannelsChoices && suggestChannelsChoices.length > 0, suggestChannelsChoices, guild?.id)
+                    
                     return subcommand
                 })
                 .addSubcommand(subcommand =>
@@ -223,6 +229,7 @@ export default class Config extends Command {
                 required: true
             }
         ]
+        fs.writeFile('./config'+guild?.id+'.json', JSON.stringify(cmd, null, 4), ()=>'')
         // console.log(JSON.stringify(command.options?.[5].options, null, 1))
         return new Promise(resolve => resolve(cmd))
     }
