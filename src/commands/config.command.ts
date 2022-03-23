@@ -2,7 +2,6 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, Guild } from 'discord.js'
 import { Command, Client, CommandType, LangType } from '../utils/classes.js'
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
-import fs from 'fs'
 
 export default class Config extends Command {
     constructor(client: Client) {
