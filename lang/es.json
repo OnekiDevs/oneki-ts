@@ -14,6 +14,10 @@
 		"start_out": "Debes unirte a la partida primero",
 		"start_no_host": "Sólo el host puede iniciar la partida"
 	},
+	"autoroll_btn": {
+		"remove": "Rol removido correctamente",
+		"add": "Rol agregado correctamente"
+	},
 	"------------>>>============ commands ============<<<------------": "------------>>>============ commands ============<<<------------",
 	"activitie_cmd": {
 		"whotout_voice": "Ingresa a un canal de voz o específica uno",
@@ -48,6 +52,14 @@
 			"set_message": "El anuncio que se enviará cuando un usuario sea invitado por otro ha sido cambiado a {message}",
 			"cant_find_inviter": "{invited} ha entrado al servidor. ´No pude encontrar quién lo invitó.´",
 			"set_channel": "El canal para recibir notificaciones de invitaciones ha sido cambiado a {channel}"
+		},
+		"autoroles": {
+			"create":"Se ha creado el grupo de autoroles {name}",
+			"added": "Se agrego el rol {roll} al grupo {goup}",
+			"remove": "Rol {roll} eliminado de {group}",
+			"remove_group": "Grupo eliminado",
+			"displaying": "Desplegando...",
+			"displaying_error": "No existe ese grupo"
 		}
 	},
 	"info_cmd": {
@@ -82,40 +94,40 @@
 		"error": "Lo siento, no puedo entender eso. Por favor, comprueba que hayas escrito tu fecha de cumpleaños como en este ejemplo: `MES/DÍA`",
 		"default_message": "¡Feliz cumpleaños {username}!"
 	},
-    "ban_cmd": {
-        "user_permissions": "No tienes permisos suficientes para banear a ese usuario",
-        "reply": "{user} ha sido baneado correctamente"
-    },
-    "kick_cmd": {
-        "user_permissions": "No tienes permisos suficientes para patear a ese usuario",
-        "reply": "{user} ha sido pateado correctamente"
-    },
-    "timeout_cmd": {
-        "user_permissions": "No tienes permisos suficientes para aislar a ese usuario",
-        "reply": "{user} ha sido aislado correctamente"
-    },
-    "------------>>>============ olds ============<<<------------":"------------>>>============ olds ============<<<------------",
-    "emoji_old": {
-        "missing": "Emoji no encontrado",
-        "link": "Enlace",
-        "forget": "Olvidaste mencionar un emoji"
-    },
-    "uno_old": {
-        "updating": "Actualizando cartas ...",
-        "gg": "GG, has ganado",
-        "waiting": "Esperando jugadores, se requieren minimo 2",
-        "end": "Partida terminada\nGanador: {user}",
-        "turn": "Turno de {user}",
-        "join": "Unirme",
-        "start": "Iniciar partida",
-        "show": "Mostrar cartas",
-        "eat": "Comar cartas"
-    },
-    "emote_analize_old": {
+	"ban_cmd": {
+		"user_permissions": "No tienes permisos suficientes para banear a ese usuario",
+		"reply": "{user} ha sido baneado correctamente"
+	},
+	"kick_cmd": {
+		"user_permissions": "No tienes permisos suficientes para patear a ese usuario",
+		"reply": "{user} ha sido pateado correctamente"
+	},
+	"timeout_cmd": {
+		"user_permissions": "No tienes permisos suficientes para aislar a ese usuario",
+		"reply": "{user} ha sido aislado correctamente"
+	},
+	"------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
+	"emoji_old": {
+		"missing": "Emoji no encontrado",
+		"link": "Enlace",
+		"forget": "Olvidaste mencionar un emoji"
+	},
+	"uno_old": {
+		"updating": "Actualizando cartas ...",
+		"gg": "GG, has ganado",
+		"waiting": "Esperando jugadores, se requieren minimo 2",
+		"end": "Partida terminada\nGanador: {user}",
+		"turn": "Turno de {user}",
+		"join": "Unirme",
+		"start": "Iniciar partida",
+		"show": "Mostrar cartas",
+		"eat": "Comar cartas"
+	},
+	"emote_analize_old": {
 		"start": "Iniciando análisis",
 		"end": "Parando análisis"
 	},
-    "------------>>>============ commons ============<<<------------":"------------>>>============ commons ============<<<------------",
-    "footer":"{bot} Bot v{version}",
-    "premium": "Actualize su membresia a Premium para usar esta caracteristica"
+	"------------>>>============ commons ============<<<------------": "------------>>>============ commons ============<<<------------",
+	"footer": "{bot} Bot v{version}",
+	"premium": "Actualize su membresia a Premium para usar esta caracteristica"
 }

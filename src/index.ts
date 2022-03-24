@@ -38,9 +38,9 @@ const client: Client = new Client({
         defaultLocale: 'en',
         retryInDefaultLocale: true,
         objectNotation: true,
-        logWarnFn: msg => console.warn('WARN', msg),
-        logErrorFn: msg => console.error('ERROR', msg),
-        missingKeyFn: msg => console.error('LANG', msg),
+        logWarnFn: msg => console.warn('WARN _l', msg),
+        logErrorFn: msg => console.error('ERROR _l', msg),
+        missingKeyFn: msg => console.error('LANG _l', msg),
         mustacheConfig: {
             tags: ['{{', '}}'],
             disable: false

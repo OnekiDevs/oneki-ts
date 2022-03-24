@@ -14,6 +14,10 @@
 		"start_out": "You must join the game first",
 		"start_no_host": "Only the host can start the game"
 	},
+	"autoroll_btn": {
+		"remove": "Roll removed sucesfull",
+		"add": "Roll added sucesfull"
+	},
 	"------------>>>============ commands ============<<<------------": "------------>>>============ commands ============<<<------------",
 	"activitie_cmd": {
 		"whotout_voice": "Enter a voice channel or specify one",
@@ -48,6 +52,14 @@
 			"set_message": "The announcement that will get sent when a user is invited by another has been set to {message}",
 			"cant_find_inviter": "{invited} has joined the server. ´I couldn't figure out who invited him.´",
 			"set_channel": "The channel for recieving invitations has been set to {channel}"
+		},
+		"autoroles": {
+			"create":"The group {name} has ccreated",
+			"added": "the roll {roll} has added in the group {goup}",
+			"remove": "the roll {roll} has removed of the group {goup}}",
+			"remove_group": "Group deleted",
+			"displaying": "Deploying...",
+			"displaying_error": "Don't exist this group"
 		}
 	},
 	"info_cmd": {

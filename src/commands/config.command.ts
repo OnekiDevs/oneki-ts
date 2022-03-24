@@ -2,7 +2,6 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, Guild } from 'discord.js'
 import { Command, Client, CommandType, LangType } from '../utils/classes.js'
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
-import fs from 'fs'
 
 export default class Config extends Command {
     constructor(client: Client) {
@@ -16,12 +15,14 @@ export default class Config extends Command {
 
     async getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
         if (!guild) return this.baseCommand.toJSON() as any
-        let server = this.client.servers.get(guild.id)
-        if (!server) server = this.client.newServer(guild)
-        const suggestChannelsChoices = await Promise.all(server.suggestChannels.map(c => {
-            return [c.default ? 'default' : c.alias, c.channel??c.channel_id as string]
-        }))
-        
+        const server = this.client.servers.get(guild.id) ?? this.client.newServer(guild)
+
+        const suggestChannelsChoices = await Promise.all(
+            server.suggestChannels.map(c => {
+                return [c.default ? 'default' : c.alias, c.channel ?? (c.channel_id as string)]
+            })
+        )
+
         const logs = ['message_update', 'message_delete', 'message_attachment']
         const subcommandsLogs = logs.map(i =>
             new SlashCommandSubcommandBuilder()
@@ -89,11 +90,11 @@ export default class Config extends Command {
                                 .setRequired(true)
                         )
                 )
-                .addSubcommand((subcommand) =>
+                .addSubcommand(subcommand =>
                     subcommand
                         .setName('birthday_message')
-                        .setDescription('Change your happy birthday\'s announcement')
-                        .addStringOption(option => 
+                        .setDescription("Change your happy birthday's announcement")
+                        .addStringOption(option =>
                             option
                                 .setName('message')
                                 .setDescription('The message to use when sending the message')
@@ -166,7 +167,7 @@ export default class Config extends Command {
                                 .setDescription('Alias of channel to remove')
                                 .setRequired(true)
                                 .addChoices(suggestChannelsChoices as [name: string, value: string][])
-                        )                    
+                        )
                     return subcommand
                 })
                 .addSubcommand(subcommand =>
@@ -184,7 +185,7 @@ export default class Config extends Command {
                 .addSubcommand(subcommand =>
                     subcommand
                         .setName('birthday_channel')
-                        .setDescription('Remove the channel to celebrate user\'s birthdays')
+                        .setDescription("Remove the channel to celebrate user's birthdays")
                 )
         )
 
@@ -197,7 +198,9 @@ export default class Config extends Command {
                 subcommand
                     .setName('auto')
                     .setDescription('Configure logs automatically')
-                    .addChannelOption(option => option.setName('category').setDescription('Category to use').addChannelType(4))
+                    .addChannelOption(option =>
+                        option.setName('category').setDescription('Category to use').addChannelType(4)
+                    )
             )
             return subcommandGroup
         })
@@ -208,6 +211,76 @@ export default class Config extends Command {
                 .setDescription('Export the config file')
                 .addSubcommand(subcommand => subcommand.setName('file').setDescription('Export the config file'))
         )
+
+        command.addSubcommandGroup(subcommandGroup => {
+            subcommandGroup
+                .setName('autoroles')
+                .setDescription('Config the autoroles')
+                .addSubcommand(subcommand =>
+                    subcommand
+                        .setName('create')
+                        .setDescription('Create a autorol group')
+                        .addStringOption(option => option.setName('name').setDescription('Set the name of the group'))
+                )
+            if (server && server.autoroles && server.autoroles.size > 0) {
+                subcommandGroup.addSubcommand(subcommand =>
+                    subcommand
+                        .setName('add')
+                        .setDescription('Add rol to autorol group')
+                        .addStringOption(option =>
+                            option
+                                .setName('group')
+                                .setDescription('The group name')
+                                .setRequired(true)
+                                .addChoices(Array.from(server.autoroles.keys()).map(ar => [ar, ar]))
+                        )
+                        .addRoleOption(option => option.setName('rol').setDescription('Rol to add').setRequired(true))
+                )
+
+                subcommandGroup.addSubcommand(subcommand =>
+                    subcommand
+                        .setName('remove')
+                        .setDescription('Remove rol of an autorol group')
+                        .addStringOption(option =>
+                            option
+                                .setName('group')
+                                .setDescription('The group name')
+                                .setRequired(true)
+                                .addChoices(Array.from(server.autoroles.keys()).map(ar => [ar, ar]))
+                        )
+                        .addRoleOption(option => option.setName('rol').setDescription('Rol to remove').setRequired(true))
+                )
+
+                subcommandGroup.addSubcommand(subcommand =>
+                    subcommand
+                        .setName('remove_group')
+                        .setDescription('Delete a autorol group')
+                        .addStringOption(option =>
+                            option
+                                .setName('group')
+                                .setDescription('The group name')
+                                .setRequired(true)
+                                .addChoices(Array.from(server.autoroles.keys()).map(ar => [ar, ar]))
+                        )
+                )
+
+                subcommandGroup.addSubcommand(subcommand =>
+                    subcommand
+                        .setName('display')
+                        .setDescription('Display a autorol group')
+                        .addStringOption(option =>
+                            option
+                                .setName('group')
+                                .setDescription('The group name')
+                                .setRequired(true)
+                                .addChoices(Array.from(server.autoroles.keys()).map(ar => [ar, ar]))
+                        )
+                        .addChannelOption(option => option.setName('channel').setDescription('Channel to display').addChannelType(0))
+                        .addStringOption(option => option.setName('message').setDescription('Message to display'))
+                )
+            }
+            return subcommandGroup
+        })
 
         command.addSubcommandGroup(subcommandGroup =>
             subcommandGroup
@@ -228,8 +301,6 @@ export default class Config extends Command {
                 required: true
             }
         ]
-        // fs.writeFile('./config'+guild?.id+'.json', JSON.stringify(cmd, null, 4), ()=>'')
-        // console.log(JSON.stringify(command.options?.[5].options, null, 1))
         return new Promise(resolve => resolve(cmd))
     }
 

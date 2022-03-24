@@ -1,14 +1,15 @@
-import { Guild, GuildChannel, Invite, Message } from 'discord.js'
+import { Collection, Guild, GuildChannel, Invite, Message } from 'discord.js'
 import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, ServerInvite } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import i18n from 'i18n'
 export class Server {
     invites: ServerInvite = []
+    autoroles: Collection<string, Set<string>> = new Collection()
     rejectSug(id: string) {
-        throw new Error('Method not implemented.'+id)
+        throw new Error('Method not implemented.' + id)
     }
     aceptSug(id: string) {
-        throw new Error('Method not implemented.'+id)
+        throw new Error('Method not implemented.' + id)
     }
     emojiAnalisisEnabled = false
     private _i18n = i18n
@@ -43,7 +44,7 @@ export class Server {
     }
 
     init() {
-        return Promise.all([ this.syncDB() ])
+        return Promise.all([this.syncDB()])
     }
 
     async syncDB(dataPriority?: boolean): Promise<void> {
@@ -56,7 +57,7 @@ export class Server {
         }
 
         const data = db.data() as GuildDataBaseModel
-        
+
         if (data.lang) this.lang = data.lang
         if (data.premium) this.premium = true
         if (data.last_suggest) this.lastSuggestId = data.last_suggest
@@ -70,10 +71,8 @@ export class Server {
         }
         if (data.birthday?.channel) this.birthday.channel = data.birthday.channel
         if (data.birthday?.message) this.birthday.message = data.birthday.message
-        if (data.emoji_statistics) this.emojiStatistics = data.emoji_statistics      
+        if (data.emoji_statistics) this.emojiStatistics = data.emoji_statistics
         if (data.emoji_analisis_enabled && data.premium) this.startEmojiAnalisis()
-
-
 
         return Promise.resolve()
     }
@@ -537,13 +536,13 @@ export class Server {
         if (this.emojiAnalisisEnabled) return
         else this.emojiAnalisisEnabled = true
         this.db.update({ emoji_analisis_enabled: true }).catch(() => this.db.set({ emoji_analisis_enabled: true }))
-        
+
         this.emojiTimeout = setInterval(() => {
             this.db.update({
                 emoji_statistics: this.emojiStatistics
             })
         }, 600_000)
-        
+
         this.guild.client.on('messageCreate', msg => {
             if (!msg.guild) return
             if (!msg.content) return
@@ -563,9 +562,9 @@ export class Server {
     stopEmojiAnalisis() {
         this.emojiAnalisisEnabled = false
         this.db.update({ emoji_analisis_enabled: false }).catch(() => this.db.set({ emoji_analisis_enabled: false }))
-        
+
         if (this.emojiTimeout) clearInterval(this.emojiTimeout)
-        
+
         this.guild.client.removeListener('messageCreate', this.emojiAnalisis)
     }
 
@@ -590,12 +589,36 @@ export class Server {
      */
     async getInvites(): Promise<ServerInvite> {
         const invites = await this.guild.invites.fetch()
-        this.invites = await Promise.all(invites
-            .map((i: Invite) => ({ 
-                user: i.inviterId??'server', 
+        this.invites = await Promise.all(
+            invites.map((i: Invite) => ({
+                user: i.inviterId ?? 'server',
                 count: i.memberCount,
                 code: i.code
-            })))
+            }))
+        )
         return Promise.resolve(this.invites)
+    }
+
+    newAutorol(name: string) {
+        this.autoroles.set(name, new Set())
+        this.db.update({ ['autoroles.' + name]: [] }).catch(() => this.db.set({ ['autoroles.' + name]: [] }))
+    }
+
+    addAutorol(name: string, id: string) {
+        if (!this.autoroles.has(name)) return
+        this.autoroles.get(name)?.add(id)
+        this.db.update({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }).catch(() => this.db.set({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }))
+    }
+
+    removeAutorolRol(name: string, id: string) {
+        if (!this.autoroles.has(name)) return
+        this.autoroles.get(name)?.delete(id)
+        this.db.update({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }).catch(() => this.db.set({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }))
+    }
+
+    removeAutorol(name: string) {
+        if (!this.autoroles.has(name)) return
+        this.autoroles.delete(name)
+        this.db.update({ ['autoroles.' + name]: FieldValue.delete() }).catch(() => this.db.set({ ['autoroles.' + name]: FieldValue.delete() }))
     }
 }
