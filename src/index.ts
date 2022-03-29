@@ -58,11 +58,7 @@ const tracker = InvitesTracker.init(client, {
     fetchAuditLogs: true
 })
 
-tracker.on('guildMemberAdd', (member, type, invite) => {
-
-    console.log(1, `${member.user.tag} (${member.id}) joined ${member.guild.name} (${invite?.inviter?.username})`)
-
-})
+tracker.on('guildMemberAdd', (member, type, invite) => client.emit('customGuildMemberAdd', member, type, invite))
 
 client.login(process.env.DISCORD_TOKEN)
 
