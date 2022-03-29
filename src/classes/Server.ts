@@ -23,6 +23,7 @@ export class Server {
         messageUpdate?: string
         messageDelete?: string
         messageAttachment?: string
+        invite?: string
     } = {}
     birthday: {
         channel?: string
@@ -620,5 +621,23 @@ export class Server {
         if (!this.autoroles.has(name)) return
         this.autoroles.delete(name)
         this.db.update({ ['autoroles.' + name]: FieldValue.delete() }).catch(() => this.db.set({ ['autoroles.' + name]: FieldValue.delete() }))
+    }
+
+    setInviteChannel(inviteChannel: string){
+        this.logsChannels.invite = inviteChannel
+        this.db
+            .update({ ['logs_channels.invite']: inviteChannel })
+            .catch(() => this.db.set({ ['logs_channels.invite']: inviteChannel }))
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'set_invitechannel',
+                from: 'mts',
+                data: {
+                    log: 'INVITE_CHANNEL',
+                    channel: inviteChannel,
+                    guild: this.guild.id
+                }
+            })
+        )
     }
 }

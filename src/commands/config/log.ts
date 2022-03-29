@@ -59,3 +59,16 @@ export async function auto(interaction: CommandInteraction<'cached'>) {
     })
     server.setMessageAttachmentLog(ca.id)
 }
+
+export async function invites(interaction: CommandInteraction<'cached'>){
+    await interaction.deferReply()
+    let server = (interaction.client as Client).servers.get(interaction.guildId)
+    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+    
+    const member = interaction.guild?.members.cache.get(interaction.user.id)
+    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+
+    const inviteChannel = interaction.options.getChannel('channel') as TextChannel
+    server.setInviteChannel(inviteChannel.id)
+    interaction.editReply(server.translate('config_cmd.invites.set_channel', { channel: inviteChannel?.toString() }))
+}

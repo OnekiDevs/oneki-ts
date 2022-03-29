@@ -23,7 +23,7 @@ export default class Config extends Command {
             })
         )
 
-        const logs = ['message_update', 'message_delete', 'message_attachment']
+        const logs = ['message_update', 'message_delete', 'message_attachment', 'invites']
         const subcommandsLogs = logs.map(i =>
             new SlashCommandSubcommandBuilder()
                 .setName(i)
@@ -93,7 +93,7 @@ export default class Config extends Command {
                 .addSubcommand(subcommand =>
                     subcommand
                         .setName('birthday_message')
-                        .setDescription("Change your happy birthday's announcement")
+                        .setDescription('Change your happy birthday\'s announcement')
                         .addStringOption(option =>
                             option
                                 .setName('message')
@@ -185,7 +185,7 @@ export default class Config extends Command {
                 .addSubcommand(subcommand =>
                     subcommand
                         .setName('birthday_channel')
-                        .setDescription("Remove the channel to celebrate user's birthdays")
+                        .setDescription('Remove the channel to celebrate user\'s birthdays')
                 )
         )
 

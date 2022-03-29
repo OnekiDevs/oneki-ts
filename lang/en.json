@@ -49,9 +49,10 @@
 		},
 		"invites": {
 			"default_message": "¡{invited} has joined the server! *He has been by {inviter} **Total invites**: {invites}*",
-			"set_message": "The announcement that will get sent when a user is invited by another has been set to {message}",
 			"cant_find_inviter": "{invited} has joined the server. ´I couldn't figure out who invited him.´",
-			"set_channel": "The channel for recieving invitations has been set to {channel}"
+			"set_channel": "The channel for recieving invitations has been set to {channel}",
+			"permissions_error": "⚠️{invited} has joined the server, however, I don't have enough permissions to see who invited him.⚠️",
+			"custom_url": "{invited} has joined the server. `He has joined using the special invite URL.`"
 		},
 		"autoroles": {
 			"create":"The group {name} has ccreated",
