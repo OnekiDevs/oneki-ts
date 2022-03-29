@@ -118,10 +118,6 @@ export class Client extends BaseClient {
         console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
         
         this._checkBirthdays()
-        this._getInvites()
-        const guild = await this.guilds.fetch('885674114310881362')!
-        const member = await guild.members.fetch('317105612100075520')!
-        this.emit('guildMemberAdd', member)
     }
 
     private _onWebSocketMessage(message: string): void {
@@ -184,10 +180,6 @@ export class Client extends BaseClient {
         setTimeout(() => {
             this._checkBirthdays()
         }, 86400000)
-    }
-    
-    private async _getInvites(){
-        //
     }
 
     /**
