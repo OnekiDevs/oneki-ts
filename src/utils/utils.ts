@@ -112,7 +112,8 @@ export async function sendError(client: Client, error: Error, file: string) {
     )
     const channel = await client.channels.fetch(client.constants.errorChannel as string)
     if (channel) (channel as TextChannel).send({
-        content: process.env.NODE_ENV!=='production'?process.env.DEVELOPER_ID?`<@${process.env.DEVELOPER_ID}>`:null:`<@&${client.constants.jsDiscordRoll}>`,
+        content: process.env.NODE_ENV!=='production'?process.env.DEVELOPER_ID?
+            `<@${process.env.DEVELOPER_ID}>`:null:`<@&${client.constants.jsDiscordRoll}>`,
         embeds: [
             new MessageEmbed()
                 .setColor('YELLOW')
@@ -127,6 +128,8 @@ export async function sendError(client: Client, error: Error, file: string) {
         ],
     })
 }
+
+
 
 /**
  * @deprecated Now use <client>.newServer(guild: Guild, data?: GuildDataBaseModel)

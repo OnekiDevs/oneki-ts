@@ -16,7 +16,9 @@ const client: Client = new Client({
         Intents.FLAGS.GUILD_WEBHOOKS,
         Intents.FLAGS.GUILD_BANS,
         Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-        Intents.FLAGS.GUILD_VOICE_STATES
+        Intents.FLAGS.GUILD_VOICE_STATES,
+        Intents.FLAGS.GUILD_INVITES,
+        Intents.FLAGS.GUILD_MEMBERS
     ],
     partials: ['CHANNEL'],
     firebaseToken: JSON.parse(process.env.FIREBASE_TOKEN as string),
@@ -46,6 +48,20 @@ const client: Client = new Client({
             disable: false
         }
     }
+})
+
+import InvitesTracker from '@androz2091/discord-invites-tracker'
+
+const tracker = InvitesTracker.init(client, {
+    fetchGuilds: true,
+    fetchVanity: true,
+    fetchAuditLogs: true
+})
+
+tracker.on('guildMemberAdd', (member, type, invite) => {
+
+    console.log(1, `${member.user.tag} (${member.id}) joined ${member.guild.name} (${invite?.inviter?.username})`)
+
 })
 
 client.login(process.env.DISCORD_TOKEN)
