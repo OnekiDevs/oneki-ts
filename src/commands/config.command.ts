@@ -220,7 +220,7 @@ export default class Config extends Command {
                     subcommand
                         .setName('create')
                         .setDescription('Create a autorol group')
-                        .addStringOption(option => option.setName('name').setDescription('Set the name of the group'))
+                        .addStringOption(option => option.setName('name').setDescription('Set the name of the group').setRequired(true))
                 )
             if (server && server.autoroles && server.autoroles.size > 0) {
                 subcommandGroup.addSubcommand(subcommand =>

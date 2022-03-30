@@ -11,7 +11,7 @@ export class Server {
     aceptSug(id: string) {
         throw new Error('Method not implemented.' + id)
     }
-    emojiAnalisisEnabled = false
+    private _emojiAnalisisEnabled = false
     private _i18n = i18n
     guild: Guild
     private _prefixes: Array<string> = ['>', '?']
@@ -74,6 +74,11 @@ export class Server {
         if (data.birthday?.message) this.birthday.message = data.birthday.message
         if (data.emoji_statistics) this.emojiStatistics = data.emoji_statistics
         if (data.emoji_analisis_enabled && data.premium) this.startEmojiAnalisis()
+        if (data.autoroles) {
+            for (const [key, value] of Object.entries(data.autoroles)) {
+                this.autoroles.set(key, new Set(value))
+            }   
+        }
 
         return Promise.resolve()
     }
@@ -95,9 +100,15 @@ export class Server {
         obj.birthday = {}
         if (this.birthday?.channel) obj.birthday.channel = this.birthday.channel
         if (this.birthday?.message) obj.birthday.message = this.birthday.message
-        if (this.emojiAnalisisEnabled) obj.emoji_analisis_enabled = true
+        if (this._emojiAnalisisEnabled) obj.emoji_analisis_enabled = true
         if (toPublic && this.emojiStatistics) obj.emoji_statistics = this.emojiStatistics
         if (toPublic) obj.premium = this.premium
+        if (this.autoroles) {
+            obj.autoroles = {}
+            for (const [key, value] of this.autoroles.entries()) {
+                obj.autoroles[key] = [...value]
+            }
+        }
 
         return obj
     }
@@ -112,6 +123,10 @@ export class Server {
     set lastSuggestId(n: number) {
         this._lastSuggestId = n
         this.db.update({ last_suggest: n }).catch(() => this.db.set({ last_suggest: n }))
+    }
+
+    get emojiAnalisisEnabled() {
+        return this._emojiAnalisisEnabled
     }
 
     /**
@@ -534,8 +549,8 @@ export class Server {
     }
 
     startEmojiAnalisis() {
-        if (this.emojiAnalisisEnabled) return
-        else this.emojiAnalisisEnabled = true
+        if (this._emojiAnalisisEnabled) return
+        else this._emojiAnalisisEnabled = true
         this.db.update({ emoji_analisis_enabled: true }).catch(() => this.db.set({ emoji_analisis_enabled: true }))
 
         this.emojiTimeout = setInterval(() => {
@@ -561,7 +576,7 @@ export class Server {
     }
 
     stopEmojiAnalisis() {
-        this.emojiAnalisisEnabled = false
+        this._emojiAnalisisEnabled = false
         this.db.update({ emoji_analisis_enabled: false }).catch(() => this.db.set({ emoji_analisis_enabled: false }))
 
         if (this.emojiTimeout) clearInterval(this.emojiTimeout)

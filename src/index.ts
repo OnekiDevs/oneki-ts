@@ -1,6 +1,6 @@
 import InvitesTracker from '@androz2091/discord-invites-tracker'
 import { Guild, Intents } from 'discord.js'
-import { Client, SuggestChannelObject } from './utils/classes.js'
+import { Client, GuildDataBaseModel, SuggestChannelObject } from './utils/classes.js'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { config } from 'dotenv'
@@ -100,7 +100,7 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
     const guild = (await client.guilds.fetch(interaction.guild_id)) as Guild
     const server = client.servers.get(guild.id)??client.newServer(guild)
 
-    const { prefixes, lang, logs_channels, birthday, suggest_channels } = await req.json()
+    const { prefixes, lang, logs_channels, birthday, suggest_channels, autoroles, emoji_analisis_enabled } = await req.json() as GuildDataBaseModel
 
     if (prefixes) server.prefixes = prefixes
     if (lang) server.lang = lang
@@ -121,6 +121,10 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
         if (channel.channel_id) delete channel.channel_id
         server.addSuggestChannel(channel)
     })
+    if (autoroles) for (const [key, value] of Object.entries(autoroles)) {
+        server.autoroles.set(key, new Set(value))
+    } 
+    if (emoji_analisis_enabled) server.startEmojiAnalisis()
     server.syncDB(true)
 
     await fetch(`https://discord.com/api/v10/webhooks/${client.user?.id}/${interaction.token}/messages/@original`, {

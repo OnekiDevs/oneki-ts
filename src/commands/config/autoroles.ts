@@ -31,7 +31,7 @@ export async function remove(interaction: CommandInteraction<'cached'>) {
     if (!server) server = (interaction.client as Client).newServer(interaction.guild)
     server.removeAutorolRol(name, rol.id)
     await (interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
-    interaction.editReply(server.translate('config_cmd.autoroles.remove', { roll:rol, group:name }))
+    interaction.editReply(server.translate('config_cmd.autoroles.remove', { roll:rol.toString(), group:name }))
 }
 
 export async function remove_group(interaction: CommandInteraction<'cached'>) {

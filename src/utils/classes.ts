@@ -93,7 +93,8 @@ export interface GuildDataBaseModel {
     }
     emoji_analisis_enabled?: boolean;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    emoji_statistics?: any
+    emoji_statistics?: any,
+    autoroles?: {[key: string]: string[]}
 }
 
 export interface ClientConstants {
@@ -127,11 +128,6 @@ export interface ClientOptions extends BaseClientOptions {
             disable: boolean;
         }
     }
-}
-
-export interface ButtonOptions {
-    regex: RegExp;
-    name: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,13 +1,13 @@
 import { ButtonInteraction } from 'discord.js'
-import { ButtonOptions } from '../utils/classes.js'
+import { Client } from '../utils/classes.js'
 
 export class Button {
-    regex: RegExp;
-    name: string;
+    regex: RegExp
+    client: Client
 
-    constructor(options: ButtonOptions) {
-        this.regex = options.regex;
-        this.name = options.name;
+    constructor(client: Client, regex: RegExp) {
+        this.regex = regex
+        this.client = client
     }
 
     run(interaction: ButtonInteraction) {

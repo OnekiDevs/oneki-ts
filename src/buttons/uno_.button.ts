@@ -3,21 +3,17 @@ import { Button, Client } from '../utils/classes.js'
 import { Player } from '../classes/Player.js'
 
 export default class Uno extends Button {
-    constructor() {
-        super({
-            name: 'uno_',
-            regex: /uno_.{8}_.{2}(_.{2})?$/i,
-        })
+    constructor(client: Client) {
+        super(client, /uno_.{8}_.{2}(_.{2})?$/i)
     }
 
-    async run(interaction: ButtonInteraction) {
+    async run(interaction: ButtonInteraction<'cached'>) {
         const [, id, option] = interaction.customId.split(/_/gi)
 
-        const uno = (interaction.client as Client).uno.get(id)
+        const uno = this.client.uno.get(id)
         if (!uno) return interaction.deferUpdate()
 
-        const server = (interaction.client as Client).servers.get(interaction.guildId as string)
-        if(!server) return
+        const server = this.client.servers.get(interaction.guildId as string)??this.client.newServer(interaction.guild)
 
         if (option === 'jn') {
             if (!uno.players.has(interaction.user.id))

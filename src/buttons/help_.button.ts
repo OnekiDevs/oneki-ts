@@ -2,14 +2,11 @@ import { ButtonInteraction, MessageEmbed, MessageButton, MessageActionRow } from
 import { Button, Client, oldCommandData } from '../utils/classes.js'
 
 export default class Activitie extends Button {
-    constructor() {
-        super({
-            name: 'help_',
-            regex: /help_(es|en)_.+/i,
-        })
+    constructor(client: Client) {
+        super(client, /help_(es|en)_.+/i)
     }
 
-    async run(interaction: ButtonInteraction) {
+    async run(interaction: ButtonInteraction<'cached'>) {
         const message = await interaction.channel?.messages.fetch(interaction.message.id)
         if (!message || !message.reference?.messageId) return interaction.deferUpdate()
         const messageRef = await interaction.channel?.messages.fetch(message.reference.messageId)
@@ -19,8 +16,7 @@ export default class Activitie extends Button {
         fetch(`https://oneki.herokuapp.com/api/lang/${lang}/cmd/${category}`)
             .then((r) => r.json())
             .then(async (cmds) => {
-                const server = (interaction.client as Client).servers.get(interaction.guildId ?? '')
-                if (!server) return
+                const server = this.client.servers.get(interaction.guildId ?? '')??this.client.newServer(interaction.guild)
                 const embed = new MessageEmbed()
                 embed.setTitle(server.translate('help_btn.embed_title', { bot: interaction.client.user?.username }))
                 embed.setDescription(server.translate('help_btn.embed_description', { category }))
@@ -34,7 +30,7 @@ export default class Activitie extends Button {
                     }),
                 )
                 embed.setFooter({
-                    text: `${interaction.client.user?.username} Bot v${(interaction.client as Client).version}`,
+                    text: `${interaction.client.user?.username} Bot v${this.client.version}`,
                     iconURL: interaction.client.user?.avatarURL() ?? '',
                 })
                 embed.setThumbnail(interaction.client.user?.avatarURL() ?? '')

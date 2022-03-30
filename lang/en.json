@@ -56,8 +56,8 @@
 		},
 		"autoroles": {
 			"create":"The group {name} has ccreated",
-			"added": "the roll {roll} has added in the group {goup}",
-			"remove": "the roll {roll} has removed of the group {goup}}",
+			"added": "the roll {roll} has added in the group {group}",
+			"remove": "the roll {roll} has removed of the group {group}}",
 			"remove_group": "Group deleted",
 			"displaying": "Deploying...",
 			"displaying_error": "Don't exist this group"

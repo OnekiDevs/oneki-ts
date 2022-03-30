@@ -22,6 +22,7 @@ export async function file(interaction: CommandInteraction<'cached'>) {
             channel: undefined
         },
         suggest_channels: [],
+        autoroles: {}
     }
 
 
