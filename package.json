@@ -29,7 +29,6 @@
     "capture-website": "2.3.0",
     "cross-env": "7.0.3",
     "discord-api-types": "0.26.0",
-    "discord-invites-tracker": "^1.0.5",
     "discord.js": "^13.6.0",
     "dotenv": "16.0.0",
     "firebase-admin": "10.0.2",

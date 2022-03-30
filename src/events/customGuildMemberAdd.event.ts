@@ -4,7 +4,7 @@ import { Client } from '../classes/Client'
 export const name = 'customGuildMemberAdd'
 
 export async function run(member: GuildMember, type: 'normal' | 'vanity' | 'permissions' | 'unknown', invite: Invite) {
-    const welcomeChannel = member.guild.channels.cache.find((ch) => ch.name === 'welcome');
+    const welcomeChannel = member.guild.channels.cache.find((ch) => ch.name === 'welcome')
 
     if(type === 'normal'){
         welcomeChannel.send(`Welcome ${member}! You were invited by ${invite.inviter.username}!`);

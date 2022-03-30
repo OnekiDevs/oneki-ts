@@ -1,5 +1,6 @@
+import InvitesTracker from '@androz2091/discord-invites-tracker'
 import { Guild, Intents } from 'discord.js'
-import { Client } from './utils/classes.js'
+import { Client, SuggestChannelObject } from './utils/classes.js'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { config } from 'dotenv'
@@ -50,15 +51,11 @@ const client: Client = new Client({
     }
 })
 
-import InvitesTracker from '@androz2091/discord-invites-tracker'
-
-const tracker = InvitesTracker.init(client, {
+InvitesTracker.init(client, {
     fetchGuilds: true,
     fetchVanity: true,
     fetchAuditLogs: true
-})
-
-tracker.on('guildMemberAdd', (member, type, invite) => client.emit('customGuildMemberAdd', member, type, invite))
+}).on('guildMemberAdd', (member, type, invite) => client.emit('customGuildMemberAdd', member, type, invite))
 
 client.login(process.env.DISCORD_TOKEN)
 
@@ -101,10 +98,9 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
 
     const req = await fetch(interaction.data.resolved.attachments[command.options[0].value].url)
     const guild = (await client.guilds.fetch(interaction.guild_id)) as Guild
-    let server = client.servers.get(guild.id)
-    if (!server) server = client.newServer(guild)
+    const server = client.servers.get(guild.id)??client.newServer(guild)
 
-    const { prefixes, lang, logs_channels, birthday } = await req.json()
+    const { prefixes, lang, logs_channels, birthday, suggest_channels } = await req.json()
 
     if (prefixes) server.prefixes = prefixes
     if (lang) server.lang = lang
@@ -121,6 +117,10 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
         if (channel) server.setBirthdayChannel(channel)
         if (message) server.setBirthdayMessage(message)
     }
+    suggest_channels?.forEach((channel: SuggestChannelObject) => {
+        if (channel.channel_id) delete channel.channel_id
+        server.addSuggestChannel(channel)
+    })
     server.syncDB(true)
 
     await fetch(`https://discord.com/api/v10/webhooks/${client.user?.id}/${interaction.token}/messages/@original`, {
