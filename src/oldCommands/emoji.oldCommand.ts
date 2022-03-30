@@ -1,5 +1,6 @@
 import { Message, MessageEmbed } from 'discord.js'
 import { OldCommand, Client, Server } from '../utils/classes.js'
+import { sendError } from '../utils/utils.js'
 
 export default class Emoji extends OldCommand {
     constructor(client: Client) {
@@ -12,33 +13,38 @@ export default class Emoji extends OldCommand {
     }
 
     async run(msg: Message, server: Server, args?: string[]) {
-        const emojiString = (msg.content.match(/<a?:(.+):\d{18}>/) ?? args)?.[0]
-        const emojiId = (emojiString ?? '').replace(/<a?:(.+):/, '').replace(/>/, '')
-        if (args && args[0] && /\d{18}/.test(emojiId)) {
-            fetch(`https://cdn.discordapp.com/emojis/${emojiId}.gif`).then((a) => {
-                if (a.status != 200) {
-                    fetch(`https://cdn.discordapp.com/emojis/${emojiId}.png`).then((e) => {
-                        if (e.status != 200) msg.reply(server!.translate('emoji_old.missing'))
-                        else
-                            msg.reply({
-                                embeds: [
-                                    new MessageEmbed()
-                                        .setColor('#ffffff')
-                                        .setImage(e.url)
-                                        .addField(server!.translate('emoji_old.link'), `[PNG](${e.url})`),
-                                ],
-                            })
-                    })
-                } else
-                    msg.reply({
-                        embeds: [
-                            new MessageEmbed()
-                                .setColor('#ffffff')
-                                .setImage(a.url)
-                                .addField(server!.translate('emoji_old.link'), `[GIF](${a.url})`),
-                        ],
-                    })
-            })
-        } else msg.reply(server!.translate('emoji_old.forget'))
+        try {
+            const emojiString = (msg.content.match(/<a?:(.+):\d{18}>/) ?? args)?.[0]
+            const emojiId = (emojiString ?? '').replace(/<a?:(.+):/, '').replace(/>/, '')
+            if (args && args[0] && /\d{18}/.test(emojiId)) {
+                fetch(`https://cdn.discordapp.com/emojis/${emojiId}.gif`).then(a => {
+                    if (a.status != 200) {
+                        fetch(`https://cdn.discordapp.com/emojis/${emojiId}.png`).then(e => {
+                            if (e.status != 200) msg.reply(server.translate('emoji_old.missing'))
+                            else
+                                msg.reply({
+                                    embeds: [
+                                        new MessageEmbed()
+                                            .setColor('#ffffff')
+                                            .setImage(e.url)
+                                            .addField(server.translate('emoji_old.link'), `[PNG](${e.url})`)
+                                    ]
+                                })
+                        })
+                    } else
+                        msg.reply({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setColor('#ffffff')
+                                    .setImage(a.url)
+                                    .addField(server.translate('emoji_old.link'), `[GIF](${a.url})`)
+                            ]
+                        })
+                })
+            } else msg.reply(server!.translate('emoji_old.forget'))
+        } catch (error) {
+            msg.reply('Ha ocurrido un error, reporte genrado')
+            sendError(this.client, error as Error, import.meta.url)
+        }
     }
 }

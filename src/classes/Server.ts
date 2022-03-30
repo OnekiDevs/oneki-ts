@@ -556,7 +556,7 @@ export class Server {
         this.emojiTimeout = setInterval(() => {
             this.db.update({
                 emoji_statistics: this.emojiStatistics
-            })
+            }).catch(() => this.db.set({ emoji_statistics: this.emojiStatistics }))
         }, 600_000)
 
         this.guild.client.on('messageCreate', msg => {

@@ -1,6 +1,7 @@
-import { Message } from 'discord.js'
+import { OldCommand, Client } from '../utils/classes.js'
 import { UnoGame } from '../classes/UnoGame.js'
-import { OldCommand, Client, Server } from '../utils/classes.js'
+import { sendError } from '../utils/utils.js'
+import { Message } from 'discord.js'
 
 export default class Help extends OldCommand {
     constructor(client: Client) {
@@ -12,7 +13,12 @@ export default class Help extends OldCommand {
         })
     }
 
-    async run(msg: Message<true>, server: Server, args?: string[]) {
-        new UnoGame(msg, msg.client as Client)
+    async run(msg: Message<true>) {
+        try {
+            new UnoGame(msg, msg.client as Client)
+        } catch (error) {
+            msg.reply('Ha ocurrido un error, reporte genrado')  
+            sendError(this.client, error as Error, import.meta.url)
+        }
     }
 }
