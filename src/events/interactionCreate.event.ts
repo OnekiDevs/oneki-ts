@@ -16,11 +16,10 @@ export async function run(interaction: CommandInteraction | ButtonInteraction) {
                     ephemeral: true
                 })
             }
-        } else if (interaction.isButton()) {
-            const btn = await (interaction.client as Client).buttons.find(btn => btn.regex.test(interaction.customId))
-            if (btn) btn.run(interaction)
-            else interaction.deferUpdate()
-        }
+        } else if (interaction.isButton()) 
+            (interaction.client as Client).buttons
+                .find(btn => btn.regex.test(interaction.customId))
+                ?.run(interaction)
     } catch (error) {
         sendError(interaction.client as Client, error as Error, import.meta.url)
     }

@@ -1,11 +1,13 @@
+import { Client, GuildDataBaseModel, SuggestChannelObject } from './utils/classes.js'
 import InvitesTracker from '@androz2091/discord-invites-tracker'
 import { Guild, Intents } from 'discord.js'
-import { Client, GuildDataBaseModel, SuggestChannelObject } from './utils/classes.js'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { config } from 'dotenv'
 
 config()
+
+process.on('exit', () => console.log('Bot apagado'))
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -21,7 +23,6 @@ const client: Client = new Client({
         Intents.FLAGS.GUILD_INVITES,
         Intents.FLAGS.GUILD_MEMBERS
     ],
-    partials: ['CHANNEL'],
     firebaseToken: JSON.parse(process.env.FIREBASE_TOKEN as string),
     constants: {
         newServerLogChannel: '885674115946643458',

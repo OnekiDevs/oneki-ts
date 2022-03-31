@@ -60,7 +60,10 @@ export default class Activitie extends Command {
             components: [
                 new MessageActionRow().addComponents([
                     new MessageButton().setLabel('join').setStyle('LINK').setURL(`https://discord.com/invite/${invite.code}`),
-                    new MessageButton().setLabel('show link').setStyle('SECONDARY').setCustomId(`act_sl_${invite.code}`)
+                    new MessageButton()
+                        .setLabel('show link')
+                        .setStyle('SECONDARY')
+                        .setCustomId(`act_sl_${invite.code}`)
                 ]),
             ]
         })
