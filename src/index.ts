@@ -93,10 +93,9 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
     const guild = (await client.guilds.fetch(interaction.guild_id)) as Guild
     const server = client.servers.get(guild.id)??client.newServer(guild)
 
-    const { prefixes, lang, logs_channels, birthday, suggest_channels, autoroles, emoji_analisis_enabled } = await req.json() as GuildDataBaseModel
+    const { prefixes, logs_channels, birthday, suggest_channels, autoroles, emoji_analisis_enabled } = await req.json() as GuildDataBaseModel
 
     if (prefixes) server.prefixes = prefixes
-    if (lang) server.lang = lang
     if (logs_channels) {
         const { message_update, message_delete, message_attachment } = logs_channels
 

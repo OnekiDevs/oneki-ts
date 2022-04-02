@@ -1,7 +1,6 @@
 import { Collection, Guild, GuildChannel, Message } from 'discord.js'
-import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, ServerInvite } from '../utils/classes.js'
+import { GuildDataBaseModel, Client, SuggestChannelObject, ServerInvite } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
-import i18n from 'i18n'
 export class Server {
     invites: ServerInvite = []
     autoroles: Collection<string, Set<string>> = new Collection()
@@ -12,11 +11,9 @@ export class Server {
         throw new Error('Method not implemented.' + id)
     }
     private _emojiAnalisisEnabled = false
-    private _i18n = i18n
     guild: Guild
     private _prefixes: Array<string> = ['>', '?']
     db
-    private _lang: LangType = LangType.en
     suggestChannels: SuggestChannelObject[] = []
     private _lastSuggestId = 0
     logsChannels: {
@@ -42,7 +39,6 @@ export class Server {
     constructor(guild: Guild) {
         this.guild = guild
         this.db = (guild.client as Client).db.collection('guilds').doc(guild.id)
-        this._i18n.configure((guild.client as Client).i18nConfig)
     }
 
     async init() {
@@ -77,7 +73,6 @@ export class Server {
 
         const data = db.data() as GuildDataBaseModel
 
-        if (data.lang) this.lang = data.lang
         if (data.premium) this.premium = true
         if (data.last_suggest) this.lastSuggestId = data.last_suggest
         if (data.suggest_channels) this.suggestChannels = data.suggest_channels
@@ -106,7 +101,6 @@ export class Server {
     toDBObject(toPublic?: boolean): GuildDataBaseModel {
         const obj: GuildDataBaseModel = {}
         if (JSON.stringify(this.getPrefixes(true)) !== JSON.stringify(['?', '>'])) obj.prefixes = this._prefixes
-        if (this.lang !== LangType.en) obj.lang = this.lang
         if (this.lastSuggestId) obj.last_suggest = this.lastSuggestId
         if (this.suggestChannels) obj.suggest_channels = this.suggestChannels
         if (this.logsChannels) {
@@ -242,23 +236,8 @@ export class Server {
     /**
      * Return a lang of the guild for the Server.lang
      */
-    get lang(): LangType {
-        return this._lang
-    }
-
-    set lang(lang: LangType) {
-        this._lang = lang
-        this.db.update({ lang }).catch(() => this.db.set({ lang }))
-        ;(this.guild.client as Client).websocket.send(
-            JSON.stringify({
-                event: 'set_guild_lang',
-                from: 'mts',
-                data: {
-                    lang,
-                    guild: this.guild.id
-                }
-            })
-        )
+    get lang(): string {
+        return this.guild.preferredLocale.slice(0, 2)
     }
 
     /**
@@ -482,8 +461,9 @@ export class Server {
      * @returns {string} string
      */
     translate(phrase: string, params?: object): string {
-        if (params) return this._i18n.__mf({ phrase, locale: this.lang }, params) ?? ''
-        return this._i18n.__({ phrase, locale: this.lang }) ?? ''
+        const i18n = (this.guild.client as Client).i18n
+        if (params) return i18n.__mf({ phrase, locale: this.lang }, params).toString()
+        return i18n.__({ phrase, locale: this.lang }).toString()
     }
 
     /**

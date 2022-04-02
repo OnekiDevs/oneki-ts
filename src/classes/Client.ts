@@ -15,10 +15,10 @@ import {
     ClientConstants,
     ButtonManager,
     OldCommandManager,
-    anyFunction,
     UnoGame,
     Server
 } from '../utils/classes.js'
+import i18n from 'i18n'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const version = createRequire(import.meta.url)('../../package.json').version
@@ -26,20 +26,7 @@ const version = createRequire(import.meta.url)('../../package.json').version
 export class Client extends BaseClient {
     db: Firestore
     version: string
-    i18nConfig: {
-        locales: string[];
-        directory: string;
-        defaultLocale: string;
-        retryInDefaultLocale: boolean;
-        objectNotation: boolean;
-        logWarnFn: anyFunction;
-        logErrorFn: anyFunction;
-        missingKeyFn: anyFunction;
-        mustacheConfig: {
-            tags: [string, string];
-            disable: boolean;
-        }
-    }
+    i18n = i18n
     commands: CommandManager
     oldCommands: OldCommandManager
     buttons: ButtonManager
@@ -57,7 +44,7 @@ export class Client extends BaseClient {
         this.commands = new CommandManager(this, options.routes.commands)
         this.buttons = new ButtonManager(this, options.routes.buttons)
 
-        this.i18nConfig = options.i18n
+        this.i18n.configure(options.i18n)
         this.version = version??'1.0.0'
 
         this.db = getFirestore(initializeApp({
@@ -143,11 +130,11 @@ export class Client extends BaseClient {
     initializeEventListener(path: string) {
         return Promise.all(
             readdirSync(path)
-                .filter((f) => f.endsWith('.event.js'))
+                .filter((f) => f.includes('.event.'))
                 .map(async (file) => {
                     const event = await import('file:///'+join(path, file))
-
-                    this.on(event.name, (...args) => event.run(...args))
+                    const [eventName] = file.split('.')
+                    this.on(eventName, (...args) => event(...args))
                 }),
         )
     }
