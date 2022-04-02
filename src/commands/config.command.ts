@@ -23,7 +23,7 @@ export default class Config extends Command {
             })
         )
 
-        const logs = ['message_update', 'message_delete', 'message_attachment', 'invites']
+        const logs = ['message_update', 'message_delete', 'message_attachment', 'invites', 'useractivitie']
         const subcommandsLogs = logs.map(i =>
             new SlashCommandSubcommandBuilder()
                 .setName(i)

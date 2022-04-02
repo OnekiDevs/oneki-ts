@@ -51,7 +51,7 @@
 			"set_channel": "El canal para recibir notificaciones de invitaciones ha sido cambiado a {channel}"
 		},
 		"autoroles": {
-			"create":"Se ha creado el grupo de autoroles {name}",
+			"create": "Se ha creado el grupo de autoroles {name}",
 			"added": "Se agrego el rol {roll} al grupo {goup}",
 			"remove": "Rol {roll} eliminado de {group}",
 			"remove_group": "Grupo eliminado",
@@ -110,6 +110,10 @@
 		"cant_find_inviter": "{invited} ha entrado al servidor. `No pude encontrar quién lo invitó.`",
 		"permissions_error": "⚠️{invited} ha entrado al servidor, sin embargo no tengo permisos para revisar quién lo invitó.⚠️"
 	},
+	"useractivitie_event": {
+		"set_channel": "¡El canal {channel} ha sido seleccionado como el canal para recibir la actividad de los usuarios!",
+		"nickname_change": "El usuario {user} acaba de cambiar su apodo. **Viejo apodo**: {oldNickname}, **Nuevo apodo**: {newNickname}"
+	},
 	"------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
 	"emoji_old": {
 		"missing": "Emoji no encontrado",
@@ -133,5 +137,6 @@
 	},
 	"------------>>>============ commons ============<<<------------": "------------>>>============ commons ============<<<------------",
 	"footer": "{bot} Bot v{version}",
-	"premium": "Actualize su membresia a Premium para usar esta caracteristica"
+	"premium": "Actualize su membresia a Premium para usar esta caracteristica",
+	"useractivitie": {}
 }

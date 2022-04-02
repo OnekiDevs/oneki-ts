@@ -24,6 +24,7 @@ export class Server {
         messageDelete?: string
         messageAttachment?: string
         invite?: string
+        useractivitie?: string
     } = {}
     birthday: {
         channel?: string
@@ -650,6 +651,24 @@ export class Server {
                 data: {
                     log: 'INVITE_CHANNEL',
                     channel: inviteChannel,
+                    guild: this.guild.id
+                }
+            })
+        )
+    }
+
+    setUseractivitieChannel(useractivitieChannel: string){
+        this.logsChannels.useractivitie = useractivitieChannel
+        this.db
+            .update({ ['logs_channels.useractivitie']: useractivitieChannel })
+            .catch(() => this.db.set({ ['logs_channels.useractivitie']: useractivitieChannel }))
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'set_useractivitiechannel',
+                from: 'mts',
+                data: {
+                    log: 'USER_ACTIVITIE_CHANNEL',
+                    channel: useractivitieChannel,
                     guild: this.guild.id
                 }
             })

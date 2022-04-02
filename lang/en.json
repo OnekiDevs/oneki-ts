@@ -51,7 +51,7 @@
 			"set_channel": "The channel for recieving invitations has been set to {channel}"
 		},
 		"autoroles": {
-			"create":"The group {name} has ccreated",
+			"create": "The group {name} has ccreated",
 			"added": "the roll {roll} has added in the group {group}",
 			"remove": "the roll {roll} has removed of the group {group}}",
 			"remove_group": "Group deleted",
@@ -111,6 +111,10 @@
 		"permissions_error": "⚠️{invited} has joined the server, however, I don't have enough permissions to see who invited him.⚠️",
 		"custom_url": "{invited} has joined the server. `He has joined using the special invite URL.`"
 	},
+	"useractivitie_event": {
+		"set_channel": "¡The channel {channel} has been set as the channel to receive user's activitie!",
+		"nickname_change": "The user {user} just changed his nickname. **Old nickname**: {oldNickname}, **New nickname**: {newNickname}"
+	},
 	"------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
 	"emoji_old": {
 		"missing": "Emoji not found",
@@ -134,5 +138,6 @@
 	},
 	"------------>>>============ commons ============<<<------------": "------------>>>============ commons ============<<<------------",
 	"footer": "{bot} Bot v{version}",
-	"premium": "Upgrade your membership to Premium to use this feature"
+	"premium": "Upgrade your membership to Premium to use this feature",
+	"useractivitie": {}
 }
