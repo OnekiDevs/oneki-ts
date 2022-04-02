@@ -144,7 +144,7 @@ interface FoolConstructor {
     (): (phrase: string, params?: object) => string
 }
 
-export const translate = function (this: Translate, interaction: Interaction) {
+export const Translate = function (this: Translate, interaction: Interaction) {
     this.lang = interaction.locale.slice(0, 2)
     this.i18n = (interaction.client as Client).i18n
     return (phrase: string, params?: object) => {

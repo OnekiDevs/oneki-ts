@@ -1,17 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { CommandInteraction, Permissions, TextChannel } from 'discord.js'
 import { permissionsError } from '../../utils/utils.js'
-import { Client, LangType } from '../../utils/classes.js'
-
-export function language(interaction: CommandInteraction<'cached'>) {
-    const member = interaction.guild?.members.cache.get(interaction.user.id)
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
-    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
-    const lang = interaction.options.getString('lang') as LangType
-    server.lang = lang
-    interaction.reply(server.translate('config_cmd.set_lang', { lang }))
-}
+import { Client } from '../../utils/classes.js'
 
 export function prefix(interaction: CommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)

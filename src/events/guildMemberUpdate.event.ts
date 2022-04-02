@@ -1,9 +1,7 @@
 import { GuildMember } from 'discord.js'
 import { Client } from '../classes/Client.js'
 
-export const name = 'guildMemberUpdate'
-
-export async function run(oldMember: GuildMember, newMember: GuildMember) {
+export default async function(oldMember: GuildMember, newMember: GuildMember) {
     const client = (newMember.client) as Client
     let server = client.servers.get(newMember.guild.id)
     if(!server) server = client.newServer(newMember.guild)

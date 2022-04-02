@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApplicationCommandDataResolvable, CommandInteraction, Guild } from 'discord.js'
-import { Command, Client, CommandType, LangType } from '../utils/classes.js'
+import { Command, Client, CommandType } from '../utils/classes.js'
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
 
 export default class Config extends Command {
@@ -43,21 +43,6 @@ export default class Config extends Command {
             subcommandGroup
                 .setName('set') // group
                 .setDescription('set configs')
-                .addSubcommand(subcommand =>
-                    subcommand
-                        .setName('language') // command
-                        .setDescription('Set language')
-                        .addStringOption(option =>
-                            option
-                                .setName('lang') // option
-                                .setDescription('Language')
-                                .setRequired(true)
-                                .addChoices([
-                                    ['Español', LangType.es],
-                                    ['English', LangType.en]
-                                ])
-                        )
-                )
                 .addSubcommand(subcommand =>
                     subcommand
                         .setName('prefix')

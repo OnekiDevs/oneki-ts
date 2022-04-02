@@ -2,9 +2,7 @@ import { sendError } from '../utils/utils.js'
 import { Client } from '../utils/classes.js'
 import { Message } from 'discord.js'
 
-export const name = 'command'
-
-export async function run(msg: Message<true>, command: string, args?: string[]) {
+export default async function(msg: Message<true>, command: string, args?: string[]) {
     try {
         if (msg.author.bot) return
         const cmd = (msg.client as Client).oldCommands.getCommand(command)

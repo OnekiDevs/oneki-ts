@@ -1,11 +1,9 @@
 import { GuildMember, Invite, TextChannel } from 'discord.js'
 import { Client } from '../classes/Client.js'
 
-export const name = 'customGuildMemberAdd'
-
 type JoinType = 'permissions' | 'normal' | 'vanity' | 'unknown';
 
-export async function run(member: GuildMember, type: JoinType, invite: Invite) {
+export default async function(member: GuildMember, type: JoinType, invite: Invite) {
     const server = (member.client as Client).servers.get(member.guild.id) ?? (member.client as Client).newServer(member.guild)
     if (!server.logsChannels.invite || !server.premium) return
     const welcomeChannel = await member.guild.channels.fetch(server.logsChannels.invite) as TextChannel

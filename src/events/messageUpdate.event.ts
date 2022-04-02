@@ -2,9 +2,7 @@ import { Client } from '../utils/classes.js'
 import { MessageEmbed, Message, TextChannel, GuildMember } from 'discord.js'
 import { checkSend, sendError } from '../utils/utils.js'
 
-export const name = 'messageUpdate'
-
-export function run(old: Message, msg: Message) {
+export default async function(old: Message, msg: Message) {
     try {
         if (msg.author.bot) return
         if (!msg.guild) return

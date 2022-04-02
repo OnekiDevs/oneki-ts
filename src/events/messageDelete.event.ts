@@ -2,9 +2,7 @@ import { MessageEmbed, Message, TextChannel, GuildMember } from 'discord.js'
 import { sendError, checkSend } from '../utils/utils.js'
 import { Client } from '../utils/classes.js'
 
-export const name = 'messageDelete'
-
-export function run(msg: Message) {
+export default async function(msg: Message) {
     try {
         if (msg.author.bot) return
         if (!msg.guild) return

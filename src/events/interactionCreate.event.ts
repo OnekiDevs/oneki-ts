@@ -2,9 +2,7 @@ import { ButtonInteraction, CommandInteraction } from 'discord.js'
 import { Client } from '../utils/classes.js'
 import { sendError } from '../utils/utils.js'
 
-export const name = 'interactionCreate'
-
-export async function run(interaction: CommandInteraction | ButtonInteraction) {
+export default async function(interaction: CommandInteraction | ButtonInteraction) {
     try {
         if (interaction.isApplicationCommand()) {
             //isApplicationCommand

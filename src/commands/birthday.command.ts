@@ -44,7 +44,7 @@ export default class Birthday extends Command {
         if(subCommand === 'set'){
             const birthday = interaction.options.getString('date')!
             const regex = /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12]\d|3[01])$/i
-            
+
             //Check if satisfies the required 'MONTH/DAY' type
             if(!regex.test(birthday!)) return interaction.editReply(server.translate('birthday_cmd.error'))
 

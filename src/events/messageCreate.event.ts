@@ -2,9 +2,7 @@ import { Message } from 'discord.js'
 import { Client } from '../utils/classes.js'
 import { sendError } from '../utils/utils.js'
 
-export const name = 'messageCreate'
-
-export async function run(msg: Message) {
+export default async function(msg: Message) {
     try {
         if (
             msg.attachments.size > 0 ||

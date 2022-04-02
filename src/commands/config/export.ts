@@ -1,6 +1,6 @@
 import { Permissions, CommandInteraction, MessageAttachment } from 'discord.js'
 import { permissionsError } from '../../utils/utils.js'
-import { Client, GuildDataBaseModel, LangType } from '../../utils/classes.js'
+import { Client, GuildDataBaseModel } from '../../utils/classes.js'
 
 export async function file(interaction: CommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)

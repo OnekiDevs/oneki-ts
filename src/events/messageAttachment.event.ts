@@ -2,9 +2,7 @@ import { TextChannel, GuildMember, MessageEmbed, Message } from 'discord.js'
 import { checkSend, sendError } from '../utils/utils.js'
 import { Client } from '../utils/classes.js'
 
-export const name = 'messageAttachment'
-
-export async function run(msg: Message) {
+export default async function(msg: Message) {
     try {
         if (!msg.guild) return
         if (!(msg.client as Client).servers.has(msg.guild?.id ?? '')) return
