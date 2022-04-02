@@ -15,9 +15,9 @@ export default class Help extends OldCommand {
     async run(msg: Message, server: Server) {
         try {
             const embed = new MessageEmbed()
-            const categories = await this.getCategories()
+            const categories = await Help.getCategories()
             if (categories.length === 0) return msg.reply('parece que no he encontrado ningun comando')
-            const commands = await this.getCategory(categories[0])
+            const commands = await Help.getCategory(categories[0])
             if (commands.length === 0) return msg.reply('parece que no he encontrado ningun comando')
             embed.setTitle(`${msg.client.user?.username} Bot command list`)
             embed.setDescription('Category: ' + categories[0] + '\n`<>` Means mandatory\n`[]` Means optional')

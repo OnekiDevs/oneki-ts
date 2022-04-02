@@ -1,5 +1,5 @@
 import { ButtonInteraction, MessageEmbed, MessageButton, MessageActionRow } from 'discord.js'
-import { Button, Client, oldCommandData } from '../utils/classes.js'
+import { Button, Client } from '../utils/classes.js'
 import Help from '../oldCommands/help.oldCommand.js' 
 
 export default class Activitie extends Button {
