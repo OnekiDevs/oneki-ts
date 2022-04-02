@@ -35,6 +35,7 @@ export function log(interaction: CommandInteraction<'cached'>) {
     else if (log === 'message_delete') server.removeMessageDeleteLog()
     else if (log === 'message_attachment') server.removeMessageAttachmentLog()
     else if (log === 'invite') server.removeInviteChannel()
+    else if (log === 'member_update') server.removeMemberUpdateChannel()
     interaction.reply(server.translate('config_cmd.remove_log'))
 }
 

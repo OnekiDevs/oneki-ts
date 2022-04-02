@@ -21,7 +21,7 @@ export class Server {
         messageDelete?: string
         messageAttachment?: string
         invite?: string
-        useractivitie?: string
+        memberUpdate?: string
     } = {}
     birthday: {
         channel?: string
@@ -77,13 +77,13 @@ export class Server {
         if (data.last_suggest) this.lastSuggestId = data.last_suggest
         if (data.suggest_channels) this.suggestChannels = data.suggest_channels
         if (data.logs_channels) {
-            const { message_update, message_delete, message_attachment, invite, useractivitie } = data.logs_channels
+            const { message_update, message_delete, message_attachment, invite, member_update } = data.logs_channels
 
             if (message_update) this.logsChannels.messageUpdate = message_update
             if (message_delete) this.logsChannels.messageDelete = message_delete
             if (message_attachment) this.logsChannels.messageAttachment = message_attachment
             if (invite) this.logsChannels.invite = invite
-            if (useractivitie) this.logsChannels.useractivitie = useractivitie
+            if (member_update) this.logsChannels.memberUpdate = member_update
         }
         if (data.birthday?.channel) this.birthday.channel = data.birthday.channel
         if (data.birthday?.message) this.birthday.message = data.birthday.message
@@ -104,14 +104,14 @@ export class Server {
         if (this.lastSuggestId) obj.last_suggest = this.lastSuggestId
         if (this.suggestChannels) obj.suggest_channels = this.suggestChannels
         if (this.logsChannels) {
-            const { messageUpdate, messageDelete, messageAttachment, invite, useractivitie } = this.logsChannels
+            const { messageUpdate, messageDelete, messageAttachment, invite, memberUpdate } = this.logsChannels
             obj.logs_channels = {}
 
             if (messageUpdate) obj.logs_channels.message_update = messageUpdate
             if (messageDelete) obj.logs_channels.message_delete = messageDelete
             if (messageAttachment) obj.logs_channels.message_attachment = messageAttachment
             if (invite) this.logsChannels.invite = invite
-            if (useractivitie) this.logsChannels.useractivitie = useractivitie
+            if (memberUpdate) this.logsChannels.memberUpdate = memberUpdate
         }
         obj.birthday = {}
         if (this.birthday?.channel) obj.birthday.channel = this.birthday.channel
@@ -324,6 +324,7 @@ export class Server {
         if (this.logsChannels.messageAttachment) data['logs_channels.message_attachment'] = this.logsChannels.messageAttachment
         if (this.logsChannels.messageDelete) data['logs_channels.message_delete'] = this.logsChannels.messageDelete
         if (this.logsChannels.invite) data['logs_channels.invite'] = this.logsChannels.invite
+        if (this.logsChannels.memberUpdate) data['logs_channels.member_update'] = this.logsChannels.memberUpdate
         if (Object.values(data.logs_channels).length === 0) data.logs_channels = FieldValue.delete()
         this.db.update(data).catch(() => this.db.set(data))
     }
@@ -670,26 +671,42 @@ export class Server {
         )
     }
 
-    setUseractivitieChannel(useractivitieChannel: string){
-        this.logsChannels.useractivitie = useractivitieChannel
+    setMemberUpdateChannel(memberUpdateChannel: string){
+        this.logsChannels.memberUpdate = memberUpdateChannel
         this.db
-            .update({ ['logs_channels.useractivitie']: useractivitieChannel })
-            .catch(() => this.db.set({ ['logs_channels.useractivitie']: useractivitieChannel }))
+            .update({ ['logs_channels.useractivitie']: memberUpdateChannel })
+            .catch(() => this.db.set({ ['logs_channels.useractivitie']: memberUpdateChannel }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
-                event: 'set_useractivitiechannel',
+                event: 'set_log',
                 from: 'mts',
                 data: {
-                    log: 'USER_ACTIVITIE_CHANNEL',
-                    channel: useractivitieChannel,
+                    log: 'GUILD_MEMBER_UPDATE',
+                    channel: memberUpdateChannel,
                 }
             })
         )
     }
 
+    removeMemberUpdateChannel(){
+        if (!this.logsChannels.memberUpdate) return
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'remove_log',
+                from: 'mts',
+                data: {
+                    log: 'GUILD_MEMBER_UPDATE',
+                    channel: this.logsChannels.memberUpdate,
+                    guild: this.guild.id
+                }
+            })
+        )
+        delete this.logsChannels.memberUpdate
+        this.updateChannelsLogsInDB()
+    }
+
     removeInviteChannel() {
-        if (!this.logsChannels.invite) return
-        
+        if (!this.logsChannels.invite) return        
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'remove_log',

@@ -75,7 +75,7 @@ export async function invites(interaction: CommandInteraction<'cached'>){
     interaction.editReply(server.translate('config_cmd.invites.set_channel', { channel: inviteChannel?.toString() }))
 }
 
-export async function useractivitie(interaction: CommandInteraction<'cached'>){
+export async function member_update(interaction: CommandInteraction<'cached'>){
     await interaction.deferReply()
     let server = (interaction.client as Client).servers.get(interaction.guildId)
     if (!server) server = (interaction.client as Client).newServer(interaction.guild)
@@ -86,6 +86,6 @@ export async function useractivitie(interaction: CommandInteraction<'cached'>){
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
 
     const userActivitieChannel = interaction.options.getChannel('channel') as TextChannel
-    server.setUseractivitieChannel(userActivitieChannel.id)
+    server.setMemberUpdateChannel(userActivitieChannel.id)
     interaction.editReply(server.translate('useractivitie_event.set_channel', { channel: userActivitieChannel.toString() }))
 }
