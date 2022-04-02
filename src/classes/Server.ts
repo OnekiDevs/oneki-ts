@@ -1,4 +1,4 @@
-import { Collection, Guild, GuildChannel, Invite, Message } from 'discord.js'
+import { Collection, Guild, GuildChannel, Message } from 'discord.js'
 import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, ServerInvite } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import i18n from 'i18n'
@@ -44,8 +44,25 @@ export class Server {
         this._i18n.configure((guild.client as Client).i18nConfig)
     }
 
-    init() {
-        return Promise.all([this.syncDB()])
+    async init() {
+        await this.syncDB()
+        await this.fetchInvites()
+        return Promise.resolve()
+    }
+
+    async fetchInvites() {
+        if (!this.premium) return Promise.resolve()
+        if (!this.logsChannels.invite) return Promise.resolve()
+        const currentInvites = await this.guild.invites.fetch()
+        this.invites = await Promise.all(currentInvites.map(async i => {
+            const invite = await this.guild.client.fetchInvite(i.code) 
+            return {
+                user: invite.inviter ? invite.inviter.id : 'Server',
+                memberCount: invite.memberCount,
+                code: invite.code
+            }
+        }))
+        return Promise.resolve()
     }
 
     async syncDB(dataPriority?: boolean): Promise<void> {
@@ -64,11 +81,12 @@ export class Server {
         if (data.last_suggest) this.lastSuggestId = data.last_suggest
         if (data.suggest_channels) this.suggestChannels = data.suggest_channels
         if (data.logs_channels) {
-            const { message_update, message_delete, message_attachment } = data.logs_channels
+            const { message_update, message_delete, message_attachment, invite } = data.logs_channels
 
             if (message_update) this.logsChannels.messageUpdate = message_update
             if (message_delete) this.logsChannels.messageDelete = message_delete
             if (message_attachment) this.logsChannels.messageAttachment = message_attachment
+            if (invite) this.logsChannels.invite = invite
         }
         if (data.birthday?.channel) this.birthday.channel = data.birthday.channel
         if (data.birthday?.message) this.birthday.message = data.birthday.message
@@ -77,7 +95,7 @@ export class Server {
         if (data.autoroles) {
             for (const [key, value] of Object.entries(data.autoroles)) {
                 this.autoroles.set(key, new Set(value))
-            }   
+            }
         }
 
         return Promise.resolve()
@@ -90,12 +108,13 @@ export class Server {
         if (this.lastSuggestId) obj.last_suggest = this.lastSuggestId
         if (this.suggestChannels) obj.suggest_channels = this.suggestChannels
         if (this.logsChannels) {
-            const { messageUpdate, messageDelete, messageAttachment } = this.logsChannels
+            const { messageUpdate, messageDelete, messageAttachment, invite } = this.logsChannels
             obj.logs_channels = {}
 
             if (messageUpdate) obj.logs_channels.message_update = messageUpdate
             if (messageDelete) obj.logs_channels.message_delete = messageDelete
             if (messageAttachment) obj.logs_channels.message_attachment = messageAttachment
+            if (invite) this.logsChannels.invite = invite
         }
         obj.birthday = {}
         if (this.birthday?.channel) obj.birthday.channel = this.birthday.channel
@@ -320,10 +339,10 @@ export class Server {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data: any = {}
         if (this.logsChannels.messageUpdate) data['logs_channels.message_update'] = this.logsChannels.messageUpdate
-        if (this.logsChannels.messageAttachment)
-            data['logs_channels.message_attachment'] = this.logsChannels.messageAttachment
+        if (this.logsChannels.messageAttachment) data['logs_channels.message_attachment'] = this.logsChannels.messageAttachment
         if (this.logsChannels.messageDelete) data['logs_channels.message_delete'] = this.logsChannels.messageDelete
-        if (!data.logs_channels) data.logs_channels = FieldValue.delete()
+        if (this.logsChannels.invite) data['logs_channels.invite'] = this.logsChannels.invite
+        if (Object.values(data.logs_channels).length === 0) data.logs_channels = FieldValue.delete()
         this.db.update(data).catch(() => this.db.set(data))
     }
 
@@ -554,9 +573,11 @@ export class Server {
         this.db.update({ emoji_analisis_enabled: true }).catch(() => this.db.set({ emoji_analisis_enabled: true }))
 
         this.emojiTimeout = setInterval(() => {
-            this.db.update({
-                emoji_statistics: this.emojiStatistics
-            }).catch(() => this.db.set({ emoji_statistics: this.emojiStatistics }))
+            this.db
+                .update({
+                    emoji_statistics: this.emojiStatistics
+                })
+                .catch(() => this.db.set({ emoji_statistics: this.emojiStatistics }))
         }, 600_000)
 
         this.guild.client.on('messageCreate', msg => {
@@ -606,11 +627,13 @@ export class Server {
     async getInvites(): Promise<ServerInvite> {
         const invites = await this.guild.invites.fetch()
         this.invites = await Promise.all(
-            invites.map((i: Invite) => ({
-                user: i.inviterId ?? 'server',
-                count: i.memberCount,
-                code: i.code
-            }))
+            invites.map(async i => {
+                const invite = await this.guild.client.fetchInvite(i.code)
+                return {
+                    memberCount: invite.memberCount,
+                    code: invite.code
+                }
+            })
         )
         return Promise.resolve(this.invites)
     }
@@ -623,36 +646,61 @@ export class Server {
     addAutorol(name: string, id: string) {
         if (!this.autoroles.has(name)) return
         this.autoroles.get(name)?.add(id)
-        this.db.update({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }).catch(() => this.db.set({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }))
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.db
+            .update({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) })
+            .catch(() => this.db.set({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }))
     }
 
     removeAutorolRol(name: string, id: string) {
         if (!this.autoroles.has(name)) return
         this.autoroles.get(name)?.delete(id)
-        this.db.update({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }).catch(() => this.db.set({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }))
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.db
+            .update({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) })
+            .catch(() => this.db.set({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }))
     }
 
     removeAutorol(name: string) {
         if (!this.autoroles.has(name)) return
         this.autoroles.delete(name)
-        this.db.update({ ['autoroles.' + name]: FieldValue.delete() }).catch(() => this.db.set({ ['autoroles.' + name]: FieldValue.delete() }))
+        this.db
+            .update({ ['autoroles.' + name]: FieldValue.delete() })
+            .catch(() => this.db.set({ ['autoroles.' + name]: FieldValue.delete() }))
     }
 
-    setInviteChannel(inviteChannel: string){
+    setInviteChannel(inviteChannel: string) {
         this.logsChannels.invite = inviteChannel
         this.db
             .update({ ['logs_channels.invite']: inviteChannel })
             .catch(() => this.db.set({ ['logs_channels.invite']: inviteChannel }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
-                event: 'set_invitechannel',
+                event: 'set_log',
                 from: 'mts',
                 data: {
-                    log: 'INVITE_CHANNEL',
+                    log: 'INVITE',
                     channel: inviteChannel,
                     guild: this.guild.id
                 }
             })
         )
+    }
+
+    removeInviteChannel() {
+        if (!this.logsChannels.invite) return
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'remove_log',
+                from: 'mts',
+                data: {
+                    log: 'INVITE',
+                    message: this.logsChannels.invite,
+                    guild: this.guild.id
+                }
+            })
+        )
+        delete this.logsChannels.invite
+        this.updateChannelsLogsInDB()
     }
 }

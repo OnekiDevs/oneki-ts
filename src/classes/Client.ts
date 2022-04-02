@@ -126,7 +126,7 @@ export class Client extends BaseClient {
                 const server = this.servers.get(guild.id) ?? this.newServer(guild)
                 return !(server.logsChannels.invite && server.premium)
             }
-        }).on('guildMemberAdd', (...args) => this.emit('customGuildMemberAdd', ...args)).on('cacheFetched', () => console.log('invites fetched'))
+        }).on('guildMemberAdd', (...args) => this.emit('customGuildMemberAdd', ...args))
         
         console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
     }

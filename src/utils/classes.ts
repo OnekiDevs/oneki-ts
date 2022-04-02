@@ -24,7 +24,7 @@ export enum CommandType {
     global,
 }
 
-export type ServerInvite = { user: string; count: number; code:string }[];
+export type ServerInvite = { memberCount: number; code:string }[];
 
 export interface oldCommandData {
     name: string;
@@ -78,6 +78,7 @@ export interface LogsChannelsDatabaseModel {
     message_update?: string;
     message_delete?: string;
     message_attachment?: string;
+    invite?: string;
 }
 
 export interface GuildDataBaseModel {
