@@ -1,7 +1,6 @@
 import { Collection, Guild, GuildChannel, Message } from 'discord.js'
 import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, ServerInvite } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
-import i18n from 'i18n'
 export class Server {
     invites: ServerInvite = []
     autoroles: Collection<string, Set<string>> = new Collection()
@@ -12,7 +11,6 @@ export class Server {
         throw new Error('Method not implemented.' + id)
     }
     private _emojiAnalisisEnabled = false
-    private _i18n = i18n
     guild: Guild
     private _prefixes: Array<string> = ['>', '?']
     db
@@ -42,7 +40,6 @@ export class Server {
     constructor(guild: Guild) {
         this.guild = guild
         this.db = (guild.client as Client).db.collection('guilds').doc(guild.id)
-        this._i18n.configure((guild.client as Client).i18nConfig)
     }
 
     async init() {
@@ -480,8 +477,9 @@ export class Server {
      * @returns {string} string
      */
     translate(phrase: string, params?: object): string {
-        if (params) return this._i18n.__mf({ phrase, locale: this.lang }, params) ?? ''
-        return this._i18n.__({ phrase, locale: this.lang }) ?? ''
+        const i18n = (this.guild.client as Client).i18n
+        if (params) return i18n.__mf({ phrase, locale: this.lang }, params).toString()
+        return i18n.__({ phrase, locale: this.lang }).toString()
     }
 
     /**
