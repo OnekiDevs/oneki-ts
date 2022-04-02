@@ -2,7 +2,6 @@
 import { TextChannel } from 'discord.js'
 import { GuildMemberOptions } from '../utils/classes.js'
 
-
 export default async function({ server, oldMember, newMember }: GuildMemberOptions){
     //If the channel ID is saved in the database
     if(!server.logsChannels.useractivitie) return

@@ -134,7 +134,7 @@ export class Client extends BaseClient {
                 .map(async (file) => {
                     const event = await import('file:///'+join(path, file))
                     const [eventName] = file.split('.')
-                    this.on(eventName, (...args) => event(...args))
+                    this.on(eventName, (...args) => event.default(...args))
                 }),
         )
     }
