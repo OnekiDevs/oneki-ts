@@ -65,6 +65,8 @@ export async function invites(interaction: CommandInteraction<'cached'>){
     let server = (interaction.client as Client).servers.get(interaction.guildId)
     if (!server) server = (interaction.client as Client).newServer(interaction.guild)
     
+    if(!server.premium) return interaction.editReply(server.translate('premium'))
+
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
 

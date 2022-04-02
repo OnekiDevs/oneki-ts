@@ -48,11 +48,7 @@
 			"set_message": "The announcement that will be sent when it's a user's birthday has been set to: {message}"
 		},
 		"invites": {
-			"default_message": "¡{invited} has joined the server! *He has been by {inviter} **Total invites**: {invites}*",
-			"cant_find_inviter": "{invited} has joined the server. ´I couldn't figure out who invited him.´",
-			"set_channel": "The channel for recieving invitations has been set to {channel}",
-			"permissions_error": "⚠️{invited} has joined the server, however, I don't have enough permissions to see who invited him.⚠️",
-			"custom_url": "{invited} has joined the server. `He has joined using the special invite URL.`"
+			"set_channel": "The channel for recieving invitations has been set to {channel}"
 		},
 		"autoroles": {
 			"create":"The group {name} has ccreated",
@@ -107,6 +103,13 @@
 	"timeout_cmd": {
 		"user_permissions": "You do not have sufficient permissions",
 		"reply": "{user} has been successfully aislated"
+	},
+	"------------>>>============ events ============<<<------------": "------------>>>============ events ============<<<------------",
+	"invites_event": {
+		"default_message": "¡{invited} has joined the server! *He has been by {inviter} **Total invites**: {invites}*",
+		"cant_find_inviter": "{invited} has joined the server. `I couldn't figure out who invited him.`",
+		"permissions_error": "⚠️{invited} has joined the server, however, I don't have enough permissions to see who invited him.⚠️",
+		"custom_url": "{invited} has joined the server. `He has joined using the special invite URL.`"
 	},
 	"------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
 	"emoji_old": {

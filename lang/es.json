@@ -48,11 +48,7 @@
 			"set_message": "El anuncio que se enviará cuando cada usuario cumpla años ha sido cambiado por: {message}"
 		},
 		"invites": {
-			"default_message": "¡{invited} ha entrado al servidor! *Ha sido invitado por {inviter}*",
-			"custom_url": "{invited} ha entrado al servidor. `Se ha unido usando la URL especial del servidor.`",
-			"cant_find_inviter": "{invited} ha entrado al servidor. `No pude encontrar quién lo invitó.`",
-			"set_channel": "El canal para recibir notificaciones de invitaciones ha sido cambiado a {channel}",
-			"permissions_error": "⚠️{invited} ha entrado al servidor, sin embargo no tengo permisos para revisar quién lo invitó.⚠️"
+			"set_channel": "El canal para recibir notificaciones de invitaciones ha sido cambiado a {channel}"
 		},
 		"autoroles": {
 			"create":"Se ha creado el grupo de autoroles {name}",
@@ -106,6 +102,13 @@
 	"timeout_cmd": {
 		"user_permissions": "No tienes permisos suficientes para aislar a ese usuario",
 		"reply": "{user} ha sido aislado correctamente"
+	},
+	"------------>>>============ events ============<<<------------": "------------>>>============ events ============<<<------------",
+	"invites_event": {
+		"default_message": "¡{invited} ha entrado al servidor! *Ha sido invitado por {inviter}*",
+		"custom_url": "{invited} ha entrado al servidor. `Se ha unido usando la URL especial del servidor.`",
+		"cant_find_inviter": "{invited} ha entrado al servidor. `No pude encontrar quién lo invitó.`",
+		"permissions_error": "⚠️{invited} ha entrado al servidor, sin embargo no tengo permisos para revisar quién lo invitó.⚠️"
 	},
 	"------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
 	"emoji_old": {

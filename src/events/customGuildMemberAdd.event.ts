@@ -1,24 +1,30 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { GuildMember, Invite, TextChannel } from 'discord.js'
+import { Client } from '../classes/Client.js'
 
 export const name = 'customGuildMemberAdd'
 
 export async function run(member: GuildMember, type: 'normal' | 'vanity' | 'permissions' | 'unknown', invite: Invite) {
-    const welcomeChannel = member.guild.channels.cache.find((ch) => ch.name === 'welcome') as TextChannel
-
+    console.log('hola')
+    const client = (member.client) as Client
+    let server = client.servers.get(member.guild.id)
+    if(!server) server = client.newServer(member.guild)
+    const welcomeChannelID = server.logsChannels.invite!
+    const welcomeChannel = await member.guild.channels.fetch(welcomeChannelID) as TextChannel
     if(type === 'normal'){
-        welcomeChannel.send(`Welcome ${member}! You were invited by ${invite.inviter?.username}!`)
+        return welcomeChannel.send(server.translate('invites_event.default_message', { invited: member.toString(), inviter: invite.inviter?.username.toString() }))
     }
 
-    else if(type === 'vanity'){
-        welcomeChannel.send(`Welcome ${member}! You joined using a custom invite!`)
+    if(type === 'vanity'){
+        return welcomeChannel.send(server.translate('invites_event.custom_url', { invited: member.toString() }))
     }
 
-    else if(type === 'permissions'){
-        welcomeChannel.send(`Welcome ${member}! I can't figure out how you joined because I don't have the "Manage Server" permission!`)
+    if(type === 'permissions'){
+        return welcomeChannel.send(server.translate('invites_event.permissions_error', { invited: member.toString() }))
     }
 
-    else if(type === 'unknown'){
-        welcomeChannel.send(`Welcome ${member}! I can't figure out how you joined the server...`)
+    if(type === 'unknown'){
+        return welcomeChannel.send(server.translate('invites_event.cant_find_inviter', { invited: member.toString() }))
     }
-
+    return
 }
