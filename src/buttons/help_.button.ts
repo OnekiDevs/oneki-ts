@@ -14,7 +14,7 @@ export default class Activitie extends Button {
         if (!messageRef || messageRef.author.id !== interaction.user.id) return interaction.deferUpdate()
         const [lang] = interaction.customId.match(/(es|en)/) as string[]
         const [, , category] = interaction.customId.split(/_/g) as string[]
-        const server = this.client.servers.get(interaction.guildId ?? '')??this.client.newServer(interaction.guild)
+        const server = this.client.servers.get(interaction.guildId)??this.client.newServer(interaction.guild)
         const embed = new MessageEmbed()
         embed.setTitle(server.translate('help_btn.embed_title', { bot: interaction.client.user?.username }))
         embed.setDescription(server.translate('help_btn.embed_description', { category }))
