@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Client as BaseClient, Collection, TextChannel, Guild } from 'discord.js'
 import { getFirestore, Firestore } from 'firebase-admin/firestore'
+import InvitesTracker from '@androz2091/discord-invites-tracker'
 import { initializeApp, cert } from 'firebase-admin/app'
 import { createRequire } from 'module'
 import { join, dirname } from 'path'
@@ -115,9 +116,19 @@ export class Client extends BaseClient {
         await this.initializeEventListener(options.eventsPath)
         console.log('\x1b[35m%s\x1b[0m', 'Eventos Cargados!!')
         
-        console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
+        await this._checkBirthdays()
+
+        InvitesTracker.init(this, {
+            fetchGuilds: true,
+            fetchVanity: true,
+            fetchAuditLogs: true,
+            exemptGuild: guild => {
+                const server = this.servers.get(guild.id) ?? this.newServer(guild)
+                return !(server.logsChannels.invite && server.premium)
+            }
+        }).on('guildMemberAdd', (...args) => this.emit('customGuildMemberAdd', ...args))
         
-        this._checkBirthdays()
+        console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
     }
 
     private _onWebSocketMessage(message: string): void {
@@ -180,6 +191,7 @@ export class Client extends BaseClient {
         setTimeout(() => {
             this._checkBirthdays()
         }, 86400000)
+
     }
 
     /**

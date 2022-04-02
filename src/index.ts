@@ -1,5 +1,4 @@
 import { Client, GuildDataBaseModel, SuggestChannelObject } from './utils/classes.js'
-import InvitesTracker from '@androz2091/discord-invites-tracker'
 import { Guild, Intents } from 'discord.js'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -51,12 +50,6 @@ const client: Client = new Client({
         }
     }
 })
-
-InvitesTracker.init(client, {
-    fetchGuilds: true,
-    fetchVanity: true,
-    fetchAuditLogs: true
-}).on('guildMemberAdd', (member, type, invite) => client.emit('customGuildMemberAdd', member, type, invite))
 
 client.login(process.env.DISCORD_TOKEN)
 

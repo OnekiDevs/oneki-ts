@@ -129,8 +129,6 @@ export async function sendError(client: Client, error: Error, file: string) {
     })
 }
 
-
-
 /**
  * @deprecated Now use <client>.newServer(guild: Guild, data?: GuildDataBaseModel)
  * @param {Guild} guild 
