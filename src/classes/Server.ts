@@ -1,5 +1,5 @@
 import { Collection, Guild, GuildChannel, Message } from 'discord.js'
-import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, ServerInvite } from '../utils/classes.js'
+import { GuildDataBaseModel, Client, SuggestChannelObject, ServerInvite } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
 export class Server {
     invites: ServerInvite = []
@@ -14,7 +14,6 @@ export class Server {
     guild: Guild
     private _prefixes: Array<string> = ['>', '?']
     db
-    private _lang: LangType = LangType.en
     suggestChannels: SuggestChannelObject[] = []
     private _lastSuggestId = 0
     logsChannels: {
@@ -74,7 +73,6 @@ export class Server {
 
         const data = db.data() as GuildDataBaseModel
 
-        if (data.lang) this.lang = data.lang
         if (data.premium) this.premium = true
         if (data.last_suggest) this.lastSuggestId = data.last_suggest
         if (data.suggest_channels) this.suggestChannels = data.suggest_channels
@@ -102,7 +100,6 @@ export class Server {
     toDBObject(toPublic?: boolean): GuildDataBaseModel {
         const obj: GuildDataBaseModel = {}
         if (JSON.stringify(this.getPrefixes(true)) !== JSON.stringify(['?', '>'])) obj.prefixes = this._prefixes
-        if (this.lang !== LangType.en) obj.lang = this.lang
         if (this.lastSuggestId) obj.last_suggest = this.lastSuggestId
         if (this.suggestChannels) obj.suggest_channels = this.suggestChannels
         if (this.logsChannels) {
@@ -237,23 +234,8 @@ export class Server {
     /**
      * Return a lang of the guild for the Server.lang
      */
-    get lang(): LangType {
-        return this._lang
-    }
-
-    set lang(lang: LangType) {
-        this._lang = lang
-        this.db.update({ lang }).catch(() => this.db.set({ lang }))
-        ;(this.guild.client as Client).websocket.send(
-            JSON.stringify({
-                event: 'set_guild_lang',
-                from: 'mts',
-                data: {
-                    lang,
-                    guild: this.guild.id
-                }
-            })
-        )
+    get lang(): string {
+        return this.guild.preferredLocale.slice(0, 2)
     }
 
     /**

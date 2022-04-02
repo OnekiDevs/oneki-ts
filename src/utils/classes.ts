@@ -39,11 +39,6 @@ export interface oldCommandData {
     type: 'slash' | 'command';
 }
 
-export enum LangType {
-    en = 'en',
-    es = 'es',
-}
-
 export interface PollDatabaseModel {
     guild: string;
     options: {
@@ -83,7 +78,6 @@ export interface LogsChannelsDatabaseModel {
 
 export interface GuildDataBaseModel {
     prefixes?: string[];
-    lang?: LangType;
     suggest_channels?: SuggestChannelObject[];
     last_suggest?: number;
     logs_channels?: LogsChannelsDatabaseModel;

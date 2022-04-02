@@ -11,7 +11,6 @@ export async function file(interaction: CommandInteraction<'cached'>) {
 
     const defaultConfig: GuildDataBaseModel = {
         prefixes: ['>', '?'],
-        lang: LangType.en,
         logs_channels: {
             message_update: undefined,
             message_delete: undefined,
