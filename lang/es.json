@@ -112,7 +112,15 @@
 	},
 	"useractivitie_event": {
 		"set_channel": "¡El canal {channel} ha sido seleccionado como el canal para recibir la actividad de los usuarios!",
-		"nickname_change": "El usuario {user} acaba de cambiar su apodo. **Viejo apodo**: {oldNickname}, **Nuevo apodo**: {newNickname}"
+		"nickname_change": "El usuario {user} acaba de cambiar su apodo. **Viejo apodo**: {oldNickname}, **Nuevo apodo**: {newNickname}",
+		"serveravatar_change": {
+			"title": "♻️ Actualización de avatar del servidor de {username}",
+			"description": "El usuario {user} ha actualizado su avatar del servidor."
+		},
+		"roles_change": {
+			"added": "Se le ha agregado el rol {role} al usuario {user}.",
+			"removed": "Se le ha removido el rol {role} al usuario {user}."
+		}
 	},
 	"------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
 	"emoji_old": {

@@ -1,7 +1,8 @@
-import { ClientOptions as BaseClientOptions, PermissionResolvable } from 'discord.js'
+import { ClientOptions as BaseClientOptions, GuildMember, PermissionResolvable } from 'discord.js'
 
 import { Client } from '../classes/Client.js'
 import { ApplicationCommandPermissionTypes } from 'discord.js/typings/enums'
+import { Server } from '../classes/Server.js'
 export default Client
 
 export * from '../classes/Client.js'
@@ -79,6 +80,7 @@ export interface LogsChannelsDatabaseModel {
     message_delete?: string;
     message_attachment?: string;
     invite?: string;
+    useractivitie?: string;
 }
 
 export interface GuildDataBaseModel {
@@ -129,6 +131,12 @@ export interface ClientOptions extends BaseClientOptions {
             disable: boolean;
         }
     }
+}
+
+export interface GuildMemberOptions{
+    server: Server,
+    oldMember: GuildMember,
+    newMember: GuildMember
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

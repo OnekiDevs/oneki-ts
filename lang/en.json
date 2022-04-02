@@ -113,7 +113,15 @@
 	},
 	"useractivitie_event": {
 		"set_channel": "¡The channel {channel} has been set as the channel to receive user's activitie!",
-		"nickname_change": "The user {user} just changed his nickname. **Old nickname**: {oldNickname}, **New nickname**: {newNickname}"
+		"nickname_change": "The user {user} just changed his nickname. **Old nickname**: {oldNickname}, **New nickname**: {newNickname}",
+		"serveravatar_change": {
+			"title": "♻️ Server's avatar update {username}",
+			"description": "The user {user} has updated his server's avatar."
+		},
+		"roles_change": {
+			"added": "The user {user} has been given the role {role}",
+			"removed": "The {role} has been removed from the user {user}"
+		}
 	},
 	"------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
 	"emoji_old": {

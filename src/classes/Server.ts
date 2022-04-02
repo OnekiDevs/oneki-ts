@@ -82,12 +82,13 @@ export class Server {
         if (data.last_suggest) this.lastSuggestId = data.last_suggest
         if (data.suggest_channels) this.suggestChannels = data.suggest_channels
         if (data.logs_channels) {
-            const { message_update, message_delete, message_attachment, invite } = data.logs_channels
+            const { message_update, message_delete, message_attachment, invite, useractivitie } = data.logs_channels
 
             if (message_update) this.logsChannels.messageUpdate = message_update
             if (message_delete) this.logsChannels.messageDelete = message_delete
             if (message_attachment) this.logsChannels.messageAttachment = message_attachment
             if (invite) this.logsChannels.invite = invite
+            if (useractivitie) this.logsChannels.useractivitie = useractivitie
         }
         if (data.birthday?.channel) this.birthday.channel = data.birthday.channel
         if (data.birthday?.message) this.birthday.message = data.birthday.message
@@ -109,13 +110,14 @@ export class Server {
         if (this.lastSuggestId) obj.last_suggest = this.lastSuggestId
         if (this.suggestChannels) obj.suggest_channels = this.suggestChannels
         if (this.logsChannels) {
-            const { messageUpdate, messageDelete, messageAttachment, invite } = this.logsChannels
+            const { messageUpdate, messageDelete, messageAttachment, invite, useractivitie } = this.logsChannels
             obj.logs_channels = {}
 
             if (messageUpdate) obj.logs_channels.message_update = messageUpdate
             if (messageDelete) obj.logs_channels.message_delete = messageDelete
             if (messageAttachment) obj.logs_channels.message_attachment = messageAttachment
             if (invite) this.logsChannels.invite = invite
+            if (useractivitie) this.logsChannels.useractivitie = useractivitie
         }
         obj.birthday = {}
         if (this.birthday?.channel) obj.birthday.channel = this.birthday.channel
