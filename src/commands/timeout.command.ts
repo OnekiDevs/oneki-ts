@@ -1,5 +1,6 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, GuildMember } from 'discord.js'
 import { Command, Client, CommandType } from '../utils/classes.js'
+import { Translator } from '../utils/utils.js'
 import ms from 'iblazingx-ms'
 
 export default class Ban extends Command {
@@ -24,6 +25,8 @@ export default class Ban extends Command {
         const member = interaction.options.getMember('member') as GuildMember
         const reason = interaction.options.getString('reason') as string
         const time = ms(interaction.options.getString('time') as string)
+        const translate = new Translator(interaction)
+        const s = translate()
         let server = (interaction.client as Client).servers.get(interaction.guildId)
         if (!server) server = (interaction.client as Client).newServer(interaction.guild)
 
