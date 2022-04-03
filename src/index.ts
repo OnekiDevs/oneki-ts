@@ -1,24 +1,26 @@
+import { Client, GuildDataBaseModel, SuggestChannelObject } from './utils/classes.js'
 import { Guild, Intents } from 'discord.js'
-import { Client } from './utils/classes.js'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { config } from 'dotenv'
 
 config()
 
+process.on('exit', () => console.log('Bot apagado'))
+
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const client: Client = new Client({
     intents: [
-        Intents.FLAGS.DIRECT_MESSAGES,
         Intents.FLAGS.GUILD_MESSAGES,
         Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_WEBHOOKS,
         Intents.FLAGS.GUILD_BANS,
         Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-        Intents.FLAGS.GUILD_VOICE_STATES
+        Intents.FLAGS.GUILD_VOICE_STATES,
+        Intents.FLAGS.GUILD_INVITES,
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_PRESENCES
     ],
-    partials: ['CHANNEL'],
     firebaseToken: JSON.parse(process.env.FIREBASE_TOKEN as string),
     constants: {
         newServerLogChannel: '885674115946643458',
@@ -38,9 +40,9 @@ const client: Client = new Client({
         defaultLocale: 'en',
         retryInDefaultLocale: true,
         objectNotation: true,
-        logWarnFn: msg => console.warn('WARN', msg),
-        logErrorFn: msg => console.error('ERROR', msg),
-        missingKeyFn: msg => console.error('LANG', msg),
+        logWarnFn: msg => console.warn('WARN _l', msg),
+        logErrorFn: msg => console.error('ERROR _l', msg),
+        missingKeyFn: msg => console.error('LANG _l', msg),
         mustacheConfig: {
             tags: ['{{', '}}'],
             disable: false
@@ -89,13 +91,11 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
 
     const req = await fetch(interaction.data.resolved.attachments[command.options[0].value].url)
     const guild = (await client.guilds.fetch(interaction.guild_id)) as Guild
-    let server = client.servers.get(guild.id)
-    if (!server) server = client.newServer(guild)
+    const server = client.getServer(guild)
 
-    const { prefixes, lang, logs_channels, birthday } = await req.json()
+    const { prefixes, logs_channels, birthday, suggest_channels, autoroles, emoji_analisis_enabled } = await req.json() as GuildDataBaseModel
 
     if (prefixes) server.prefixes = prefixes
-    if (lang) server.lang = lang
     if (logs_channels) {
         const { message_update, message_delete, message_attachment } = logs_channels
 
@@ -109,6 +109,14 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
         if (channel) server.setBirthdayChannel(channel)
         if (message) server.setBirthdayMessage(message)
     }
+    suggest_channels?.forEach((channel: SuggestChannelObject) => {
+        if (channel.channel_id) delete channel.channel_id
+        server.addSuggestChannel(channel)
+    })
+    if (autoroles) for (const [key, value] of Object.entries(autoroles)) {
+        server.autoroles.set(key, new Set(value))
+    } 
+    if (emoji_analisis_enabled) server.startEmojiAnalisis()
     server.syncDB(true)
 
     await fetch(`https://discord.com/api/v10/webhooks/${client.user?.id}/${interaction.token}/messages/@original`, {

@@ -2,13 +2,11 @@ import { TextChannel, GuildMember, MessageEmbed, Message } from 'discord.js'
 import { checkSend, sendError } from '../utils/utils.js'
 import { Client } from '../utils/classes.js'
 
-export const name = 'messageAttachment'
-
-export async function run(msg: Message) {
+export default async function(msg: Message<true>) {
     try {
         if (!msg.guild) return
         if (!(msg.client as Client).servers.has(msg.guild?.id ?? '')) return
-        const server = (msg.client as Client).servers.get(msg.guild?.id ?? '')
+        const server = (msg.client as Client).getServer(msg.guild)
         if (!server?.logsChannels.messageAttachment) return
         if (msg.channel.id === server.logsChannels.messageAttachment) return
         const channel: TextChannel = msg.client.channels.cache.get(

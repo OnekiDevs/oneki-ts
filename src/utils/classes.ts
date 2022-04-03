@@ -1,7 +1,8 @@
-import { ClientOptions as BaseClientOptions, PermissionResolvable } from 'discord.js'
+import { ClientOptions as BaseClientOptions, GuildMember, PermissionResolvable } from 'discord.js'
 
 import { Client } from '../classes/Client.js'
 import { ApplicationCommandPermissionTypes } from 'discord.js/typings/enums'
+import { Server } from '../classes/Server.js'
 export default Client
 
 export * from '../classes/Client.js'
@@ -24,7 +25,7 @@ export enum CommandType {
     global,
 }
 
-export type ServerInvite = { user: string; count: number; code:string }[];
+export type ServerInvite = { memberCount: number; code:string }[];
 
 export interface oldCommandData {
     name: string;
@@ -37,11 +38,6 @@ export interface oldCommandData {
     example: string;
     module: 'mts' | 'mpy' | 'mrs';
     type: 'slash' | 'command';
-}
-
-export enum LangType {
-    en = 'en',
-    es = 'es',
 }
 
 export interface PollDatabaseModel {
@@ -78,11 +74,12 @@ export interface LogsChannelsDatabaseModel {
     message_update?: string;
     message_delete?: string;
     message_attachment?: string;
+    invite?: string;
+    member_update?: string;
 }
 
 export interface GuildDataBaseModel {
     prefixes?: string[];
-    lang?: LangType;
     suggest_channels?: SuggestChannelObject[];
     last_suggest?: number;
     logs_channels?: LogsChannelsDatabaseModel;
@@ -91,9 +88,11 @@ export interface GuildDataBaseModel {
         channel?: string;
         message?: string;
     }
+    keepRoles?: boolean
     emoji_analisis_enabled?: boolean;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    emoji_statistics?: any
+    emoji_statistics?: any,
+    autoroles?: {[key: string]: string[]}
 }
 
 export interface ClientConstants {
@@ -129,9 +128,10 @@ export interface ClientOptions extends BaseClientOptions {
     }
 }
 
-export interface ButtonOptions {
-    regex: RegExp;
-    name: string;
+export interface GuildMemberOptions{
+    server: Server,
+    oldMember: GuildMember,
+    newMember: GuildMember
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

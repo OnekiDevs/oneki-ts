@@ -1,24 +1,24 @@
-import { GuildMember, /*TextChannel*/} from 'discord.js'
-// import { Client } from '../classes/Client'
+import { GuildMember, TextChannel } from 'discord.js'
+import { Client } from '../classes/Client'
 
-export const name = 'guildMemberAdd'
+export default async function(member: GuildMember){
+    const client = (member.client) as Client
+    let server = client.servers.get(member.guild.id)
+    if(!server) server = client.newServer(member.guild)
 
-export async function run(member: GuildMember) {
-    // const { client, guild } = member
-    // const invites = await guild.invites.fetch()
-    // let server = (client as Client).servers.get(guild.id)
-    // if (!server) server = (client as Client).newServer(guild)
+    if(!server.keepRoles || !server.premium) return
 
-    // const invite = invites.find(i => {
-    //     const inv = server?.invites.find(j=>j.code === i.code)
-    //     return !!(inv && inv.count < i.memberCount)
-    // })
+    const userSnap = (await server.db.collection('users').doc(member.id).get()).data()
+    if(!userSnap) return
+    const roles = userSnap.roles as string[]
 
-    // if (!invite) return // no se encontro
-    // const inviter = invite.inviter??'Server'
-    // // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    // server.invites.find(i => i.code = invite.code)!.count ++
-
-    // const channel = guild.channels.cache.get('885674115615301650') as TextChannel
-    // channel.send(`invited: ${member}\ninviter: ${inviter}`)
+    roles.map(role => {
+        member.roles.add(role).catch(async () => {
+            if(!server?.logsChannels.memberUpdate) return
+            const userUpdateChannel = await server.guild.channels.fetch(server.logsChannels.memberUpdate) as TextChannel
+            if(!userUpdateChannel) return
+            
+            userUpdateChannel.send({ content: `⚠️ Intenté añadirle el rol ${await server.guild.roles.fetch(role)} al usuario ${member}, sin embargo, no tengo permisos para ello o mi rol está por debajo del suyo ⚠️`, allowedMentions: { roles: [] } })
+        })
+    })
 }

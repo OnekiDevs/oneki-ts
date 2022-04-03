@@ -1,5 +1,6 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, Guild, GuildMember, MessageEmbed, TextChannel } from 'discord.js'
 import { Command, Client, CommandType, Server } from '../utils/classes.js'
+import { Translator } from '../utils/utils.js'
 import { checkSend } from '../utils/utils.js'
 
 export default class Suggest extends Command {
@@ -13,7 +14,7 @@ export default class Suggest extends Command {
     }
 
     async getData(guild: Guild): Promise<ApplicationCommandDataResolvable> {
-        const server = this.client.servers.get(guild?.id as string)
+        const server = this.client.getServer(guild)
         const command = this.baseCommand
         command.addStringOption((option) => option.setName('suggestion').setDescription('Suggest to send').setRequired(true))
         if (server && server.suggestChannels.length > 0) {
@@ -28,12 +29,14 @@ export default class Suggest extends Command {
         return command.toJSON() as ApplicationCommandDataResolvable
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     run(interaction: CommandInteraction<'cached'>): any {
+        const translate = Translator(interaction)
         let server = this.client.servers.get(interaction.guildId as string)
         if (!server || server.suggestChannels.length === 0) {
-            server = new Server(interaction.guild!)
+            server = new Server(interaction.guild)
             interaction.reply({
-                content: server.translate('suggest_cmd.whitout_channel'),
+                content: translate('suggest_cmd.whitout_channel'),
                 ephemeral: true,
             })
             const guild = interaction.guild ?? this.client.guilds.cache.get(interaction.guildId as string)
@@ -54,11 +57,11 @@ export default class Suggest extends Command {
                     name:interaction.user.username,
                     iconURL: interaction.user.displayAvatarURL()
                 })
-                .setTitle(server.translate('suggest_cmd.title', { id:server?.lastSuggestId }))
+                .setTitle(translate('suggest_cmd.title', { id:server?.lastSuggestId }))
                 .setColor(16313844)
                 .setDescription(sug as string)
                 .setFooter({
-                    text: server.translate('footer', { bot:this.client.user?.username, version:this.client.version }),
+                    text: translate('footer', { bot:this.client.user?.username, version:this.client.version }),
                     iconURL: this.client.user?.avatarURL() as string
                 })
                 .setTimestamp()
@@ -68,7 +71,7 @@ export default class Suggest extends Command {
                 })
                 .then((msg) =>{ 
                     msg.startThread({
-                        name: server!.translate('suggest_cmd.sent', { id:server?.lastSuggestId }),
+                        name: translate('suggest_cmd.sent', { id:server?.lastSuggestId }),
                     })
                     server?.db?.collection('suggests').doc(`suggest_${server.lastSuggestId}`).set({ 
                         author: interaction.user.id, 
@@ -77,15 +80,15 @@ export default class Suggest extends Command {
                     })
                 }
                 )
-            return interaction.reply({ content: server.translate('suggest_cmd.sent'), ephemeral: true })
+            return interaction.reply({ content: translate('suggest_cmd.sent'), ephemeral: true })
         } else if (checkSend(channel, interaction.guild?.me as GuildMember)) {
             return interaction.reply({
-                content: server.translate('suggest_cmd.error_permissions', {channel, owner:'<#'+interaction.guild?.ownerId+'>'}),
+                content: translate('suggest_cmd.error_permissions', {channel, owner:'<#'+interaction.guild?.ownerId+'>'}),
                 ephemeral: true,
             })
         } else if (!channelId || !channel) {
             server.removeSuggestChannel(channelId as string)
-            return interaction.reply({ content: server.translate('suggest_cmd.missing_channel'), ephemeral: true })
+            return interaction.reply({ content: translate('suggest_cmd.missing_channel'), ephemeral: true })
             ;(interaction.client as Client).commands.get(interaction.commandName)?.deploy(interaction.guild as Guild)
             ;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild as Guild)
         }

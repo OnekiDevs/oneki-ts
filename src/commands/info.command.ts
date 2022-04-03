@@ -4,7 +4,8 @@ import {
     GuildMember,
     MessageEmbed,
 } from 'discord.js'
-import { Command, Client, CommandType, Server } from '../utils/classes.js'
+import { Command, Client, CommandType } from '../utils/classes.js'
+import { Translator } from '../utils/utils.js'
 
 export default class Activitie extends Command {
     constructor(client: Client) {
@@ -29,13 +30,10 @@ export default class Activitie extends Command {
             .toJSON()
     }
 
-    async run(interaction: CommandInteraction): Promise<any> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async run(interaction: CommandInteraction<'cached'>): Promise<any> {
         await interaction.deferReply()
-        let server = this.client.servers.get(interaction.guildId!)
-        if (!server) {
-            server = new Server(interaction.guild!)
-            this.client.servers.set(interaction.guildId!, server)
-        }
+        const translate = Translator(interaction)
         if (interaction.options.getSubcommand() === 'member') {
             const member = (interaction.options.getMember('member') ??
         interaction.member) as GuildMember
@@ -43,7 +41,7 @@ export default class Activitie extends Command {
                 force: true,
             })
             const embed = new MessageEmbed()
-                .setTitle(server.translate('info_cmd.member.title', { user: member.displayName }))
+                .setTitle(translate('info_cmd.member.title', { user: member.displayName }))
                 .setDescription(
                     `${member?.user.bot
                         ? `Es Bot${user.flags?.has('VERIFIED_BOT') ? ' verificado' : ''}`
@@ -76,13 +74,13 @@ export default class Activitie extends Command {
                 .addField('Tag', '```\n' + user.tag + '\n```', true)
             if (member.nickname) embed.addField('Nickname', '```\n' + member.nickname + '\n```', true)
             embed.addField(
-                server.translate('info_cmd.member.member_color'),
+                translate('info_cmd.member.member_color'),
                 '```\n' + `${member.displayColor} / ${member.displayHexColor}` + '\n```',
                 true
             )
             if (user.accentColor)
                 embed.addField(
-                    server.translate('info_cmd.member.user_color'),
+                    translate('info_cmd.member.user_color'),
                     '```\n' + `${user.accentColor} / ${user.hexAccentColor}` + '\n```',
                     true
                 )
@@ -107,11 +105,11 @@ export default class Activitie extends Command {
                 embed.setImage(user.bannerURL({ dynamic: true, size: 2048 }) ?? '')
             if (member.premiumSinceTimestamp)
                 embed.addField(
-                    server.translate('info_cmd.member.boosting_from'),
+                    translate('info_cmd.member.boosting_from'),
                     `<t:${Math.round(member.premiumSinceTimestamp / 1000)}:R>`,
                     true
                 )
-            embed.addField(server.translate('info_cmd.member.roles'), member.roles.cache.map((r) => `${r}`).join(' '))
+            embed.addField(translate('info_cmd.member.roles'), member.roles.cache.map((r) => `${r}`).join(' '))
             const embeds = [
                 embed,
                 new MessageEmbed()

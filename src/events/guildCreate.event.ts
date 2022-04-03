@@ -2,9 +2,7 @@ import { Guild, GuildMember, MessageEmbed, TextChannel } from 'discord.js'
 import { Client, Server } from '../utils/classes.js'
 import { checkSend, sendError } from '../utils/utils.js'
 
-export const name = 'guildCreate'
-
-export async function run(guild: Guild) {
+export default async function(guild: Guild) {
     try {
         if (!(guild.client as Client).servers.has(guild.id))
             (guild.client as Client).servers.set(guild.id, new Server(guild))

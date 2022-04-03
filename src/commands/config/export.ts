@@ -1,17 +1,15 @@
 import { Permissions, CommandInteraction, MessageAttachment } from 'discord.js'
 import { permissionsError } from '../../utils/utils.js'
-import { Client, GuildDataBaseModel, LangType } from '../../utils/classes.js'
+import { Client, GuildDataBaseModel } from '../../utils/classes.js'
 
 export async function file(interaction: CommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     await interaction.deferReply()
 
     const defaultConfig: GuildDataBaseModel = {
         prefixes: ['>', '?'],
-        lang: LangType.en,
         logs_channels: {
             message_update: undefined,
             message_delete: undefined,
@@ -22,6 +20,7 @@ export async function file(interaction: CommandInteraction<'cached'>) {
             channel: undefined
         },
         suggest_channels: [],
+        autoroles: {}
     }
 
 

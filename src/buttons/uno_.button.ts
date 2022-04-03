@@ -1,23 +1,19 @@
 import { ButtonInteraction } from 'discord.js'
 import { Button, Client } from '../utils/classes.js'
 import { Player } from '../classes/Player.js'
+import { Translator } from '../utils/utils.js'
 
 export default class Uno extends Button {
-    constructor() {
-        super({
-            name: 'uno_',
-            regex: /uno_.{8}_.{2}(_.{2})?$/i,
-        })
+    constructor(client: Client) {
+        super(client, /uno_.{8}_.{2}(_.{2})?$/i)
     }
 
-    async run(interaction: ButtonInteraction) {
+    async run(interaction: ButtonInteraction<'cached'>) {
+        const translate = Translator(interaction)
         const [, id, option] = interaction.customId.split(/_/gi)
 
-        const uno = (interaction.client as Client).uno.get(id)
+        const uno = this.client.uno.get(id)
         if (!uno) return interaction.deferUpdate()
-
-        const server = (interaction.client as Client).servers.get(interaction.guildId as string)
-        if(!server) return
 
         if (option === 'jn') {
             if (!uno.players.has(interaction.user.id))
@@ -29,12 +25,12 @@ export default class Uno extends Button {
                 uno.emit('start')
             } else if (uno.players.has(interaction.user.id)) {
                 interaction.reply({
-                    content: server.translate('uno_btn.start_no_host'),
+                    content: translate('uno_btn.start_no_host'),
                     ephemeral: true,
                 })
             } else
                 interaction.reply({
-                    content: server.translate('uno_btn.start_out'),
+                    content: translate('uno_btn.start_out'),
                     ephemeral: true,
                 })
         } else if (option === 'mc') {

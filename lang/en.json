@@ -14,6 +14,10 @@
 		"start_out": "You must join the game first",
 		"start_no_host": "Only the host can start the game"
 	},
+	"autoroll_btn": {
+		"remove": "Roll removed sucesfull",
+		"add": "Roll added sucesfull"
+	},
 	"------------>>>============ commands ============<<<------------": "------------>>>============ commands ============<<<------------",
 	"activitie_cmd": {
 		"whotout_voice": "Enter a voice channel or specify one",
@@ -44,11 +48,17 @@
 			"set_message": "The announcement that will be sent when it's a user's birthday has been set to: {message}"
 		},
 		"invites": {
-			"default_message": "¡{invited} has joined the server! *He has been by {inviter} **Total invites**: {invites}*",
-			"set_message": "The announcement that will get sent when a user is invited by another has been set to {message}",
-			"cant_find_inviter": "{invited} has joined the server. ´I couldn't figure out who invited him.´",
 			"set_channel": "The channel for recieving invitations has been set to {channel}"
-		}
+		},
+		"autoroles": {
+			"create": "The group {name} has ccreated",
+			"added": "the roll {roll} has added in the group {group}",
+			"remove": "the roll {roll} has removed of the group {group}}",
+			"remove_group": "Group deleted",
+			"displaying": "Deploying...",
+			"displaying_error": "Don't exist this group"
+		},
+		"set_keep_roles": "¡The option of keeping or keeping roles has been set to {keepRole}!"
 	},
 	"info_cmd": {
 		"member": {
@@ -95,6 +105,25 @@
 		"user_permissions": "You do not have sufficient permissions",
 		"reply": "{user} has been successfully aislated"
 	},
+	"------------>>>============ events ============<<<------------": "------------>>>============ events ============<<<------------",
+	"invites_event": {
+		"default_message": "¡{invited} has joined the server! *He has been by {inviter} **Total invites**: {invites}*",
+		"cant_find_inviter": "{invited} has joined the server. `I couldn't figure out who invited him.`",
+		"permissions_error": "⚠️{invited} has joined the server, however, I don't have enough permissions to see who invited him.⚠️",
+		"custom_url": "{invited} has joined the server. `He has joined using the special invite URL.`"
+	},
+	"useractivitie_event": {
+		"set_channel": "¡The channel {channel} has been set as the channel to receive user's activitie!",
+		"nickname_change": "The user {user} just changed his nickname. **Old nickname**: {oldNickname}, **New nickname**: {newNickname}",
+		"serveravatar_change": {
+			"title": "♻️ Server's avatar update {username}",
+			"description": "The user {user} has updated his server's avatar."
+		},
+		"roles_change": {
+			"added": "The user {user} has been given the role {role}",
+			"removed": "The {role} has been removed from the user {user}"
+		}
+	},
 	"------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
 	"emoji_old": {
 		"missing": "Emoji not found",
@@ -118,5 +147,6 @@
 	},
 	"------------>>>============ commons ============<<<------------": "------------>>>============ commons ============<<<------------",
 	"footer": "{bot} Bot v{version}",
-	"premium": "Upgrade your membership to Premium to use this feature"
+	"premium": "Upgrade your membership to Premium to use this feature",
+	"useractivitie": {}
 }

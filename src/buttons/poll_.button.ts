@@ -1,23 +1,19 @@
 import { ButtonInteraction, TextChannel, MessageEmbed } from 'discord.js'
 import { Button, Client, PollDatabaseModel } from '../utils/classes.js'
-import { pollEmojis as emojis, filledBar } from '../utils/utils.js'
+import { pollEmojis as emojis, filledBar, Translator } from '../utils/utils.js'
 
 export default class Activitie extends Button {
-    constructor() {
-        super({
-            name: 'poll_',
-            regex: /poll_.{8}_option_\d{1,2}/i,
-        })
+    constructor(client: Client) {
+        super(client, /poll_.{8}_option_\d{1,2}/i)
     }
 
-    async run(interaction: ButtonInteraction) {
+    async run(interaction: ButtonInteraction<'cached'>) {
         const [, id, , option] = interaction.customId.split(/_/gi)
-        const snap = await (interaction.client as Client).db?.collection('polls').doc(id).get()
+        const snap = await this.client.db.collection('polls').doc(id).get()
         if (!snap?.exists) return interaction.deferUpdate()
         await interaction.deferReply({ ephemeral: true })
         const data = snap.data() as PollDatabaseModel
-        const server = (interaction.client as Client).servers.get(interaction.guildId as string)
-        if (!server) return
+        const translate = Translator(interaction)
         //reviso si puede votar
         if (!data.multiple_choices && data.block_choices && data.options.map((o) => o.votes.includes(interaction.user.id)).filter((i) => i).length > 0) return interaction.editReply('Ya has votado')
         //actualizo votos
@@ -34,15 +30,15 @@ export default class Activitie extends Button {
             ?.collection('polls')
             .doc(id)
             .update(data)
-            .catch((e: any) => (interaction.client as Client).db?.collection('polls').doc(id).set(data))
+            .catch(() => this.client.db.collection('polls').doc(id).set(data))
         let votes = 0
         await Promise.all(data.options.map((o) => (votes += o.votes.length)))
         //obtengo embed
         const embed = new MessageEmbed(interaction.message.embeds[0])
         //modifico embed
         embed.setFooter({
-            text: server.translate('poll_btn.embed_footer', {
-                id, votes, bot: interaction.client.user?.username, version: (interaction.client as Client).version
+            text: translate('poll_btn.embed_footer', {
+                id, votes, bot: interaction.client.user?.username, version: this.client.version
             }),
             iconURL: interaction.client.user?.avatarURL() ?? '',
         })
@@ -50,7 +46,7 @@ export default class Activitie extends Button {
             embed.setFields(
                 await Promise.all(
                     data.options.map((o, i) => ({
-                        name: server.translate('poll_btn.option', { emoji: emojis[i], number: i + 1, value: o.value }),
+                        name: translate('poll_btn.option', { emoji: emojis[i], number: i + 1, value: o.value }),
                         value: `\`${filledBar((o.votes.length / votes) * 100)}\` ${Math.round((o.votes.length / votes) * 100)}%`,
                         inline: false,
                     })),
@@ -66,6 +62,6 @@ export default class Activitie extends Button {
                 })
             })
             .catch((e) => e)
-        interaction.editReply(server.translate('poll_btn.reply'))
+        interaction.editReply(translate('poll_btn.reply'))
     }
 }

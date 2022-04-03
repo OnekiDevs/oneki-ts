@@ -23,7 +23,9 @@
   },
   "homepage": "https://github.com/OnekiDevs/oneki-ts#readme",
   "dependencies": {
+    "@androz2091/discord-invites-tracker": "1.1.0",
     "@discordjs/builders": "0.11.0",
+    "androzjose-discord-invites-trackerfix": "^0.1.2",
     "canvas": "2.9.0",
     "capture-website": "2.3.0",
     "cross-env": "7.0.3",

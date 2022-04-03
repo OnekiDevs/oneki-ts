@@ -2,15 +2,13 @@ import { MessageEmbed, Message, TextChannel, GuildMember } from 'discord.js'
 import { sendError, checkSend } from '../utils/utils.js'
 import { Client } from '../utils/classes.js'
 
-export const name = 'messageDelete'
-
-export function run(msg: Message) {
+export default async function(msg: Message<true>) {
     try {
         if (msg.author.bot) return
         if (!msg.guild) return
 
         if (!(msg.client as Client).servers.has(msg.guild.id)) return
-        const server = (msg.client as Client).servers.get(msg.guild.id ?? '')
+        const server = (msg.client as Client).getServer(msg.guild)
         if (!server?.logsChannels.messageDelete) return
         const channel: TextChannel = msg.client.channels.cache.get(
             server.logsChannels.messageDelete

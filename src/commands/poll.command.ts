@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { filledBar, pollEmojis as emojis, checkSend, randomId } from '../utils/utils.js'
+import { Command, Client, CommandType, PollDatabaseModel } from '../utils/classes.js'
+import { Translator } from '../utils/utils.js'   
+import admin from 'firebase-admin'
 import {
     ApplicationCommandDataResolvable,
     MessageButton,
@@ -6,10 +11,8 @@ import {
     Guild,
     MessageEmbed,
     TextChannel,
+    GuildMember,
 } from 'discord.js'
-import { Command, Client, CommandType, PollDatabaseModel } from '../utils/classes.js'
-import { filledBar, pollEmojis as emojis, checkSend, randomId } from '../utils/utils.js'
-import admin from 'firebase-admin'
 
 export default class Poll extends Command {
     constructor(client: Client) {
@@ -64,22 +67,23 @@ export default class Poll extends Command {
         return command.toJSON() as ApplicationCommandDataResolvable
     }
 
-    async run(interaction: CommandInteraction): Promise<any> {
+    async run(interaction: CommandInteraction<'cached'>): Promise<any> {
         if (interaction.options.getSubcommand() === 'make') this.make(interaction)
         else if (interaction.options.getSubcommand() === 'finalize') this.finalize(interaction)
     }
 
-    async make(interaction: CommandInteraction): Promise<any> {
+    async make(interaction: CommandInteraction<'cached'>): Promise<any> {
         await interaction.deferReply({ ephemeral: true })
+        const translate = Translator(interaction)
 
-        const server = this.client.servers.get(interaction.guildId as string)
+        const server = this.client.getServer(interaction.guild)
         const snap = await admin.firestore().collection('polls').where('guild', '==', interaction.guildId).get()
         if (!server?.premium && !snap.empty)
-            return interaction.editReply(server!.translate('poll_cmd.make.dont_premium'))
-        if (!checkSend(interaction.channel as TextChannel, interaction.guild!.me!)) return interaction.editReply(server!.translate('poll_cmd.make.havent_permissions'))
+            return interaction.editReply(translate('poll_cmd.make.dont_premium'))
+        if (!checkSend(interaction.channel as TextChannel, interaction.guild.me as GuildMember)) return interaction.editReply(translate('poll_cmd.make.havent_permissions'))
         this.deploy(interaction.guild as Guild)
 
-        const title = interaction.options.getString('title') ?? server!.translate('poll_cmd.make.new_poll')
+        const title = interaction.options.getString('title') ?? translate('poll_cmd.make.new_poll')
         const context = interaction.options.getString('context') as string
         const block = interaction.options.getBoolean('block_choice') ?? false
         const show = interaction.options.getBoolean('show_results') ?? true
@@ -90,7 +94,7 @@ export default class Poll extends Command {
             .setDescription(context)
             .setURL(`https://oneki.herokuapp.com/poll/${idPoll}`)
             .setFooter({
-                text: server!.translate('poll_cmd.make.footer', { id: idPoll, bot: this.client.user?.username, version: this.client.version }),
+                text: translate('poll_cmd.make.footer', { id: idPoll, bot: this.client.user?.username, version: this.client.version }),
                 iconURL: this.client.user?.avatarURL() ?? '',
             })
 
@@ -146,10 +150,11 @@ export default class Poll extends Command {
             message: msg?.id,
         })
 
-        interaction.editReply(server!.translate('poll_cmd.make.reply'))
+        interaction.editReply(translate('poll_cmd.make.reply'))
     }
 
-    finalize(interaction: CommandInteraction) {
+    finalize(interaction: CommandInteraction<'cached'>) {
+        const translate = Translator(interaction)
         interaction.deferReply()
         admin
             .firestore()
@@ -164,7 +169,7 @@ export default class Poll extends Command {
                         .collection('finalized-polls')
                         .doc(interaction.options.getString('id') as string)
                         .set(snap.data() as any)
-                        .catch((e) => {})
+                        .catch(() => '')
                     await admin
                         .firestore()
                         .collection('polls')
@@ -198,8 +203,8 @@ export default class Poll extends Command {
                             }
                         })
                 }
-                interaction.editReply(this.client.servers.get(interaction.guildId!)!.translate('poll_cmd.finalized'))
+                interaction.editReply(translate('poll_cmd.finalized'))
             })
-            .catch((e) => interaction.editReply(this.client.servers.get(interaction.guildId!)!.translate('poll_cmd.finalized')))
+            .catch(() => interaction.editReply(translate('poll_cmd.finalized')))
     }
 }

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Client as BaseClient, Collection, TextChannel, Guild } from 'discord.js'
 import { getFirestore, Firestore } from 'firebase-admin/firestore'
+import InvitesTracker from '@androz2091/discord-invites-tracker'
 import { initializeApp, cert } from 'firebase-admin/app'
 import { createRequire } from 'module'
 import { join, dirname } from 'path'
@@ -14,10 +15,10 @@ import {
     ClientConstants,
     ButtonManager,
     OldCommandManager,
-    anyFunction,
     UnoGame,
     Server
 } from '../utils/classes.js'
+import i18n from 'i18n'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const version = createRequire(import.meta.url)('../../package.json').version
@@ -25,20 +26,7 @@ const version = createRequire(import.meta.url)('../../package.json').version
 export class Client extends BaseClient {
     db: Firestore
     version: string
-    i18nConfig: {
-        locales: string[];
-        directory: string;
-        defaultLocale: string;
-        retryInDefaultLocale: boolean;
-        objectNotation: boolean;
-        logWarnFn: anyFunction;
-        logErrorFn: anyFunction;
-        missingKeyFn: anyFunction;
-        mustacheConfig: {
-            tags: [string, string];
-            disable: boolean;
-        }
-    }
+    i18n = i18n
     commands: CommandManager
     oldCommands: OldCommandManager
     buttons: ButtonManager
@@ -56,7 +44,7 @@ export class Client extends BaseClient {
         this.commands = new CommandManager(this, options.routes.commands)
         this.buttons = new ButtonManager(this, options.routes.buttons)
 
-        this.i18nConfig = options.i18n
+        this.i18n.configure(options.i18n)
         this.version = version??'1.0.0'
 
         this.db = getFirestore(initializeApp({
@@ -115,12 +103,19 @@ export class Client extends BaseClient {
         await this.initializeEventListener(options.eventsPath)
         console.log('\x1b[35m%s\x1b[0m', 'Eventos Cargados!!')
         
-        console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
+        await this._checkBirthdays()
+
+        InvitesTracker.init(this, {
+            fetchGuilds: true,
+            fetchVanity: true,
+            fetchAuditLogs: true,
+            exemptGuild: guild => {
+                const server = this.getServer(guild)
+                return !(server.logsChannels.invite && server.premium)
+            }
+        }).on('guildMemberAdd', (...args) => this.emit('customGuildMemberAdd', ...args))
         
-        this._checkBirthdays()
-        const guild = await this.guilds.fetch('885674114310881362')!
-        const member = await guild.members.fetch('317105612100075520')!
-        this.emit('guildMemberAdd', member)
+        console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
     }
 
     private _onWebSocketMessage(message: string): void {
@@ -135,11 +130,11 @@ export class Client extends BaseClient {
     initializeEventListener(path: string) {
         return Promise.all(
             readdirSync(path)
-                .filter((f) => f.endsWith('.event.js'))
+                .filter((f) => f.includes('.event.'))
                 .map(async (file) => {
                     const event = await import('file:///'+join(path, file))
-
-                    this.on(event.name, (...args) => event.run(...args))
+                    const [eventName] = file.split('.')
+                    this.on(eventName, (...args) => event.default(...args))
                 }),
         )
     }
@@ -183,8 +178,9 @@ export class Client extends BaseClient {
         setTimeout(() => {
             this._checkBirthdays()
         }, 86400000)
+
     }
-    
+
     /**
      * Return a new Server cached
      * @param {Guild} guild 
@@ -196,4 +192,13 @@ export class Client extends BaseClient {
         this.servers.set(guild.id, server)
         return server
     }
+
+    /**
+     * Get a Server Class
+     * @param {Guild} guild - guild to refer. it is necessary to create the class in case the server doesn't exist, if you don't have the Guild, try client.servers.ger(guild_id)
+     * @returns a Server Class
+     */
+    getServer(guild: Guild): Server {
+        return this.servers.get(guild.id) ?? this.newServer(guild)
+    }   
 }

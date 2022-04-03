@@ -1,12 +1,9 @@
 import { ButtonInteraction } from 'discord.js'
-import { Button } from '../utils/classes.js'
+import { Button, Client } from '../utils/classes.js'
 
 export default class Activitie extends Button {
-    constructor() {
-        super({
-            name: 'act_sl_',
-            regex: /act_sl_.+/i
-        })
+    constructor(client: Client) {
+        super(client, /act_sl_.+/i)
     }
 
     run(interaction: ButtonInteraction) {

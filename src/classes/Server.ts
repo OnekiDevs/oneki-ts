@@ -1,28 +1,29 @@
-import { Guild, GuildChannel, Invite, Message } from 'discord.js'
-import { GuildDataBaseModel, Client, LangType, SuggestChannelObject, ServerInvite } from '../utils/classes.js'
+import { Collection, Guild, GuildChannel, Message } from 'discord.js'
+import { GuildDataBaseModel, Client, SuggestChannelObject, ServerInvite } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
-import i18n from 'i18n'
 export class Server {
     invites: ServerInvite = []
+    autoroles: Collection<string, Set<string>> = new Collection()
     rejectSug(id: string) {
-        throw new Error('Method not implemented.'+id)
+        throw new Error('Method not implemented.' + id)
     }
     aceptSug(id: string) {
-        throw new Error('Method not implemented.'+id)
+        throw new Error('Method not implemented.' + id)
     }
-    emojiAnalisisEnabled = false
-    private _i18n = i18n
+    private _emojiAnalisisEnabled = false
     guild: Guild
     private _prefixes: Array<string> = ['>', '?']
     db
-    private _lang: LangType = LangType.en
     suggestChannels: SuggestChannelObject[] = []
     private _lastSuggestId = 0
     logsChannels: {
         messageUpdate?: string
         messageDelete?: string
         messageAttachment?: string
+        invite?: string
+        memberUpdate?: string
     } = {}
+    keepRoles = false
     birthday: {
         channel?: string
         message?: string
@@ -39,11 +40,27 @@ export class Server {
     constructor(guild: Guild) {
         this.guild = guild
         this.db = (guild.client as Client).db.collection('guilds').doc(guild.id)
-        this._i18n.configure((guild.client as Client).i18nConfig)
     }
 
-    init() {
-        return Promise.all([ this.syncDB() ])
+    async init() {
+        await this.syncDB()
+        await this.fetchInvites()
+        return Promise.resolve()
+    }
+
+    async fetchInvites() {
+        if (!this.premium) return Promise.resolve()
+        if (!this.logsChannels.invite) return Promise.resolve()
+        const currentInvites = await this.guild.invites.fetch()
+        this.invites = await Promise.all(currentInvites.map(async i => {
+            const invite = await this.guild.client.fetchInvite(i.code) 
+            return {
+                user: invite.inviter ? invite.inviter.id : 'Server',
+                memberCount: invite.memberCount,
+                code: invite.code
+            }
+        }))
+        return Promise.resolve()
     }
 
     async syncDB(dataPriority?: boolean): Promise<void> {
@@ -56,24 +73,29 @@ export class Server {
         }
 
         const data = db.data() as GuildDataBaseModel
-        
-        if (data.lang) this.lang = data.lang
+
+        if(data.keepRoles && data.premium) this.keepRoles = data.keepRoles
         if (data.premium) this.premium = true
         if (data.last_suggest) this.lastSuggestId = data.last_suggest
         if (data.suggest_channels) this.suggestChannels = data.suggest_channels
         if (data.logs_channels) {
-            const { message_update, message_delete, message_attachment } = data.logs_channels
+            const { message_update, message_delete, message_attachment, invite, member_update } = data.logs_channels
 
             if (message_update) this.logsChannels.messageUpdate = message_update
             if (message_delete) this.logsChannels.messageDelete = message_delete
             if (message_attachment) this.logsChannels.messageAttachment = message_attachment
+            if (invite) this.logsChannels.invite = invite
+            if (member_update) this.logsChannels.memberUpdate = member_update
         }
         if (data.birthday?.channel) this.birthday.channel = data.birthday.channel
         if (data.birthday?.message) this.birthday.message = data.birthday.message
-        if (data.emoji_statistics) this.emojiStatistics = data.emoji_statistics      
+        if (data.emoji_statistics) this.emojiStatistics = data.emoji_statistics
         if (data.emoji_analisis_enabled && data.premium) this.startEmojiAnalisis()
-
-
+        if (data.autoroles) {
+            for (const [key, value] of Object.entries(data.autoroles)) {
+                this.autoroles.set(key, new Set(value))
+            }
+        }
 
         return Promise.resolve()
     }
@@ -81,23 +103,30 @@ export class Server {
     toDBObject(toPublic?: boolean): GuildDataBaseModel {
         const obj: GuildDataBaseModel = {}
         if (JSON.stringify(this.getPrefixes(true)) !== JSON.stringify(['?', '>'])) obj.prefixes = this._prefixes
-        if (this.lang !== LangType.en) obj.lang = this.lang
         if (this.lastSuggestId) obj.last_suggest = this.lastSuggestId
         if (this.suggestChannels) obj.suggest_channels = this.suggestChannels
         if (this.logsChannels) {
-            const { messageUpdate, messageDelete, messageAttachment } = this.logsChannels
+            const { messageUpdate, messageDelete, messageAttachment, invite, memberUpdate } = this.logsChannels
             obj.logs_channels = {}
 
             if (messageUpdate) obj.logs_channels.message_update = messageUpdate
             if (messageDelete) obj.logs_channels.message_delete = messageDelete
             if (messageAttachment) obj.logs_channels.message_attachment = messageAttachment
+            if (invite) this.logsChannels.invite = invite
+            if (memberUpdate) this.logsChannels.memberUpdate = memberUpdate
         }
         obj.birthday = {}
         if (this.birthday?.channel) obj.birthday.channel = this.birthday.channel
         if (this.birthday?.message) obj.birthday.message = this.birthday.message
-        if (this.emojiAnalisisEnabled) obj.emoji_analisis_enabled = true
+        if (this._emojiAnalisisEnabled) obj.emoji_analisis_enabled = true
         if (toPublic && this.emojiStatistics) obj.emoji_statistics = this.emojiStatistics
         if (toPublic) obj.premium = this.premium
+        if (this.autoroles) {
+            obj.autoroles = {}
+            for (const [key, value] of this.autoroles.entries()) {
+                obj.autoroles[key] = [...value]
+            }
+        }
 
         return obj
     }
@@ -112,6 +141,10 @@ export class Server {
     set lastSuggestId(n: number) {
         this._lastSuggestId = n
         this.db.update({ last_suggest: n }).catch(() => this.db.set({ last_suggest: n }))
+    }
+
+    get emojiAnalisisEnabled() {
+        return this._emojiAnalisisEnabled
     }
 
     /**
@@ -205,23 +238,8 @@ export class Server {
     /**
      * Return a lang of the guild for the Server.lang
      */
-    get lang(): LangType {
-        return this._lang
-    }
-
-    set lang(lang: LangType) {
-        this._lang = lang
-        this.db.update({ lang }).catch(() => this.db.set({ lang }))
-        ;(this.guild.client as Client).websocket.send(
-            JSON.stringify({
-                event: 'set_guild_lang',
-                from: 'mts',
-                data: {
-                    lang,
-                    guild: this.guild.id
-                }
-            })
-        )
+    get lang(): string {
+        return this.guild.preferredLocale.slice(0, 2)
     }
 
     /**
@@ -305,10 +323,11 @@ export class Server {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data: any = {}
         if (this.logsChannels.messageUpdate) data['logs_channels.message_update'] = this.logsChannels.messageUpdate
-        if (this.logsChannels.messageAttachment)
-            data['logs_channels.message_attachment'] = this.logsChannels.messageAttachment
+        if (this.logsChannels.messageAttachment) data['logs_channels.message_attachment'] = this.logsChannels.messageAttachment
         if (this.logsChannels.messageDelete) data['logs_channels.message_delete'] = this.logsChannels.messageDelete
-        if (!data.logs_channels) data.logs_channels = FieldValue.delete()
+        if (this.logsChannels.invite) data['logs_channels.invite'] = this.logsChannels.invite
+        if (this.logsChannels.memberUpdate) data['logs_channels.member_update'] = this.logsChannels.memberUpdate
+        if (Object.values(data.logs_channels).length === 0) data.logs_channels = FieldValue.delete()
         this.db.update(data).catch(() => this.db.set(data))
     }
 
@@ -445,8 +464,9 @@ export class Server {
      * @returns {string} string
      */
     translate(phrase: string, params?: object): string {
-        if (params) return this._i18n.__mf({ phrase, locale: this.lang }, params) ?? ''
-        return this._i18n.__({ phrase, locale: this.lang }) ?? ''
+        const i18n = (this.guild.client as Client).i18n
+        if (params) return i18n.__mf({ phrase, locale: this.lang }, params).toString()
+        return i18n.__({ phrase, locale: this.lang }).toString()
     }
 
     /**
@@ -534,16 +554,18 @@ export class Server {
     }
 
     startEmojiAnalisis() {
-        if (this.emojiAnalisisEnabled) return
-        else this.emojiAnalisisEnabled = true
+        if (this._emojiAnalisisEnabled) return
+        else this._emojiAnalisisEnabled = true
         this.db.update({ emoji_analisis_enabled: true }).catch(() => this.db.set({ emoji_analisis_enabled: true }))
-        
+
         this.emojiTimeout = setInterval(() => {
-            this.db.update({
-                emoji_statistics: this.emojiStatistics
-            })
+            this.db
+                .update({
+                    emoji_statistics: this.emojiStatistics
+                })
+                .catch(() => this.db.set({ emoji_statistics: this.emojiStatistics }))
         }, 600_000)
-        
+
         this.guild.client.on('messageCreate', msg => {
             if (!msg.guild) return
             if (!msg.content) return
@@ -561,11 +583,11 @@ export class Server {
     }
 
     stopEmojiAnalisis() {
-        this.emojiAnalisisEnabled = false
+        this._emojiAnalisisEnabled = false
         this.db.update({ emoji_analisis_enabled: false }).catch(() => this.db.set({ emoji_analisis_enabled: false }))
-        
+
         if (this.emojiTimeout) clearInterval(this.emojiTimeout)
-        
+
         this.guild.client.removeListener('messageCreate', this.emojiAnalisis)
     }
 
@@ -580,7 +602,7 @@ export class Server {
 
         for (const id of ids) {
             const emoji = msg.guild.emojis.cache.get(id)
-            if (emoji) this.emojiStatistics[id] = this.emojiStatistics[id] ? this.emojiStatistics[id]++ : 1
+            if (emoji) this.emojiStatistics[id] = this.emojiStatistics[id] ? this.emojiStatistics[id] + 1 : 1
         }
     }
 
@@ -590,12 +612,129 @@ export class Server {
      */
     async getInvites(): Promise<ServerInvite> {
         const invites = await this.guild.invites.fetch()
-        this.invites = await Promise.all(invites
-            .map((i: Invite) => ({ 
-                user: i.inviterId??'server', 
-                count: i.memberCount,
-                code: i.code
-            })))
+        this.invites = await Promise.all(
+            invites.map(async i => {
+                const invite = await this.guild.client.fetchInvite(i.code)
+                return {
+                    memberCount: invite.memberCount,
+                    code: invite.code
+                }
+            })
+        )
         return Promise.resolve(this.invites)
+    }
+
+    newAutorol(name: string) {
+        this.autoroles.set(name, new Set())
+        this.db.update({ ['autoroles.' + name]: [] }).catch(() => this.db.set({ ['autoroles.' + name]: [] }))
+    }
+
+    addAutorol(name: string, id: string) {
+        if (!this.autoroles.has(name)) return
+        this.autoroles.get(name)?.add(id)
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.db
+            .update({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) })
+            .catch(() => this.db.set({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }))
+    }
+
+    removeAutorolRol(name: string, id: string) {
+        if (!this.autoroles.has(name)) return
+        this.autoroles.get(name)?.delete(id)
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.db
+            .update({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) })
+            .catch(() => this.db.set({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }))
+    }
+
+    removeAutorol(name: string) {
+        if (!this.autoroles.has(name)) return
+        this.autoroles.delete(name)
+        this.db
+            .update({ ['autoroles.' + name]: FieldValue.delete() })
+            .catch(() => this.db.set({ ['autoroles.' + name]: FieldValue.delete() }))
+    }
+
+    setInviteChannel(inviteChannel: string) {
+        this.logsChannels.invite = inviteChannel
+        this.db
+            .update({ ['logs_channels.invite']: inviteChannel })
+            .catch(() => this.db.set({ ['logs_channels.invite']: inviteChannel }))
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'set_log',
+                from: 'mts',
+                data: {
+                    log: 'INVITE',
+                    channel: inviteChannel,
+                    guild: this.guild.id
+                }
+            })
+        )
+    }
+
+    setMemberUpdateChannel(memberUpdateChannel: string){
+        this.logsChannels.memberUpdate = memberUpdateChannel
+        this.db
+            .update({ ['logs_channels.member_update']: memberUpdateChannel })
+            .catch(() => this.db.set({ ['logs_channels.member_update']: memberUpdateChannel }))
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'set_log',
+                from: 'mts',
+                data: {
+                    log: 'GUILD_MEMBER_UPDATE',
+                    channel: memberUpdateChannel,
+                }
+            })
+        )
+    }
+
+    removeMemberUpdateChannel(){
+        if (!this.logsChannels.memberUpdate) return
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'remove_log',
+                from: 'mts',
+                data: {
+                    log: 'GUILD_MEMBER_UPDATE',
+                    channel: this.logsChannels.memberUpdate,
+                    guild: this.guild.id
+                }
+            })
+        )
+        delete this.logsChannels.memberUpdate
+        this.updateChannelsLogsInDB()
+    }
+
+    removeInviteChannel() {
+        if (!this.logsChannels.invite) return        
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'remove_log',
+                from: 'mts',
+                data: {
+                    log: 'INVITE',
+                    message: this.logsChannels.invite,
+                    guild: this.guild.id
+                }
+            })
+        )
+        delete this.logsChannels.invite
+        this.updateChannelsLogsInDB()
+    }
+
+    setKeepRoles(keepRoles: boolean){
+        this.keepRoles = keepRoles
+        this.db
+            .update({ ['keep_roles']: keepRoles })
+            .catch(() => this.db.set({ ['keep_roles']: keepRoles }))
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'keep_roles',
+                from: 'mts',
+                data: keepRoles
+            })
+        )
     }
 }

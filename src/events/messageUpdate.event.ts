@@ -2,14 +2,12 @@ import { Client } from '../utils/classes.js'
 import { MessageEmbed, Message, TextChannel, GuildMember } from 'discord.js'
 import { checkSend, sendError } from '../utils/utils.js'
 
-export const name = 'messageUpdate'
-
-export function run(old: Message, msg: Message) {
+export default async function(old: Message<true>, msg: Message<true>) {
     try {
         if (msg.author.bot) return
         if (!msg.guild) return
         if (!(msg.client as Client).servers.has(msg.guild?.id ?? '')) return
-        const server = (msg.client as Client).servers.get(msg.guild?.id ?? '')
+        const server = (msg.client as Client).getServer(msg.guild)
         if (!server?.logsChannels.messageUpdate) return
         const channel: TextChannel = msg.client.channels.cache.get(
             server.logsChannels.messageUpdate
