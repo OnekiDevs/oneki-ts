@@ -79,7 +79,7 @@ export async function member_update(interaction: CommandInteraction<'cached'>){
     await interaction.deferReply()
     let server = (interaction.client as Client).servers.get(interaction.guildId)
     if (!server) server = (interaction.client as Client).newServer(interaction.guild)
-
+    
     if(!server.premium) return interaction.editReply(server.translate('premium'))
 
     const member = interaction.guild?.members.cache.get(interaction.user.id)

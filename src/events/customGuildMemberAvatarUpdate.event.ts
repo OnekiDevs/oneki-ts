@@ -15,6 +15,6 @@ export default async function({ server, oldMember, newMember }: GuildMemberOptio
         .setImage(newMember.displayAvatarURL({ size: 4096, dynamic: true }))
         .setThumbnail(oldMember.displayAvatarURL({ dynamic: true }))
         .setColor('RANDOM')
-    
+
     userActivitieChannel.send({ embeds: [avatarEmbed] })
 }

@@ -57,7 +57,8 @@
 			"remove_group": "Grupo eliminado",
 			"displaying": "Desplegando...",
 			"displaying_error": "No existe ese grupo"
-		}
+		},
+		"set_keep_roles": "¡La opción de mantener roles ha sido seleccionada como {keepRole}!"
 	},
 	"info_cmd": {
 		"member": {

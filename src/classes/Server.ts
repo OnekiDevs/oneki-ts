@@ -23,6 +23,7 @@ export class Server {
         invite?: string
         memberUpdate?: string
     } = {}
+    keepRoles = false
     birthday: {
         channel?: string
         message?: string
@@ -73,6 +74,7 @@ export class Server {
 
         const data = db.data() as GuildDataBaseModel
 
+        if(data.keepRoles && data.premium) this.keepRoles = data.keepRoles
         if (data.premium) this.premium = true
         if (data.last_suggest) this.lastSuggestId = data.last_suggest
         if (data.suggest_channels) this.suggestChannels = data.suggest_channels
@@ -674,8 +676,8 @@ export class Server {
     setMemberUpdateChannel(memberUpdateChannel: string){
         this.logsChannels.memberUpdate = memberUpdateChannel
         this.db
-            .update({ ['logs_channels.useractivitie']: memberUpdateChannel })
-            .catch(() => this.db.set({ ['logs_channels.useractivitie']: memberUpdateChannel }))
+            .update({ ['logs_channels.member_update']: memberUpdateChannel })
+            .catch(() => this.db.set({ ['logs_channels.member_update']: memberUpdateChannel }))
         ;(this.guild.client as Client).websocket.send(
             JSON.stringify({
                 event: 'set_log',
@@ -720,5 +722,19 @@ export class Server {
         )
         delete this.logsChannels.invite
         this.updateChannelsLogsInDB()
+    }
+
+    setKeepRoles(keepRoles: boolean){
+        this.keepRoles = keepRoles
+        this.db
+            .update({ ['keep_roles']: keepRoles })
+            .catch(() => this.db.set({ ['keep_roles']: keepRoles }))
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'keep_roles',
+                from: 'mts',
+                data: keepRoles
+            })
+        )
     }
 }

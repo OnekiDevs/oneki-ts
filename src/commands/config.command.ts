@@ -53,6 +53,14 @@ export default class Config extends Command {
                 )
                 .addSubcommand(subcommand =>
                     subcommand
+                        .setName('keep_roles')
+                        .setDescription('Set whether or not the bot should save a user\'s role and apply it when they join the server')
+                        .addBooleanOption(option =>
+                            option.setName('keep_roles').setDescription('Keep roles').setRequired(true)
+                        )
+                )
+                .addSubcommand(subcommand =>
+                    subcommand
                         .setName('suggest_channel')
                         .setDescription('Set a unique suggest channel')
                         .addChannelOption(option =>

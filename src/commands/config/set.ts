@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { CommandInteraction, Permissions, TextChannel } from 'discord.js'
-import { permissionsError } from '../../utils/utils.js'
+import { permissionsError, Translator } from '../../utils/utils.js'
 import { Client } from '../../utils/classes.js'
 
 export function prefix(interaction: CommandInteraction<'cached'>) {
@@ -53,4 +53,21 @@ export async function birthday_message(interaction: CommandInteraction<'cached'>
     const birthdayMessage = interaction.options.getString('message')!
     server.setBirthdayMessage(birthdayMessage)
     interaction.editReply(server.translate('config_cmd.birthday.set_message', { message: birthdayMessage }))
+}
+
+export async function keep_roles(interaction: CommandInteraction<'cached'>){
+    await interaction.deferReply()
+    let server = (interaction.client as Client).servers.get(interaction.guildId)
+    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+
+    const translate = Translator(interaction)
+    if(!server.premium) return translate('premium')
+
+    const member = interaction.guild?.members.cache.get(interaction.user.id)
+    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+
+    const keepRoles = interaction.options.getBoolean('keep_roles')!
+    server.setKeepRoles(keepRoles)
+
+    interaction.editReply(translate('config_cmd.set_keep_roles', { keepRole: keepRoles }))
 }

@@ -57,7 +57,8 @@
 			"remove_group": "Group deleted",
 			"displaying": "Deploying...",
 			"displaying_error": "Don't exist this group"
-		}
+		},
+		"set_keep_roles": "¡The option of keeping or keeping roles has been set to {keepRole}!"
 	},
 	"info_cmd": {
 		"member": {
