@@ -16,7 +16,7 @@ export function file(interaction: CommandInteraction<'cached'>) {
 export async function suggest_channel(interaction: CommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = (interaction.client as Client).servers.get(interaction.guildId) ?? (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const channel = interaction.options.getChannel('channel') as TextChannel
     const alias = (interaction.options.getString('alias') as string).toLowerCase()

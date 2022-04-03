@@ -5,7 +5,7 @@ import { Client } from '../../utils/classes.js'
 export function message_update(interaction: CommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = (interaction.client as Client).servers.get(interaction.guildId) ?? (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const channel = interaction.options.getChannel('channel') as TextChannel
     server.setMessageUpdateLog(channel.id)
@@ -15,7 +15,7 @@ export function message_update(interaction: CommandInteraction<'cached'>) {
 export function message_delete(interaction: CommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = (interaction.client as Client).servers.get(interaction.guildId) ?? (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const channel = interaction.options.getChannel('channel') as TextChannel
     server.setMessageDeleteLog(channel.id)
@@ -25,7 +25,7 @@ export function message_delete(interaction: CommandInteraction<'cached'>) {
 export function message_attachment(interaction: CommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = (interaction.client as Client).servers.get(interaction.guildId) ?? (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const channel = interaction.options.getChannel('channel') as TextChannel
     server.setMessageAttachmentLog(channel.id)
@@ -34,7 +34,7 @@ export function message_attachment(interaction: CommandInteraction<'cached'>) {
 
 export async function auto(interaction: CommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = (interaction.client as Client).servers.get(interaction.guildId) ?? (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
 
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const category = (interaction.options.getChannel('category') ?? interaction.guild.channels.create('logs', {
@@ -62,7 +62,7 @@ export async function auto(interaction: CommandInteraction<'cached'>) {
 export async function invites(interaction: CommandInteraction<'cached'>){
     await interaction.deferReply()
     const translate = Translator(interaction)
-    const server = (interaction.client as Client).servers.get(interaction.guildId) ?? (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     
     if(!server.premium) return interaction.editReply(translate('premium'))
 
@@ -77,7 +77,7 @@ export async function invites(interaction: CommandInteraction<'cached'>){
 export async function member_update(interaction: CommandInteraction<'cached'>){
     const translate = Translator(interaction)
     await interaction.deferReply()
-    const server = (interaction.client as Client).servers.get(interaction.guildId) ?? (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
 
     if(!server.premium) return interaction.editReply(translate('premium'))
 

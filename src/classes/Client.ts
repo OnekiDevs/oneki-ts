@@ -110,7 +110,7 @@ export class Client extends BaseClient {
             fetchVanity: true,
             fetchAuditLogs: true,
             exemptGuild: guild => {
-                const server = this.servers.get(guild.id) ?? this.newServer(guild)
+                const server = this.getServer(guild)
                 return !(server.logsChannels.invite && server.premium)
             }
         }).on('guildMemberAdd', (...args) => this.emit('customGuildMemberAdd', ...args))

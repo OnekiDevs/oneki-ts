@@ -16,7 +16,7 @@ export default class Activitie extends Button {
         const [lang] = interaction.customId.match(/(es|en)/) as string[]
         const [, , category] = interaction.customId.split(/_/g) as string[]
         const translate = Translator(interaction)
-        const server = this.client.servers.get(interaction.guildId)??this.client.newServer(interaction.guild)
+        const server = this.client.getServer(interaction.guild)
         const embed = new MessageEmbed()
         embed.setTitle(translate('help_btn.embed_title', { bot: interaction.client.user?.username }))
         embed.setDescription(translate('help_btn.embed_description', { category }))

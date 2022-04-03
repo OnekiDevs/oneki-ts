@@ -14,7 +14,7 @@ export default class Suggest extends Command {
     }
 
     async getData(guild: Guild): Promise<ApplicationCommandDataResolvable> {
-        const server = this.client.servers.get(guild?.id as string)
+        const server = this.client.getServer(guild)
         const command = this.baseCommand
         command.addStringOption((option) => option.setName('suggestion').setDescription('Suggest to send').setRequired(true))
         if (server && server.suggestChannels.length > 0) {

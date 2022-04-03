@@ -76,7 +76,7 @@ export default class Poll extends Command {
         await interaction.deferReply({ ephemeral: true })
         const translate = Translator(interaction)
 
-        const server = this.client.servers.get(interaction.guildId as string)
+        const server = this.client.getServer(interaction.guild)
         const snap = await admin.firestore().collection('polls').where('guild', '==', interaction.guildId).get()
         if (!server?.premium && !snap.empty)
             return interaction.editReply(translate('poll_cmd.make.dont_premium'))
