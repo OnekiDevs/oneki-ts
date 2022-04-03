@@ -12,7 +12,6 @@ import {
     Message,
     Interaction
 } from 'discord.js'
-import { I18n } from 'i18n'
 
 export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms))
@@ -133,25 +132,14 @@ export async function sendError(client: Client, error: Error, file: string) {
         })
 }
 
-interface Translate {
-    lang: string
-    i18n: I18n
-    (): (phrase: string, params?: object) => string
-}
-
-interface FoolConstructor {
-    new (interaction: Interaction): Translate
-    (): (phrase: string, params?: object) => string
-}
-
-export const Translator = function (this: Translate, interaction: Interaction) {
-    this.lang = interaction.locale.slice(0, 2)
-    this.i18n = (interaction.client as Client).i18n
+export const Translator = function (interaction: Interaction) {
+    const lang = interaction.locale.slice(0, 2)
+    const i18n = (interaction.client as Client).i18n
     return (phrase: string, params?: object) => {
-        if (params) return this.i18n.__mf({ phrase, locale: this.lang }, params).toString()
-        return this.i18n.__({ phrase, locale: this.lang }).toString()
+        if (params) return i18n.__mf({ phrase, locale: lang }, params).toString()
+        return i18n.__({ phrase, locale: lang }).toString()
     }
-} as FoolConstructor
+} 
 
 /**
  * @deprecated Now use <client>.newServer(guild: Guild, data?: GuildDataBaseModel)
