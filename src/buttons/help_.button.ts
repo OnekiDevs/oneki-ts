@@ -1,6 +1,7 @@
 import { ButtonInteraction, MessageEmbed, MessageButton, MessageActionRow } from 'discord.js'
 import { Button, Client } from '../utils/classes.js'
 import Help from '../oldCommands/help.oldCommand.js' 
+import { Translator } from '../utils/utils.js'
 
 export default class Activitie extends Button {
     constructor(client: Client) {
@@ -14,22 +15,23 @@ export default class Activitie extends Button {
         if (!messageRef || messageRef.author.id !== interaction.user.id) return interaction.deferUpdate()
         const [lang] = interaction.customId.match(/(es|en)/) as string[]
         const [, , category] = interaction.customId.split(/_/g) as string[]
-        const server = this.client.servers.get(interaction.guildId)??this.client.newServer(interaction.guild)
+        const translate = Translator(interaction)
+        const server = this.client.getServer(interaction.guild)
         const embed = new MessageEmbed()
-        embed.setTitle(server.translate('help_btn.embed_title', { bot: interaction.client.user?.username }))
-        embed.setDescription(server.translate('help_btn.embed_description', { category }))
+        embed.setTitle(translate('help_btn.embed_title', { bot: interaction.client.user?.username }))
+        embed.setDescription(translate('help_btn.embed_description', { category }))
         const commands = await Help.getCategory(category)
         await Promise.all(
             commands.map((cmd) => {
                 embed.addField(
                     cmd.name,
-                    server.translate('help_btn.command_field', { cmd_description: cmd.description, alias: cmd.alias.length > 0 ? '`' + cmd.alias.join('` `') + '`' : 'none', cmd_prefix: (cmd.type == 'slash' ? '/' : server?.getPrefixes(true)[0] ?? server?.prefixes[0]), cmd_use: cmd.use }),
+                    translate('help_btn.command_field', { cmd_description: cmd.description, alias: cmd.alias.length > 0 ? '`' + cmd.alias.join('` `') + '`' : 'none', cmd_prefix: (cmd.type == 'slash' ? '/' : server?.getPrefixes(true)[0] ?? server?.prefixes[0]), cmd_use: cmd.use }),
                     true,
                 )
             }),
         )
         embed.setFooter({
-            text: server.translate('footer', { bot: interaction.client.user?.username, version: this.client.version }),
+            text: translate('footer', { bot: interaction.client.user?.username, version: this.client.version }),
             iconURL: interaction.client.user?.avatarURL() ?? '',
         })
         embed.setThumbnail(interaction.client.user?.avatarURL() ?? '')

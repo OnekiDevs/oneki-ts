@@ -1,62 +1,63 @@
 import { Embed } from '@discordjs/builders'
 import { CommandInteraction, MessageActionRow, MessageButton, Role, TextChannel } from 'discord.js'
 import { Client } from '../../classes/Client'
+import { Translator } from '../../utils/utils'
 
 export async function create(interaction: CommandInteraction<'cached'>) {
     await interaction.deferReply()
+    const translate = Translator(interaction)
     const name = (interaction.options.getString('name') as string).split(/ +/gi).join('_')
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     server.newAutorol(name)
     await (interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
-    interaction.editReply(server.translate('config_cmd.autoroles.create', { name }))
+    interaction.editReply(translate('config_cmd.autoroles.create', { name }))
 }
 
 export async function add(interaction: CommandInteraction<'cached'>) {
     await interaction.deferReply()
+    const translate = Translator(interaction)
     const name = (interaction.options.getString('group') as string).split(/ +/gi).join('_')
     const rol = interaction.options.getRole('rol') as Role
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     server.addAutorol(name, rol.id)
     await (interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
-    interaction.editReply(server.translate('config_cmd.autoroles.added', { group:name, roll:rol }))
+    interaction.editReply(translate('config_cmd.autoroles.added', { group:name, roll:rol }))
 }
 
 export async function remove(interaction: CommandInteraction<'cached'>) {
     await interaction.deferReply()
+    const translate = Translator(interaction)
     const name = (interaction.options.getString('group') as string).split(/ +/gi).join('_')
     const rol = interaction.options.getRole('rol') as Role
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     server.removeAutorolRol(name, rol.id)
     await (interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
-    interaction.editReply(server.translate('config_cmd.autoroles.remove', { roll:rol.toString(), group:name }))
+    interaction.editReply(translate('config_cmd.autoroles.remove', { roll:rol.toString(), group:name }))
 }
 
 export async function remove_group(interaction: CommandInteraction<'cached'>) {
     await interaction.deferReply()
+    const translate = Translator(interaction)
     const name = (interaction.options.getString('group') as string).split(/ +/gi).join('_')
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     server.removeAutorol(name)
     await (interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
-    interaction.editReply(server.translate('config_cmd.autoroles.remove_group'))
+    interaction.editReply(translate('config_cmd.autoroles.remove_group'))
 }
 
 export async function display(interaction: CommandInteraction<'cached'>) {
+    const translate = Translator(interaction)
     const name = (interaction.options.getString('group') as string).split(/ +/gi).join('_')
     const message = interaction.options.getString('message')??'Choice yout role'
     const channel = (interaction.options.getChannel('channel')??interaction.channel) as TextChannel
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     if (server.autoroles.has(name)) await interaction.reply({
-        content: server.translate('config_cmd.autoroles.displaying'),
+        content: translate('config_cmd.autoroles.displaying'),
         ephemeral: true
     })
     else {
         (interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
-        return interaction.reply(server.translate('config_cmd.autoroles.displaying_error'))
+        return interaction.reply(translate('config_cmd.autoroles.displaying_error'))
     }
     
     const autoroles = server.autoroles.get(name) as Set<string>

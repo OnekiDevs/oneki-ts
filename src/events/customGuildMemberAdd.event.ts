@@ -4,7 +4,7 @@ import { Client } from '../classes/Client.js'
 type JoinType = 'permissions' | 'normal' | 'vanity' | 'unknown';
 
 export default async function(member: GuildMember, type: JoinType, invite: Invite) {
-    const server = (member.client as Client).servers.get(member.guild.id) ?? (member.client as Client).newServer(member.guild)
+    const server = (member.client as Client).getServer(member.guild)
     if (!server.logsChannels.invite || !server.premium) return
     
     const welcomeChannel = await member.guild.channels.fetch(server.logsChannels.invite) as TextChannel

@@ -23,15 +23,10 @@ export class UnoGame extends EventEmitter {
     winner: Player | undefined
     server: Server
 
-    constructor(msg: Message, client: Client) {
+    constructor(msg: Message<true>, client: Client) {
         super()
 
-        const server = client.servers.get(msg.guildId!)
-        if (server) this.server = server
-        else {
-            this.server = new Server(msg.guild!)
-            client.servers.set(msg.guildId!, this.server)
-        }
+        this.server = client.getServer(msg.guild)
 
         this.host = new Player(msg.author.id)
         this.client = client

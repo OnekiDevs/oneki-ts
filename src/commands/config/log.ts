@@ -1,41 +1,40 @@
 import { Permissions, CommandInteraction, TextChannel, CategoryChannel } from 'discord.js'
-import { permissionsError } from '../../utils/utils.js'
+import { permissionsError, Translator } from '../../utils/utils.js'
 import { Client } from '../../utils/classes.js'
 
 export function message_update(interaction: CommandInteraction<'cached'>) {
+    const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const channel = interaction.options.getChannel('channel') as TextChannel
     server.setMessageUpdateLog(channel.id)
-    interaction.reply(server.translate('config_cmd.set_log', { channel }))
+    interaction.reply(translate('config_cmd.set_log', { channel }))
 }
 
 export function message_delete(interaction: CommandInteraction<'cached'>) {
+    const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const channel = interaction.options.getChannel('channel') as TextChannel
     server.setMessageDeleteLog(channel.id)
-    interaction.reply(server.translate('config_cmd.set_log', { channel }))
+    interaction.reply(translate('config_cmd.set_log', { channel }))
 }
 
 export function message_attachment(interaction: CommandInteraction<'cached'>) {
+    const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const channel = interaction.options.getChannel('channel') as TextChannel
     server.setMessageAttachmentLog(channel.id)
-    interaction.reply(server.translate('config_cmd.set_log', { channel }))
+    interaction.reply(translate('config_cmd.set_log', { channel }))
 }
 
 export async function auto(interaction: CommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
 
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     const category = (interaction.options.getChannel('category') ?? interaction.guild.channels.create('logs', {
@@ -62,30 +61,30 @@ export async function auto(interaction: CommandInteraction<'cached'>) {
 
 export async function invites(interaction: CommandInteraction<'cached'>){
     await interaction.deferReply()
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+    const translate = Translator(interaction)
+    const server = (interaction.client as Client).getServer(interaction.guild)
     
-    if(!server.premium) return interaction.editReply(server.translate('premium'))
+    if(!server.premium) return interaction.editReply(translate('premium'))
 
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
 
     const inviteChannel = interaction.options.getChannel('channel') as TextChannel
     server.setInviteChannel(inviteChannel.id)
-    interaction.editReply(server.translate('config_cmd.invites.set_channel', { channel: inviteChannel?.toString() }))
+    interaction.editReply(translate('config_cmd.invites.set_channel', { channel: inviteChannel?.toString() }))
 }
 
 export async function member_update(interaction: CommandInteraction<'cached'>){
+    const translate = Translator(interaction)
     await interaction.deferReply()
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
-    
-    if(!server.premium) return interaction.editReply(server.translate('premium'))
+    const server = (interaction.client as Client).getServer(interaction.guild)
+
+    if(!server.premium) return interaction.editReply(translate('premium'))
 
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
 
     const userActivitieChannel = interaction.options.getChannel('channel') as TextChannel
     server.setMemberUpdateChannel(userActivitieChannel.id)
-    interaction.editReply(server.translate('useractivitie_event.set_channel', { channel: userActivitieChannel.toString() }))
+    interaction.editReply(translate('useractivitie_event.set_channel', { channel: userActivitieChannel.toString() }))
 }

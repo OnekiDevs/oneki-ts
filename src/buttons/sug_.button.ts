@@ -8,7 +8,7 @@ export default class Activitie extends Button {
 
     run(interaction: ButtonInteraction<'cached'>) {
         const [,m,id] = interaction.customId.split(/_/gi)
-        const server = this.client.servers.get(interaction.guildId)??this.client.newServer(interaction.guild)
+        const server = this.client.getServer(interaction.guild)
         if (m === 'a') server.aceptSug(id)
         else server.rejectSug(id)
         interaction.deferUpdate()

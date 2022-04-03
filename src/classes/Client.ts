@@ -110,7 +110,7 @@ export class Client extends BaseClient {
             fetchVanity: true,
             fetchAuditLogs: true,
             exemptGuild: guild => {
-                const server = this.servers.get(guild.id) ?? this.newServer(guild)
+                const server = this.getServer(guild)
                 return !(server.logsChannels.invite && server.premium)
             }
         }).on('guildMemberAdd', (...args) => this.emit('customGuildMemberAdd', ...args))
@@ -192,4 +192,13 @@ export class Client extends BaseClient {
         this.servers.set(guild.id, server)
         return server
     }
+
+    /**
+     * Get a Server Class
+     * @param {Guild} guild - guild to refer. it is necessary to create the class in case the server doesn't exist, if you don't have the Guild, try client.servers.ger(guild_id)
+     * @returns a Server Class
+     */
+    getServer(guild: Guild): Server {
+        return this.servers.get(guild.id) ?? this.newServer(guild)
+    }   
 }

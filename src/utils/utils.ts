@@ -1,4 +1,4 @@
-import { Server, Client } from './classes.js'
+import { Client } from './classes.js'
 import { fileURLToPath } from 'url'
 import {
     PermissionResolvable,
@@ -8,7 +8,6 @@ import {
     Permissions,
     MessageAttachment,
     MessageEmbed,
-    Guild,
     Message,
     Interaction
 } from 'discord.js'
@@ -139,16 +138,4 @@ export const Translator = function (interaction: Interaction) {
         if (params) return i18n.__mf({ phrase, locale: lang }, params).toString()
         return i18n.__({ phrase, locale: lang }).toString()
     }
-} 
-
-/**
- * @deprecated Now use <client>.newServer(guild: Guild, data?: GuildDataBaseModel)
- * @param {Guild} guild
- * @param {GuildDataBaseModel} data
- * @returns {Server}
- */
-export function newServer(guild: Guild): Server {
-    const server = new Server(guild)
-    ;(guild.client as Client).servers.set(guild.id, server)
-    return server
 }

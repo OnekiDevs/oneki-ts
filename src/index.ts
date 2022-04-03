@@ -91,7 +91,7 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
 
     const req = await fetch(interaction.data.resolved.attachments[command.options[0].value].url)
     const guild = (await client.guilds.fetch(interaction.guild_id)) as Guild
-    const server = client.servers.get(guild.id)??client.newServer(guild)
+    const server = client.getServer(guild)
 
     const { prefixes, logs_channels, birthday, suggest_channels, autoroles, emoji_analisis_enabled } = await req.json() as GuildDataBaseModel
 
