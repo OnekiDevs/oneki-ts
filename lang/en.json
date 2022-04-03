@@ -58,7 +58,12 @@
 			"displaying": "Deploying...",
 			"displaying_error": "Don't exist this group"
 		},
-		"set_keep_roles": "¡The option of keeping or keeping roles has been set to {keepRole}!"
+		"set_keep_roles": "The option of keeping or keeping roles has been set to {keepRole}!",
+		"add_blacklisted_word": "The word `{word}` has been blacklisted successfully!",
+		"remove_blacklisted_word": "The word `{word}` has been removed from the blacklist successfully!",
+		"add_no_filter_channel": "The channel {channel} has been added to the list of channels where the filters are disabled",
+		"remove_no_filter_channel": "The channel {channel} has been removed from the list of channels where the filters are disabled"
+
 	},
 	"info_cmd": {
 		"member": {

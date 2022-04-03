@@ -129,6 +129,29 @@ export default class Config extends Command {
                             option.setName('default').setDescription('Set a default suggestion channel')
                         )
                 )
+                .addSubcommand(subcommand =>
+                    subcommand
+                        .setName('blacklisted_word')
+                        .setDescription('Add a new blacklisted word')
+                        .addStringOption(option =>
+                            option
+                                .setName('word')
+                                .setDescription('The word to blacklist')
+                                .setRequired(true)
+                        )
+                )
+                .addSubcommand(subcommand =>
+                    subcommand
+                        .setName('no_filter_channel')
+                        .setDescription('Add a channel where the bot should not filter messages')
+                        .addChannelOption(option =>
+                            option
+                                .setName('channel')
+                                .setDescription('The channel to use')
+                                .setRequired(true)
+                                .addChannelType(0)
+                        )
+                )
         )
 
         command.addSubcommandGroup(subcommandGroup =>
@@ -179,6 +202,29 @@ export default class Config extends Command {
                     subcommand
                         .setName('birthday_channel')
                         .setDescription('Remove the channel to celebrate user\'s birthdays')
+                )
+                .addSubcommand(subcommand =>
+                    subcommand
+                        .setName('blacklisted_word')
+                        .setDescription('Remove a blacklisted word')
+                        .addStringOption(option =>
+                            option
+                                .setName('word')
+                                .setDescription('The word to remove')
+                                .setRequired(true)
+                        )
+                )
+                .addSubcommand(subcommand =>
+                    subcommand
+                        .setName('no_filter_channel')
+                        .setDescription('Remove a channel where the bot should not filter messages')
+                        .addChannelOption(option =>
+                            option
+                                .setName('channel')
+                                .setDescription('The channel to remove')
+                                .setRequired(true)
+                                .addChannelType(0)
+                        )
                 )
         )
 

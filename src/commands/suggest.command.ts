@@ -89,8 +89,8 @@ export default class Suggest extends Command {
         } else if (!channelId || !channel) {
             server.removeSuggestChannel(channelId as string)
             return interaction.reply({ content: translate('suggest_cmd.missing_channel'), ephemeral: true })
-            ;(interaction.client as Client).commands.get(interaction.commandName)?.deploy(interaction.guild as Guild)
-            ;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild as Guild)
+            //;(interaction.client as Client).commands.get(interaction.commandName)?.deploy(interaction.guild as Guild)
+            //;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild as Guild)
         }
     }
 

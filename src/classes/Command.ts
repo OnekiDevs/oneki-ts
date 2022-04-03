@@ -96,7 +96,7 @@ export class Command {
         } else if (this.type === CommandType.global) {
             try {
                 const c = await this.client.application?.commands.create(await this.getData())
-                return Promise.reject(c as ApplicationCommand)
+                return Promise.resolve(c as ApplicationCommand)
             } catch (error) {
                 return Promise.reject(error)
             }

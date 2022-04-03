@@ -28,9 +28,9 @@ export function capitalize(input: string): string {
 export function permissionsError(
     interaction: CommandInteraction | Message,
     permissions: PermissionResolvable[] | PermissionResolvable
-): any {
+): void {
     interaction.reply({
-        content: `No tiienes los permissions suficientes, necesitas \`${
+        content: `No tienes los permissions suficientes, necesitas \`${
             Array.isArray(permissions) ? permissions.map(p => p).join('`, `') : permissions.toString()
         }\``,
         ephemeral: true

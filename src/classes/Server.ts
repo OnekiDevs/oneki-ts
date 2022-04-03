@@ -25,6 +25,8 @@ export class Server {
         memberUpdate?: string
     } = {}
     keepRoles = false
+    blacklistedWords: string[] = []
+    noFilterChannels: string[] = []
     birthday: {
         channel?: string
         message?: string
@@ -75,7 +77,9 @@ export class Server {
 
         const data = db.data() as GuildDataBaseModel
 
-        if(data.keepRoles && data.premium) this.keepRoles = data.keepRoles
+        if(data.no_filter_channels) this.noFilterChannels = data.no_filter_channels
+        if(data.blacklisted_words) this.blacklistedWords = data.blacklisted_words
+        if(data.keep_roles && data.premium) this.keepRoles = data.keep_roles
         if (data.premium) this.premium = true
         if (data.last_suggest) this.lastSuggestId = data.last_suggest
         if (data.suggest_channels) this.suggestChannels = data.suggest_channels
@@ -735,6 +739,62 @@ export class Server {
                 event: 'keep_roles',
                 from: 'mts',
                 data: keepRoles
+            })
+        )
+    }
+
+    addBlacklistedWord(word: string){
+        this.blacklistedWords.push(word)
+        this.db
+            .update({ ['blacklisted_words']: FieldValue.arrayUnion(word) })
+            .catch(() => this.db.set({ ['blacklisted_words']: this.blacklistedWords }))
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'add_blacklisted_word',
+                from: 'mts',
+                data: this.blacklistedWords
+            })
+        )
+    }
+
+    removeBlacklistedWord(word: string){
+        this.blacklistedWords = this.blacklistedWords.filter(dbWord => dbWord !== word)
+        this.db
+            .update({ ['blacklisted_words']: FieldValue.arrayRemove(word) })
+            .catch(() => this.db.set({ ['blacklisted_words']: this.blacklistedWords }))
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'remove_blacklisted_word',
+                from: 'mts',
+                data: this.blacklistedWords
+            })
+        )
+    }
+
+    addNoFiltersChannel(channelID: string){
+        this.noFilterChannels.push(channelID)
+        this.db
+            .update({ ['no_filter_channels']: FieldValue.arrayUnion(channelID) })
+            .catch(() => this.db.set({ ['no_filter_channels']: this.noFilterChannels }))
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'add_no_filter_channel',
+                from: 'mts',
+                data: this.noFilterChannels
+            })
+        )
+    }
+
+    removeNoFiltersChannel(channelID: string){
+        this.noFilterChannels = this.noFilterChannels.filter(dbChannel => dbChannel !== channelID)
+        this.db
+            .update({ ['no_filter_channels']: FieldValue.arrayRemove(channelID) })
+            .catch(() => this.db.set({ ['no_filter_channels']: this.noFilterChannels }))
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'remove_no_filter_channel',
+                from: 'mts',
+                data: this.noFilterChannels
             })
         )
     }

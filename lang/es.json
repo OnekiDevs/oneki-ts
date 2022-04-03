@@ -58,7 +58,11 @@
 			"displaying": "Desplegando...",
 			"displaying_error": "No existe ese grupo"
 		},
-		"set_keep_roles": "¡La opción de mantener roles ha sido seleccionada como {keepRole}!"
+		"set_keep_roles": "¡La opción de mantener roles ha sido seleccionada como {keepRole}!",
+		"add_blacklisted_word": "¡La palabra `{word}` ha sido prohibida satisfactoriamente!",
+		"remove_blacklisted_word": "¡La palabra `{word}` ha sido removida de las prohibidas satisfactoriamente!",
+		"add_no_filter_channel": "¡El canal {channel} ha sido agregado a la lista de canales sin filtro!",
+		"remove_no_filter_channel": "¡El canal {channel} ha sido removido de la lista de canales sin filtro!"
 	},
 	"info_cmd": {
 		"member": {

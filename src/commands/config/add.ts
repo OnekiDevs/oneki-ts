@@ -36,3 +36,32 @@ export async function suggest_channel(interaction: CommandInteraction<'cached'>)
     (interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
     channel.setRateLimitPerUser(21600)
 }
+
+export async function blacklisted_word(interaction: CommandInteraction<'cached'>){
+    await interaction.deferReply()
+    const translate = Translator(interaction)
+    const member = interaction.guild?.members.cache.get(interaction.user.id)
+    const server = (interaction.client as Client).getServer(interaction.guild)
+
+    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+
+    const word = interaction.options.getString('word') as string
+    server.addBlacklistedWord(word.toLowerCase())
+
+    interaction.editReply(translate('config_cmd.add_blacklisted_word', { word }))
+}
+
+export async function no_filter_channel(interaction: CommandInteraction<'cached'>){
+    await interaction.deferReply()
+
+    const translate = Translator(interaction)
+    const member = interaction.guild?.members.cache.get(interaction.user.id)
+    const server = (interaction.client as Client).getServer(interaction.guild)
+
+    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+
+    const channel = interaction.options.getChannel('channel') as TextChannel
+    const channelID = channel.id
+    server.addNoFiltersChannel(channelID)
+    interaction.editReply(translate('config_cmd.add_no_filter_channel', { channel: channel.toString() }))
+}

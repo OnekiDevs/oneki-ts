@@ -1,4 +1,4 @@
-import { Permissions, CommandInteraction } from 'discord.js'
+import { Permissions, CommandInteraction, TextChannel } from 'discord.js'
 import { permissionsError, Translator } from '../../utils/utils.js'
 import { Client } from '../../utils/classes.js'
 
@@ -46,4 +46,34 @@ export function birthday_channel(interaction: CommandInteraction<'cached'>) {
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
     server.removeBirthdayChannel()
     interaction.reply(translate('config_cmd.birthday.remove_channel'))
+}
+
+export async function blacklisted_word(interaction: CommandInteraction<'cached'>) {
+    await interaction.deferReply()
+
+    const translate = Translator(interaction)
+    const member = interaction.guild?.members.cache.get(interaction.user.id)
+    const server = (interaction.client as Client).getServer(interaction.guild)
+
+    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+
+    const word = interaction.options.getString('word') as string
+    server.removeBlacklistedWord(word)
+    interaction.editReply(translate('config_cmd.remove_blacklisted_word', { word }))
+}
+
+export async function no_filter_channel(interaction: CommandInteraction<'cached'>){
+    await interaction.deferReply()
+
+    const translate = Translator(interaction)
+    const member = interaction.guild?.members.cache.get(interaction.user.id)
+    const server = (interaction.client as Client).getServer(interaction.guild)
+
+    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+
+    const channel = interaction.options.getChannel('channel') as TextChannel
+    const channelID = channel.id
+
+    server.removeNoFiltersChannel(channelID)
+    interaction.editReply(translate('config_cmd.remove_no_filter_channel', { channel: channel.toString() }))
 }

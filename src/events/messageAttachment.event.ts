@@ -18,7 +18,7 @@ export default async function(msg: Message<true>) {
                 embeds: [
                     new MessageEmbed()
                         .setTitle(
-                            `attachments send by ${msg.member?.displayName}`
+                            `attachments sent by ${msg.member?.displayName}`
                         )
                         .setThumbnail(msg.member?.displayAvatarURL() as string)
                         .addField(

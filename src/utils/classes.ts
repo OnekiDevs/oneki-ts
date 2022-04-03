@@ -88,7 +88,9 @@ export interface GuildDataBaseModel {
         channel?: string;
         message?: string;
     }
-    keepRoles?: boolean
+    blacklisted_words?: string[];
+    no_filter_channels?: string[];
+    keep_roles?: boolean;
     emoji_analisis_enabled?: boolean;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     emoji_statistics?: any,
