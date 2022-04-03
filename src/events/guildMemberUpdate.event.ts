@@ -3,8 +3,7 @@ import { Client } from '../classes/Client.js'
 
 export default async function(oldMember: GuildMember, newMember: GuildMember) {
     const client = (newMember.client) as Client
-    let server = client.servers.get(newMember.guild.id)
-    if(!server) server = client.newServer(newMember.guild)
+    const server = client.getServer(newMember.guild)
 
     if(oldMember.nickname !== newMember.nickname) client.emit('customGuildMemberNickameUpdate', { server, oldMember, newMember })
     if(oldMember.avatar !== newMember.avatar) client.emit('customGuildMemberAvatarUpdate', { server, oldMember, newMember })
