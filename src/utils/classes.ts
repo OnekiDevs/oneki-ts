@@ -25,8 +25,6 @@ export enum CommandType {
     global,
 }
 
-export type ServerInvite = { memberCount: number; code:string }[];
-
 export interface oldCommandData {
     name: string;
     description: string;
@@ -88,7 +86,7 @@ export interface GuildDataBaseModel {
         channel?: string;
         message?: string;
     }
-    keepRoles?: boolean
+    keep_roles?: boolean
     emoji_analisis_enabled?: boolean;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     emoji_statistics?: any,
