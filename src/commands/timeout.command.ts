@@ -1,5 +1,6 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, GuildMember } from 'discord.js'
 import { Command, Client, CommandType } from '../utils/classes.js'
+import { Translator } from '../utils/utils.js'
 import ms from 'iblazingx-ms'
 
 export default class Ban extends Command {
@@ -24,18 +25,17 @@ export default class Ban extends Command {
         const member = interaction.options.getMember('member') as GuildMember
         const reason = interaction.options.getString('reason') as string
         const time = ms(interaction.options.getString('time') as string)
-        let server = (interaction.client as Client).servers.get(interaction.guildId)
-        if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+        const translate = Translator(interaction)
 
         if (interaction.member.roles.highest.comparePositionTo(member.roles.highest) <= 0)
             return interaction.reply({
-                content: server.translate('timeout_cmd.user_permissions'),
+                content: translate('timeout_cmd.user_permissions'),
                 ephemeral: true
             })
 
         await member.timeout(time, reason)
 
-        interaction.reply(server.translate('timeout_cmd.reply', { user: member }))
+        interaction.reply(translate('timeout_cmd.reply', { user: member }))
 
         //TODO Implementar notas aqui
     }

@@ -1,7 +1,7 @@
 
 import { ApplicationCommandDataResolvable, CommandInteraction, VoiceChannel, MessageActionRow, MessageButton } from 'discord.js'
-// import { ChannelType } from 'discord-api-types/v9'
 import { Command, Client, CommandType } from '../utils/classes.js'
+import { Translator } from '../utils/utils.js'
 
 export default class Activitie extends Command {
     constructor(client: Client) {
@@ -41,22 +41,21 @@ export default class Activitie extends Command {
             .toJSON() as ApplicationCommandDataResolvable
     }
 
-    async run(interaction: CommandInteraction): Promise<any> {
-        const server = this.client.servers.get(interaction.guildId as string)
-        if(!server) return
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async run(interaction: CommandInteraction<'cached'>): Promise<any> {
+        const translate = Translator(interaction)
         const [activitieId, activitie] = (interaction.options.getString('game') as string).split('/')
         const channel = interaction.options.getChannel('channel') ?? interaction.guild?.members.cache.get(interaction.user.id)?.voice.channel
-        if (!channel)
-            return interaction.reply({
-                content: server.translate('activitie_cmd.whotout_voice'),
-                ephemeral: true,
-            })
+        if (!channel) return interaction.reply({
+            content: translate('activitie_cmd.whotout_voice'),
+            ephemeral: true,
+        })
         const invite = await (channel as VoiceChannel).createInvite({
             targetApplication: activitieId,
             targetType: 2,
         })
         interaction.reply({
-            content: server.translate('activitie_cmd.reply', {activitie, channel}),
+            content: translate('activitie_cmd.reply', {activitie, channel}),
             components: [
                 new MessageActionRow().addComponents([
                     new MessageButton().setLabel('join').setStyle('LINK').setURL(`https://discord.com/invite/${invite.code}`),

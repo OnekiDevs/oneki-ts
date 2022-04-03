@@ -1,6 +1,7 @@
 import { ButtonInteraction } from 'discord.js'
 import { Button, Client } from '../utils/classes.js'
 import { Player } from '../classes/Player.js'
+import { Translator } from '../utils/utils.js'
 
 export default class Uno extends Button {
     constructor(client: Client) {
@@ -8,12 +9,11 @@ export default class Uno extends Button {
     }
 
     async run(interaction: ButtonInteraction<'cached'>) {
+        const translate = Translator(interaction)
         const [, id, option] = interaction.customId.split(/_/gi)
 
         const uno = this.client.uno.get(id)
         if (!uno) return interaction.deferUpdate()
-
-        const server = this.client.servers.get(interaction.guildId as string)??this.client.newServer(interaction.guild)
 
         if (option === 'jn') {
             if (!uno.players.has(interaction.user.id))
@@ -25,12 +25,12 @@ export default class Uno extends Button {
                 uno.emit('start')
             } else if (uno.players.has(interaction.user.id)) {
                 interaction.reply({
-                    content: server.translate('uno_btn.start_no_host'),
+                    content: translate('uno_btn.start_no_host'),
                     ephemeral: true,
                 })
             } else
                 interaction.reply({
-                    content: server.translate('uno_btn.start_out'),
+                    content: translate('uno_btn.start_out'),
                     ephemeral: true,
                 })
         } else if (option === 'mc') {

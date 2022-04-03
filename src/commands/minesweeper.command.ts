@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CommandInteraction } from 'discord.js'
 import { Command, Client, CommandType } from '../utils/classes.js'
 

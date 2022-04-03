@@ -1,6 +1,6 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, GuildMember, Permissions } from 'discord.js'
 import { Command, Client, CommandType } from '../utils/classes.js'
-import { permissionsError } from '../utils/utils.js'
+import { permissionsError, Translator } from '../utils/utils.js'
 
 export default class Ban extends Command {
     constructor(client: Client) {
@@ -20,14 +20,13 @@ export default class Ban extends Command {
     }
 
     async run(interaction: CommandInteraction<'cached'>) {
+        const translate = Translator(interaction)
         const member = interaction.options.getMember('member') as GuildMember
         const reason = interaction.options.getString('reason') as string
-        let server = (interaction.client as Client).servers.get(interaction.guildId)
-        if (!server) server = (interaction.client as Client).newServer(interaction.guild)
-
+        
         if (interaction.member.roles.highest.comparePositionTo(member.roles.highest) <= 0)
             return interaction.reply({
-                content: server.translate('kick_cmd.user_permissions'),
+                content: translate('kick_cmd.user_permissions'),
                 ephemeral: true
             })
 
@@ -35,7 +34,7 @@ export default class Ban extends Command {
 
         await interaction.guild.members.kick(member, reason)
 
-        interaction.reply(server.translate('kick_cmd.reply', { user: member }))
+        interaction.reply(translate('kick_cmd.reply', { user: member }))
 
         //TODO Implementar notas aqui
     }
