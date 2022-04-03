@@ -4,10 +4,10 @@ import { GuildMemberOptions } from '../utils/classes.js'
 
 export default async function({ server, oldMember, newMember }: GuildMemberOptions){
     //If the channel ID is saved in the database
-    if(!server.logsChannels.useractivitie) return
+    if(!server.logsChannels.memberUpdate) return
 
     //If the channel still exists
-    const userActivitieChannel = await server.guild.channels.fetch(server.logsChannels.useractivitie) as TextChannel
+    const userActivitieChannel = await server.guild.channels.fetch(server.logsChannels.memberUpdate) as TextChannel
     if(!userActivitieChannel) return
 
     const changedRole = newMember.roles.cache.difference(oldMember.roles.cache).first()!
