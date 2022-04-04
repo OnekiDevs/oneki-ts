@@ -1,7 +1,7 @@
 import { Embed } from '@discordjs/builders'
 import { CommandInteraction, MessageActionRow, MessageButton, Role, TextChannel } from 'discord.js'
-import { Client } from '../../classes/Client'
-import { Translator } from '../../utils/utils'
+import { Client } from '../../classes/Client.js'
+import { Translator } from '../../utils/utils.js'
 
 export async function create(interaction: CommandInteraction<'cached'>) {
     await interaction.deferReply()
