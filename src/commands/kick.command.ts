@@ -8,6 +8,7 @@ export default class Ban extends Command {
             name: 'kick',
             description: 'Kick a memeber',
             defaultPermission: false,
+            category: 'Moderation',
             type: CommandType.guild
         })
     }

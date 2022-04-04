@@ -1,9 +1,10 @@
-import { ClientOptions as BaseClientOptions, GuildMember, PermissionResolvable } from 'discord.js'
+import { ClientOptions as BaseClientOptions, GuildMember, PermissionResolvable, Intents } from 'discord.js'
 
 import { Client } from '../classes/Client.js'
 import { ApplicationCommandPermissionTypes } from 'discord.js/typings/enums'
 import { Server } from '../classes/Server.js'
 export default Client
+export { Client, Intents }
 
 export * from '../classes/Client.js'
 export * from '../classes/Command.js'

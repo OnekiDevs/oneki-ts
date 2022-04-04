@@ -7,6 +7,7 @@ export default class Ban extends Command {
         super(client, {
             name: 'ban',
             description: 'Ban a memeber',
+            category: 'Moderation',
             defaultPermission: false,
             type: CommandType.guild
         })

@@ -8,6 +8,7 @@ export default class Suggest extends Command {
         super(client, {
             name: 'suggest',
             description: 'Make a suggestion',
+            category: 'Utils',
             defaultPermission: true,
             type: CommandType.guild,
         })

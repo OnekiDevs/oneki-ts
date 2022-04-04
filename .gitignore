@@ -5,3 +5,4 @@ dist
 *.js
 commmands_exported.json
 scripts/lang
+commands.json
