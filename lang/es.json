@@ -52,11 +52,12 @@
 		},
 		"autoroles": {
 			"create": "Se ha creado el grupo de autoroles {name}",
-			"added": "Se agrego el rol {roll} al grupo {goup}",
+			"added": "Se agrego el rol {roll} al grupo {group}",
 			"remove": "Rol {roll} eliminado de {group}",
 			"remove_group": "Grupo eliminado",
 			"displaying": "Desplegando...",
-			"displaying_error": "No existe ese grupo"
+			"displaying_error": "No existe ese grupo",
+			"sending_error": "No permisos para enviar mensajes en el canal"
 		},
 		"set_keep_roles": "¡La opción de mantener roles ha sido seleccionada como {keepRole}!",
 		"add_blacklisted_word": "¡La palabra `{word}` ha sido prohibida satisfactoriamente!",

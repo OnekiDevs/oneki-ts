@@ -25,8 +25,6 @@ export enum CommandType {
     global,
 }
 
-export type ServerInvite = { memberCount: number; code:string }[];
-
 export interface oldCommandData {
     name: string;
     description: string;

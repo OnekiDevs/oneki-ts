@@ -1,7 +1,7 @@
 import { Embed } from '@discordjs/builders'
-import { CommandInteraction, MessageActionRow, MessageButton, Role, TextChannel } from 'discord.js'
-import { Client } from '../../classes/Client'
-import { Translator } from '../../utils/utils'
+import { CommandInteraction, GuildMember, MessageActionRow, MessageButton, Role, TextChannel } from 'discord.js'
+import { Client } from '../../classes/Client.js'
+import { checkSend, Translator } from '../../utils/utils.js'
 
 export async function create(interaction: CommandInteraction<'cached'>) {
     await interaction.deferReply()
@@ -21,7 +21,7 @@ export async function add(interaction: CommandInteraction<'cached'>) {
     const server = (interaction.client as Client).getServer(interaction.guild)
     server.addAutorol(name, rol.id)
     await (interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
-    interaction.editReply(translate('config_cmd.autoroles.added', { group:name, roll:rol }))
+    interaction.editReply(translate('config_cmd.autoroles.added', { group:name, roll:rol.toString() }))
 }
 
 export async function remove(interaction: CommandInteraction<'cached'>) {
@@ -58,6 +58,9 @@ export async function display(interaction: CommandInteraction<'cached'>) {
     else {
         (interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
         return interaction.reply(translate('config_cmd.autoroles.displaying_error'))
+    }
+    if (!checkSend(channel, interaction.guild.me as GuildMember)) {
+        return interaction.reply(translate('config_cmd.autoroles.sending_error'))
     }
     
     const autoroles = server.autoroles.get(name) as Set<string>
