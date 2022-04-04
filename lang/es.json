@@ -52,7 +52,7 @@
 		},
 		"autoroles": {
 			"create": "Se ha creado el grupo de autoroles {name}",
-			"added": "Se agrego el rol {roll} al grupo {goup}",
+			"added": "Se agrego el rol {roll} al grupo {group}",
 			"remove": "Rol {roll} eliminado de {group}",
 			"remove_group": "Grupo eliminado",
 			"displaying": "Desplegando...",

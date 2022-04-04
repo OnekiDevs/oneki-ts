@@ -21,7 +21,7 @@ export async function add(interaction: CommandInteraction<'cached'>) {
     const server = (interaction.client as Client).getServer(interaction.guild)
     server.addAutorol(name, rol.id)
     await (interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
-    interaction.editReply(translate('config_cmd.autoroles.added', { group:name, roll:rol }))
+    interaction.editReply(translate('config_cmd.autoroles.added', { group:name, roll:rol.toString() }))
 }
 
 export async function remove(interaction: CommandInteraction<'cached'>) {
