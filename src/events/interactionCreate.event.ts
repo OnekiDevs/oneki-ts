@@ -5,7 +5,9 @@ import { sendError } from '../utils/utils.js'
 export default async function(interaction: CommandInteraction | ButtonInteraction) {
     try {
         if (interaction.isApplicationCommand()) 
-            (interaction.client as Client).commands.get(interaction.commandName)?.run(interaction)
+            (interaction.client as Client).commands
+                .get(interaction.commandName)
+                ?.run(interaction)
         if (interaction.isButton()) 
             (interaction.client as Client).buttons
                 .find(btn => btn.regex.test(interaction.customId))

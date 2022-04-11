@@ -7,6 +7,7 @@ export default class SS extends Command {
         super(client, {
             name: 'ss',
             description: 'make a fake ss',
+            category: 'Entertainment',
             defaultPermission: true,
             type: CommandType.global
         })

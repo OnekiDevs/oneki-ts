@@ -14,6 +14,7 @@ export class Command {
     guilds: Array<string> = []
     public = true
     permissions: PermissionResolvable[] = []
+    category: string
 
     constructor(
         client: Client,
@@ -26,8 +27,10 @@ export class Command {
             public?: boolean;
             guilds?: string[];
             permissions?: PermissionResolvable[];
+            category: string;
         },
     ) {
+        this.category = options.category
         this.client = client
         this.name = options.name
         this.description = options.description

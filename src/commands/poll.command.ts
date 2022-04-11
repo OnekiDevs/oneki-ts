@@ -19,6 +19,7 @@ export default class Poll extends Command {
         super(client, {
             name: 'poll',
             description: 'make a poll',
+            category: 'Utils',
             defaultPermission: false,
             type: CommandType.guild,
         })

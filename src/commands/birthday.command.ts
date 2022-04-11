@@ -9,6 +9,7 @@ export default class Birthday extends Command {
         super(client, {
             name: 'birthday',
             description: 'Change your birthday reminder',
+            category: 'Utils',
             type: CommandType.global,
         })
     }

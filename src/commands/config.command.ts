@@ -9,6 +9,7 @@ export default class Config extends Command {
             name: 'config',
             description: 'config',
             defaultPermission: false,
+            category: 'Settings',
             type: CommandType.guild
         })
     }

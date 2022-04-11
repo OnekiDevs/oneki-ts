@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Collection, Guild, GuildChannel, Message } from 'discord.js'
-import { GuildDataBaseModel, Client, SuggestChannelObject, ServerInvite } from '../utils/classes.js'
+import { GuildDataBaseModel, Client, SuggestChannelObject } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import { PunishmentType, PunishUser } from '../utils/utils.js'
 export class Server {
-    invites: ServerInvite = []
     autoroles: Collection<string, Set<string>> = new Collection()
     rejectSug(id: string) {
         throw new Error('Method not implemented.' + id)
@@ -49,22 +48,6 @@ export class Server {
 
     async init() {
         await this.syncDB()
-        await this.fetchInvites()
-        return Promise.resolve()
-    }
-
-    async fetchInvites() {
-        if (!this.premium) return Promise.resolve()
-        if (!this.logsChannels.invite) return Promise.resolve()
-        const currentInvites = await this.guild.invites.fetch()
-        this.invites = await Promise.all(currentInvites.map(async i => {
-            const invite = await this.guild.client.fetchInvite(i.code) 
-            return {
-                user: invite.inviter ? invite.inviter.id : 'Server',
-                memberCount: invite.memberCount,
-                code: invite.code
-            }
-        }))
         return Promise.resolve()
     }
 
@@ -135,6 +118,7 @@ export class Server {
                 obj.autoroles[key] = [...value]
             }
         }
+        if(this.keepRoles) obj.keep_roles = this.keepRoles 
 
         return obj
     }
@@ -612,24 +596,6 @@ export class Server {
             const emoji = msg.guild.emojis.cache.get(id)
             if (emoji) this.emojiStatistics[id] = this.emojiStatistics[id] ? this.emojiStatistics[id] + 1 : 1
         }
-    }
-
-    /**
-     * Get the Guild invites and parse it
-     * @returns {Promise<ServerInvite>} - Invites parsed
-     */
-    async getInvites(): Promise<ServerInvite> {
-        const invites = await this.guild.invites.fetch()
-        this.invites = await Promise.all(
-            invites.map(async i => {
-                const invite = await this.guild.client.fetchInvite(i.code)
-                return {
-                    memberCount: invite.memberCount,
-                    code: invite.code
-                }
-            })
-        )
-        return Promise.resolve(this.invites)
     }
 
     newAutorol(name: string) {

@@ -9,7 +9,8 @@ export default class Ban extends Command {
             name: 'timeout',
             description: 'Timeout a memeber',
             defaultPermission: false,
-            type: CommandType.guild
+            type: CommandType.guild,
+            category: 'Moderation',
         })
     }
 

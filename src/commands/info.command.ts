@@ -13,6 +13,7 @@ export default class Activitie extends Command {
             name: 'info',
             description: 'display info',
             defaultPermission: true,
+            category: 'Utils',
             type: CommandType.global,
         })
     }

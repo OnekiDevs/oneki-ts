@@ -56,7 +56,8 @@
 			"remove": "the roll {roll} has removed of the group {group}}",
 			"remove_group": "Group deleted",
 			"displaying": "Deploying...",
-			"displaying_error": "Don't exist this group"
+			"displaying_error": "Don't exist this group",
+			"sending_error": "I don't have the permissions to send messages in this channel"
 		},
 		"set_keep_roles": "The option of keeping or keeping roles has been set to {keepRole}!",
 		"add_blacklisted_word": "The word `{word}` has been blacklisted successfully!",
