@@ -40,7 +40,7 @@ export default class DownloadEmojis extends OldCommand {
                 files: [new MessageAttachment(zipGenerated, `${msg.guild.name}_emojis.zip`)]
             })
         } catch (error) {
-            msg.reply('Ha ocurrido un error, reporte genrado')
+            msg.reply('Ha ocurrido un error, reporte generado')
             sendError(this.client, error as Error, import.meta.url)
         }
     }

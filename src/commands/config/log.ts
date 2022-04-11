@@ -88,3 +88,16 @@ export async function member_update(interaction: CommandInteraction<'cached'>){
     server.setMemberUpdateChannel(userActivitieChannel.id)
     interaction.editReply(translate('useractivitie_event.set_channel', { channel: userActivitieChannel.toString() }))
 }
+
+export async function sanction(interaction: CommandInteraction<'cached'>){
+    const translate = Translator(interaction)
+    await interaction.deferReply()
+    const server = (interaction.client as Client).getServer(interaction.guild)
+
+    const member = interaction.guild?.members.cache.get(interaction.user.id)
+    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+
+    const sanctionChannel = interaction.options.getChannel('channel') as TextChannel
+    server.setSanctionChannel(sanctionChannel.id)
+    interaction.editReply(translate('sanction_event.set_channel', { channel: sanctionChannel.toString() }))
+}

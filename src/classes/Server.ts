@@ -2,6 +2,7 @@
 import { Collection, Guild, GuildChannel, Message } from 'discord.js'
 import { GuildDataBaseModel, Client, SuggestChannelObject, ServerInvite } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
+import { PunishmentType, PunishUser } from '../utils/utils.js'
 export class Server {
     invites: ServerInvite = []
     autoroles: Collection<string, Set<string>> = new Collection()
@@ -23,6 +24,7 @@ export class Server {
         messageAttachment?: string
         invite?: string
         memberUpdate?: string
+        sanction?: string
     } = {}
     keepRoles = false
     blacklistedWords: string[] = []
@@ -84,13 +86,14 @@ export class Server {
         if (data.last_suggest) this.lastSuggestId = data.last_suggest
         if (data.suggest_channels) this.suggestChannels = data.suggest_channels
         if (data.logs_channels) {
-            const { message_update, message_delete, message_attachment, invite, member_update } = data.logs_channels
+            const { message_update, message_delete, message_attachment, invite, member_update, sanction } = data.logs_channels
 
             if (message_update) this.logsChannels.messageUpdate = message_update
             if (message_delete) this.logsChannels.messageDelete = message_delete
             if (message_attachment) this.logsChannels.messageAttachment = message_attachment
             if (invite) this.logsChannels.invite = invite
             if (member_update) this.logsChannels.memberUpdate = member_update
+            if (sanction) this.logsChannels.sanction = sanction
         }
         if (data.birthday?.channel) this.birthday.channel = data.birthday.channel
         if (data.birthday?.message) this.birthday.message = data.birthday.message
@@ -797,5 +800,163 @@ export class Server {
                 data: this.noFilterChannels
             })
         )
+    }
+
+    setSanctionChannel(channelID: string){
+        this.logsChannels.sanction = channelID
+        this.db
+            .update({ ['logs_channels.sanction']: channelID })
+            .catch(() => this.db.set({ ['logs_channels.sanction']: channelID }))
+        ;(this.guild.client as Client).websocket.send(
+            JSON.stringify({
+                event: 'set_sanction_channel',
+                from: 'mts',
+                data: channelID
+            })
+        )
+    }
+
+    /** 
+     * Punishes a user
+     * @param {string} userId Id of the user
+     * @param {PunishmentType} type Type of punishment
+     * @param {string} reason Reason of the punishment
+     * @param {number} duration Duration of the punishment in ms (-1 for permanent)
+     * @param {string} moderatorId Id of the moderator
+     */
+
+    punishUser({ userId, type, reason, duration, moderatorId }: PunishUser ) {
+        return new Promise((resolve, reject) => {
+            if(type === PunishmentType.WARN) 
+                this.warnUser(userId, reason, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+
+            if(type === PunishmentType.MUTE)
+                this.muteUser(userId, reason, duration, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+
+            if(type === PunishmentType.KICK)
+                this.kickUser(userId, reason, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+
+            if(type === PunishmentType.BAN)
+                this.banUser(userId, reason, duration, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+
+            if(type === PunishmentType.HACKBAN)
+                this.hackbanUser(userId, reason, duration, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+            
+        })
+    }
+
+    private async warnUser(userId: string, reason: string, moderatorId: string){
+        const user = await this.guild.members.fetch(userId)
+
+        const moderator = await this.guild.members.fetch(moderatorId)
+
+        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+
+        this.db.collection('users').doc(userId).update({ 
+            sanctions: FieldValue.arrayUnion({ type: 'WARN', reason, moderator: moderatorId, date: new Date().getTime() })
+        }).catch(() => {
+            this.db.collection('users').doc(userId).set({ 
+                sanctions: [{ type: 'WARN', reason, moderator: moderatorId, date: new Date().getTime() }]
+            })
+        })
+        return Promise.resolve()
+    }
+
+    private async muteUser(userId: string, reason: string, duration: number, moderatorId: string) {
+        const user = await this.guild.members.fetch(userId)
+
+        const moderator = await this.guild.members.fetch(moderatorId)
+
+        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+
+        user.timeout(duration, reason)
+
+        this.db.collection('users').doc(userId).update({ 
+            sanctions: FieldValue.arrayUnion({ type: 'MUTE', reason, moderator: moderatorId, date: new Date().getTime() })
+        }).catch(() => {
+            this.db.collection('users').doc(userId).set({ 
+                sanctions: [{ type: 'MUTE', reason, moderator: moderatorId, date: new Date().getTime() }]
+            })
+        })
+        return Promise.resolve()
+    }
+
+    private async kickUser(userId: string, reason: string, moderatorId: string){
+        const user = await this.guild.members.fetch(userId)
+
+        const moderator = await this.guild.members.fetch(moderatorId)
+
+        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+
+        user.kick(reason)
+
+        this.db.collection('users').doc(userId).update({ 
+            sanctions: FieldValue.arrayUnion({ type: 'KICK', reason, moderator: moderatorId, date: new Date().getTime() })
+        }).catch(() => {
+            this.db.collection('users').doc(userId).set({ 
+                sanctions: [{ type: 'KICK', reason, moderator: moderatorId, date: new Date().getTime() }]
+            })
+        })
+        return Promise.resolve()
+    }
+
+    private async banUser(userId: string, reason: string, duration: number, moderatorId: string){
+        const user = await this.guild.members.fetch(userId)
+
+        const moderator = await this.guild.members.fetch(moderatorId)
+
+        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+
+        this.db.collection('users').doc(userId).update({ 
+            sanctions: FieldValue.arrayUnion({ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() })
+        }).catch(() => {
+            this.db.collection('users').doc(userId).set({ 
+                sanctions: [{ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() }]
+            })
+        })
+
+        if(duration === -1){
+            user.ban({ days: 0, reason })
+            return Promise.resolve()
+        }
+        
+        user.ban({ days: 0, reason }).then(() => {
+            if(duration < 86400000){
+                setTimeout(() => {
+                    this.guild.members.unban(userId)
+                }, duration)
+            }
+        })
+        return Promise.resolve()
+    }
+
+    private async hackbanUser(userId: string, reason: string, duration: number, moderatorId: string){
+        const user = await this.guild.members.fetch(userId)
+
+        const moderator = await this.guild.members.fetch(moderatorId)
+
+        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+
+        this.db.collection('users').doc(userId).update({ 
+            sanctions: FieldValue.arrayUnion({ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() })
+        }).catch(() => {
+            this.db.collection('users').doc(userId).set({ 
+                sanctions: [{ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() }]
+            })
+        })
+
+        if(duration === -1){
+            user.ban({ days: 0, reason })
+            return Promise.resolve()
+        }
+        
+        user.ban({ days: 0, reason }).then(() => {
+            if(duration < 86400000){
+                setTimeout(() => {
+                    this.guild.members.unban(userId)
+                }, duration)
+            }
+        })
+        return Promise.resolve()
     }
 }

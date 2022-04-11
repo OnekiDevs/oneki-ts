@@ -37,9 +37,7 @@ export default class Activitie extends Command {
         if (interaction.options.getSubcommand() === 'member') {
             const member = (interaction.options.getMember('member') ??
         interaction.member) as GuildMember
-            const user = await interaction.client.users.fetch(member.id, {
-                force: true,
-            })
+            const user = member.user
             const embed = new MessageEmbed()
                 .setTitle(translate('info_cmd.member.title', { user: member.displayName }))
                 .setDescription(
@@ -93,7 +91,7 @@ export default class Activitie extends Command {
                     true
                 )
                 .addField(
-                    'Entro el',
+                    'Entró el',
                     `<t:${Math.round(
                         (member.joinedTimestamp ?? 1) / 1000
                     )}:d> <t:${Math.round((member.joinedTimestamp ?? 1) / 1000)}:R>`,

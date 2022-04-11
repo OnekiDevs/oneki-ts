@@ -104,6 +104,7 @@ export class Client extends BaseClient {
         console.log('\x1b[35m%s\x1b[0m', 'Eventos Cargados!!')
         
         await this._checkBirthdays()
+        await this.checkBans()
 
         InvitesTracker.init(this, {
             fetchGuilds: true,
@@ -139,6 +140,26 @@ export class Client extends BaseClient {
         )
     }
 
+    async checkBans(){
+        console.log('\x1b[32m%s\x1b[0m','Revisando bans...')
+        this.servers.map(async server => {
+            const bansSnap = await server.db.collection('bans').get()
+            bansSnap.forEach(async bannedUser => {
+                const bannedDate = bannedUser.data().date
+                const timeSinceBanned = new Date().getTime() - bannedDate
+                const banDuration = bannedUser.data().duration
+                if(timeSinceBanned > banDuration){
+                    server.guild.members.unban(bannedUser.id)
+                    server.db.collection('bans').doc(bannedUser.id).delete()
+                }
+                console.log(`El usuario ${bannedUser.id} ha sido desbaneado de ${server.guild.id}`)
+            })
+        })
+
+        setTimeout(() => {
+            this.checkBans()
+        }, 900000)
+    }
 
     private async _checkBirthdays(){
         console.log('\x1b[34m%s\x1b[0m','Revisando cumpleaños...')

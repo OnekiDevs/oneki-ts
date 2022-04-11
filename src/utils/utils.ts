@@ -139,3 +139,19 @@ export const Translator = function (interaction: Interaction) {
         return i18n.__({ phrase, locale: lang }).toString()
     }
 }
+
+export enum PunishmentType{
+    WARN,
+    KICK,
+    MUTE,
+    BAN,
+    HACKBAN,
+}
+
+export interface PunishUser{
+    userId: string,
+    type: PunishmentType,
+    reason: string,
+    duration: number,
+    moderatorId: string
+}

@@ -76,6 +76,7 @@ export interface LogsChannelsDatabaseModel {
     message_attachment?: string;
     invite?: string;
     member_update?: string;
+    sanction?: string;
 }
 
 export interface GuildDataBaseModel {
