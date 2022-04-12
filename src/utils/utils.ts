@@ -148,10 +148,19 @@ export enum PunishmentType{
     HACKBAN,
 }
 
+/**
+ * @interface PunishUser
+ * @param {string} userId The id of the user to punish
+ * @param {type} PunishmentType The type of punishment to apply
+ * @param {string} reason The reason of the punishment
+ * @param {number} duration The duration of the punishment in ms. Skip for permanent
+ * @param {string} moderatorId The id of the moderator who punished the user
+ */
+
 export interface PunishUser{
     userId: string,
     type: PunishmentType,
     reason: string,
-    duration: number,
+    duration?: string,
     moderatorId: string
 }

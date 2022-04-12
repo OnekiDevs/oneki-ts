@@ -1,14 +1,14 @@
 import { ButtonInteraction, MessageEmbed, MessageButton, MessageActionRow } from 'discord.js'
-import { Button, Client } from '../utils/classes.js'
+import { Component, Client } from '../utils/classes.js'
 import Help from '../oldCommands/help.oldCommand.js' 
 import { Translator } from '../utils/utils.js'
 
-export default class Activitie extends Button {
+export default class Activitie extends Component {
     constructor(client: Client) {
         super(client, /help_(es|en)_.+/i)
     }
 
-    async run(interaction: ButtonInteraction<'cached'>) {
+    async button(interaction: ButtonInteraction<'cached'>) {
         const message = await interaction.channel?.messages.fetch(interaction.message.id)
         if (!message || !message.reference?.messageId) return interaction.deferUpdate()
         const messageRef = await interaction.channel?.messages.fetch(message.reference.messageId)

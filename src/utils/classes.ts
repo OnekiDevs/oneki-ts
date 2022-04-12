@@ -9,11 +9,11 @@ export { Client, Intents }
 export * from '../classes/Client.js'
 export * from '../classes/Command.js'
 export * from '../classes/OldCommand.js'
-export * from '../classes/Button.js'
+export * from '../classes/Component.js'
 export * from '../classes/Server.js'
 export * from '../handlers/CommandManager.js'
 export * from '../handlers/OldCommandManager.js'
-export * from '../handlers/ButtonManager.js'
+export * from '../handlers/ComponentManager.js'
 export * from '../handlers/ServerManager.js'
 
 export * from '../classes/Player.js'
@@ -89,7 +89,7 @@ export interface GuildDataBaseModel {
         message?: string;
     }
     blacklisted_words?: string[];
-    no_filter_channels?: string[];
+    disabled_channels?: string[];
     keep_roles?: boolean;
     emoji_analisis_enabled?: boolean;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -112,7 +112,7 @@ export interface ClientOptions extends BaseClientOptions {
         commands: string;
         oldCommands: string;
         events: string;
-        buttons: string;
+        components: string;
     }
     i18n: {
         locales: string[];

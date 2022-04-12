@@ -9,9 +9,9 @@ export default async function(interaction: CommandInteraction | ButtonInteractio
                 .get(interaction.commandName)
                 ?.run(interaction)
         if (interaction.isButton()) 
-            (interaction.client as Client).buttons
+            (interaction.client as Client).components
                 .find(btn => btn.regex.test(interaction.customId))
-                ?.run(interaction)
+                ?.button?.(interaction)
     } catch (error) {
         sendError(interaction.client as Client, error as Error, import.meta.url)
     }

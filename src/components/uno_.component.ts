@@ -1,14 +1,14 @@
 import { ButtonInteraction } from 'discord.js'
-import { Button, Client } from '../utils/classes.js'
+import { Component, Client } from '../utils/classes.js'
 import { Player } from '../classes/Player.js'
 import { Translator } from '../utils/utils.js'
 
-export default class Uno extends Button {
+export default class Uno extends Component {
     constructor(client: Client) {
         super(client, /uno_.{8}_.{2}(_.{2})?$/i)
     }
 
-    async run(interaction: ButtonInteraction<'cached'>) {
+    async button(interaction: ButtonInteraction<'cached'>) {
         const translate = Translator(interaction)
         const [, id, option] = interaction.customId.split(/_/gi)
 

@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { MessageEmbed, Message, TextChannel, GuildMember } from 'discord.js'
-import { sendError, checkSend } from '../utils/utils.js'
-import { Client } from '../utils/classes.js'
-import { FieldValue } from 'firebase-admin/firestore'
+import { MessageEmbed, Message, TextChannel, GuildMember, User } from 'discord.js'
+import { sendError, checkSend, PunishmentType } from '../utils/utils.js'
+import { Client, Server } from '../utils/classes.js'
 
 export default async function(msg: Message<true>) {
     if (!(msg.client as Client).servers.has(msg.guild.id)) return
     const server = (msg.client as Client).getServer(msg.guild)
     if (msg.author.bot) return
     if (!msg.guild) return
+
+    await checkGhostPing(server, msg)
 
     try {
         if (!server?.logsChannels.messageDelete) return
@@ -53,35 +54,44 @@ export default async function(msg: Message<true>) {
     } catch (error) {
         sendError(msg.client as Client, error as Error, import.meta.url)
     }
+}
 
+async function checkGhostPing(server: Server, msg: Message){
     const regex = /<@!?\d{18}>/
-    if(regex.test(msg.content)){
-        const timeBeforeDeletion = new Date().getTime() - msg.createdTimestamp
-        const timeBeforeDeletioninSecs = timeBeforeDeletion / 1000
-        const user = msg.mentions.users.first()
+    if(!regex.test(msg.content)) return
 
-        if(user === msg.author || user?.bot) return
+    const user = msg.mentions.users.first()
+    if(!user || user === msg.author || user?.bot) return
 
-        if(timeBeforeDeletioninSecs > 7) return
+    const timeBeforeDeletion = new Date().getTime() - msg.createdTimestamp
+    const timeBeforeDeletioninSecs = timeBeforeDeletion / 1000
+    
+    if(timeBeforeDeletioninSecs > 7) return
 
-        const channel = await msg.client.channels.fetch('885674115615301650') as TextChannel
-        channel.send({ content: server.translate('ghost_ping_event.realized', { ghostingUser: msg.author.toString(), ghostedUser: user?.toString() }), allowedMentions: { users: [] } })
+    const channel = await msg.client.channels.fetch('885674115615301650') as TextChannel
+    channel.send({ content: server.translate('ghost_ping_event.realized', { ghostingUser: msg.member?.toString(), ghostedUser: user?.toString() }), allowedMentions: { users: [] } })
+    const ghosterSnap = (await server.db.collection('users').doc(msg.author.id).get()).data()
+    if(!ghosterSnap) return warnUser(server, channel, msg, user)
 
-        const ghosterSnap = (await server.db.collection('users').doc(msg.author.id).get()).data()
-        if(!ghosterSnap || !ghosterSnap.sanctions){
-            server.db.collection('users').doc(msg.author.id).set({ sanctions: [{ type: 'warning', reason: 'Ghosting', moderator: msg.client.user!.id, date: new Date().getTime() }] })
-            channel.send({ content: server.translate('ghost_ping_event.warned') , allowedMentions: { users: [] } })
-        }
+    const ghostSanctions = ghosterSnap.sanctions.filter((sanction: { reason: string }) => sanction.reason === 'Ghosting')
 
-        msg.member?.timeout(10 * 1000, `Ghost pinging ${user?.toString()}`)
-            .then(() => {
-                channel.send({ content: server.translate('ghost_ping_event.muted', { ghostingUser: msg.member?.toString(), ghostedUser: user?.toString()}), allowedMentions: { users: [] } })
-                server.db.collection('users').doc(msg.author.id).update({
-                    sanctions: FieldValue.arrayUnion({ type: 'mute', reason: 'Ghosting', moderator: msg.client.user!.id, date: new Date().getTime() })
-                })
-            })
-            .catch(() => {
-                channel.send({ content: server.translate('ghost_ping_event.cant_mute', { ghostingUser: msg.member?.toString(), ghostedUser: user?.toString()}), allowedMentions: { users: [] } })
-            })
-    }
+    if(!ghostSanctions) return warnUser(server, channel, msg, user)
+
+    server.punishUser({ userId: msg.author.id, type: PunishmentType.MUTE, reason: 'Ghost pinging', duration: '10m', moderatorId: msg.client.user!.id })
+        .then(() => {
+            channel.send({ content: server.translate('ghost_ping_event.muted', { ghostingUser: msg.member?.toString(), ghostedUser: user?.toString()}), allowedMentions: { users: [] } })
+        })
+        .catch(() => {
+            channel.send({ content: server.translate('ghost_ping_event.cant_mute', { ghostingUser: msg.member?.toString(), ghostedUser: user?.toString()}), allowedMentions: { users: [] } })
+        })
+}
+
+function warnUser(server: Server, channel: TextChannel, msg: Message, user: User){
+    server.punishUser({ userId: msg.author.id, type: PunishmentType.WARN, reason: 'Ghost pining', moderatorId: msg.client.user!.id })
+        .then(() => {
+            channel.send({ content: server.translate('ghost_ping_event.warned', { ghostingUser: msg.member?.toString(), ghostedUser: user?.toString()}), allowedMentions: { users: [] } })
+        })
+        .catch(() => {
+            channel.send({ content: server.translate('ghost_ping_event.cant_warn', { ghostingUser: msg.member?.toString(), ghostedUser: user?.toString()}), allowedMentions: { users: [] } })
+        })
 }

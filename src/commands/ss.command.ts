@@ -28,13 +28,12 @@ export default class SS extends Command {
             text,
             avatar: member.displayAvatarURL({ format: 'png' }),
             user: member.displayName,
-            color: member.displayHexColor.slice(1),
-            bot: member.user.bot ? '1' : '0',
-            verified: member.user.flags?.has('VERIFIED_BOT') ? '1' : '0'
+            color: member.displayHexColor.slice(1)
         })
-        console.log(Math.round((text.length * 50) / 10 + 50))
+        if (member.user.bot) params.append('bot', '')
+        if (member.user.flags?.has('VERIFIED_BOT')) params.append('verified', '')
 
-        const ss = await cw.buffer('https://oneki.herokuapp.com/api/fakeDiscordMessage?' + params, {
+        const ss = await cw.buffer('https://oneki.herokuapp.com/api/fake/discord/message?' + params, {
             height: Math.round((text.length * 50) / 140 + 50),
             width: 500,
             launchOptions: { args: ['--no-sandbox'] }

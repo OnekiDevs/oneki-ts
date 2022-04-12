@@ -32,7 +32,7 @@ const client: Client = new Client({
         commands: join(__dirname, 'commands'),
         oldCommands: join(__dirname, 'oldCommands'),
         events: join(__dirname, 'events'),
-        buttons: join(__dirname, 'buttons')
+        components: join(__dirname, 'components')
     },
     i18n: {
         locales: ['en', 'es'],

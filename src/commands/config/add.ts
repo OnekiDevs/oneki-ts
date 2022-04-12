@@ -62,6 +62,6 @@ export async function no_filter_channel(interaction: CommandInteraction<'cached'
 
     const channel = interaction.options.getChannel('channel') as TextChannel
     const channelID = channel.id
-    server.addNoFiltersChannel(channelID)
+    server.addDisabledChannel(channelID)
     interaction.editReply(translate('config_cmd.add_no_filter_channel', { channel: channel.toString() }))
 }
