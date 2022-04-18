@@ -8,7 +8,7 @@ config()
 
 process.on('exit', () => console.log('Bot apagado'))
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const client: Client = new Client({
     intents: [
