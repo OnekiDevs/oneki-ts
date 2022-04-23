@@ -64,7 +64,6 @@
 		"remove_blacklisted_word": "The word `{word}` has been removed from the blacklist successfully!",
 		"add_no_filter_channel": "The channel {channel} has been added to the list of channels where the filters are disabled",
 		"remove_no_filter_channel": "The channel {channel} has been removed from the list of channels where the filters are disabled"
-
 	},
 	"info_cmd": {
 		"member": {
@@ -131,7 +130,7 @@
 		}
 	},
 	"ghost_ping": {
-		"realized":"⛔ The user {ghostingUser} has ghost pinged {ghostedUser}. ⛔",
+		"realized": "⛔ The user {ghostingUser} has ghost pinged {ghostedUser}. ⛔",
 		"warned": "The user {ghostingUser} has made his first ghost ping to the user {ghostedUser} and has been warned about it.",
 		"cant_warn": "⚠️ The user {ghostingUser} has made his first ghost ping to the user {ghostedUser}. However, I can not warn him because his role is higher than mine. ⚠️",
 		"muted": "The user {ghostingUser} has ghost pinged {ghostedUser} and has been muted because of it.",

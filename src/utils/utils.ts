@@ -134,9 +134,9 @@ export async function sendError(client: Client, error: Error, file: string) {
 export const Translator = function (interaction: Interaction) {
     const lang = interaction.locale.slice(0, 2)
     const i18n = (interaction.client as Client).i18n
-    return (phrase: string, params?: object) => {
-        if (params) return i18n.__mf({ phrase, locale: lang }, params).toString()
-        return i18n.__({ phrase, locale: lang }).toString()
+    return (phrase: string, params?: object): string => {
+        if (params) return i18n.__mf({ phrase, locale: lang }, params)
+        return i18n.__({ phrase, locale: lang })
     }
 }
 
@@ -151,9 +151,9 @@ export enum PunishmentType{
 /**
  * @interface PunishUser
  * @param {string} userId The id of the user to punish
- * @param {type} PunishmentType The type of punishment to apply
+ * @param {PunishmentType} type The type of punishment to apply
  * @param {string} reason The reason of the punishment
- * @param {number} duration The duration of the punishment in ms. Skip for permanent
+ * @param {number} [duration] The duration of the punishment in ms. Skip for permanent
  * @param {string} moderatorId The id of the moderator who punished the user
  */
 
