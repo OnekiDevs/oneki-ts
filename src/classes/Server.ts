@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Collection, Guild, GuildChannel, Message } from 'discord.js'
 import { GuildDataBaseModel, Client, SuggestChannelObject } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
+import { PunishmentType, PunishUser } from '../utils/utils.js'
+import ms from 'iblazingx-ms'
 export class Server {
     autoroles: Collection<string, Set<string>> = new Collection()
     rejectSug(id: string) {
@@ -21,8 +24,11 @@ export class Server {
         messageAttachment?: string
         invite?: string
         memberUpdate?: string
+        sanction?: string
     } = {}
     keepRoles = false
+    blacklistedWords: string[] = []
+    disabledChannels: string[] = []
     birthday: {
         channel?: string
         message?: string
@@ -57,18 +63,21 @@ export class Server {
 
         const data = db.data() as GuildDataBaseModel
 
+        if(data.disabled_channels) this.disabledChannels = data.disabled_channels
+        if(data.blacklisted_words) this.blacklistedWords = data.blacklisted_words
         if(data.keep_roles && data.premium) this.keepRoles = data.keep_roles
         if (data.premium) this.premium = true
         if (data.last_suggest) this.lastSuggestId = data.last_suggest
         if (data.suggest_channels) this.suggestChannels = data.suggest_channels
         if (data.logs_channels) {
-            const { message_update, message_delete, message_attachment, invite, member_update } = data.logs_channels
+            const { message_update, message_delete, message_attachment, invite, member_update, sanction } = data.logs_channels
 
             if (message_update) this.logsChannels.messageUpdate = message_update
             if (message_delete) this.logsChannels.messageDelete = message_delete
             if (message_attachment) this.logsChannels.messageAttachment = message_attachment
             if (invite) this.logsChannels.invite = invite
             if (member_update) this.logsChannels.memberUpdate = member_update
+            if (sanction) this.logsChannels.sanction = sanction
         }
         if (data.birthday?.channel) this.birthday.channel = data.birthday.channel
         if (data.birthday?.message) this.birthday.message = data.birthday.message
@@ -159,7 +168,7 @@ export class Server {
     setPrefix(prefix: string) {
         this._prefixes = [prefix]
         this.db.update({ prefix: [prefix] }).catch(() => this.db.update({ prefix: [prefix] }))
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'set_prefix',
                 from: 'mts',
@@ -178,7 +187,7 @@ export class Server {
     addPrefix(prefix: string) {
         this._prefixes.push(prefix)
         this.db.update({ prefixies: this._prefixes }).catch(() => this.db.set({ prefixies: this._prefixes }))
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'add_prefix',
                 from: 'mts',
@@ -207,7 +216,7 @@ export class Server {
                     .update({ prefixies: FieldValue.arrayRemove(prefix) })
                     .catch(() => this.db.set({ prefixies: FieldValue.arrayRemove(prefix) }))
         }
-        (this.guild.client as Client).websocket.send(
+        (this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'remove_prefix',
                 from: 'mts',
@@ -235,7 +244,7 @@ export class Server {
         this.db
             .update({ suggest_channels: [{ channel: channel.id, default: true }] })
             .catch(() => this.db.set({ suggest_channels: [{ channel: channel.id, default: true }] }))
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'set_suggest_channel',
                 from: 'mts',
@@ -258,7 +267,7 @@ export class Server {
         this.db
             .update({ suggest_channels: this.suggestChannels })
             .catch(() => this.db.set({ suggest_channels: this.suggestChannels }))
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'add_suggest_channel',
                 from: 'mts',
@@ -288,7 +297,7 @@ export class Server {
         this.db
             .update({ suggest_channels: this.suggestChannels })
             .catch(() => this.db.set({ suggest_channels: this.suggestChannels }))
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'remove_suggest_channel',
                 from: 'mts',
@@ -324,7 +333,7 @@ export class Server {
         this.db
             .update({ ['logs_channels.message_update']: channel })
             .catch(() => this.db.set({ ['logs_channels.message_update']: channel }))
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'set_log',
                 from: 'mts',
@@ -342,7 +351,7 @@ export class Server {
      */
     removeMessageUpdateLog() {
         if (!this.logsChannels.messageUpdate) return
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
@@ -366,7 +375,7 @@ export class Server {
         this.db
             .update({ ['logs_channels.message_delete']: channel })
             .catch(() => this.db.set({ ['logs_channels.message_delete']: channel }))
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'set_log',
                 from: 'mts',
@@ -384,7 +393,7 @@ export class Server {
      */
     removeMessageDeleteLog() {
         if (!this.logsChannels.messageDelete) return
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
@@ -408,7 +417,7 @@ export class Server {
         this.db
             .update({ ['logs_channels.message_attachment']: channel })
             .catch(() => this.db.set({ ['logs_channels.message_attachment']: channel }))
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'set_log',
                 from: 'mts',
@@ -426,7 +435,7 @@ export class Server {
      */
     removeMessageAttachmentLog() {
         if (!this.logsChannels.messageAttachment) return
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
@@ -462,7 +471,7 @@ export class Server {
         this.db
             .update({ ['birthday.channel']: birthdayChannel })
             .catch(() => this.db.set({ ['birthday.channel']: birthdayChannel }))
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'set_birthdaychannel',
                 from: 'mts',
@@ -484,7 +493,7 @@ export class Server {
         this.db
             .update({ ['birthday.message']: birthdayMessage })
             .catch(() => this.db.set({ ['birthday.message']: birthdayMessage }))
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'set_birthdaymessage',
                 from: 'mts',
@@ -502,7 +511,7 @@ export class Server {
      */
     removeBirthdayChannel() {
         if (!this.birthday.channel) return
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'remove_birthday',
                 from: 'mts',
@@ -522,7 +531,7 @@ export class Server {
      */
     removeBirthdayMessage() {
         if (!this.birthday.message) return
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'remove_birthday',
                 from: 'mts',
@@ -561,7 +570,9 @@ export class Server {
 
             for (const id of ids) {
                 const emoji = msg.guild.emojis.cache.get(id)
-                if (emoji) this.emojiStatistics[id] = this.emojiStatistics[id] ? this.emojiStatistics[id]++ : 1
+                console.log(this.emojiStatistics[id])
+                if (emoji) this.emojiStatistics[id] = this.emojiStatistics[id] ? this.emojiStatistics[id] + 1 : 1
+                console.log(this.emojiStatistics[id])
             }
         })
     }
@@ -626,7 +637,7 @@ export class Server {
         this.db
             .update({ ['logs_channels.invite']: inviteChannel })
             .catch(() => this.db.set({ ['logs_channels.invite']: inviteChannel }))
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'set_log',
                 from: 'mts',
@@ -644,7 +655,7 @@ export class Server {
         this.db
             .update({ ['logs_channels.member_update']: memberUpdateChannel })
             .catch(() => this.db.set({ ['logs_channels.member_update']: memberUpdateChannel }))
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'set_log',
                 from: 'mts',
@@ -658,7 +669,7 @@ export class Server {
 
     removeMemberUpdateChannel(){
         if (!this.logsChannels.memberUpdate) return
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
@@ -675,7 +686,7 @@ export class Server {
 
     removeInviteChannel() {
         if (!this.logsChannels.invite) return        
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
@@ -695,12 +706,223 @@ export class Server {
         this.db
             .update({ ['keep_roles']: keepRoles })
             .catch(() => this.db.set({ ['keep_roles']: keepRoles }))
-        ;(this.guild.client as Client).websocket.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'keep_roles',
                 from: 'mts',
                 data: keepRoles
             })
         )
+    }
+
+    addBlacklistedWord(word: string){
+        this.blacklistedWords.push(word)
+        this.db
+            .update({ ['blacklisted_words']: FieldValue.arrayUnion(word) })
+            .catch(() => this.db.set({ ['blacklisted_words']: this.blacklistedWords }))
+        ;(this.guild.client as Client).websocket?.send(
+            JSON.stringify({
+                event: 'add_blacklisted_word',
+                from: 'mts',
+                data: this.blacklistedWords
+            })
+        )
+    }
+
+    removeBlacklistedWord(word: string){
+        this.blacklistedWords = this.blacklistedWords.filter(dbWord => dbWord !== word)
+        this.db
+            .update({ ['blacklisted_words']: FieldValue.arrayRemove(word) })
+            .catch(() => this.db.set({ ['blacklisted_words']: this.blacklistedWords }))
+        ;(this.guild.client as Client).websocket?.send(
+            JSON.stringify({
+                event: 'remove_blacklisted_word',
+                from: 'mts',
+                data: this.blacklistedWords
+            })
+        )
+    }
+
+    addDisabledChannel(channelID: string){
+        this.disabledChannels.push(channelID)
+        this.db
+            .update({ ['disabled_channels']: FieldValue.arrayUnion(channelID) })
+            .catch(() => this.db.set({ ['disabled_channels']: this.disabledChannels }))
+        ;(this.guild.client as Client).websocket?.send(
+            JSON.stringify({
+                event: 'add_disabled_channel',
+                from: 'mts',
+                data: this.disabledChannels
+            })
+        )
+    }
+
+    removeDisabledChannel(channelID: string){
+        this.disabledChannels = this.disabledChannels.filter(dbChannel => dbChannel !== channelID)
+        this.db
+            .update({ ['disabled_channels']: FieldValue.arrayRemove(channelID) })
+            .catch(() => this.db.set({ ['disabled_channels']: this.disabledChannels }))
+        ;(this.guild.client as Client).websocket?.send(
+            JSON.stringify({
+                event: 'remove_disabled_channel',
+                from: 'mts',
+                data: this.disabledChannels
+            })
+        )
+    }
+
+    setSanctionChannel(channelID: string){
+        this.logsChannels.sanction = channelID
+        this.db
+            .update({ ['logs_channels.sanction']: channelID })
+            .catch(() => this.db.set({ ['logs_channels.sanction']: channelID }))
+        ;(this.guild.client as Client).websocket?.send(
+            JSON.stringify({
+                event: 'set_sanction_channel',
+                from: 'mts',
+                data: channelID
+            })
+        )
+    }
+
+    /** 
+     * Punishes a user
+     * @param {PunishUser} options Params to punish a user. See PunishUser for more info
+     */
+
+    punishUser({ userId, type, reason, duration = 'permanent', moderatorId }: PunishUser ) {
+        return new Promise((resolve, reject) => {
+            if(type === PunishmentType.WARN) 
+                this.warnUser(userId, reason, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+
+            if(type === PunishmentType.MUTE)
+                this.muteUser(userId, reason, duration, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+
+            if(type === PunishmentType.KICK)
+                this.kickUser(userId, reason, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+
+            if(type === PunishmentType.BAN)
+                this.banUser(userId, reason, duration, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+
+            if(type === PunishmentType.HACKBAN)
+                this.hackbanUser(userId, reason, duration, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+            
+        })
+    }
+
+    private async warnUser(userId: string, reason: string, moderatorId: string){
+        const user = await this.guild.members.fetch(userId)
+
+        const moderator = await this.guild.members.fetch(moderatorId)
+
+        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+
+        this.db.collection('users').doc(userId).update({ 
+            sanctions: FieldValue.arrayUnion({ type: 'WARN', reason, moderator: moderatorId, date: new Date().getTime() })
+        }).catch(() => {
+            this.db.collection('users').doc(userId).set({ 
+                sanctions: [{ type: 'WARN', reason, moderator: moderatorId, date: new Date().getTime() }]
+            })
+        })
+        return Promise.resolve()
+    }
+
+    private async muteUser(userId: string, reason: string, duration: string, moderatorId: string) {
+        const user = await this.guild.members.fetch(userId)
+
+        const moderator = await this.guild.members.fetch(moderatorId)
+
+        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+
+        const durationToMs = ms(duration)
+        user.timeout(durationToMs, reason)
+
+        this.db.collection('users').doc(userId).update({ 
+            sanctions: FieldValue.arrayUnion({ type: 'MUTE', reason, moderator: moderatorId, date: new Date().getTime() })
+        }).catch(() => {
+            this.db.collection('users').doc(userId).set({ 
+                sanctions: [{ type: 'MUTE', reason, moderator: moderatorId, date: new Date().getTime() }]
+            })
+        })
+        return Promise.resolve()
+    }
+
+    private async kickUser(userId: string, reason: string, moderatorId: string){
+        const user = await this.guild.members.fetch(userId)
+
+        const moderator = await this.guild.members.fetch(moderatorId)
+
+        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+
+        user.kick(reason)
+
+        this.db.collection('users').doc(userId).update({ 
+            sanctions: FieldValue.arrayUnion({ type: 'KICK', reason, moderator: moderatorId, date: new Date().getTime() })
+        }).catch(() => {
+            this.db.collection('users').doc(userId).set({ 
+                sanctions: [{ type: 'KICK', reason, moderator: moderatorId, date: new Date().getTime() }]
+            })
+        })
+        return Promise.resolve()
+    }
+
+    private async banUser(userId: string, reason: string, duration: string, moderatorId: string){
+        const user = await this.guild.members.fetch(userId)
+
+        const moderator = await this.guild.members.fetch(moderatorId)
+
+        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+
+        this.db.collection('users').doc(userId).update({ 
+            sanctions: FieldValue.arrayUnion({ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() })
+        }).catch(() => {
+            this.db.collection('users').doc(userId).set({ 
+                sanctions: [{ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() }]
+            })
+        })
+
+        if(duration === 'permanent'){
+            user.ban({ days: 0, reason })
+            return Promise.resolve()
+        }
+        
+        user.ban({ days: 0, reason }).then(() => {
+            if(ms(duration) < 86400000){
+                setTimeout(() => {
+                    this.guild.members.unban(userId)
+                }, ms(duration))
+            }
+        })
+        return Promise.resolve()
+    }
+
+    private async hackbanUser(userId: string, reason: string, duration: string, moderatorId: string){
+        const user = await this.guild.members.fetch(userId)
+
+        const moderator = await this.guild.members.fetch(moderatorId)
+
+        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+
+        this.db.collection('users').doc(userId).update({ 
+            sanctions: FieldValue.arrayUnion({ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() })
+        }).catch(() => {
+            this.db.collection('users').doc(userId).set({ 
+                sanctions: [{ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() }]
+            })
+        })
+
+        if(duration === 'permanent'){
+            user.ban({ days: 0, reason })
+            return Promise.resolve()
+        }
+        
+        user.ban({ days: 0, reason }).then(() => {
+            if(ms(duration) < 86400000){
+                setTimeout(() => {
+                    this.guild.members.unban(userId)
+                }, ms(duration))
+            }
+        })
+        return Promise.resolve()    
     }
 }

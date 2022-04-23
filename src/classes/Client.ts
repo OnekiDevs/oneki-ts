@@ -13,7 +13,7 @@ import {
     ClientOptions,
     ServerManager,
     ClientConstants,
-    ButtonManager,
+    ComponentManager,
     OldCommandManager,
     UnoGame,
     Server
@@ -29,9 +29,9 @@ export class Client extends BaseClient {
     i18n = i18n
     commands: CommandManager
     oldCommands: OldCommandManager
-    buttons: ButtonManager
+    components: ComponentManager
     servers: ServerManager = new ServerManager(this)
-    websocket: WebSocket = new WebSocket('wss://oneki.herokuapp.com/')
+    websocket?: WebSocket
     constants: ClientConstants
     private _wsInterval = setInterval(() => '', 60000)
     private _wsintent = 1
@@ -42,7 +42,7 @@ export class Client extends BaseClient {
         
         this.oldCommands = new OldCommandManager(this, options.routes.oldCommands)
         this.commands = new CommandManager(this, options.routes.commands)
-        this.buttons = new ButtonManager(this, options.routes.buttons)
+        this.components = new ComponentManager(this, options.routes.components)
 
         this.i18n.configure(options.i18n)
         this.version = version??'1.0.0'
@@ -54,7 +54,7 @@ export class Client extends BaseClient {
         this.constants = options.constants
 
         this.once('ready', () => this._onReady({ eventsPath: options.routes?.events ?? join(__dirname, '../events') }))
-
+        
         this._initWebSocket()
     }
 
@@ -64,7 +64,7 @@ export class Client extends BaseClient {
             this.websocket.on('open', () => {
                 console.time('WebSocket Connection')
                 console.log('\x1b[33m%s\x1b[0m', 'Socket Conectado!!!')
-                this._wsInterval = setInterval(() => this.websocket.ping(() => ''), 20000)
+                this._wsInterval = setInterval(() => this.websocket?.ping(() => ''), 20000)
                 this._wsintent = 1
             })
             this.websocket.on('close', () => {
@@ -104,6 +104,7 @@ export class Client extends BaseClient {
         console.log('\x1b[35m%s\x1b[0m', 'Eventos Cargados!!')
         
         await this._checkBirthdays()
+        await this.checkBans()
 
         InvitesTracker.init(this, {
             fetchGuilds: true,
@@ -114,6 +115,10 @@ export class Client extends BaseClient {
                 return !(server.logsChannels.invite && server.premium)
             }
         }).on('guildMemberAdd', (...args) => this.emit('customGuildMemberAdd', ...args))
+
+        // for (const command of this.application?.commands.cache.values()??[]) {
+        //     await command.delete()
+        // }
         
         console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
     }
@@ -139,6 +144,26 @@ export class Client extends BaseClient {
         )
     }
 
+    private async checkBans(){
+        console.log('\x1b[32m%s\x1b[0m','Revisando bans...')
+        this.servers.map(async server => {
+            const bansSnap = await server.db.collection('bans').get()
+            bansSnap.forEach(async bannedUser => {
+                const bannedDate = bannedUser.data().date
+                const timeSinceBanned = new Date().getTime() - bannedDate
+                const banDuration = bannedUser.data().duration
+                if(timeSinceBanned > banDuration){
+                    server.guild.members.unban(bannedUser.id)
+                    server.db.collection('bans').doc(bannedUser.id).delete()
+                }
+                console.log(`El usuario ${bannedUser.id} ha sido desbaneado de ${server.guild.id}`)
+            })
+        })
+
+        setTimeout(() => {
+            this.checkBans()
+        }, 900000)
+    }
 
     private async _checkBirthdays(){
         console.log('\x1b[34m%s\x1b[0m','Revisando cumpleaños...')

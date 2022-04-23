@@ -8,7 +8,7 @@ config()
 
 process.on('exit', () => console.log('Bot apagado'))
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const client: Client = new Client({
     intents: [
@@ -32,7 +32,7 @@ const client: Client = new Client({
         commands: join(__dirname, 'commands'),
         oldCommands: join(__dirname, 'oldCommands'),
         events: join(__dirname, 'events'),
-        buttons: join(__dirname, 'buttons')
+        components: join(__dirname, 'components')
     },
     i18n: {
         locales: ['en', 'es'],

@@ -1,18 +1,19 @@
-import { ClientOptions as BaseClientOptions, GuildMember, PermissionResolvable } from 'discord.js'
+import { ClientOptions as BaseClientOptions, GuildMember, PermissionResolvable, Intents } from 'discord.js'
 
 import { Client } from '../classes/Client.js'
 import { ApplicationCommandPermissionTypes } from 'discord.js/typings/enums'
 import { Server } from '../classes/Server.js'
 export default Client
+export { Client, Intents }
 
 export * from '../classes/Client.js'
 export * from '../classes/Command.js'
 export * from '../classes/OldCommand.js'
-export * from '../classes/Button.js'
+export * from '../classes/Component.js'
 export * from '../classes/Server.js'
 export * from '../handlers/CommandManager.js'
 export * from '../handlers/OldCommandManager.js'
-export * from '../handlers/ButtonManager.js'
+export * from '../handlers/ComponentManager.js'
 export * from '../handlers/ServerManager.js'
 
 export * from '../classes/Player.js'
@@ -74,6 +75,7 @@ export interface LogsChannelsDatabaseModel {
     message_attachment?: string;
     invite?: string;
     member_update?: string;
+    sanction?: string;
 }
 
 export interface GuildDataBaseModel {
@@ -86,7 +88,9 @@ export interface GuildDataBaseModel {
         channel?: string;
         message?: string;
     }
-    keep_roles?: boolean
+    blacklisted_words?: string[];
+    disabled_channels?: string[];
+    keep_roles?: boolean;
     emoji_analisis_enabled?: boolean;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     emoji_statistics?: any,
@@ -108,7 +112,7 @@ export interface ClientOptions extends BaseClientOptions {
         commands: string;
         oldCommands: string;
         events: string;
-        buttons: string;
+        components: string;
     }
     i18n: {
         locales: string[];

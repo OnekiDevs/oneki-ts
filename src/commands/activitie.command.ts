@@ -8,6 +8,7 @@ export default class Activitie extends Command {
         super(client, {
             name: 'activitie',
             description: 'Play in the voice channel',
+            category: 'Entertainment',
             defaultPermission: true,
             type: CommandType.global,
         })

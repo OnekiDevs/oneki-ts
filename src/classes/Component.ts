@@ -1,7 +1,7 @@
 import { ButtonInteraction } from 'discord.js'
 import { Client } from '../utils/classes.js'
 
-export class Button {
+export class Component {
     regex: RegExp
     client: Client
 
@@ -10,7 +10,7 @@ export class Button {
         this.client = client
     }
 
-    run(interaction: ButtonInteraction) {
-        interaction.reply('pong')
+    button(interaction: ButtonInteraction) {
+        interaction.customId
     }
 }

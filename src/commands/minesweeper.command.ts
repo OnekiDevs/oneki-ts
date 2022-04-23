@@ -7,6 +7,7 @@ export default class Minesweeper extends Command {
         super(client, {
             name: 'minesweeper',
             description: 'display a minesweeper game',
+            category: 'Entertainment',
             defaultPermission: true,
             type: CommandType.global,
         })

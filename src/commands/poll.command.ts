@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { filledBar, pollEmojis as emojis, checkSend, randomId } from '../utils/utils.js'
 import { Command, Client, CommandType, PollDatabaseModel } from '../utils/classes.js'
-import { Translator } from '../utils/utils.js'   
-import admin from 'firebase-admin'
+import { Translator } from '../utils/utils.js'
 import {
     ApplicationCommandDataResolvable,
     MessageButton,
@@ -19,6 +18,7 @@ export default class Poll extends Command {
         super(client, {
             name: 'poll',
             description: 'make a poll',
+            category: 'Utils',
             defaultPermission: false,
             type: CommandType.guild,
         })
@@ -26,8 +26,7 @@ export default class Poll extends Command {
 
     async getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
         const command = this.baseCommand
-        const snap = await admin
-            .firestore()
+        const snap = await this.client.db
             .collection('polls')
             .where('guild', '==', (guild as Guild).id)
             .get()
@@ -77,7 +76,7 @@ export default class Poll extends Command {
         const translate = Translator(interaction)
 
         const server = this.client.getServer(interaction.guild)
-        const snap = await admin.firestore().collection('polls').where('guild', '==', interaction.guildId).get()
+        const snap = await this.client.db.collection('polls').where('guild', '==', interaction.guildId).get()
         if (!server?.premium && !snap.empty)
             return interaction.editReply(translate('poll_cmd.make.dont_premium'))
         if (!checkSend(interaction.channel as TextChannel, interaction.guild.me as GuildMember)) return interaction.editReply(translate('poll_cmd.make.havent_permissions'))
@@ -137,7 +136,7 @@ export default class Poll extends Command {
             components: buttons,
         })
 
-        await admin.firestore().collection('polls').doc(idPoll).set({
+        await this.client.db.collection('polls').doc(idPoll).set({
             guild: interaction.guildId,
             options,
             show_results: show,
@@ -151,60 +150,55 @@ export default class Poll extends Command {
         })
 
         interaction.editReply(translate('poll_cmd.make.reply'))
+
+        this.client.commands.find((c) => c.name === 'poll')?.deploy(interaction.guild as Guild)
     }
 
-    finalize(interaction: CommandInteraction<'cached'>) {
+    async finalize(interaction: CommandInteraction<'cached'>) {
         const translate = Translator(interaction)
-        interaction.deferReply()
-        admin
-            .firestore()
-            .collection('polls')
-            .doc(interaction.options.getString('id') as string)
-            .get()
-            .then(async (snap) => {
-                if (snap.exists) {
-                    const data = snap.data() as PollDatabaseModel
-                    await admin
-                        .firestore()
-                        .collection('finalized-polls')
-                        .doc(interaction.options.getString('id') as string)
-                        .set(snap.data() as any)
-                        .catch(() => '')
-                    await admin
-                        .firestore()
-                        .collection('polls')
-                        .doc(interaction.options.getString('id') as string)
-                        .delete()
-                    await this.deploy(interaction.guild as Guild);
-                    (interaction.client.channels.cache.get(data.channel) as TextChannel)?.messages
-                        .fetch(data.message)
-                        .then(async (msg) => {
-                            await msg.edit({
-                                components: [],
-                            })
-                            if (!data.show_results) {
-                                const embed = new MessageEmbed(msg.embeds[0])
-                                let votesCount = 0
-                                await Promise.all(data.options.map((o) => (votesCount += o.votes.length)))
-                                embed.setFields(
-                                    await Promise.all(
-                                        data.options.map((o, i) => ({
-                                            name: `${emojis[i]} Opcion ${i + 1} ${o.value}`,
-                                            value: `\`${filledBar((o.votes.length / votesCount) * 100)}\` ${Math.round(
-                                                (o.votes.length / votesCount) * 100,
-                                            )}%`,
-                                            inline: false,
-                                        })),
-                                    ),
-                                )
-                                msg.edit({
-                                    embeds: [embed],
-                                })
-                            }
+        await interaction.deferReply({ ephemeral: true })
+        const snap = await this.client.db.collection('polls').doc(interaction.options.getString('id') as string).get()
+        if (snap.exists) {
+            const data = snap.data() as PollDatabaseModel
+            await this.client.db
+                .collection('finalized-polls')
+                .doc(interaction.options.getString('id') as string)
+                .set(snap.data() as any)
+                .catch(() => '')
+            await this.client.db
+                .collection('polls')
+                .doc(interaction.options.getString('id') as string)
+                .delete()
+            await this.deploy(interaction.guild as Guild);
+            (interaction.client.channels.cache.get(data.channel) as TextChannel)?.messages
+                .fetch(data.message)
+                .then(async (msg) => {
+                    await msg.edit({
+                        components: [],
+                    })
+                    if (!data.show_results) {
+                        const embed = new MessageEmbed(msg.embeds[0])
+                        let votesCount = 0
+                        await Promise.all(data.options.map((o) => (votesCount += o.votes.length)))
+                        embed.setFields(
+                            await Promise.all(
+                                data.options.map((o, i) => ({
+                                    name: `${emojis[i]} Opcion ${i + 1} ${o.value}`,
+                                    value: `\`${filledBar((o.votes.length / votesCount) * 100)}\` ${Math.round(
+                                        (o.votes.length / votesCount) * 100,
+                                    )}%`,
+                                    inline: false,
+                                })),
+                            ),
+                        )
+                        msg.edit({
+                            embeds: [embed],
                         })
-                }
-                interaction.editReply(translate('poll_cmd.finalized'))
-            })
-            .catch(() => interaction.editReply(translate('poll_cmd.finalized')))
+                    }
+                })
+        }
+        interaction.editReply(translate('poll_cmd.finalize'))
+        
+        this.client.commands.find((c) => c.name === 'poll')?.deploy(interaction.guild as Guild)
     }
 }

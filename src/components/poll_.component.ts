@@ -1,13 +1,13 @@
 import { ButtonInteraction, TextChannel, MessageEmbed } from 'discord.js'
-import { Button, Client, PollDatabaseModel } from '../utils/classes.js'
+import { Component, Client, PollDatabaseModel } from '../utils/classes.js'
 import { pollEmojis as emojis, filledBar, Translator } from '../utils/utils.js'
 
-export default class Activitie extends Button {
+export default class Activitie extends Component {
     constructor(client: Client) {
         super(client, /poll_.{8}_option_\d{1,2}/i)
     }
 
-    async run(interaction: ButtonInteraction<'cached'>) {
+    async button(interaction: ButtonInteraction<'cached'>) {
         const [, id, , option] = interaction.customId.split(/_/gi)
         const snap = await this.client.db.collection('polls').doc(id).get()
         if (!snap?.exists) return interaction.deferUpdate()

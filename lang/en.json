@@ -59,7 +59,11 @@
 			"displaying_error": "Don't exist this group",
 			"sending_error": "I don't have the permissions to send messages in this channel"
 		},
-		"set_keep_roles": "¡The option of keeping or keeping roles has been set to {keepRole}!"
+		"set_keep_roles": "The option of keeping or keeping roles has been set to {keepRole}!",
+		"add_blacklisted_word": "The word `{word}` has been blacklisted successfully!",
+		"remove_blacklisted_word": "The word `{word}` has been removed from the blacklist successfully!",
+		"add_no_filter_channel": "The channel {channel} has been added to the list of channels where the filters are disabled",
+		"remove_no_filter_channel": "The channel {channel} has been removed from the list of channels where the filters are disabled"
 	},
 	"info_cmd": {
 		"member": {
@@ -108,13 +112,13 @@
 	},
 	"------------>>>============ events ============<<<------------": "------------>>>============ events ============<<<------------",
 	"invites_event": {
-		"default_message": "¡{invited} has joined the server! *He has been by {inviter} **Total invites**: {invites}*",
+		"default_message": "{invited} has joined the server! *He has been by {inviter} **Total invites**: {invites}*",
 		"cant_find_inviter": "{invited} has joined the server. `I couldn't figure out who invited him.`",
 		"permissions_error": "⚠️{invited} has joined the server, however, I don't have enough permissions to see who invited him.⚠️",
 		"custom_url": "{invited} has joined the server. `He has joined using the special invite URL.`"
 	},
 	"useractivitie_event": {
-		"set_channel": "¡The channel {channel} has been set as the channel to receive user's activitie!",
+		"set_channel": "The channel {channel} has been set as the channel to receive user's activitie!",
 		"nickname_change": "The user {user} just changed his nickname. **Old nickname**: {oldNickname}, **New nickname**: {newNickname}",
 		"serveravatar_change": {
 			"title": "♻️ Server's avatar update {username}",
@@ -124,6 +128,17 @@
 			"added": "The user {user} has been given the role {role}",
 			"removed": "The {role} has been removed from the user {user}"
 		}
+	},
+	"ghost_ping": {
+		"realized": "⛔ The user {ghostingUser} has ghost pinged {ghostedUser}. ⛔",
+		"warned": "The user {ghostingUser} has made his first ghost ping to the user {ghostedUser} and has been warned about it.",
+		"cant_warn": "⚠️ The user {ghostingUser} has made his first ghost ping to the user {ghostedUser}. However, I can not warn him because his role is higher than mine. ⚠️",
+		"muted": "The user {ghostingUser} has ghost pinged {ghostedUser} and has been muted because of it.",
+		"cant_mute": "⚠️ The user {ghostingUser} has ghost pinged {ghostedUser}. However, I can not mute him because his role is higher than mine. ⚠️"
+	},
+	"sanction_event": {
+		"set_channel": "The channel {channel} has been set as the channel to recieve all sanctions!",
+		"mute_user": "The user {user} has been muted by {moderator} for {time}. Reason: {reason}"
 	},
 	"------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
 	"emoji_old": {

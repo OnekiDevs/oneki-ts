@@ -5,8 +5,7 @@ export default function(member: GuildMember){
     if(member.user.bot) return
 
     const client = (member.client) as Client
-    let server = client.servers.get(member.guild.id)
-    if(!server) server = client.newServer(member.guild)
+    const server = client.getServer(member.guild)
 
     if(!server.keepRoles || !server.premium) return
 

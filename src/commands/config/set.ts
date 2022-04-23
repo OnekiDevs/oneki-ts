@@ -36,8 +36,11 @@ export async function birthday_channel(interaction: CommandInteraction<'cached'>
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     const server = (interaction.client as Client).getServer(interaction.guild)
+    
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+
     const birthdayChannel = interaction.options.getChannel('channel') as TextChannel
+
     server.setBirthdayChannel(birthdayChannel.id)
     interaction.editReply(translate('config_cmd.birthday.set_channel', { channel: birthdayChannel?.toString() }))
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Guild, CommandInteraction, ApplicationCommandDataResolvable, ApplicationCommand, Permissions, PermissionResolvable } from 'discord.js'
 import { Client, CommandType, CommandPermissions } from '../utils/classes.js'
 import { SlashCommandBuilder } from '@discordjs/builders'
@@ -8,11 +9,12 @@ export class Command {
     description = 'pong'
     defaultPermission = true
     client: Client
-    options?: {}
+    options = {}
     type: CommandType = CommandType.global
     guilds: Array<string> = []
     public = true
     permissions: PermissionResolvable[] = []
+    category: string
 
     constructor(
         client: Client,
@@ -20,13 +22,15 @@ export class Command {
             name: string;
             description: string;
             defaultPermission?: boolean;
-            options?: {};
+            options?: Record<string, unknown>;
             type?: CommandType;
             public?: boolean;
             guilds?: string[];
             permissions?: PermissionResolvable[];
+            category: string;
         },
     ) {
+        this.category = options.category
         this.client = client
         this.name = options.name
         this.description = options.description
@@ -82,35 +86,35 @@ export class Command {
      * @param guild
      * @returns
      */
-    deploy(guild?: Guild) {
-        return new Promise<ApplicationCommand | boolean>(async (resolve, reject) => {
-            const needDeploy = await this.checkDeploy(guild)
-            if (!needDeploy) resolve(false)
-            if (guild && this.type === CommandType.guild && (this.guilds.length === 0 || this.guilds.includes(guild.id))) {
-                guild.commands
-                    .create(await this.getData(guild))
-                    .then((c) => this._deployPermission(c))
-                    .then((command: ApplicationCommand) => resolve(command))
-                    .catch((err) => console.error(err.toString(), '/' + this.name, 'in', guild.name))
-            } else if (this.type === CommandType.global) {
-                try {
-                    const c = await this.client.application?.commands.create(await this.getData())
-                    resolve(c as ApplicationCommand)
-                } catch (error) {
-                    reject(error)
-                }
-            } else {
-                this.client.guilds.cache
-                    .filter((f) => this.public || this.guilds.includes(f.id))
-                    .map(async (guild: Guild) => {
-                        guild.commands
-                            .create(await this.getData(guild))
-                            .then((c) => this._deployPermission(c))
-                            .then((command: ApplicationCommand) => resolve(command))
-                            .catch((err) => console.error(err.toString(), '/' + this.name, 'in', guild.name, err.stack))
-                    })
+    async deploy(guild?: Guild): Promise<ApplicationCommand | boolean | void> {
+        const needDeploy = await this.checkDeploy(guild)
+        if (!needDeploy) return Promise.resolve(false)
+        if (guild && this.type === CommandType.guild && (this.guilds.length === 0 || this.guilds.includes(guild.id))) {
+            const cmd = await guild.commands
+                .create(await this.getData(guild))
+                .then((c) => this._deployPermission(c))
+                .then((command: ApplicationCommand) => command)
+                .catch((err) => console.error(err.toString(), '/' + this.name, 'in', guild.name))
+            return Promise.resolve(cmd)
+        } else if (this.type === CommandType.global) {
+            try {
+                const c = await this.client.application?.commands.create(await this.getData())
+                return Promise.resolve(c as ApplicationCommand)
+            } catch (error) {
+                return Promise.reject(error)
             }
-        })
+        } else {
+            this.client.guilds.cache
+                .filter((f) => this.public || this.guilds.includes(f.id))
+                .map(async (guild: Guild) => {
+                    const cmd = await guild.commands
+                        .create(await this.getData(guild))
+                        .then((c) => this._deployPermission(c))
+                        .then((command: ApplicationCommand) => command)
+                        .catch((err) => console.error(err.toString(), '/' + this.name, 'in', guild.name, err.stack))
+                    return Promise.resolve(cmd)
+                })
+        }
     }
 
     checkDeploy(guild?: Guild): Promise<boolean> {

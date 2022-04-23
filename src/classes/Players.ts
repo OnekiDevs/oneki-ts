@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Player } from './Player.js'
 
 export class Players extends Array<Player> {
