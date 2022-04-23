@@ -23,18 +23,18 @@ export default class SS extends Command {
     async run(interaction: CommandInteraction<'cached'>) {
         await interaction.deferReply()
         const member = interaction.options.getMember('user') ?? interaction.member
-        const text = interaction.options.getString('text') as string
+        const message = interaction.options.getString('text') as string
         const params = new URLSearchParams({
-            text,
+            message,
             avatar: member.displayAvatarURL({ format: 'png' }),
-            user: member.displayName,
+            username: member.displayName,
             color: member.displayHexColor.slice(1)
         })
         if (member.user.bot) params.append('bot', '')
         if (member.user.flags?.has('VERIFIED_BOT')) params.append('verified', '')
-
+    
         const ss = await cw.buffer('https://oneki.herokuapp.com/api/fake/discord/message?' + params, {
-            height: Math.round((text.length * 50) / 140 + 50),
+            height: Math.round((message.length * 50) / 140 + 50),
             width: 500,
             launchOptions: { args: ['--no-sandbox'] }
         })
