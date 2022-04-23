@@ -57,11 +57,10 @@ export async function birthday_message(interaction: CommandInteraction<'cached'>
 
 export async function keep_roles(interaction: CommandInteraction<'cached'>){
     await interaction.deferReply()
-    let server = (interaction.client as Client).servers.get(interaction.guildId)
-    if (!server) server = (interaction.client as Client).newServer(interaction.guild)
+    const server = (interaction.client as Client).getServer(interaction.guild)
 
     const translate = Translator(interaction)
-    if(!server.premium) return translate('premium')
+    if(!server.premium) return interaction.editReply(translate('premium'))
 
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)

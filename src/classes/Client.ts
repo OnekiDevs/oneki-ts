@@ -33,7 +33,7 @@ export class Client extends BaseClient {
     servers: ServerManager = new ServerManager(this)
     websocket: WebSocket = new WebSocket('wss://oneki.herokuapp.com/')
     constants: ClientConstants
-    private _wsInterval = setInterval(() => '', 20000000)
+    private _wsInterval = setInterval(() => '', 60000)
     private _wsintent = 1
     uno: Collection<string, UnoGame> = new Collection()
 
