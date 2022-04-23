@@ -115,6 +115,10 @@ export class Client extends BaseClient {
                 return !(server.logsChannels.invite && server.premium)
             }
         }).on('guildMemberAdd', (...args) => this.emit('customGuildMemberAdd', ...args))
+
+        // for (const command of this.application?.commands.cache.values()??[]) {
+        //     await command.delete()
+        // }
         
         console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
     }
