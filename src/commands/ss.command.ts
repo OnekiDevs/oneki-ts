@@ -28,7 +28,7 @@ export default class SS extends Command {
             message,
             avatar: member.displayAvatarURL({ format: 'png' }),
             username: member.displayName,
-            color: member.displayHexColor.slice(1)
+            color: member.displayHexColor
         })
         if (member.user.bot) params.append('bot', '')
         if (member.user.flags?.has('VERIFIED_BOT')) params.append('verified', '')
