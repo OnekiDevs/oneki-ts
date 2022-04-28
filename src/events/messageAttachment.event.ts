@@ -1,4 +1,4 @@
-import { TextChannel, GuildMember, MessageEmbed, Message } from 'discord.js'
+import { TextChannel, GuildMember, EmbedBuilder, Message, Util } from 'discord.js'
 import { checkSend, sendError } from '../utils/utils.js'
 import { Client } from '../utils/classes.js'
 
@@ -7,26 +7,24 @@ export default async function(msg: Message<true>) {
         if (!msg.guild) return
         if (!(msg.client as Client).servers.has(msg.guild?.id ?? '')) return
         const server = (msg.client as Client).getServer(msg.guild)
-        if (!server?.logsChannels.messageAttachment) return
-        if (msg.channel.id === server.logsChannels.messageAttachment) return
+        if (!server?.logsChannels.Attachment) return
+        if (msg.channel.id === server.logsChannels.Attachment) return
         const channel: TextChannel = msg.client.channels.cache.get(
-            server.logsChannels.messageAttachment
+            server.logsChannels.Attachment
         ) as TextChannel
         if (channel && checkSend(channel, msg.guild?.me as GuildMember)) {
             channel.send({
                 files: msg.attachments.map((attachment) => attachment),
                 embeds: [
-                    new MessageEmbed()
+                    new EmbedBuilder()
                         .setTitle(
                             `attachments sent by ${msg.member?.displayName}`
                         )
                         .setThumbnail(msg.member?.displayAvatarURL() as string)
-                        .addField(
-                            'Canal',
-                            `${msg.channel} | ${
-                                (msg.channel as TextChannel).name ?? ''
-                            }`
-                        )
+                        .addFields([{
+                            name: 'Canal',
+                            value: Util.escapeCodeBlock(`${msg.channel} | ${msg.channel.name}`),
+                        }])
                         .setURL(msg.url),
                 ],
                 content: msg.author.id,

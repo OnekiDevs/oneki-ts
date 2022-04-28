@@ -1,8 +1,7 @@
-import { ButtonInteraction, MessageButton, MessageActionRow } from 'discord.js'
-import canvas from 'canvas'
+import { ButtonInteraction, ButtonBuilder, ActionRowBuilder, MessageActionRowComponentBuilder, ButtonStyle } from 'discord.js'
+import Jimp from 'jimp'
 import { UnoCard, randomCard, UnoGame } from '../utils/classes.js'
 import { randomId } from '../utils/utils.js'
-import { MessageButtonStyles } from 'discord.js/typings/enums'
 
 export class Player {
     id: string
@@ -27,51 +26,43 @@ export class Player {
     }
 
     async cardsToImage(): Promise<Buffer> {
-        let img = await canvas.loadImage(this.cards[0].url)
-        const c = canvas.createCanvas(
+        let img = await Jimp.read(this.cards[0].url)
+        const c = new Jimp(
             this.cards.length <= 10
-                ? (img.width * this.cards.length) / 2 + img.width / 2
-                : (img.width * this.cards.length) / 3 + (img.width / 3) * 2,
-            img.height,
+                ? (img.bitmap.width * this.cards.length) / 2 + img.bitmap.width / 2
+                : (img.bitmap.width * this.cards.length) / 3 + (img.bitmap.width / 3) * 2,
+            img.bitmap.height
         )
-        const ctx = c.getContext('2d')
         let p = 0
         for (const i of this.cards) {
             
-            img = await canvas.loadImage(i.url)
-            ctx.drawImage(
-                img,
-                this.cards.length <= 10 ? (p * img.width) / 2 : (p * img.width) / 3,
-                0,
-                img.width,
-                img.height,
-            )
+            img = await await Jimp.read(i.url)
+            c.composite(img, this.cards.length <= 10 ? (p * img.bitmap.width) / 2 : (p * img.bitmap.width) / 3, 0) 
             p++
         }
-        
-        return Promise.resolve(c.toBuffer('image/png'))
+        return c.getBufferAsync('image/png')
     }
 
-    cardsToButtons(game: UnoGame): MessageActionRow[] {
+    cardsToButtons(game: UnoGame): ActionRowBuilder<MessageActionRowComponentBuilder>[] {
         
         let j = 0, k = 0
-        const buttons: MessageActionRow[] = []
+        const buttons: ActionRowBuilder<MessageActionRowComponentBuilder>[] = []
         const dis = this.cards.filter((c) => c.symbol == game.actualCard.symbol || c.color == game.actualCard.color)
         for (const i of dis) {
-            const btn = new MessageButton()
+            const btn = new ButtonBuilder()
                 .setStyle(
                     i.color == 'blue'
-                        ? MessageButtonStyles.PRIMARY
+                        ? ButtonStyle.Primary
                         : i.color == 'green'
-                            ? MessageButtonStyles.SUCCESS
+                            ? ButtonStyle.Success
                             : i.color == 'red'
-                                ? MessageButtonStyles.DANGER
-                                : MessageButtonStyles.SECONDARY,
+                                ? ButtonStyle.Danger
+                                : ButtonStyle.Secondary,
                 )
                 .setLabel(`${i.symbol} ${i.color}`)
                 .setCustomId(`uno_${game.id}_${i.id}_${randomId().slice(-2)}`)
             
-            if (j == 0) buttons.push(new MessageActionRow().addComponents([btn]))
+            if (j == 0) buttons.push(new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([btn]))
             else buttons[k].addComponents([btn])
             if (j == 4) {
                 j = 0

@@ -1,6 +1,6 @@
 import { Client } from '../utils/classes.js'
-import { MessageEmbed, Message, TextChannel, GuildMember } from 'discord.js'
-import { checkSend, sendError } from '../utils/utils.js'
+import { EmbedBuilder, Message, TextChannel, GuildMember } from 'discord.js'
+import { checkSend, sendError, Util } from '../utils/utils.js'
 
 export default async function(old: Message<true>, msg: Message<true>) {
     try {
@@ -13,35 +13,39 @@ export default async function(old: Message<true>, msg: Message<true>) {
             server.logsChannels.messageUpdate
         ) as TextChannel
         if (channel && checkSend(channel, msg.guild?.me as GuildMember)) {
-            const embed = new MessageEmbed()
-            embed.setTitle('Mensaje Editado') //LANG:
-            embed.setURL(msg.url)
-            embed.setColor('RANDOM') //FEATURE: server.logsColors
-            embed.setAuthor({
+            const embed = new EmbedBuilder()
+            .setTitle('Mensaje Editado') //LANG:
+            .setURL(msg.url)
+            .setColor(Util.resolveColor('Random')) //FEATURE: server.logsColors
+            .setAuthor({
                 name: msg.author.username,
                 iconURL: msg.author.displayAvatarURL(),
             })
-            embed.addField('Editado en:', msg.channel.toString(), true) //LANG:
-            embed.setTimestamp()
-            embed.setThumbnail(msg.author.displayAvatarURL({ dynamic: true }))
-            embed.addField(
-                'Escrito el:',
-                `<t:${Math.round(msg.createdTimestamp / 1000)}>`,
-                true
-            ) //Lang:
-            embed.addField(
-                'Editado el:',
-                `<t:${Math.round(Date.now() / 1000)}>`,
-                true
-            ) //LANG:
+            .addFields([{
+                name: 'Enviado en:',
+                value: String(msg.channel),
+                inline: true,
+            }, {
+                name: 'Editado el:',
+                value: `<t:${Math.round(Date.now() / 1000)}>`,
+                inline: true,
+            }, {
+                name: 'Escrito el:',
+                value: `<t:${Math.round(old.createdTimestamp / 1000)}>`,
+                inline: true,
+            }])
+            .setTimestamp()
+            .setThumbnail(msg.author.displayAvatarURL({  }))
             if (old.content)
-                embed.addField('Antes', '```\n' + old.content + '\n```', false) //LANG:
+                embed.addFields([{
+                    name: 'Antes:',
+                    value: Util.escapeCodeBlock(old.content)
+                }])
             if (msg.content)
-                embed.addField(
-                    'Despues',
-                    '```\n' + msg.content + '\n```',
-                    false
-                ) //LANG:
+            embed.addFields([{
+                name: 'Despues:',
+                value: Util.escapeCodeBlock(msg.content)
+            }])
             embed.setFooter({
                 text: `${msg.client.user?.username} Bot v${
                     (msg.client as Client).version

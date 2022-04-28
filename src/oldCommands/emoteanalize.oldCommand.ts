@@ -1,6 +1,5 @@
-import { OldCommand, Client, Server } from '../utils/classes.js'
+import { OldCommand, Client, Server, Message, EmbedBuilder, PermissionsBitField } from '../utils/classes.js'
 import { permissionsError, sendError } from '../utils/utils.js'
-import { Message, MessageEmbed, Permissions } from 'discord.js'
 
 export default class Help extends OldCommand {
     constructor(client: Client) {
@@ -15,8 +14,8 @@ export default class Help extends OldCommand {
     async run(msg: Message<true>, server: Server, args: string[]) {
         try {
             if (!server.premium) return msg.reply(server.translate('premium'))
-            if (!msg.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR))
-                return permissionsError(msg, Permissions.FLAGS.ADMINISTRATOR)
+            if (!msg.member?.permissions.has(PermissionsBitField.Flags.Administrator))
+                return permissionsError(msg, PermissionsBitField.Flags.Administrator)
 
             if ((args.length === 0 || !['show', 'start', 'stop'].includes(args[0])) && server.emojiAnalisisEnabled)
                 this.show(msg, server)
@@ -43,7 +42,7 @@ export default class Help extends OldCommand {
 
     async show(msg: Message<true>, server: Server) {
         await msg.channel.sendTyping()
-        const embeds = [new MessageEmbed().setDescription('Emojis uses')]
+        const embeds = [new EmbedBuilder().setDescription('Emojis uses')]
         let j = 0,
             t = '',
             updateDB = false
@@ -53,9 +52,11 @@ export default class Help extends OldCommand {
                 t += `${emoji} --- ${server.emojiStatistics[key]}\n`
                 if (++j == 6) {
                     j = 0
-                    console.log('s',t)
-                    
-                    embeds[0].addField('emojis', t, true)
+                    embeds[0].addFields([{
+                        name: 'Emojis',
+                        value: t,
+                        inline: true
+                    }])
                     //ㅤ
                     t = ''
                 }
@@ -67,9 +68,12 @@ export default class Help extends OldCommand {
         if (updateDB) server.db.update({
             emoji_statistics: server.emojiStatistics
         }).catch(() => server.db.set({ emoji_statistics: server.emojiStatistics }))
-        console.log('d', t)
         
-        if (embeds[0].fields.length === 0) embeds[0].addField('emojis', t, true)
+        if (embeds[0].data.fields?.length === 0) embeds[0].addFields([{
+            name: 'Emojis',
+            value: t,
+            inline: true
+        }])
         msg.reply({ embeds })
     }
 }

@@ -1,4 +1,4 @@
-import { ApplicationCommandDataResolvable, CommandInteraction, Guild, GuildMember, MessageEmbed, TextChannel } from 'discord.js'
+import { ApplicationCommandDataResolvable, ChatInputCommandInteraction, Guild, GuildMember, EmbedBuilder, TextChannel } from 'discord.js'
 import { Command, Client, CommandType, Server } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
 import { checkSend } from '../utils/utils.js'
@@ -19,19 +19,19 @@ export default class Suggest extends Command {
         const command = this.baseCommand
         command.addStringOption((option) => option.setName('suggestion').setDescription('Suggest to send').setRequired(true))
         if (server && server.suggestChannels.length > 0) {
-            const channels = server.suggestChannels.map((i) => [i.alias ?? 'predetermined', i.channel??i.channel_id])            
+            const channels = server.suggestChannels.map((i) => ({ name: i.alias ?? 'predetermined', value: i.channel }))            
             command.addStringOption((option) =>
                 option
                     .setName('channel')
                     .setDescription('channel to send the suggestion')
-                    .addChoices(channels as [name: string, value: string][]),
+                    .addChoices(...channels),
             )
         }
         return command.toJSON() as ApplicationCommandDataResolvable
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    run(interaction: CommandInteraction<'cached'>): any {
+    run(interaction: ChatInputCommandInteraction<'cached'>): any {
         const translate = Translator(interaction)
         let server = this.client.servers.get(interaction.guildId as string)
         if (!server || server.suggestChannels.length === 0) {
@@ -53,7 +53,7 @@ export default class Suggest extends Command {
         const channel = this.client.channels.cache.get(channelId as string) as TextChannel
         if (channel && checkSend(channel, interaction.guild?.me as GuildMember)) {
             server.lastSuggestId += 1
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setAuthor({
                     name:interaction.user.username,
                     iconURL: interaction.user.displayAvatarURL()

@@ -1,10 +1,10 @@
-import { ButtonInteraction, CommandInteraction } from 'discord.js'
+import { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { Client } from '../utils/classes.js'
 import { sendError } from '../utils/utils.js'
 
-export default async function(interaction: CommandInteraction | ButtonInteraction) {
+export default async function(interaction: ChatInputCommandInteraction | ButtonInteraction) {
     try {
-        if (interaction.isApplicationCommand()) 
+        if (interaction.isChatInputCommand()) 
             (interaction.client as Client).commands
                 .get(interaction.commandName)
                 ?.run(interaction)

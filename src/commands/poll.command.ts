@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { filledBar, pollEmojis as emojis, checkSend, randomId } from '../utils/utils.js'
-import { Command, Client, CommandType, PollDatabaseModel } from '../utils/classes.js'
+import { Command, Client, CommandType, PollDatabaseModel, MessageActionRowComponentBuilder } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
 import {
     ApplicationCommandDataResolvable,
-    MessageButton,
-    MessageActionRow,
-    CommandInteraction,
+    ButtonBuilder,
+    ActionRowBuilder,
+    ChatInputCommandInteraction,
     Guild,
-    MessageEmbed,
+    EmbedBuilder,
     TextChannel,
     GuildMember,
+    ButtonStyle,
 } from 'discord.js'
 
 export default class Poll extends Command {
@@ -35,7 +36,7 @@ export default class Poll extends Command {
                 subcommand.setName('finalize').setDescription('Finish a poll')
                 subcommand.addStringOption((option) => {
                     option.setName('id').setDescription('Id of de poll').setRequired(true)
-                    snap.forEach((doc) => option.addChoice(doc.id, doc.id))
+                    snap.forEach((doc) => option.addChoices({ name: doc.id, value: doc.id }))
                     return option
                 })
                 return subcommand
@@ -66,12 +67,12 @@ export default class Poll extends Command {
         return command.toJSON() as ApplicationCommandDataResolvable
     }
 
-    async run(interaction: CommandInteraction<'cached'>): Promise<any> {
+    async run(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         if (interaction.options.getSubcommand() === 'make') this.make(interaction)
         else if (interaction.options.getSubcommand() === 'finalize') this.finalize(interaction)
     }
 
-    async make(interaction: CommandInteraction<'cached'>): Promise<any> {
+    async make(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         await interaction.deferReply({ ephemeral: true })
         const translate = Translator(interaction)
 
@@ -88,7 +89,7 @@ export default class Poll extends Command {
         const show = interaction.options.getBoolean('show_results') ?? true
         const multiple = interaction.options.getBoolean('multiple_choices') ?? false
         const idPoll = randomId()
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(title)
             .setDescription(context)
             .setURL(`https://oneki.herokuapp.com/poll/${idPoll}`)
@@ -115,17 +116,17 @@ export default class Poll extends Command {
             })),
         )
 
-        const buttons = [new MessageActionRow()]
+        const buttons = [new ActionRowBuilder<MessageActionRowComponentBuilder>()]
         let i = 1, j = 0
 
         for (const option of options) {
-            if (i % 5 === 0) buttons.push(new MessageActionRow())
+            if (i % 5 === 0) buttons.push(new ActionRowBuilder<MessageActionRowComponentBuilder>())
 
             buttons[i % 5 === 0 ? j++ : j].addComponents([
-                new MessageButton()
+                new ButtonBuilder()
                     .setCustomId(`poll_${idPoll}_${option.name}`)
                     .setLabel(`${option.name.replace('_', ' ')}`)
-                    .setStyle('PRIMARY')
+                    .setStyle(ButtonStyle.Primary)
                     .setEmoji(emojis[i - 1]),
             ])
             i++
@@ -154,7 +155,7 @@ export default class Poll extends Command {
         this.client.commands.find((c) => c.name === 'poll')?.deploy(interaction.guild as Guild)
     }
 
-    async finalize(interaction: CommandInteraction<'cached'>) {
+    async finalize(interaction: ChatInputCommandInteraction<'cached'>) {
         const translate = Translator(interaction)
         await interaction.deferReply({ ephemeral: true })
         const snap = await this.client.db.collection('polls').doc(interaction.options.getString('id') as string).get()
@@ -177,7 +178,7 @@ export default class Poll extends Command {
                         components: [],
                     })
                     if (!data.show_results) {
-                        const embed = new MessageEmbed(msg.embeds[0])
+                        const embed = new EmbedBuilder(msg.embeds[0]?.data)
                         let votesCount = 0
                         await Promise.all(data.options.map((o) => (votesCount += o.votes.length)))
                         embed.setFields(

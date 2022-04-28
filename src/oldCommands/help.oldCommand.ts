@@ -1,6 +1,5 @@
-import { Message, MessageEmbed, MessageButton, MessageActionRow } from 'discord.js'
-import { OldCommand, Client, oldCommandData, Server } from '../utils/classes.js'
-import { sendError } from '../utils/utils.js'
+import { OldCommand, Client, oldCommandData, Server, Message, EmbedBuilder, ButtonBuilder, ActionRowBuilder, MessageActionRowComponentBuilder, ButtonStyle } from '../utils/classes.js'
+import { sendError, Util } from '../utils/utils.js'
 
 export default class Help extends OldCommand {
     constructor(client: Client) {
@@ -14,7 +13,7 @@ export default class Help extends OldCommand {
 
     async run(msg: Message, server: Server) {
         try {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
             const categories = await Help.getCategories()
             if (categories.length === 0) return msg.reply('parece que no he encontrado ningun comando')
             const commands = await Help.getCategory(categories[0])
@@ -23,17 +22,19 @@ export default class Help extends OldCommand {
             embed.setDescription('Category: ' + categories[0] + '\n`<>` Means mandatory\n`[]` Means optional')
             await Promise.all(
                 commands.map(cmd => {
-                    embed.addField(
-                        cmd.name,
-                        `${cmd.description}\n**Alias:** ${
-                            cmd.alias.length > 0 ? '`' + cmd.alias.join('` `') + '`' : 'none'
-                        }\n**Use:** \`${
-                            cmd.type == 'command'
-                                ? server?.getPrefixes(true)[0] ?? server?.prefixes[0]
-                                : '/'
-                        }${cmd.use}\``,
-                        true
-                    )
+                    embed.addFields([
+                        {
+                            name: `${cmd.name}`,
+                            value: `${cmd.description}\n${Util.escapeBold('Alias')} ${
+                                cmd.alias.length > 0 ? '`' + cmd.alias.join('` `') + '`' : 'none'
+                            }\n${Util.escapeBold('Use')} ${Util.escapeInlineCode(
+                                `${cmd.type == 'command' ? server?.getPrefixes(true)[0] ?? server?.prefixes[0] : '/'}${
+                                    cmd.use
+                                }`
+                            )}`,
+                            inline: true
+                        }
+                    ])
                 })
             )
             embed.setFooter({
@@ -43,13 +44,14 @@ export default class Help extends OldCommand {
             embed.setThumbnail(msg.client.user?.avatarURL() ?? '')
             let j = 0,
                 k = 0
+            
             const components = []
             for (const i of categories) {
-                const btn = new MessageButton()
-                    .setStyle(i == categories[0] ? 'SUCCESS' : 'PRIMARY')
+                const btn = new ButtonBuilder()
+                    .setStyle(i == categories[0] ? ButtonStyle.Success : ButtonStyle.Primary)
                     .setLabel(i)
                     .setCustomId(`help_${server?.lang}_${i}`)
-                if (j == 0) components.push(new MessageActionRow().addComponents([btn]))
+                if (j == 0) components.push(new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([btn]))
                 else components[k].addComponents([btn])
                 if (j == 4) {
                     j = 0

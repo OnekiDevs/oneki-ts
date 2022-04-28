@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { ApplicationCommandDataResolvable, CommandInteraction, Guild } from 'discord.js'
+import { ApplicationCommandDataResolvable, ChatInputCommandInteraction, Guild } from 'discord.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import Client, { Command, CommandType } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
@@ -39,7 +39,7 @@ export default class Birthday extends Command {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async run(interaction: CommandInteraction<'cached'>): Promise<any> {
+    async run(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         await interaction.deferReply()
         const translate = Translator(interaction)
         const subCommand = interaction.options.getSubcommand()

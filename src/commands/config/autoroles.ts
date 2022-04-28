@@ -1,9 +1,8 @@
-import { Embed } from '@discordjs/builders'
-import { CommandInteraction, GuildMember, MessageActionRow, MessageButton, Role, TextChannel } from 'discord.js'
+import { ChatInputCommandInteraction, GuildMember, ActionRowBuilder, ButtonBuilder, Role, TextChannel, MessageActionRowComponentBuilder, ButtonStyle, EmbedBuilder } from 'discord.js'
 import { Client } from '../../classes/Client.js'
 import { checkSend, Translator } from '../../utils/utils.js'
 
-export async function create(interaction: CommandInteraction<'cached'>) {
+export async function create(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply()
     const translate = Translator(interaction)
     const name = (interaction.options.getString('name') as string).split(/ +/gi).join('_')
@@ -13,7 +12,7 @@ export async function create(interaction: CommandInteraction<'cached'>) {
     interaction.editReply(translate('config_cmd.autoroles.create', { name }))
 }
 
-export async function add(interaction: CommandInteraction<'cached'>) {
+export async function add(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply()
     const translate = Translator(interaction)
     const name = (interaction.options.getString('group') as string).split(/ +/gi).join('_')
@@ -24,7 +23,7 @@ export async function add(interaction: CommandInteraction<'cached'>) {
     interaction.editReply(translate('config_cmd.autoroles.added', { group:name, roll:rol.toString() }))
 }
 
-export async function remove(interaction: CommandInteraction<'cached'>) {
+export async function remove(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply()
     const translate = Translator(interaction)
     const name = (interaction.options.getString('group') as string).split(/ +/gi).join('_')
@@ -35,7 +34,7 @@ export async function remove(interaction: CommandInteraction<'cached'>) {
     interaction.editReply(translate('config_cmd.autoroles.remove', { roll:rol.toString(), group:name }))
 }
 
-export async function remove_group(interaction: CommandInteraction<'cached'>) {
+export async function remove_group(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply()
     const translate = Translator(interaction)
     const name = (interaction.options.getString('group') as string).split(/ +/gi).join('_')
@@ -45,7 +44,7 @@ export async function remove_group(interaction: CommandInteraction<'cached'>) {
     interaction.editReply(translate('config_cmd.autoroles.remove_group'))
 }
 
-export async function display(interaction: CommandInteraction<'cached'>) {
+export async function display(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const name = (interaction.options.getString('group') as string).split(/ +/gi).join('_')
     const message = interaction.options.getString('message')??'Choice yout role'
@@ -66,25 +65,25 @@ export async function display(interaction: CommandInteraction<'cached'>) {
     const autoroles = server.autoroles.get(name) as Set<string>
 
     let row = 0, button = 0
-    const components: MessageActionRow[] = [new MessageActionRow()]
+    const components = [new ActionRowBuilder<MessageActionRowComponentBuilder>()]
 
     for (const rollId of autoroles) {
         const roll = await interaction.guild.roles.fetch(rollId)
         if (!roll) continue
         if (button++ >= 5) {
             button = 0
-            components[++row] = new MessageActionRow()
+            components[++row] = new ActionRowBuilder<MessageActionRowComponentBuilder>()
         }
-        components[row].addComponents(
-            new MessageButton()
+        components[row].addComponents([
+            new ButtonBuilder()
                 .setLabel(roll.name)
-                .setStyle('PRIMARY')
+                .setStyle(ButtonStyle.Primary)
                 .setCustomId(`autoroll_${rollId}`)
-        )
+        ])
     }
 
-    channel.send({
-        embeds: [ new Embed().setDescription(message) ],
+    return channel.send({
+        embeds: [ new EmbedBuilder().setDescription(message) ],
         components
     })
 }

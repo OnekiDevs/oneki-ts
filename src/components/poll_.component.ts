@@ -1,4 +1,4 @@
-import { ButtonInteraction, TextChannel, MessageEmbed } from 'discord.js'
+import { ButtonInteraction, TextChannel, EmbedBuilder } from 'discord.js'
 import { Component, Client, PollDatabaseModel } from '../utils/classes.js'
 import { pollEmojis as emojis, filledBar, Translator } from '../utils/utils.js'
 
@@ -34,7 +34,7 @@ export default class Activitie extends Component {
         let votes = 0
         await Promise.all(data.options.map((o) => (votes += o.votes.length)))
         //obtengo embed
-        const embed = new MessageEmbed(interaction.message.embeds[0])
+        const embed = new EmbedBuilder(interaction.message.embeds[0]?.data)
         //modifico embed
         embed.setFooter({
             text: translate('poll_btn.embed_footer', {
@@ -63,5 +63,6 @@ export default class Activitie extends Component {
             })
             .catch((e) => e)
         interaction.editReply(translate('poll_btn.reply'))
+        return
     }
 }

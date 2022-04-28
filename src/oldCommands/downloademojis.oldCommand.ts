@@ -1,4 +1,4 @@
-import { Message, MessageAttachment, Permissions } from 'discord.js'
+import { Message, Attachment, PermissionsBitField } from 'discord.js'
 import { OldCommand, Client, Server } from '../utils/classes.js'
 import { permissionsError, sendError } from '../utils/utils.js'
 import JSZip from 'jszip'
@@ -15,8 +15,8 @@ export default class DownloadEmojis extends OldCommand {
 
     async run(msg: Message<true>, server: Server, args?: string[]) {
         try {
-            if (!msg.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR))
-                return permissionsError(msg, Permissions.FLAGS.ADMINISTRATOR)
+            if (!msg.member?.permissions.has(PermissionsBitField.Flags.Administrator))
+                return permissionsError(msg, PermissionsBitField.Flags.Administrator)
             await msg.channel.sendTyping()
             const emojis = await Promise.all(
                 (
@@ -37,7 +37,7 @@ export default class DownloadEmojis extends OldCommand {
             const zipGenerated = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' })
 
             msg.reply({
-                files: [new MessageAttachment(zipGenerated, `${msg.guild.name}_emojis.zip`)]
+                files: [new Attachment(zipGenerated, `${msg.guild.name}_emojis.zip`)]
             })
         } catch (error) {
             msg.reply('Ha ocurrido un error, reporte generado')

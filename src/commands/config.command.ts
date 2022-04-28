@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ApplicationCommandDataResolvable, CommandInteraction, Guild } from 'discord.js'
+import { ApplicationCommandDataResolvable, ChatInputCommandInteraction, Guild } from 'discord.js'
 import { Command, Client, CommandType } from '../utils/classes.js'
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
 
@@ -19,9 +19,10 @@ export default class Config extends Command {
         const server = this.client.servers.get(guild.id) ?? this.client.newServer(guild)
 
         const suggestChannelsChoices = await Promise.all(
-            server.suggestChannels.map(c => {
-                return [c.default ? 'default' : c.alias, c.channel ?? (c.channel_id as string)]
-            })
+            server.suggestChannels.map(c => ({
+                name: c.default ? 'default' : c.alias as string,
+                value: c.channel
+            }))
         )
 
         const logs = ['message_update', 'message_delete', 'message_attachment', 'invites', 'member_update']
@@ -34,7 +35,7 @@ export default class Config extends Command {
                         .setName('channel')
                         .setDescription('Channel where the logs are send')
                         .setRequired(true)
-                        .addChannelType(0)
+                        .addChannelTypes(0)
                 )
         )
 
@@ -68,7 +69,7 @@ export default class Config extends Command {
                             option
                                 .setName('channel')
                                 .setDescription('Channel where the suggest are sent')
-                                .addChannelType(0)
+                                .addChannelTypes(0)
                                 .setRequired(true)
                         )
                 )
@@ -80,7 +81,7 @@ export default class Config extends Command {
                             option
                                 .setName('channel')
                                 .setDescription('The channel to use')
-                                .addChannelType(0)
+                                .addChannelTypes(0)
                                 .setRequired(true)
                         )
                 )
@@ -118,7 +119,7 @@ export default class Config extends Command {
                                 .setName('channel')
                                 .setDescription('Channel to suggest')
                                 .setRequired(true)
-                                .addChannelType(0)
+                                .addChannelTypes(0)
                         )
                         .addStringOption(option =>
                             option
@@ -150,7 +151,7 @@ export default class Config extends Command {
                                 .setName('channel')
                                 .setDescription('The channel to use')
                                 .setRequired(true)
-                                .addChannelType(0)
+                                .addChannelTypes(0)
                         )
                 )
         )
@@ -168,10 +169,10 @@ export default class Config extends Command {
                                 .setName('prefix')
                                 .setDescription('Prefix to remove')
                                 .addChoices(
-                                    server?.getPrefixes(true).map(i => [i, i]) ?? [
-                                        ['>', '>'],
-                                        ['?', '?']
-                                    ]
+                                    ...(server?.getPrefixes(true).map(i => ({ name: i, value: i })) ?? [
+                                        { name: '>', value: '>' },
+                                        { name: '?', value: '?' }
+                                    ])
                                 )
                         )
                 )
@@ -183,7 +184,7 @@ export default class Config extends Command {
                                 .setName('alias')
                                 .setDescription('Alias of channel to remove')
                                 .setRequired(true)
-                                .addChoices(suggestChannelsChoices as [name: string, value: string][])
+                                .addChoices(...suggestChannelsChoices)
                         )
                     return subcommand
                 })
@@ -196,7 +197,7 @@ export default class Config extends Command {
                                 .setName('logname')
                                 .setDescription('Log name to remove')
                                 .setRequired(true)
-                                .addChoices(logs.map(l => [l, l]))
+                                .addChoices(...logs.map(l => ({ name:l, value:l })))
                         )
                 )
                 .addSubcommand(subcommand =>
@@ -224,7 +225,7 @@ export default class Config extends Command {
                                 .setName('channel')
                                 .setDescription('The channel to remove')
                                 .setRequired(true)
-                                .addChannelType(0)
+                                .addChannelTypes(0)
                         )
                 )
         )
@@ -239,7 +240,7 @@ export default class Config extends Command {
                     .setName('auto')
                     .setDescription('Configure logs automatically')
                     .addChannelOption(option =>
-                        option.setName('category').setDescription('Category to use').addChannelType(4)
+                        option.setName('category').setDescription('Category to use').addChannelTypes(4)
                     )
             )
             return subcommandGroup
@@ -272,7 +273,7 @@ export default class Config extends Command {
                                 .setName('group')
                                 .setDescription('The group name')
                                 .setRequired(true)
-                                .addChoices(Array.from(server.autoroles.keys()).map(ar => [ar, ar]))
+                                .addChoices(...Array.from(server.autoroles.keys()).map(ar => ({ name: ar, value: ar })))
                         )
                         .addRoleOption(option => option.setName('rol').setDescription('Rol to add').setRequired(true))
                 )
@@ -286,7 +287,7 @@ export default class Config extends Command {
                                 .setName('group')
                                 .setDescription('The group name')
                                 .setRequired(true)
-                                .addChoices(Array.from(server.autoroles.keys()).map(ar => [ar, ar]))
+                                .addChoices(...Array.from(server.autoroles.keys()).map(ar => ({ name: ar, value: ar })))
                         )
                         .addRoleOption(option => option.setName('rol').setDescription('Rol to remove').setRequired(true))
                 )
@@ -300,7 +301,7 @@ export default class Config extends Command {
                                 .setName('group')
                                 .setDescription('The group name')
                                 .setRequired(true)
-                                .addChoices(Array.from(server.autoroles.keys()).map(ar => [ar, ar]))
+                                .addChoices(...Array.from(server.autoroles.keys()).map(ar => ({ name: ar, value: ar })))
                         )
                 )
 
@@ -313,9 +314,9 @@ export default class Config extends Command {
                                 .setName('group')
                                 .setDescription('The group name')
                                 .setRequired(true)
-                                .addChoices(Array.from(server.autoroles.keys()).map(ar => [ar, ar]))
+                                .addChoices(...Array.from(server.autoroles.keys()).map(ar => ({ name: ar, value: ar })))
                         )
-                        .addChannelOption(option => option.setName('channel').setDescription('Channel to display').addChannelType(0))
+                        .addChannelOption(option => option.setName('channel').setDescription('Channel to display').addChannelTypes(0))
                         .addStringOption(option => option.setName('message').setDescription('Message to display'))
                 )
             }
@@ -344,7 +345,7 @@ export default class Config extends Command {
         return new Promise(resolve => resolve(cmd))
     }
 
-    run(interaction: CommandInteraction) {
+    run(interaction: ChatInputCommandInteraction) {
         const subcommand = interaction.options.getSubcommand()
         const subcommandGroup = interaction.options.getSubcommandGroup()
         import(`./config/${subcommandGroup}.js`).then(scg => scg[subcommand](interaction)).catch(() => '')
