@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChatInputCommandInteraction } from 'discord.js'
-import { Command, Client, CommandType } from '../utils/classes.js'
+import { Command, Client } from '../utils/classes.js'
 
 export default class Minesweeper extends Command {
     constructor(client: Client) {
         super(client, {
-            name: 'minesweeper',
-            description: 'display a minesweeper game',
-            category: 'Entertainment',
-            defaultPermission: true,
-            type: CommandType.global,
+            name: {
+                'en-US': 'minesweeper',
+                'es-ES': 'buscaminas'
+            },
+            description: {
+                'en-US': 'Dsplay a minesweeper game',
+                'es-ES': 'Muestra un juego de buscaminas'
+            }
         })
     }
 

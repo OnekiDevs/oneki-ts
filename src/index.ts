@@ -47,11 +47,3 @@ const client: Client = new Client({
 })
 
 client.login()
-
-// client.on('ready', async (client) => {
-//     await new Promise(resolve => setTimeout(resolve, 10_000))
-//     console.log('deleting commands')    
-//     for (const command of client.application.commands.cache.values()) await command.delete()
-//     for (const guild of client.guilds.cache.values()) for (const command of guild.commands.cache.values()) await command.delete()
-//     console.log('deleted commands')
-// })

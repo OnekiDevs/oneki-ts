@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { filledBar, pollEmojis as emojis, checkSend, randomId } from '../utils/utils.js'
-import { Command, Client, CommandType, PollDatabaseModel, MessageActionRowComponentBuilder } from '../utils/classes.js'
+import { Command, Client, PollDatabaseModel, MessageActionRowComponentBuilder } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
 import {
-    ApplicationCommandDataResolvable,
     ButtonBuilder,
     ActionRowBuilder,
     ChatInputCommandInteraction,
@@ -12,59 +11,83 @@ import {
     TextChannel,
     GuildMember,
     ButtonStyle,
+    ApplicationCommandOptionType
 } from 'discord.js'
 
 export default class Poll extends Command {
     constructor(client: Client) {
         super(client, {
-            name: 'poll',
-            description: 'make a poll',
-            category: 'Utils',
-            defaultPermission: false,
-            type: CommandType.guild,
+            name: {
+                'en-US': 'poll',
+                'es-ES': 'encuesta'
+            },
+            description: {
+                'en-US': 'Make a poll',
+                'es-ES': 'Hacer una encuesta'
+            },
+            global: false,
         })
     }
 
-    async getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
-        const command = this.baseCommand
+    async createData(guild: Guild): Promise<void> {
+
+        const server = this.client.getServer(guild)
+        this.clearOptions()
+
         const snap = await this.client.db
             .collection('polls')
             .where('guild', '==', (guild as Guild).id)
             .get()
-        if (!snap.empty)
-            command.addSubcommand((subcommand) => {
-                subcommand.setName('finalize').setDescription('Finish a poll')
-                subcommand.addStringOption((option) => {
-                    option.setName('id').setDescription('Id of de poll').setRequired(true)
-                    snap.forEach((doc) => option.addChoices({ name: doc.id, value: doc.id }))
-                    return option
-                })
-                return subcommand
+
+        if (server.premium || snap.empty) {
+            this.addOption({
+                name: 'make',
+                description: 'Make a new poll',
+                type: ApplicationCommandOptionType.Subcommand,
+                options: [{
+                    name: 'context',
+                    description: 'Add a description of context of the poll',
+                    type: ApplicationCommandOptionType.String,
+                    required: true
+                }, {
+                    name: 'title',
+                    description: 'Add a title for the poll',
+                    type: ApplicationCommandOptionType.String,
+                }, {
+                    name: 'block_choice',
+                    description: 'Blocks the response so as not to be modified',
+                    type: ApplicationCommandOptionType.Boolean,
+                }, {
+                    name: 'show_results',
+                    description: 'Show the results of the poll in the moment',
+                    type: ApplicationCommandOptionType.Boolean,
+                }, {
+                    name: 'multiple_choices',
+                    description: 'Allow multiple choices',
+                    type: ApplicationCommandOptionType.Boolean,
+                }].concat(new Array(20).map((_, i) => ({
+                    name: `option${i + 1}`,
+                    description: `Add an option for the poll`,
+                    type: ApplicationCommandOptionType.String,
+                })))
             })
-        command.addSubcommand((subcommand) => {
-            subcommand
-                .setName('make')
-                .setDescription('Make a poll')
-                .addStringOption((option) =>
-                    option.setName('context').setDescription('add a description of context').setRequired(true),
-                )
-                .addStringOption((option) => option.setName('title').setDescription('title to show in the poll'))
-                .addBooleanOption((option) =>
-                    option.setName('block_choice').setDescription('blocks the response so as not to be modified'),
-                )
-                .addBooleanOption((option) =>
-                    option.setName('multiple_choices').setDescription('if they can choose several answers'),
-                )
-                .addBooleanOption((option) =>
-                    option.setName('show_results').setDescription('show results at the moment'),
-                )
-            for (let i = 1; i <= 20; i++)
-                subcommand.addStringOption((option) =>
-                    option.setName(`option_${i}`).setDescription(`option ${i} to choice`),
-                )
-            return subcommand
-        })
-        return command.toJSON() as ApplicationCommandDataResolvable
+        } 
+
+        if (!snap.empty) {
+            const choices: { name: string; value: string }[] = []
+            snap.forEach((doc) => choices.push({ name: doc.id, value: doc.id }))
+            this.addOption({
+                name: 'finalize',
+                description: 'Finalize the poll',
+                type: ApplicationCommandOptionType.Subcommand,
+                options: [{
+                    name: 'id',
+                    description: 'Select the poll to finalize',
+                    type: ApplicationCommandOptionType.String,
+                    choices,
+                }]
+            })
+        }
     }
 
     async run(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
@@ -200,6 +223,6 @@ export default class Poll extends Command {
         }
         interaction.editReply(translate('poll_cmd.finalize'))
         
-        this.client.commands.find((c) => c.name === 'poll')?.deploy(interaction.guild as Guild)
+        this.client.commands.find((c) => c.name === 'poll')?.deploy(interaction.guild)
     }
 }

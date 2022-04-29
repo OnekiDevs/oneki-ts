@@ -1,47 +1,42 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { ApplicationCommandDataResolvable, ChatInputCommandInteraction, Guild } from 'discord.js'
+import { ApplicationCommandDataResolvable, ApplicationCommandOptionType, ChatInputCommandInteraction, Guild } from 'discord.js'
 import { FieldValue } from 'firebase-admin/firestore'
-import Client, { Command, CommandType } from '../utils/classes.js'
+import Client, { Command } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
 
 export default class Birthday extends Command {
     constructor(client: Client) {
         super(client, {
-            name: 'birthday',
-            description: 'Change your birthday reminder',
-            category: 'Utils',
-            type: CommandType.global,
-        })
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getData(guild?: Guild): Promise<ApplicationCommandDataResolvable> {
-        return new Promise(resolve => {
-            const command = this.baseCommand
-            command.addSubcommand(subcommand =>
-                subcommand
-                    .setName('set')
-                    .setDescription('Set your birthday\'s date')
-                    .addStringOption(option => 
-                        option
-                            .setName('date')
-                            .setDescription('Your birthday\'s date FORM: MONTH/DAY')
-                            .setRequired(true)
-                    )
-            )
-            command.addSubcommand(subcommand =>
-                subcommand
-                    .setName('remove')
-                    .setDescription('Remove your birthday\'s reminder')
-            )
-            resolve(command.toJSON())
+            name: {
+                'en-US': 'birthday',
+                'es-ES': 'cumpleaños'
+            },
+            description: {
+                'en-US': 'Set your birthday reminder',
+                'es-ES': 'Añadir un recordatorio de tu cumpleaños'
+            },
+            options: [{
+                name: 'set',
+                description: "Set your birthday's date",
+                type: ApplicationCommandOptionType.Subcommand,
+                options: [{
+                    name: 'date',
+                    description: 'Your birthday\'s date FORM: MONTH/DAY',   
+                    type: ApplicationCommandOptionType.String,
+                    required: true
+                }]
+            }, {
+                name: 'remove',
+                description: 'Remove your birthday\'s date',
+                type: ApplicationCommandOptionType.Subcommand
+            }]
         })
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async run(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         await interaction.deferReply()
-        const translate = Translator(interaction)
+        const translate = this.translator(interaction)
         const subCommand = interaction.options.getSubcommand()
         if(subCommand === 'set'){
             const birthday = interaction.options.getString('date')!

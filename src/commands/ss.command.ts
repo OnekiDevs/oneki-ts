@@ -1,23 +1,29 @@
-import { ApplicationCommandDataResolvable, ChatInputCommandInteraction, Attachment, UserFlagsBitField } from 'discord.js'
-import { Command, Client, CommandType } from '../utils/classes.js'
+import { ChatInputCommandInteraction, Attachment, UserFlagsBitField, ApplicationCommandOptionType } from 'discord.js'
+import { Command, Client } from '../utils/classes.js'
 import cw from 'capture-website'
 
 export default class SS extends Command {
     constructor(client: Client) {
         super(client, {
-            name: 'ss',
-            description: 'make a fake ss',
-            category: 'Entertainment',
-            defaultPermission: true,
-            type: CommandType.global
+            name: {
+                'en-US': 'ss',
+                'es-ES': 'ss'
+            },
+            description: {
+                'en-US': 'Shows a fake message',
+                'es-ES': 'Muestra un mensaje falso'
+            },
+            options: [{
+                name: 'text',
+                type: ApplicationCommandOptionType.String,
+                description: 'The text of the message',
+                required: true,
+            },{
+                name: 'user',
+                type: ApplicationCommandOptionType.User,
+                description: 'The user of the message',
+            }]
         })
-    }
-
-    async getData(): Promise<ApplicationCommandDataResolvable> {
-        return this.baseCommand
-            .addStringOption(option => option.setName('text').setDescription('Text to show').setRequired(true))
-            .addUserOption(option => option.setName('user').setDescription('The user to show'))
-            .toJSON()
     }
 
     async run(interaction: ChatInputCommandInteraction<'cached'>) {

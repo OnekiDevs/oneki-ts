@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApplicationCommandDataResolvable, ChatInputCommandInteraction, Guild } from 'discord.js'
-import { Command, Client, CommandType } from '../utils/classes.js'
+import { Command, Client } from '../utils/classes.js'
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
 
 export default class Config extends Command {
     constructor(client: Client) {
         super(client, {
-            name: 'config',
-            description: 'config',
-            defaultPermission: false,
-            category: 'Settings',
-            type: CommandType.guild
+            name: {
+                'en-US': 'config',
+                'es-ES': 'configuracion',
+            },
+            description: {
+                'en-US': 'Configure the bot',
+                'es-ES': 'Configurar el bot',
+            },
+            global: false
         })
     }
 

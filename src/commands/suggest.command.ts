@@ -1,33 +1,44 @@
-import { ApplicationCommandDataResolvable, ChatInputCommandInteraction, Guild, GuildMember, EmbedBuilder, TextChannel } from 'discord.js'
-import { Command, Client, CommandType, Server } from '../utils/classes.js'
+import { ChatInputCommandInteraction, Guild, GuildMember, EmbedBuilder, TextChannel, ApplicationCommandOptionType } from 'discord.js'
+import { Command, Client, Server } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
 import { checkSend } from '../utils/utils.js'
 
 export default class Suggest extends Command {
     constructor(client: Client) {
         super(client, {
-            name: 'suggest',
-            description: 'Make a suggestion',
-            category: 'Utils',
-            defaultPermission: true,
-            type: CommandType.guild,
+            name: {
+                'en-US': 'suggest',
+                'es-ES': 'sugerencia',
+            },
+            description: {
+                'es-ES': 'Sugiere algo en el servidor',   
+                'en-US': 'Suggest something in the server',  
+            },
+            global: false,
         })
     }
 
-    async getData(guild: Guild): Promise<ApplicationCommandDataResolvable> {
-        const server = this.client.getServer(guild)
-        const command = this.baseCommand
-        command.addStringOption((option) => option.setName('suggestion').setDescription('Suggest to send').setRequired(true))
-        if (server && server.suggestChannels.length > 0) {
-            const channels = server.suggestChannels.map((i) => ({ name: i.alias ?? 'predetermined', value: i.channel }))            
-            command.addStringOption((option) =>
-                option
-                    .setName('channel')
-                    .setDescription('channel to send the suggestion')
-                    .addChoices(...channels),
-            )
+    async createData(guild: Guild): Promise<void> {
+
+        const server = this.client.getServer(guild) 
+
+        this.addOption({
+            name: 'suggestion',
+            type: ApplicationCommandOptionType.String,
+            description: 'The suggestion',
+            required: true
+        })
+
+        if (server.suggestChannels.length > 0) {
+            const channels = server.suggestChannels.map((c) => ({name: c.alias ?? 'predetermined', value: c.channel}))
+            this.addOption({
+                name: 'channel',
+                type: ApplicationCommandOptionType.Channel,
+                description: 'The channel to send the suggestion',
+                required: true,
+                choices: channels
+            })
         }
-        return command.toJSON() as ApplicationCommandDataResolvable
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

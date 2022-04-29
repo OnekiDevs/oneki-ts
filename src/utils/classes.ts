@@ -36,6 +36,7 @@ export {
 
 export interface Local extends Partial<Record<LocaleString, string>> {
     'en-US': string;
+    'es-ES': string;
 }
 
 export * from '../classes/Client.js'
@@ -52,11 +53,6 @@ export * from '../classes/Player.js'
 export * from '../classes/UnoCards.js'
 export * from '../classes/Players.js'
 export * from '../classes/UnoGame.js'
-
-export enum CommandType {
-    guild = 1,
-    global
-}
 
 export interface oldCommandData {
     name: string
