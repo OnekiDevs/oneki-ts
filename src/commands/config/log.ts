@@ -1,7 +1,7 @@
 import { PermissionsBitField, ChatInputCommandInteraction, TextChannel, CategoryChannel, ChannelType } from 'discord.js'
-import { OverwriteType } from 'discord-api-types/v10'
 import { permissionsError, Translator } from '../../utils/utils.js'
 import { Client } from '../../utils/classes.js'
+
 
 export function message_update(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
@@ -43,7 +43,7 @@ export async function auto(interaction: ChatInputCommandInteraction<'cached'>) {
         permissionOverwrites: [{
             id: interaction.guildId,
             deny: PermissionsBitField.Flags.ViewChannel,
-            type: OverwriteType.Role,
+            type: 0,
         }]
     })) as CategoryChannel
 

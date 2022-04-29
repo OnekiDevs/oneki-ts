@@ -11,7 +11,8 @@ import {
     ButtonStyle,
     PermissionsBitField,
     Colors,
-    MessageActionRowComponentBuilder
+    MessageActionRowComponentBuilder,
+    LocaleString
 } from 'discord.js'
 
 import { Client } from '../classes/Client.js'
@@ -29,7 +30,12 @@ export {
     ActionRowBuilder,
     ButtonStyle,
     Colors,
-    MessageActionRowComponentBuilder
+    MessageActionRowComponentBuilder,
+    LocaleString
+}
+
+export interface Local extends Partial<Record<LocaleString, string>> {
+    'en-US': string;
 }
 
 export * from '../classes/Client.js'

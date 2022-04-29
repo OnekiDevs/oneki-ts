@@ -5,8 +5,6 @@ import { config } from 'dotenv'
 
 config()
 
-process.on('exit', () => console.log('Bot apagado'))
-
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const client: Client = new Client({
@@ -48,6 +46,8 @@ const client: Client = new Client({
     }
 })
 
+client.login()
+
 // client.on('ready', async (client) => {
 //     await new Promise(resolve => setTimeout(resolve, 10_000))
 //     console.log('deleting commands')    
@@ -55,5 +55,3 @@ const client: Client = new Client({
 //     for (const guild of client.guilds.cache.values()) for (const command of guild.commands.cache.values()) await command.delete()
 //     console.log('deleted commands')
 // })
-
-client.login()

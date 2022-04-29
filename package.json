@@ -29,8 +29,7 @@
     "capture-website": "2.3.0",
     "catch-decorator-ts": "0.0.3",
     "cross-env": "7.0.3",
-    "discord-api-types": "0.32.0",
-    "discord.js": "14.0.0-dev.1650931749-df64d3e",
+    "discord.js": "14.0.0-dev.1651147765-679dcda",
     "dotenv": "16.0.0",
     "firebase-admin": "10.1.0",
     "i18n": "0.14.2",
@@ -40,7 +39,7 @@
     "ws": "8.5.0"
   },
   "engines": {
-    "node": "18.0.0",
+    "node": "18",
     "npm": "8.6.0"
   },
   "devDependencies": {

@@ -38,7 +38,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           cache: 'npm'
           node-version: '18'
@@ -106,9 +106,9 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: resistancemts
-          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
 
   deploy-oneki:
     needs: [test]
@@ -121,6 +121,6 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: oneki-js
-          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
