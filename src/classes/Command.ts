@@ -1,9 +1,17 @@
-import { Guild, SlashCommandBuilder, AutocompleteInteraction, SelectMenuInteraction, PermissionsBitField, ChatInputCommandInteraction, Message, ButtonInteraction } from "discord.js";
-import { Client, Local } from "../utils/classes.js";
-import { Translator } from "../utils/utils";
+import {
+    Guild,
+    SlashCommandBuilder,
+    AutocompleteInteraction,
+    SelectMenuInteraction,
+    PermissionsBitField,
+    ChatInputCommandInteraction,
+    Message,
+    ButtonInteraction
+} from 'discord.js'
+import { Client, Local } from '../utils/classes.js'
+import { Translator } from '../utils/utils.js'
 
 export class Command {
-
     name: string
     description: string
     local_names: Local
@@ -14,9 +22,12 @@ export class Command {
     options: CommandOptions[] = []
     dm = true
     permissions: PermissionsBitField | null = null
-    constructor(client: Client, {name, description, global = true, options = [], dm = true, permissions}: cmdOptions) {
-        this.name = name["en-US"]
-        this.description = description["en-US"]
+    constructor(
+        client: Client,
+        { name, description, global = true, options = [], dm = true, permissions }: cmdOptions
+    ) {
+        this.name = name['en-US']
+        this.description = description['en-US']
         this.local_names = name
         this.local_descriptions = description
         this.client = client
@@ -40,10 +51,12 @@ export class Command {
             await this.createData(guild)
             return guild.commands.create(this.data)
         }
-        return Promise.all(this.client.guilds.cache.map(async guild => {
-            await this.createData(guild)
-            return guild.commands.create(this.data)
-        }))
+        return Promise.all(
+            this.client.guilds.cache.map(async guild => {
+                await this.createData(guild)
+                return guild.commands.create(this.data)
+            })
+        )
     }
 
     /**
@@ -58,7 +71,7 @@ export class Command {
             .setDescriptionLocalizations(this.local_descriptions)
             .toJSON()
         command.options = this.options
-        if (this.global) command = { ...command, dm_permission: this.dm}
+        if (this.global) command = { ...command, dm_permission: this.dm }
         if (this.permissions) command = { ...command, default_member_permissions: this.permissions.bitfield }
         return command
     }
@@ -67,9 +80,7 @@ export class Command {
      * It proces and modify the data of the command.
      * @param {Guild} [guild] - The guild to create the data for.
      */
-    async createData(guild?: Guild) {
-        
-    }
+    async createData(guild?: Guild) {}
 
     async run(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         return interaction.deferReply()
