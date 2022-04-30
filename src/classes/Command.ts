@@ -46,17 +46,25 @@ export class Command {
         if (this.global) {
             await this.createData()
             return this.client.application?.commands.create(this.data)
+                .catch(Command.errorDeploy)
         }
         if (guild) {
             await this.createData(guild)
             return guild.commands.create(this.data)
+                .catch(Command.errorDeploy)
         }
         return Promise.all(
             this.client.guilds.cache.map(async guild => {
                 await this.createData(guild)
                 return guild.commands.create(this.data)
+                    .catch(Command.errorDeploy)
             })
         )
+    }
+
+    static errorDeploy(error: Error) {
+        console.error('!!!', error.name)
+        console.error(error)
     }
 
     /**
