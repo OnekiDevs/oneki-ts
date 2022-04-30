@@ -33,7 +33,7 @@ export default class Suggest extends Command {
             const channels = server.suggestChannels.map((c) => ({name: c.alias ?? 'predetermined', value: c.channel}))
             this.addOption({
                 name: 'channel',
-                type: ApplicationCommandOptionType.Channel,
+                type: ApplicationCommandOptionType.String,
                 description: 'The channel to send the suggestion',
                 required: true,
                 choices: channels
