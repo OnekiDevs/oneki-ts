@@ -1,24 +1,24 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { CommandInteraction, Permissions, TextChannel } from 'discord.js'
+import { ChatInputCommandInteraction, PermissionsBitField, TextChannel } from 'discord.js'
 import { permissionsError, Translator } from '../../utils/utils.js'
 import { Client } from '../../utils/classes.js'
 
-export function prefix(interaction: CommandInteraction<'cached'>) {
+export function prefix(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     const server = (interaction.client as Client).getServer(interaction.guild)
-    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const prefix = interaction.options.getString('prefix') as string
     server.setPrefix(prefix)
     interaction.reply(translate('config_cmd.set_prefix', { prefix }))
     ;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild) //TODO cambiar a autocompletado
 }
 
-export async function suggest_channel(interaction: CommandInteraction<'cached'>) {
+export async function suggest_channel(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     const server = (interaction.client as Client).getServer(interaction.guild)
-    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const channel = interaction.options.getChannel('channel') as TextChannel
     server.setSuggestChannel(channel)
     interaction.reply(translate('config_cmd.set_suggest_channel.reply', { channel }))
@@ -31,13 +31,13 @@ export async function suggest_channel(interaction: CommandInteraction<'cached'>)
     (interaction.client as Client).commands.get('config')?.deploy(interaction.guild) //TODO cambiar a autocompletado
 }
 
-export async function birthday_channel(interaction: CommandInteraction<'cached'>) {
+export async function birthday_channel(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply()
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     const server = (interaction.client as Client).getServer(interaction.guild)
     
-    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
 
     const birthdayChannel = interaction.options.getChannel('channel') as TextChannel
 
@@ -45,20 +45,20 @@ export async function birthday_channel(interaction: CommandInteraction<'cached'>
     interaction.editReply(translate('config_cmd.birthday.set_channel', { channel: birthdayChannel?.toString() }))
 }
 
-export async function birthday_message(interaction: CommandInteraction<'cached'>){
+export async function birthday_message(interaction: ChatInputCommandInteraction<'cached'>){
     await interaction.deferReply()
     const translate = Translator(interaction)
     const server = (interaction.client as Client).getServer(interaction.guild)
 
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
 
     const birthdayMessage = interaction.options.getString('message')!
     server.setBirthdayMessage(birthdayMessage)
     interaction.editReply(translate('config_cmd.birthday.set_message', { message: birthdayMessage }))
 }
 
-export async function keep_roles(interaction: CommandInteraction<'cached'>){
+export async function keep_roles(interaction: ChatInputCommandInteraction<'cached'>){
     await interaction.deferReply()
     const server = (interaction.client as Client).getServer(interaction.guild)
 
@@ -66,7 +66,7 @@ export async function keep_roles(interaction: CommandInteraction<'cached'>){
     if(!server.premium) return interaction.editReply(translate('premium'))
 
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    if (!member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return permissionsError(interaction, Permissions.FLAGS.ADMINISTRATOR)
+    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
 
     const keepRoles = interaction.options.getBoolean('keep_roles')!
     server.setKeepRoles(keepRoles)

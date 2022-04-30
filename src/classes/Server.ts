@@ -21,7 +21,7 @@ export class Server {
     logsChannels: {
         messageUpdate?: string
         messageDelete?: string
-        messageAttachment?: string
+        Attachment?: string
         invite?: string
         memberUpdate?: string
         sanction?: string
@@ -74,7 +74,7 @@ export class Server {
 
             if (message_update) this.logsChannels.messageUpdate = message_update
             if (message_delete) this.logsChannels.messageDelete = message_delete
-            if (message_attachment) this.logsChannels.messageAttachment = message_attachment
+            if (message_attachment) this.logsChannels.Attachment = message_attachment
             if (invite) this.logsChannels.invite = invite
             if (member_update) this.logsChannels.memberUpdate = member_update
             if (sanction) this.logsChannels.sanction = sanction
@@ -98,12 +98,12 @@ export class Server {
         if (this.lastSuggestId) obj.last_suggest = this.lastSuggestId
         if (this.suggestChannels) obj.suggest_channels = this.suggestChannels
         if (this.logsChannels) {
-            const { messageUpdate, messageDelete, messageAttachment, invite, memberUpdate } = this.logsChannels
+            const { messageUpdate, messageDelete, Attachment, invite, memberUpdate } = this.logsChannels
             obj.logs_channels = {}
 
             if (messageUpdate) obj.logs_channels.message_update = messageUpdate
             if (messageDelete) obj.logs_channels.message_delete = messageDelete
-            if (messageAttachment) obj.logs_channels.message_attachment = messageAttachment
+            if (Attachment) obj.logs_channels.message_attachment = Attachment
             if (invite) this.logsChannels.invite = invite
             if (memberUpdate) this.logsChannels.memberUpdate = memberUpdate
         }
@@ -316,7 +316,7 @@ export class Server {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data: any = {}
         if (this.logsChannels.messageUpdate) data['logs_channels.message_update'] = this.logsChannels.messageUpdate
-        if (this.logsChannels.messageAttachment) data['logs_channels.message_attachment'] = this.logsChannels.messageAttachment
+        if (this.logsChannels.Attachment) data['logs_channels.message_attachment'] = this.logsChannels.Attachment
         if (this.logsChannels.messageDelete) data['logs_channels.message_delete'] = this.logsChannels.messageDelete
         if (this.logsChannels.invite) data['logs_channels.invite'] = this.logsChannels.invite
         if (this.logsChannels.memberUpdate) data['logs_channels.member_update'] = this.logsChannels.memberUpdate
@@ -412,8 +412,8 @@ export class Server {
      * Set a Message Attachments Log
      * @param {string} channel - id of the channel to set
      */
-    setMessageAttachmentLog(channel: string) {
-        this.logsChannels.messageAttachment = channel
+    setAttachmentLog(channel: string) {
+        this.logsChannels.Attachment = channel
         this.db
             .update({ ['logs_channels.message_attachment']: channel })
             .catch(() => this.db.set({ ['logs_channels.message_attachment']: channel }))
@@ -433,20 +433,20 @@ export class Server {
     /**
      * Remove the Message Attachments Log
      */
-    removeMessageAttachmentLog() {
-        if (!this.logsChannels.messageAttachment) return
+    removeAttachmentLog() {
+        if (!this.logsChannels.Attachment) return
         ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
                 data: {
                     log: 'MESSAGE_ATTACHMENT',
-                    channel: this.logsChannels.messageAttachment,
+                    channel: this.logsChannels.Attachment,
                     guild: this.guild.id
                 }
             })
         )
-        delete this.logsChannels.messageAttachment
+        delete this.logsChannels.Attachment
         this.updateChannelsLogsInDB()
     }
 
@@ -882,11 +882,11 @@ export class Server {
         })
 
         if(duration === 'permanent'){
-            user.ban({ days: 0, reason })
+            user.ban({ reason })
             return Promise.resolve()
         }
         
-        user.ban({ days: 0, reason }).then(() => {
+        user.ban({ reason }).then(() => {
             if(ms(duration) < 86400000){
                 setTimeout(() => {
                     this.guild.members.unban(userId)
@@ -912,11 +912,11 @@ export class Server {
         })
 
         if(duration === 'permanent'){
-            user.ban({ days: 0, reason })
+            user.ban({ reason })
             return Promise.resolve()
         }
         
-        user.ban({ days: 0, reason }).then(() => {
+        user.ban({ reason }).then(() => {
             if(ms(duration) < 86400000){
                 setTimeout(() => {
                     this.guild.members.unban(userId)

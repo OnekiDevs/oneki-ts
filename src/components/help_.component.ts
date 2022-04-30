@@ -1,4 +1,4 @@
-import { ButtonInteraction, MessageEmbed, MessageButton, MessageActionRow } from 'discord.js'
+import { ButtonInteraction, EmbedBuilder, ButtonBuilder, ActionRowBuilder, MessageActionRowComponentBuilder, ButtonStyle } from 'discord.js'
 import { Component, Client } from '../utils/classes.js'
 import Help from '../oldCommands/help.oldCommand.js' 
 import { Translator } from '../utils/utils.js'
@@ -17,17 +17,17 @@ export default class Activitie extends Component {
         const [, , category] = interaction.customId.split(/_/g) as string[]
         const translate = Translator(interaction)
         const server = this.client.getServer(interaction.guild)
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
         embed.setTitle(translate('help_btn.embed_title', { bot: interaction.client.user?.username }))
         embed.setDescription(translate('help_btn.embed_description', { category }))
         const commands = await Help.getCategory(category)
         await Promise.all(
             commands.map((cmd) => {
-                embed.addField(
-                    cmd.name,
-                    translate('help_btn.command_field', { cmd_description: cmd.description, alias: cmd.alias.length > 0 ? '`' + cmd.alias.join('` `') + '`' : 'none', cmd_prefix: (cmd.type == 'slash' ? '/' : server?.getPrefixes(true)[0] ?? server?.prefixes[0]), cmd_use: cmd.use }),
-                    true,
-                )
+                embed.addFields([{
+                    name: cmd.name,
+                    value: translate('help_btn.command_field', { cmd_description: cmd.description, alias: cmd.alias.length > 0 ? '`' + cmd.alias.join('` `') + '`' : 'none', cmd_prefix: (cmd.type == 'slash' ? '/' : server?.getPrefixes(true)[0] ?? server?.prefixes[0]), cmd_use: cmd.use }),
+                    inline: true
+                }])
             }),
         )
         embed.setFooter({
@@ -40,11 +40,11 @@ export default class Activitie extends Component {
         const components = []
         const res = await Help.getCategories()
         for (const i of res) {
-            const btn = new MessageButton()
-                .setStyle(i == category ? 'SUCCESS' : 'PRIMARY')
+            const btn = new ButtonBuilder()
+                .setStyle(i == category ? ButtonStyle.Success : ButtonStyle.Primary)
                 .setLabel(i)
                 .setCustomId(`help_${lang}_${i}`)
-            if (j == 0) components.push(new MessageActionRow().addComponents([btn]))
+            if (j == 0) components.push(new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([btn]))
             else components[k].addComponents([btn])
             if (j == 4) {
                 j = 0

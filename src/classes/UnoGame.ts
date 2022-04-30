@@ -1,13 +1,6 @@
-import {
-    ButtonInteraction,
-    Message,
-    MessageActionRow,
-    MessageButton,
-    MessageEmbed,
-} from 'discord.js'
-import { Client, Player, Players, UnoCard, randomCard, Server } from '../utils/classes.js'
-import { MessageButtonStyles } from 'discord.js/typings/enums'
+import { Client, Player, Players, UnoCard, randomCard, Server, ActionRowBuilder, EmbedBuilder, ButtonBuilder, Message, MessageActionRowComponentBuilder } from '../utils/classes.js'
 import { randomId, imgToLink } from '../utils/utils.js'
+import { ButtonInteraction, ButtonStyle } from 'discord.js'
 import EventEmitter from 'events'
 
 export class UnoGame extends EventEmitter {
@@ -144,6 +137,7 @@ export class UnoGame extends EventEmitter {
                 if (this.turn.id !== player.id)
                     player.interaction?.editReply({ content, components })
                 this.message.edit(this.embed)
+                return
             }
         )
     }
@@ -153,10 +147,10 @@ export class UnoGame extends EventEmitter {
     }
 
     get embed(): {
-        embeds: MessageEmbed[]
-        components?: MessageActionRow[]
+        embeds: EmbedBuilder[]
+        components?: ActionRowBuilder<MessageActionRowComponentBuilder>[]
     } {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Uno Game v1')
             .setDescription(
                 this.status == 'waiting'
@@ -165,34 +159,44 @@ export class UnoGame extends EventEmitter {
                         ? this.server.translate('uno_old.end', { user: this.winner })
                         : this.server.translate('uno_old.turn', { user: this.turn }))
             )
-            .addField('Host', String(this.host), true)
-            .addField('Jugadores', String(this.players), true)
+            .addFields([
+                {
+                    name: 'Host',
+                    value: String(this.host),
+                    inline: true,
+                },
+                {
+                    name: 'Jugadores',
+                    value: String(this.players),
+                    inline: true,
+                }
+            ])
             .setFooter({ text: this.server.translate('footer', { bot: this.client.user?.username, version: this.client.version }) })
-        const buttons = new MessageActionRow()
+        const buttons = new ActionRowBuilder<MessageActionRowComponentBuilder>()
         if (this.status == 'waiting')
             buttons.addComponents([
-                new MessageButton()
+                new ButtonBuilder()
                     .setLabel(this.server.translate('uno_old.join'))
-                    .setStyle(MessageButtonStyles.SUCCESS)
+                    .setStyle(ButtonStyle.Success)
                     .setCustomId(`uno_${this.id}_jn`),
-                new MessageButton()
+                new ButtonBuilder()
                     .setLabel(this.server.translate('uno_old.start'))
-                    .setStyle(MessageButtonStyles.PRIMARY)
+                    .setStyle(ButtonStyle.Primary)
                     .setCustomId(`uno_${this.id}_st`)
                     .setDisabled(this.players.size < this.minPlayers),
             ])
         else {
             embed.setImage(this.actualCard.url)
-            buttons.addComponents(
-                new MessageButton()
+            buttons.addComponents([
+                new ButtonBuilder()
                     .setLabel(this.server.translate('uno_old.show'))
-                    .setStyle(MessageButtonStyles.PRIMARY)
+                    .setStyle(ButtonStyle.Primary)
                     .setCustomId(`uno_${this.id}_mc`),
-                new MessageButton()
+                new ButtonBuilder()
                     .setLabel(this.server.translate('uno_old.eat'))
-                    .setStyle(MessageButtonStyles.PRIMARY)
+                    .setStyle(ButtonStyle.Primary)
                     .setCustomId(`uno_${this.id}_ea`)
-            )
+            ])
         }
         return {
             embeds: [embed],

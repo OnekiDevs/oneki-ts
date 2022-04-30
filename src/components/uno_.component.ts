@@ -55,5 +55,6 @@ export default class Uno extends Component {
                 interaction
             )
         }
+        return
     }
 }

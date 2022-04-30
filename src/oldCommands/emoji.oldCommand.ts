@@ -1,5 +1,4 @@
-import { Message, MessageEmbed } from 'discord.js'
-import { OldCommand, Client, Server } from '../utils/classes.js'
+import { OldCommand, Client, Server, EmbedBuilder, Message, Colors } from '../utils/classes.js'
 import { sendError } from '../utils/utils.js'
 
 export default class Emoji extends OldCommand {
@@ -24,20 +23,26 @@ export default class Emoji extends OldCommand {
                             else
                                 msg.reply({
                                     embeds: [
-                                        new MessageEmbed()
-                                            .setColor('#ffffff')
+                                        new EmbedBuilder()
+                                            .setColor(Colors.White)
                                             .setImage(e.url)
-                                            .addField(server.translate('emoji_old.link'), `[PNG](${e.url})`)
+                                            .addFields([{
+                                                name: server.translate('emoji_old.link'),
+                                                value: `[PNG](${e.url})`,
+                                            }])
                                     ]
                                 })
                         })
                     } else
                         msg.reply({
                             embeds: [
-                                new MessageEmbed()
-                                    .setColor('#ffffff')
+                                new EmbedBuilder()
+                                    .setColor(Colors.White)
                                     .setImage(a.url)
-                                    .addField(server.translate('emoji_old.link'), `[GIF](${a.url})`)
+                                    .addFields([{
+                                        name: server.translate('emoji_old.link'),
+                                        value: `[GIF](${a.url})`,
+                                    }])
                             ]
                         })
                 })

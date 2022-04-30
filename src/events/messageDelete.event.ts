@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { MessageEmbed, Message, TextChannel, GuildMember, User } from 'discord.js'
-import { sendError, checkSend, PunishmentType } from '../utils/utils.js'
+import { EmbedBuilder, Message, TextChannel, GuildMember, User } from 'discord.js'
+import { sendError, checkSend, PunishmentType, Util } from '../utils/utils.js'
 import { Client, Server } from '../utils/classes.js'
 
 export default async function(msg: Message<true>) {
@@ -17,22 +17,25 @@ export default async function(msg: Message<true>) {
             server.logsChannels.messageDelete
         ) as TextChannel
         if (channel && checkSend(channel, msg.guild.me as GuildMember)) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
             embed.setTitle('Mensaje Eliminado') //LANG:
             embed.setURL(msg.url)
-            embed.setColor('RANDOM') //FEATURE: server.logsColors
+            embed.setColor(Util.resolveColor('Random')) //FEATURE: server.logsColors
             embed.setAuthor({
                 name: msg.author.username,
                 iconURL: msg.author.displayAvatarURL(),
             })
-            embed.addField('Eliminado en:', msg.channel.toString(), true) //LANG:
             embed.setTimestamp()
-            embed.setThumbnail(msg.author.displayAvatarURL({ dynamic: true }))
-            embed.addField(
-                'Eliminado el:',
-                `<t:${Math.round(Date.now() / 1000)}>`,
-                true
-            ) //Lang:
+            embed.setThumbnail(msg.author.displayAvatarURL())
+            embed.addFields([{
+                name: 'Eliminado en:',
+                value: String(msg.channel),
+                inline: true,
+            },{
+                name: 'Eliminado el:',
+                value: `<t:${Math.round(Date.now() / 1000)}>`,
+                inline: true,
+            }])
             if (msg.content)
                 embed.setDescription('```\n' + msg.content + '\n```') //LANG:
             embed.setFooter({

@@ -1,6 +1,6 @@
-import { Guild, GuildMember, MessageEmbed, TextChannel } from 'discord.js'
+import { Guild, GuildMember, EmbedBuilder, TextChannel } from 'discord.js'
 import { Client, Server } from '../utils/classes.js'
-import { checkSend, sendError } from '../utils/utils.js'
+import { checkSend, sendError, Util } from '../utils/utils.js'
 
 export default async function(guild: Guild) {
     try {
@@ -26,7 +26,7 @@ export default async function(guild: Guild) {
             const owner = await (guild.client as Client).users.fetch(
                 guild.ownerId
             )
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setThumbnail(guild.iconURL() ?? '')
                 .setTitle('Me añadieron en un Nuevo Servidor')
                 .setDescription(
@@ -34,17 +34,29 @@ export default async function(guild: Guild) {
                         (guild.client as Client).guilds.cache.size
                     } servidores`
                 )
-                .addField('Servidor', `\`\`\`\n${guild.name}\n\`\`\``, true)
-                .addField('ID', `\`\`\`${guild.id}\`\`\``, true)
-                .addField('Roles', `\`${guild.roles.cache.size}\``, true)
-                .addField('Miembros', `\`\`\`Users: ${u.size}\nBots: ${b.size}\`\`\``, true)
-                .addField(
-                    'Dueño',
-                    `\`${owner.username}#${owner.discriminator}\n${owner.id}\``,
-                    true
-                )
+                .addFields([{
+                    name: 'Servidor',
+                    value: Util.escapeCodeBlock(guild.name),
+                    inline: true
+                },{
+                    name: 'ID',
+                    value: Util.escapeCodeBlock(guild.id),
+                    inline: true
+                },{
+                    name: 'Roles',
+                    value: Util.escapeCodeBlock(String(guild.roles.cache.size)),
+                    inline: true
+                },{
+                    name: 'Miembros',
+                    value: Util.escapeCodeBlock(`Users: ${u.size}\nBots: ${b.size}`),
+                    inline: true
+                },{
+                    name: 'Dueño',
+                    value: Util.escapeCodeBlock(`${owner.tag}\n${owner.id}`),
+                    inline: true
+                }])
                 .setTimestamp()
-                .setColor('RANDOM')
+                .setColor(Util.resolveColor('Random'))
                 .setFooter({
                     text: `${(guild.client as Client).user?.username} Bot v${
                         (guild.client as Client).version

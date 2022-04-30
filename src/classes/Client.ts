@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Client as BaseClient, Collection, TextChannel, Guild } from 'discord.js'
 import { getFirestore, Firestore } from 'firebase-admin/firestore'
-import InvitesTracker from '@androz2091/discord-invites-tracker'
+// import InvitesTracker from '@androz2091/discord-invites-tracker'
 import { initializeApp, cert } from 'firebase-admin/app'
 import { createRequire } from 'module'
 import { join, dirname } from 'path'
@@ -106,15 +106,15 @@ export class Client extends BaseClient {
         await this._checkBirthdays()
         await this.checkBans()
 
-        InvitesTracker.init(this, {
-            fetchGuilds: true,
-            fetchVanity: true,
-            fetchAuditLogs: true,
-            exemptGuild: guild => {
-                const server = this.getServer(guild)
-                return !(server.logsChannels.invite && server.premium)
-            }
-        }).on('guildMemberAdd', (...args) => this.emit('customGuildMemberAdd', ...args))
+        // InvitesTracker.init(this, {
+        //     fetchGuilds: true,
+        //     fetchVanity: true,
+        //     fetchAuditLogs: true,
+        //     exemptGuild: guild => {
+        //         const server = this.getServer(guild)
+        //         return !(server.logsChannels.invite && server.premium)
+        //     }
+        // }).on('guildMemberAdd', (...args) => this.emit('customGuildMemberAdd', ...args))
 
         // for (const command of this.application?.commands.cache.values()??[]) {
         //     await command.delete()

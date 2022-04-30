@@ -6,3 +6,4 @@ dist
 commmands_exported.json
 scripts/lang
 commands.json
+.vscode
