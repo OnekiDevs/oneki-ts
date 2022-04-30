@@ -65,7 +65,7 @@ export default class Poll extends Command {
                     name: 'multiple_choices',
                     description: 'Allow multiple choices',
                     type: ApplicationCommandOptionType.Boolean,
-                }].concat(new Array(20).map((_, i) => ({
+                }].concat(new Array(20).fill(0).map((_, i) => ({
                     name: `option${i + 1}`,
                     description: `Add an option for the poll`,
                     type: ApplicationCommandOptionType.String,

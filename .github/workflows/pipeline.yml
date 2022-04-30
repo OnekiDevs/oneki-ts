@@ -69,7 +69,7 @@ jobs:
           name: dist
           path: dist
       - name: Test
-        run: ls
+        run: ls dist
 
   # e2e:
   #   needs: [lint, build]
@@ -128,5 +128,7 @@ jobs:
           heroku_app_name: oneki-js
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           justlogin: true
+      - name: Check remotes
+        run: git remote -v
       - name: Deploy to heroku
         run: git push heroku-oneki main
