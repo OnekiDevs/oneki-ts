@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { ApplicationCommandDataResolvable, ApplicationCommandOptionType, ChatInputCommandInteraction, Guild } from 'discord.js'
+import { ApplicationCommandOptionType, ChatInputCommandInteraction } from 'discord.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import Client, { Command } from '../utils/classes.js'
-import { Translator } from '../utils/utils.js'
 
 export default class Birthday extends Command {
     constructor(client: Client) {

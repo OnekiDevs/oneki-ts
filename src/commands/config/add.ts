@@ -51,7 +51,7 @@ export async function blacklisted_word(interaction: ChatInputCommandInteraction<
     interaction.editReply(translate('config_cmd.add_blacklisted_word', { word }))
 }
 
-export async function no_filter_channel(interaction: ChatInputCommandInteraction<'cached'>){
+export async function ignored_channel(interaction: ChatInputCommandInteraction<'cached'>){
     await interaction.deferReply()
 
     const translate = Translator(interaction)

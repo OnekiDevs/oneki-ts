@@ -128,7 +128,7 @@ interface cmdOptions {
     permissions?: PermissionsBitField
 }
 
-interface CommandOptions {
+export interface CommandOptions {
     name: string
     description: string
     type: number
