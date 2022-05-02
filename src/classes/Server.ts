@@ -560,8 +560,7 @@ export class Server {
         }, 600_000)
 
         this.guild.client.on('messageCreate', msg => {
-            if (!msg.guild) return
-            if (!msg.content) return
+            if (!msg.guild || !msg.content) return
 
             const emojis = msg.content.match(/<a?:[a-z_]+:\d{18}>/gi)
             if (!emojis) return
