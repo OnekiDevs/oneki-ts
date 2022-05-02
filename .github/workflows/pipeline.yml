@@ -95,20 +95,20 @@ jobs:
   #         start: npm run start-test
   #         wait-on: http://localhost:5000
 
-  deploy-resistance:
-    needs: [test]
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Login to Heroku
-        if: ${{ github.event_name == 'push' }}
-        uses: akhileshns/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: resistancemts
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+  # deploy-resistance:
+  #   needs: [test]
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Login to Heroku
+  #       if: ${{ github.event_name == 'push' }}
+  #       uses: akhileshns/heroku-deploy@v3.12.12
+  #       with:
+  #         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+  #         heroku_app_name: resistancemts
+  #         heroku_email: ${{ secrets.HEROKU_EMAIL }}
           # justlogin: true
       # - name: Add username
       #   run: git config --global user.name "eliyya"
