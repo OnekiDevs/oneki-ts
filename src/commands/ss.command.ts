@@ -40,12 +40,12 @@ export default class SS extends Command {
         if (member.user.bot) params.append('bot', '')
         if (member.user.flags?.has(UserFlagsBitField.Flags.VerifiedBot)) params.append('verified', '')
     
-        let ss = await cw.buffer('https://oneki.herokuapp.com/api/fake/discord/message?' + params, {
-            height: Math.round((message.length * 50) / 140 + 50),
+        let ss: any = await cw.buffer('https://oneki.herokuapp.com/api/fake/discord/message?' + params, {
+            height: Math.round((message.length * 51) / 140 + 50),
             width: 500,
             launchOptions: { args: ['--no-sandbox'] }
         })
-        ss = await Jimp.read(ss)
+        ss = await Jimp.read('ss')
         const base = ss.getPixelColor(0, 0)
         ss.autocrop()
         const c = new Jimp(ss.bitmap.width+20, ss.bitmap.height+20, base)

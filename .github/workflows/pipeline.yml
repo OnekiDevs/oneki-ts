@@ -110,6 +110,8 @@ jobs:
           heroku_app_name: resistancemts
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           justlogin: true
+      - name: Add username
+        run: git config --global user.name "eliyya"
       - name: Create remote
         run: git remote add heroku-resistance https://git.heroku.com/resistancemts.git
       - name: Add remotes
@@ -132,6 +134,8 @@ jobs:
           heroku_app_name: oneki-js
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           justlogin: true
+      - name: Add username
+        run: git config --global user.name "eliyya"
       - name: Add remote
         run: git remote add heroku-oneki https://git.heroku.com/oneki-js.git
       - name: Check remotes
