@@ -570,9 +570,7 @@ export class Server {
 
             for (const id of ids) {
                 const emoji = msg.guild.emojis.cache.get(id)
-                console.log(this.emojiStatistics[id])
                 if (emoji) this.emojiStatistics[id] = this.emojiStatistics[id] ? this.emojiStatistics[id] + 1 : 1
-                console.log(this.emojiStatistics[id])
             }
         })
     }

@@ -113,7 +113,7 @@ jobs:
       - name: Add username
         run: git config --global user.name "eliyya"
       - name: Create remote
-        run: git remote add heroku-resistance https://git.heroku.com/resistancemts.git
+        run: git remote add heroku-resistance git@heroku.com:resistancemts.git
       - name: Add remotes
         run: git remote -v
       - name: Deploy to heroku
@@ -137,7 +137,7 @@ jobs:
       - name: Add username
         run: git config --global user.name "eliyya"
       - name: Add remote
-        run: git remote add heroku-oneki https://git.heroku.com/oneki-js.git
+        run: git remote add heroku-oneki git@heroku.com:oneki-js.git
       - name: Check remotes
         run: git remote -v
       - name: Deploy to heroku

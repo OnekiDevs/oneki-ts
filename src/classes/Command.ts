@@ -63,7 +63,7 @@ export class Command {
     }
 
     static errorDeploy(error: Error) {
-        console.error('!!!', error.name)
+        console.error('!!!', error.message)
         console.error(error)
     }
 
