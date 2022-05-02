@@ -109,15 +109,15 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: resistancemts
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          justlogin: true
-      - name: Add username
-        run: git config --global user.name "eliyya"
-      - name: Create remote
-        run: heroku git:remote -a resistancemts -r heroku-resistance
-      - name: Add remotes
-        run: git remote -v
-      - name: Deploy to heroku
-        run: git push heroku-resistance main
+          # justlogin: true
+      # - name: Add username
+      #   run: git config --global user.name "eliyya"
+      # - name: Create remote
+      #   run: heroku git:remote -a resistancemts -r heroku-resistance
+      # - name: Add remotes
+      #   run: git remote -v
+      # - name: Deploy to heroku
+      #   run: git push heroku-resistance main
 
   deploy-oneki:
     needs: [test]
@@ -133,12 +133,13 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: oneki-js
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          justlogin: true
-      - name: Add username
-        run: git config --global user.name "eliyya"
-      - name: Add remote
-        run: heroku git:remote -a oneki-js -r heroku-oneki
-      - name: Check remotes
-        run: git remote -v
-      - name: Deploy to heroku
-        run: git push heroku-oneki main
+          branch: main
+      #     justlogin: true
+      # - name: Add username
+      #   run: git config --global user.name "eliyya"
+      # - name: Add remote
+      #   run: heroku git:remote -a oneki-js -r heroku-oneki
+      # - name: Check remotes
+      #   run: git remote -v
+      # - name: Deploy to heroku
+      #   run: git push heroku-oneki main
