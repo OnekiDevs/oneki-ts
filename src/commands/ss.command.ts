@@ -49,11 +49,11 @@ export default class SS extends Command {
 
         ss = await Jimp.read(ss)
         const base = ss.getPixelColor(0, 0)
-        ss.autocrop()
+        await ss.autocrop()
         const c = new Jimp(ss.bitmap.width+20, ss.bitmap.height+20, base)
         c.composite(ss, 10, 10)
         ss = await c.getBufferAsync(Jimp.MIME_PNG)
-        
+
         interaction.editReply({
             files: [new Attachment(ss, 'ss.jpg')]
         })
