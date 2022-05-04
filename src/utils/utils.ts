@@ -191,8 +191,11 @@ export async function sendError(client: Client, error: Error, file: string) {
  * @param {Interaction} interaction - Interaction - The interaction object that contains the locale and client.
  * @returns {transalte} A function that takes a phrase and params and returns a string.
  */
-export const Translator = function (interaction: Interaction | Message) {
-    const lang = interaction.locale?.slice(0, 2) ?? interaction.guild.locale.slice(0, 2)
+export const Translator = function (interaction: Interaction | Message | {client: Client}) {
+    let lang: string
+    if (interaction instanceof Interaction) lang = interaction.locale?.slice(0, 2)
+    else if (interaction instanceof Message) lang = interaction.guild?.preferredLocale.slice(0, 2) ?? 'en'
+    else lang = 'en'
     const i18n = (interaction.client as Client).i18n
     
     /**

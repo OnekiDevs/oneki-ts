@@ -7,7 +7,7 @@ export default async function(interaction: ChatInputCommandInteraction | ButtonI
         if (interaction.isChatInputCommand()) 
             (interaction.client as Client).commands
                 .get(interaction.commandName)
-                ?.run(interaction as ChatInputCommandInteraction<'cached'>)
+                ?.interacion(interaction as ChatInputCommandInteraction<'cached'>)
         if (interaction.isButton()) 
             (interaction.client as Client).components
                 .find(btn => btn.regex.test(interaction.customId))
