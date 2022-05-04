@@ -119,23 +119,23 @@ jobs:
       # - name: Deploy to heroku
       #   run: git push heroku-resistance main
 
-  deploy-oneki:
-    needs: [test]
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Git pull
-        run: git pull
-      - name: Login to Heroku
-        if: ${{ github.event_name == 'push' }}
-        uses: akhileshns/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: oneki-js
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          branch: main
+  # deploy-oneki:
+  #   needs: [test]
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Git pull
+  #       run: git pull
+  #     - name: Login to Heroku
+  #       if: ${{ github.event_name == 'push' }}
+  #       uses: akhileshns/heroku-deploy@v3.12.12
+  #       with:
+  #         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+  #         heroku_app_name: oneki-js
+  #         heroku_email: ${{ secrets.HEROKU_EMAIL }}
+  #         branch: main
       #     justlogin: true
       # - name: Add username
       #   run: git config --global user.name "eliyya"
