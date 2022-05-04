@@ -48,25 +48,29 @@ export class Command {
         if (this.global) {
             await this.createData()
             return this.client.application?.commands.create(this.data)
-                .catch(Command.errorDeploy)
+                .catch(e => {
+                    if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
+                    else console.error(e)
+                })
         }
         if (guild) {
             await this.createData(guild)
             return guild.commands.create(this.data)
-                .catch(Command.errorDeploy)
+                .catch(e => {
+                    if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
+                    else console.error(e)
+                })
         }
         return Promise.all(
             this.client.guilds.cache.map(async guild => {
                 await this.createData(guild)
                 return guild.commands.create(this.data)
-                    .catch(Command.errorDeploy)
+                    .catch(e => {
+                        if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
+                        else console.error(e)
+                    })
             })
         )
-    }
-
-    static errorDeploy(error: Error) {
-        console.error('!!!', error.message)
-        console.error(error)
     }
 
     /**
