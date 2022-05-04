@@ -51,25 +51,25 @@ jobs:
           name: dist
           path: dist
 
-  test:
-    needs: [lint, build]
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v2
-        with:
-          cache: 'npm'
-          node-version: '18'
-      - name: Install dependencies
-        run: npm ci
-      - uses: actions/download-artifact@v2
-        with:
-          name: dist
-          path: dist
-      - name: Test
-        run: ls dist
+  # test:
+  #   needs: [lint, build]
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         cache: 'npm'
+  #         node-version: '18'
+  #     - name: Install dependencies
+  #       run: npm ci
+  #     - uses: actions/download-artifact@v2
+  #       with:
+  #         name: dist
+  #         path: dist
+  #     - name: Test
+  #       run: ls dist
 
   # e2e:
   #   needs: [lint, build]

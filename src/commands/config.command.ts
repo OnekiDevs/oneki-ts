@@ -187,7 +187,7 @@ export default class Config extends Command {
             }]
         })
         this.addOption({
-            name: 'logs',
+            name: 'log',
             description: 'Set the logs',
             type: ApplicationCommandOptionType.SubcommandGroup,
             options: logsOptions
@@ -377,6 +377,6 @@ export default class Config extends Command {
     async interacion(interaction: ChatInputCommandInteraction<'cached'>) {
         const subcommand = interaction.options.getSubcommand()
         const subcommandGroup = interaction.options.getSubcommandGroup()
-        import(`./config/${subcommandGroup}.js`).then(scg => scg[subcommand](interaction)).catch(() => '')
+        import(`./config/${subcommandGroup}.js`).then(scg => scg[subcommand](interaction)).catch(console.error)
     }
 }
