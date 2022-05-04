@@ -11,7 +11,8 @@
     "dev": "nodemon -e ts --exec \"npm run build && npm start\"",
     "watch": "nodemon -e ts --exec \"npm run build\"",
     "update": "npm-check -E -u -p",
-    "lint": "eslint"
+    "lint": "eslint",
+    "heroku": "git push heroku-oneki && git push heroku-resistance"
   },
   "repository": {
     "type": "git",
