@@ -48,10 +48,7 @@ export class Command {
         if (this.global) {
             await this.createData()
             return this.client.application?.commands.create(this.data)
-                .catch(e => {
-                    if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
-                    else console.error(e)
-                })
+                .catch(console.error)
         }
         if (guild) {
             await this.createData(guild)
