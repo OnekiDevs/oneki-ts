@@ -374,7 +374,7 @@ export default class Config extends Command {
         })
     }
 
-    async run(interaction: ChatInputCommandInteraction<'cached'>) {
+    async interacion(interaction: ChatInputCommandInteraction<'cached'>) {
         const subcommand = interaction.options.getSubcommand()
         const subcommandGroup = interaction.options.getSubcommandGroup()
         import(`./config/${subcommandGroup}.js`).then(scg => scg[subcommand](interaction)).catch(() => '')

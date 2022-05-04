@@ -46,7 +46,7 @@ export default class Activitie extends Command {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async run(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
+    async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         const translate = Translator(interaction)
         const [activitieId, activitie] = (interaction.options.getString('game') as string).split('/')
         const channel = interaction.options.getChannel('channel') ?? interaction.guild?.members.cache.get(interaction.user.id)?.voice.channel
@@ -65,7 +65,7 @@ export default class Activitie extends Command {
                     new ButtonBuilder().setLabel('join').setStyle(ButtonStyle.Link).setURL(`https://discord.com/invite/${invite.code}`),
                     new ButtonBuilder()
                         .setLabel('show link')
-                        .setStyle(ButtonStyle.Link)
+                        .setStyle(ButtonStyle.Primary)
                         .setCustomId(`act_sl_${invite.code}`)
                 ]),
             ]

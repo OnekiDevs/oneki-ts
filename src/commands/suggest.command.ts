@@ -47,7 +47,7 @@ export default class Suggest extends Command {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    run(interaction: ChatInputCommandInteraction<'cached'>): any {
+    interacion(interaction: ChatInputCommandInteraction<'cached'>): any {
         const translate = Translator(interaction)
         let server = this.client.servers.get(interaction.guildId as string)
         if (!server || server.suggestChannels.length === 0) {

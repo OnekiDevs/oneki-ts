@@ -90,7 +90,7 @@ export default class Poll extends Command {
         }
     }
 
-    async run(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
+    async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         if (interaction.options.getSubcommand() === 'make') this.make(interaction)
         else if (interaction.options.getSubcommand() === 'finalize') this.finalize(interaction)
     }

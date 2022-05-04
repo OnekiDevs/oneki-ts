@@ -12,6 +12,7 @@ import { Client, Local } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
 
 export class Command {
+    hibrid = false
     name: string
     description: string
     local_names: Local
@@ -24,7 +25,7 @@ export class Command {
     permissions: PermissionsBitField | null = null
     constructor(
         client: Client,
-        { name, description, global = true, options = [], dm = true, permissions }: cmdOptions
+        { name, description, global = true, options = [], dm = true, permissions, hibrid = false }: cmdOptions
     ) {
         this.name = name['en-US']
         this.description = description['en-US']
@@ -34,6 +35,7 @@ export class Command {
         this.global = global
         this.options = options
         this.dm = dm
+        this.hibrid = hibrid
         if (permissions) this.permissions = permissions
     }
 
@@ -90,9 +92,29 @@ export class Command {
      */
     async createData(guild?: Guild) {}
 
-    async run(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
-        return interaction.deferReply()
-    }
+    // async execute(interacion: Message<true> | ChatInputCommandInteraction<'cached'>): Promise<any> {
+    //     const server = this.client.getServer(interacion.guild)
+    //     interacion.server = server
+    //     if (interacion.isChatInputCommand()) this.interacion(interacion)
+    //     else {
+    //         this.message(interacion as Message<true>)
+    //         interacion.deferReply = function({ephemeral}: {ephemeral: boolean}) {
+    //             this.channel.sendTyping()
+    //         }
+    //         interacion.editReply = function(params) {
+    //             this.reply(params)
+    //         }
+    //         const prefix = server?.prefixes.find(p => msg.content.startsWith(p)) ?? ''
+    //         const args = msg.content.slice(prefix?.length).split(/ /gi)
+    //         args.shift()
+    //         interacion.option = args
+    //     }
+    //     this.run(interacion)
+    // }
+
+    // async run(interaction: ChatInputCommandInteraction<'cached'> | Message<true>): Promise<any> {
+    //     return interaction.deferReply()
+    // }
 
     async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         return interaction.deferReply()
@@ -138,6 +160,8 @@ export class Command {
     }
 }
 
+// export interface hybrid extends Message<true>
+
 interface cmdOptions {
     name: Local
     description: Local
@@ -145,6 +169,7 @@ interface cmdOptions {
     options?: CommandOptions[]
     dm?: boolean
     permissions?: PermissionsBitField
+    hibrid?: boolean
 }
 
 export interface CommandOptions {

@@ -33,7 +33,7 @@ export default class Birthday extends Command {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async run(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
+    async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         await interaction.deferReply()
         const translate = this.translator(interaction)
         const subCommand = interaction.options.getSubcommand()
