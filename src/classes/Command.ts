@@ -10,6 +10,7 @@ import {
 } from 'discord.js'
 import { Client, Local } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
+import { HybridInteraction } from './HybridInteraction.js'
 
 export class Command {
     hibrid = false
@@ -113,9 +114,9 @@ export class Command {
     //     this.run(interacion)
     // }
 
-    // async run(interaction: ChatInputCommandInteraction<'cached'> | Message<true>): Promise<any> {
-    //     return interaction.deferReply()
-    // }
+    async run(interaction: HybridInteraction<'message' | 'interaction'>): Promise<any> {
+        return interaction.deferReply()
+    }
 
     async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         return interaction.deferReply()
