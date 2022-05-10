@@ -1,7 +1,8 @@
 import { ButtonInteraction, EmbedBuilder, ButtonBuilder, ActionRowBuilder, MessageActionRowComponentBuilder, ButtonStyle } from 'discord.js'
 import { Component, Client } from '../utils/classes.js'
-import Help from '../oldCommands/help.oldCommand.js' 
+// import Help from '../oldCommands/help.oldCommand.js' 
 import { Translator } from '../utils/utils.js'
+const Help: any = {}
 
 export default class Activitie extends Component {
     constructor(client: Client) {
@@ -20,9 +21,9 @@ export default class Activitie extends Component {
         const embed = new EmbedBuilder()
         embed.setTitle(translate('help_btn.embed_title', { bot: interaction.client.user?.username }))
         embed.setDescription(translate('help_btn.embed_description', { category }))
-        const commands = await Help.getCategory(category)
+        const commands: any = await Help.getCategory(category)
         await Promise.all(
-            commands.map((cmd) => {
+            commands.map((cmd: any) => {
                 embed.addFields([{
                     name: cmd.name,
                     value: translate('help_btn.command_field', { cmd_description: cmd.description, alias: cmd.alias.length > 0 ? '`' + cmd.alias.join('` `') + '`' : 'none', cmd_prefix: (cmd.type == 'slash' ? '/' : server?.getPrefixes(true)[0] ?? server?.prefixes[0]), cmd_use: cmd.use }),
