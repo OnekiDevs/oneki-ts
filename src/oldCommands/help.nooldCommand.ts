@@ -70,13 +70,13 @@ export default class Help extends OldCommand {
     }
 
     static async getCategories(): Promise<string[]> {
-        const req = await fetch('https://oneki.herokuapp.com/api/commands/categories/')
+        const req = await fetch('https://oneki.up.railway.app/api/commands/categories/')
         if (!req.ok) return Promise.resolve([])
         return Promise.resolve((await req.json()) as string[])
     }
 
     static async getCategory(category: string): Promise<oldCommandData[]> {
-        const req = await fetch(`https://oneki.herokuapp.com/api/commands?category=${category}`)
+        const req = await fetch(`https://oneki.up.railway.app/api/commands?category=${category}`)
         if (!req.ok) return Promise.resolve([])
         return Promise.resolve((await req.json()) as oldCommandData[])
     }

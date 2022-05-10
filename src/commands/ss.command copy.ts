@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Attachment, ApplicationCommandOptionType, UserFlagsBitField, Message } from 'discord.js'
+import { ChatInputCommandInteraction, Attachment, ApplicationCommandOptionType, UserFlagsBitField } from 'discord.js'
 import { Command, Client } from '../utils/classes.js'
 import cw from 'capture-website'
 import Jimp from 'jimp'
@@ -60,16 +60,15 @@ export default class SS extends Command {
         })
     }
 
-    async run(interaction: HybridInteraction<'interaction' | 'message'>) {  
-        interaction.deferReply()
+    async run(interaction: HybridInteraction<'message' | 'interaction'>) {  
+        await interaction.deferReply()
 
         let member;
         if (interaction.isInteraction()) {
-            member = interaction.base.options.getMember('user') ?? interaction.member
+            member = interaction.base.options.getMember('user') ?? interaction.base.member
         } else {
-            member = interaction.base // Property 'base' does not exist on type 'never'
+            interaction.base // Property 'base' does not exist on type 'never'
         }
-        
     }
 
 }

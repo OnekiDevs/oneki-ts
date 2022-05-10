@@ -94,28 +94,9 @@ export class Command {
      */
     async createData(guild?: Guild) {}
 
-    // async execute(interacion: Message<true> | ChatInputCommandInteraction<'cached'>): Promise<any> {
-    //     const server = this.client.getServer(interacion.guild)
-    //     interacion.server = server
-    //     if (interacion.isChatInputCommand()) this.interacion(interacion)
-    //     else {
-    //         this.message(interacion as Message<true>)
-    //         interacion.deferReply = function({ephemeral}: {ephemeral: boolean}) {
-    //             this.channel.sendTyping()
-    //         }
-    //         interacion.editReply = function(params) {
-    //             this.reply(params)
-    //         }
-    //         const prefix = server?.prefixes.find(p => msg.content.startsWith(p)) ?? ''
-    //         const args = msg.content.slice(prefix?.length).split(/ /gi)
-    //         args.shift()
-    //         interacion.option = args
-    //     }
-    //     this.run(interacion)
-    // }
-
     async run(interaction: HybridInteraction<'message' | 'interaction'>): Promise<any> {
-        return interaction.deferReply()
+        // if (interaction instanceof ChatInputCommandInteraction) interaction.deferReply()
+        // else interaction.channel.sendTyping()
     }
 
     async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
