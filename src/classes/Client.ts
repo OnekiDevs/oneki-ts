@@ -60,7 +60,7 @@ export class Client extends BaseClient {
 
     private _initWebSocket() {
         try {
-            this.websocket = new WebSocket('wss://oneki.herokuapp.com/')
+            this.websocket = new WebSocket('wss://oneki.up.railway.app/')
             this.websocket.on('open', () => {
                 console.time('WebSocket Connection')
                 console.log('\x1b[33m%s\x1b[0m', 'Socket Conectado!!!')
