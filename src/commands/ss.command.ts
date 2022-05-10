@@ -41,7 +41,7 @@ export default class SS extends Command {
         if (member.user.bot) params.append('bot', '')
         if (member.user.flags?.has(UserFlagsBitField.Flags.VerifiedBot)) params.append('verified', '')      
         
-        let ss: any = await cw.buffer('https://oneki.herokuapp.com/api/fake/discord/message?' + params, {
+        let ss: any = await cw.buffer('https://oneki.up.railway.app/api/fake/discord/message?' + params, {
             height: Math.round((message.length * 51) / 140 + 50),
             width: 500,
             launchOptions: { args: ['--no-sandbox'] }

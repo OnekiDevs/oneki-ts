@@ -21,7 +21,7 @@ export async function suggest_channel(interaction: ChatInputCommandInteraction<'
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const channel = interaction.options.getChannel('channel') as TextChannel
     server.setSuggestChannel(channel)
-    interaction.reply(translate('config_cmd.set_suggest_channel.reply', { channel }))
+    interaction.reply(translate('config_cmd.set_suggest_channel.reply', { channel: channel.toString() }))
     try {
         await channel.sendTyping()
         channel.send(translate('config_cmd.set_suggest_channel.message'))

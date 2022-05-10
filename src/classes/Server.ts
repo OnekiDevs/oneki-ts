@@ -647,6 +647,10 @@ export class Server {
         )
     }
 
+    /**
+     * 
+     * @param {string} memberUpdateChannel The channel id to send the member update logs
+     */
     setMemberUpdateChannel(memberUpdateChannel: string){
         this.logsChannels.memberUpdate = memberUpdateChannel
         this.db

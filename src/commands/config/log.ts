@@ -10,7 +10,7 @@ export function message_update(interaction: ChatInputCommandInteraction<'cached'
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const channel = interaction.options.getChannel('channel') as TextChannel
     server.setMessageUpdateLog(channel.id)
-    interaction.reply(translate('config_cmd.set_log', { channel }))
+    interaction.reply(translate('config_cmd.set_log', { channel: channel.toString() }))
 }
 
 export function message_delete(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -20,7 +20,7 @@ export function message_delete(interaction: ChatInputCommandInteraction<'cached'
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const channel = interaction.options.getChannel('channel') as TextChannel
     server.setMessageDeleteLog(channel.id)
-    interaction.reply(translate('config_cmd.set_log', { channel }))
+    interaction.reply(translate('config_cmd.set_log', { channel: channel.toString() }))
 }
 
 export function message_attachment(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -30,10 +30,11 @@ export function message_attachment(interaction: ChatInputCommandInteraction<'cac
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const channel = interaction.options.getChannel('channel') as TextChannel
     server.setAttachmentLog(channel.id)
-    interaction.reply(translate('config_cmd.set_log', { channel }))
+    interaction.reply(translate('config_cmd.set_log', { channel: channel.toString() }))
 }
 
 export async function auto(interaction: ChatInputCommandInteraction<'cached'>) {
+    await interaction.deferReply()
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     const server = (interaction.client as Client).getServer(interaction.guild)
 
@@ -58,6 +59,15 @@ export async function auto(interaction: ChatInputCommandInteraction<'cached'>) {
         nsfw: true
     })
     server.setAttachmentLog(ca.id)
+
+    const cu = await category.children.create('members', {
+        type: 0
+    })
+    server.setMemberUpdateChannel(cu.id)
+
+    interaction.reply(Translator(interaction)('config_cmd.auto_logs', { category: category.toString() }))
+    //TODO: mejorar el mensaje
+    //TODO: agregar invites
 }
 
 export async function invites(interaction: ChatInputCommandInteraction<'cached'>){

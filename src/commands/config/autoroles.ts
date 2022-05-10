@@ -16,7 +16,7 @@ export async function add(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply()
     const translate = Translator(interaction)
     const name = (interaction.options.getString('group') as string).split(/ +/gi).join('_')
-    const rol = interaction.options.getRole('rol') as Role
+    const rol = interaction.options.getRole('role') as Role
     const server = (interaction.client as Client).getServer(interaction.guild)
     server.addAutorol(name, rol.id)
     await (interaction.client as Client).commands.get('config')?.deploy(interaction.guild)

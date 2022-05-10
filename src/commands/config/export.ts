@@ -13,7 +13,9 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
         logs_channels: {
             message_update: undefined,
             message_delete: undefined,
-            message_attachment: undefined
+            message_attachment: undefined,
+            invite: undefined,
+            member_update: undefined
         },
         birthday: {
             message: undefined,

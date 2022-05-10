@@ -23,11 +23,13 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
 
     if (prefixes) server.prefixes = prefixes
     if (logs_channels) {
-        const { message_update, message_delete, message_attachment } = logs_channels
+        const { message_update, message_delete, message_attachment, invite, member_update } = logs_channels
 
         if (message_update) server.setMessageDeleteLog(message_update)
         if (message_delete) server.setMessageDeleteLog(message_delete)
         if (message_attachment) server.setAttachmentLog(message_attachment)
+        if (invite) server.setInviteChannel(invite)
+        if (member_update) server.setMemberUpdateChannel(member_update)
     }
     if (birthday) {
         const { message, channel } = birthday
