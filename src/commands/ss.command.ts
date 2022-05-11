@@ -1,7 +1,8 @@
 import { ChatInputCommandInteraction, Attachment, ApplicationCommandOptionType, UserFlagsBitField } from 'discord.js'
 import { Command, Client } from '../utils/classes.js'
-import cw from 'capture-website'
+// import cw from 'capture-website'
 import Jimp from 'jimp'
+import puppeteer from 'puppeteer'
 
 export default class SS extends Command {
     constructor(client: Client) {
@@ -14,20 +15,23 @@ export default class SS extends Command {
                 'en-US': 'Shows a fake message',
                 'es-ES': 'Muestra un mensaje falso'
             },
-            options: [{
-                name: 'text',
-                type: ApplicationCommandOptionType.String,
-                description: 'The text of the message',
-                required: true,
-            },{
-                name: 'user',
-                type: ApplicationCommandOptionType.User,
-                description: 'The user of the message',
-            }]
+            options: [
+                {
+                    name: 'text',
+                    type: ApplicationCommandOptionType.String,
+                    description: 'The text of the message',
+                    required: true
+                },
+                {
+                    name: 'user',
+                    type: ApplicationCommandOptionType.User,
+                    description: 'The user of the message'
+                }
+            ]
         })
     }
 
-    async interacion(interaction: ChatInputCommandInteraction<'cached'>) {        
+    async interacion(interaction: ChatInputCommandInteraction<'cached'>) {
         await interaction.deferReply()
 
         const member = interaction.options.getMember('user') ?? interaction.member
@@ -39,18 +43,19 @@ export default class SS extends Command {
             color: member.displayHexColor
         })
         if (member.user.bot) params.append('bot', '')
-        if (member.user.flags?.has(UserFlagsBitField.Flags.VerifiedBot)) params.append('verified', '')      
-        
-        let ss: any = await cw.buffer('https://oneki.up.railway.app/api/fake/discord/message?' + params, {
-            height: Math.round((message.length * 51) / 140 + 50),
-            width: 500,
-            launchOptions: { args: ['--no-sandbox'] }
-        })
+        if (member.user.flags?.has(UserFlagsBitField.Flags.VerifiedBot)) params.append('verified', '')
+
+        const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
+        const page = await browser.newPage()
+        await page.goto(`https://oneki.up.railway.app/api/fake/discord/message?${params}`, { waitUntil: 'load' })
+        page.setViewport({ height: Math.round((message.length * 51) / 140 + 50), width: 500 })
+        let ss: any = await page.screenshot({ type: 'png' })
+        browser.close()
 
         ss = await Jimp.read(ss)
         const base = ss.getPixelColor(0, 0)
         await ss.autocrop()
-        const c = new Jimp(ss.bitmap.width+20, ss.bitmap.height+20, base)
+        const c = new Jimp(ss.bitmap.width + 20, ss.bitmap.height + 20, base)
         c.composite(ss, 10, 10)
         ss = await c.getBufferAsync(Jimp.MIME_PNG)
 

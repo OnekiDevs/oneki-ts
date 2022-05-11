@@ -1,6 +1,6 @@
 {
   "name": "oneki",
-  "version": "0.16.8",
+  "version": "0.16.9",
   "description": "Module of Oneki Bot in JavaScript",
   "main": "src/index.js",
   "type": "module",
@@ -27,7 +27,6 @@
   "homepage": "https://github.com/OnekiDevs/oneki-ts#readme",
   "dependencies": {
     "@androz2091/discord-invites-tracker": "1.1.0",
-    "capture-website": "2.3.0",
     "catch-decorator-ts": "0.0.3",
     "cross-env": "7.0.3",
     "discord.js": "14.0.0-dev.1651493371-4ba0f56",
@@ -37,6 +36,7 @@
     "iblazingx-ms": "2.1.2",
     "jimp": "0.16.1",
     "jszip": "3.9.1",
+    "puppeteer": "13.7.0",
     "ws": "8.5.0"
   },
   "engines": {
