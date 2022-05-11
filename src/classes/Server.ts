@@ -48,17 +48,17 @@ export class Server {
     }
 
     async init() {
-        await this.syncDB()
-        return Promise.resolve()
+        return this.syncDB()
     }
 
-    async syncDB(dataPriority?: boolean): Promise<void> {
+    async syncDB(dataPriority?: boolean): Promise<any> {
+        if (this.guild.client.user?.id === '897298074915975269'
+            && this.guild.id === '885674114310881362') return
         const db = await this.db.get()
 
         if (!db.exists || dataPriority) {
             const obj = this.toDBObject()
-            this.db.set(obj)
-            return Promise.resolve()
+            return this.db.set(obj)
         }
 
         const data = db.data() as GuildDataBaseModel
@@ -89,7 +89,7 @@ export class Server {
             }
         }
 
-        return Promise.resolve()
+        return
     }
 
     toDBObject(toPublic?: boolean): GuildDataBaseModel {
