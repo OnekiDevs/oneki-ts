@@ -321,7 +321,7 @@ export class Server {
         if (this.logsChannels.messageDelete) data['logs_channels.message_delete'] = this.logsChannels.messageDelete
         if (this.logsChannels.invite) data['logs_channels.invite'] = this.logsChannels.invite
         if (this.logsChannels.memberUpdate) data['logs_channels.member_update'] = this.logsChannels.memberUpdate
-        if (Object.values(data.logs_channels).length === 0) data.logs_channels = FieldValue.delete()
+        if (Object.values(data).length === 0) data.logs_channels = FieldValue.delete()
         this.db.update(data).catch(() => this.db.set(data))
     }
 
