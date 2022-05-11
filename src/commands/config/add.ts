@@ -1,5 +1,5 @@
-import { PermissionsBitField, ChatInputCommandInteraction, TextChannel } from 'discord.js'
-import { permissionsError, Translator } from '../../utils/utils.js'
+import { PermissionsBitField, ChatInputCommandInteraction, TextChannel, GuildMember } from 'discord.js'
+import { checkSend, permissionsError, Translator } from '../../utils/utils.js'
 import { Client } from '../../utils/classes.js'
 
 export function file(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -21,19 +21,18 @@ export async function suggest_channel(interaction: ChatInputCommandInteraction<'
     const channel = interaction.options.getChannel('channel') as TextChannel
     const alias = (interaction.options.getString('alias') as string).toLowerCase()
     const isDefault = interaction.options.getBoolean('default') ?? false
+    
+    if (!checkSend(channel, interaction.guild.me as GuildMember)) return interaction.reply(translate('havent_write_permissions', { channel: channel.toString() }))
+    
     server.addSuggestChannel({
         channel: channel.id,
         default: isDefault,
         alias: alias,
     })
     interaction.reply(translate('config_cmd.add_suggest_channel.reply', { channel, alias }))
-    try {
-        await channel.sendTyping()
-        channel.send(translate('config_cmd.add_suggest_channel.message', { channel, alias }))
-    } catch (error) {
-        // TODO manejar el error
-    }
-    (interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
+    await channel.sendTyping()
+    channel.send(translate('config_cmd.add_suggest_channel.message', { channel, alias }))
+    ;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
     channel.setRateLimitPerUser(21600)
 }
 

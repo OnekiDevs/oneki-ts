@@ -59,7 +59,7 @@
 			"displaying_error": "Don't exist this group",
 			"sending_error": "I don't have the permissions to send messages in this channel"
 		},
-		"auto_logs": "Logs set in {category}",
+		"auto_logs": "Log `message_update` set in {message}\nLog `message_delete` set in {message}\nLog `message_attachment` set in {attachment}\nLog `invites` set in {invites}\nLog `member_update` set in {members}",
 		"set_keep_roles": "The option of keeping or keeping roles has been set to {keepRole}!",
 		"add_blacklisted_word": "The word `{word}` has been blacklisted successfully!",
 		"remove_blacklisted_word": "The word `{word}` has been removed from the blacklist successfully!",
@@ -169,5 +169,6 @@
 	"------------>>>============ commons ============<<<------------": "------------>>>============ commons ============<<<------------",
 	"footer": "{bot} Bot v{version}",
 	"premium": "Upgrade your membership to Premium to use this feature",
-	"useractivitie": {}
+	"useractivitie": {},
+	"havent_write_permissions": "I don't have enough permissions to send messages in {channel}"
 }

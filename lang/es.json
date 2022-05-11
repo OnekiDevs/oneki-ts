@@ -59,7 +59,7 @@
 			"displaying_error": "No existe ese grupo",
 			"sending_error": "No permisos para enviar mensajes en el canal"
 		},
-		"auto_logs": "Logs establecidos en {category}",
+		"auto_logs": "Log `message_update` establecido en {message}\nLog `message_delete` establecido en {message}\nLog `message_attachment` establecido en {attachment}\nLog `invites` establecido en {invites}\nLog `member_update` establecido en {members}",
 		"set_keep_roles": "¡La opción de mantener roles ha sido seleccionada como {keepRole}!",
 		"add_blacklisted_word": "¡La palabra `{word}` ha sido prohibida satisfactoriamente!",
 		"remove_blacklisted_word": "¡La palabra `{word}` ha sido removida de las prohibidas satisfactoriamente!",
@@ -168,5 +168,6 @@
 	"------------>>>============ commons ============<<<------------": "------------>>>============ commons ============<<<------------",
 	"footer": "{bot} Bot v{version}",
 	"premium": "Actualize su membresia a Premium para usar esta caracteristica",
-	"useractivitie": {}
+	"useractivitie": {},
+	"havent_write_permissions": "No tengo permisos para escribir en {channel}"
 }

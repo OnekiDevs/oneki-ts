@@ -1,4 +1,4 @@
-import { PermissionsBitField, ChatInputCommandInteraction, TextChannel, CategoryChannel, ChannelType } from 'discord.js'
+import { PermissionsBitField, ChatInputCommandInteraction, TextChannel, CategoryChannel, ChannelType, EmbedBuilder } from 'discord.js'
 import { permissionsError, Translator } from '../../utils/utils.js'
 import { Client } from '../../utils/classes.js'
 
@@ -65,9 +65,16 @@ export async function auto(interaction: ChatInputCommandInteraction<'cached'>) {
     })
     server.setMemberUpdateChannel(cu.id)
 
-    interaction.reply(Translator(interaction)('config_cmd.auto_logs', { category: category.toString() }))
-    //TODO: mejorar el mensaje
-    //TODO: agregar invites
+    const ci = await category.children.create('invites', {
+        type: 0
+    })
+    server.setInviteChannel(ci.id)
+
+    interaction.reply({
+        embeds: [new EmbedBuilder()
+            .setDescription(Translator(interaction)('config_cmd.auto_logs', { invites: ci.toString(), members: cu.toString(), attachments: ca.toString(), messages: cm.toString() }))
+        ]
+    })
 }
 
 export async function invites(interaction: ChatInputCommandInteraction<'cached'>){

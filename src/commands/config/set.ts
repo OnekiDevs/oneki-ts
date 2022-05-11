@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { ChatInputCommandInteraction, PermissionsBitField, TextChannel } from 'discord.js'
-import { permissionsError, Translator } from '../../utils/utils.js'
+import { ChatInputCommandInteraction, GuildMember, PermissionsBitField, TextChannel } from 'discord.js'
+import { checkSend, permissionsError, Translator } from '../../utils/utils.js'
 import { Client } from '../../utils/classes.js'
 
 export function prefix(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -11,7 +11,7 @@ export function prefix(interaction: ChatInputCommandInteraction<'cached'>) {
     const prefix = interaction.options.getString('prefix') as string
     server.setPrefix(prefix)
     interaction.reply(translate('config_cmd.set_prefix', { prefix }))
-    ;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild) //TODO cambiar a autocompletado
+    ;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
 }
 
 export async function suggest_channel(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -20,15 +20,14 @@ export async function suggest_channel(interaction: ChatInputCommandInteraction<'
     const server = (interaction.client as Client).getServer(interaction.guild)
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const channel = interaction.options.getChannel('channel') as TextChannel
+    
+    if (!checkSend(channel, interaction.guild.me as GuildMember)) return interaction.reply(translate('havent_write_permissions', { channel: channel.toString() }))
+    
     server.setSuggestChannel(channel)
     interaction.reply(translate('config_cmd.set_suggest_channel.reply', { channel: channel.toString() }))
-    try {
-        await channel.sendTyping()
-        channel.send(translate('config_cmd.set_suggest_channel.message'))
-    } catch (error) {
-        //TODO manejar este error
-    }
-    (interaction.client as Client).commands.get('config')?.deploy(interaction.guild) //TODO cambiar a autocompletado
+    await channel.sendTyping()
+    channel.send(translate('config_cmd.set_suggest_channel.message'))
+    ;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
 }
 
 export async function birthday_channel(interaction: ChatInputCommandInteraction<'cached'>) {

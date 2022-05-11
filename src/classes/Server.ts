@@ -629,6 +629,10 @@ export class Server {
             .catch(() => this.db.set({ ['autoroles.' + name]: FieldValue.delete() }))
     }
 
+    /**
+     * 
+     * @param {string} inviteChannel - The channel id to send the invite 
+     */
     setInviteChannel(inviteChannel: string) {
         this.logsChannels.invite = inviteChannel
         this.db
