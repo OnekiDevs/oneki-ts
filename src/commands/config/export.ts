@@ -22,7 +22,9 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
             channel: undefined
         },
         suggest_channels: [],
-        autoroles: {}
+        autoroles: {},
+        disabled_channels: [],
+        keep_roles: false
     }
 
 

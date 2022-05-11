@@ -119,7 +119,8 @@ export class Server {
                 obj.autoroles[key] = [...value]
             }
         }
-        if(this.keepRoles) obj.keep_roles = this.keepRoles 
+        if (this.keepRoles) obj.keep_roles = this.keepRoles
+        if (this.disabledChannels) obj.disabled_channels = this.disabledChannels
 
         return obj
     }

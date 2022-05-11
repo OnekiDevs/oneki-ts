@@ -19,7 +19,7 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
 
     if (!json) return interaction.reply(translate('config_cmd.import_file.error'))
     
-    const { prefixes, logs_channels, birthday, suggest_channels, autoroles, emoji_analisis_enabled } = json
+    const { prefixes, logs_channels, birthday, suggest_channels, autoroles, emoji_analisis_enabled, keep_roles, disabled_channels } = json
 
     if (prefixes) server.prefixes = prefixes
     if (logs_channels) {
@@ -38,10 +38,10 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
         if (message) server.setBirthdayMessage(message)
     }
     suggest_channels?.forEach((channel: SuggestChannelObject) => server.addSuggestChannel(channel))
-    if (autoroles) for (const [key, value] of Object.entries(autoroles)) {
-        server.autoroles.set(key, new Set(value))
-    } 
+    if (autoroles) for (const [key, value] of Object.entries(autoroles)) server.autoroles.set(key, new Set(value))
     if (emoji_analisis_enabled) server.startEmojiAnalisis()
+    if (keep_roles) server.setKeepRoles(true)
+    disabled_channels?.forEach(c => server.addDisabledChannel(c))
 
     interaction.reply(translate('config_cmd.import_file.reply'))
 }
