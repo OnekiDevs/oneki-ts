@@ -23,9 +23,10 @@ export class Command {
     options: CommandOptions[] = []
     dm = true
     permissions: PermissionsBitField | null = null
+    regex: RegExp | null = null
     constructor(
         client: Client,
-        { name, description, global = true, options = [], dm = true, permissions, hibrid = false }: cmdOptions
+        { name, description, global = true, options = [], dm = true, permissions, hibrid = false, buttonRegex }: cmdOptions
     ) {
         this.name = name['en-US']
         this.description = description['en-US']
@@ -37,6 +38,7 @@ export class Command {
         this.dm = dm
         this.hibrid = hibrid
         if (permissions) this.permissions = permissions
+        if (buttonRegex) this.regex = buttonRegex
     }
 
     /**
@@ -93,30 +95,6 @@ export class Command {
      */
     async createData(guild?: Guild) {}
 
-    // async execute(interacion: Message<true> | ChatInputCommandInteraction<'cached'>): Promise<any> {
-    //     const server = this.client.getServer(interacion.guild)
-    //     interacion.server = server
-    //     if (interacion.isChatInputCommand()) this.interacion(interacion)
-    //     else {
-    //         this.message(interacion as Message<true>)
-    //         interacion.deferReply = function({ephemeral}: {ephemeral: boolean}) {
-    //             this.channel.sendTyping()
-    //         }
-    //         interacion.editReply = function(params) {
-    //             this.reply(params)
-    //         }
-    //         const prefix = server?.prefixes.find(p => msg.content.startsWith(p)) ?? ''
-    //         const args = msg.content.slice(prefix?.length).split(/ /gi)
-    //         args.shift()
-    //         interacion.option = args
-    //     }
-    //     this.run(interacion)
-    // }
-
-    // async run(interaction: ChatInputCommandInteraction<'cached'> | Message<true>): Promise<any> {
-    //     return interaction.deferReply()
-    // }
-
     async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         return interaction.deferReply()
     }
@@ -171,6 +149,7 @@ interface cmdOptions {
     dm?: boolean
     permissions?: PermissionsBitField
     hibrid?: boolean
+    buttonRegex?: RegExp
 }
 
 export interface CommandOptions {
