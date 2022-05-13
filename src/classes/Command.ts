@@ -1,12 +1,13 @@
 import {
-    Guild,
-    SlashCommandBuilder,
+    ChatInputCommandInteraction,
     AutocompleteInteraction,
+    ModalSubmitInteraction,
     SelectMenuInteraction,
     PermissionsBitField,
-    ChatInputCommandInteraction,
+    SlashCommandBuilder,
+    ButtonInteraction,
     Message,
-    ButtonInteraction
+    Guild
 } from 'discord.js'
 import { Client, Local } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
@@ -113,6 +114,10 @@ export class Command {
 
     async autocomplete(interacion: AutocompleteInteraction<'cached'>): Promise<any> {
         return interacion
+    }
+
+    async modal(interaction: ModalSubmitInteraction<'cached'>) {
+        return interaction.deferReply()
     }
 
     /**
