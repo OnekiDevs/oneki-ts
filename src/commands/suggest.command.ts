@@ -31,10 +31,8 @@ export default class Suggest extends Command {
 
         if (server.suggestChannels.length > 0) {
             const channels = server.suggestChannels.map((c) => {
-                console.log(c)
                 return ({name: c.alias ?? 'predetermined', value: c.channel})
             })
-            console.log(channels)
             
             this.addOption({
                 name: 'channel',

@@ -3,6 +3,7 @@ import { Client as BaseClient, Collection, TextChannel, Guild } from 'discord.js
 import { getFirestore, Firestore } from 'firebase-admin/firestore'
 // import InvitesTracker from '@androz2091/discord-invites-tracker'
 import { initializeApp, cert } from 'firebase-admin/app'
+import { EmbedBuilder } from '@discordjs/builders'
 import { createRequire } from 'module'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -33,9 +34,10 @@ export class Client extends BaseClient {
     servers: ServerManager = new ServerManager(this)
     websocket?: WebSocket
     constants: ClientConstants
-    private _wsInterval = setInterval(() => '', 60000)
+    private _wsInterval = setInterval(() => '', 20_000)
     private _wsintent = 1
     uno: Collection<string, UnoGame> = new Collection()
+    embeds = new Collection<string, {embed: EmbedBuilder, interactionId: string}>()
 
     constructor(options: ClientOptions) {
         super(options)
@@ -64,7 +66,7 @@ export class Client extends BaseClient {
             this.websocket.on('open', () => {
                 console.time('WebSocket Connection')
                 console.log('\x1b[33m%s\x1b[0m', 'Socket Conectado!!!')
-                this._wsInterval = setInterval(() => this.websocket?.ping(() => ''), 20000)
+                this._wsInterval = setInterval(() => this.websocket?.ping(() => ''), 20_000)
                 this._wsintent = 1
             })
             this.websocket.on('close', () => {
