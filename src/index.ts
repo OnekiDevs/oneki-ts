@@ -7,7 +7,7 @@ config()
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-const client: Client = new Client({
+new Client({
     intents: [
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.Guilds,
@@ -15,7 +15,8 @@ const client: Client = new Client({
         GatewayIntentBits.GuildVoiceStates,
         GatewayIntentBits.GuildInvites,
         GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.GuildPresences
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.MessageContent
     ],
     firebaseToken: JSON.parse(process.env.FIREBASE_TOKEN as string),
     constants: {
@@ -44,6 +45,4 @@ const client: Client = new Client({
             disable: false
         }
     }
-})
-
-client.login()
+}).login()

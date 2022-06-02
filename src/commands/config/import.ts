@@ -6,20 +6,30 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     const server = (interaction.client as Client).getServer(interaction.guild)
-    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
-    
+    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
+        return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
+
     const { url } = interaction.options.getAttachment('json') as Attachment
-    let json;
+    let json
     try {
         const res = await fetch(url)
-        json = await res.json() as GuildDataBaseModel
+        json = (await res.json()) as GuildDataBaseModel
     } catch (error) {
         return interaction.reply(translate('config_cmd.import_file.error'))
     }
 
     if (!json) return interaction.reply(translate('config_cmd.import_file.error'))
-    
-    const { prefixes, logs_channels, birthday, suggest_channels, autoroles, emoji_analisis_enabled, keep_roles, disabled_channels } = json
+
+    const {
+        prefixes,
+        logs_channels,
+        birthday,
+        suggest_channels,
+        autoroles,
+        emoji_analisis_enabled,
+        keep_roles,
+        disabled_channels
+    } = json
 
     if (prefixes) server.prefixes = prefixes
     if (logs_channels) {

@@ -1,56 +1,56 @@
 {
-  "name": "oneki",
-  "version": "0.16.9",
-  "description": "Module of Oneki Bot in JavaScript",
-  "main": "src/index.js",
-  "type": "module",
-  "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "test": "node test.js",
-    "dev": "nodemon -e ts --exec \"npm run build && npm start\"",
-    "watch": "nodemon -e ts --exec \"npm run build\"",
-    "update": "npm-check -E -u -p",
-    "lint": "eslint",
-    "heroku": "git push heroku-oneki && git push heroku-resistance"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/OnekiDevs/oneki-ts.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "GPL",
-  "bugs": {
-    "url": "https://github.com/OnekiDevs/oneki-ts/issues"
-  },
-  "homepage": "https://github.com/OnekiDevs/oneki-ts#readme",
-  "dependencies": {
-    "@androz2091/discord-invites-tracker": "1.1.0",
-    "catch-decorator-ts": "0.0.3",
-    "cross-env": "7.0.3",
-    "discord.js": "14.0.0-dev.1651493371-4ba0f56",
-    "dotenv": "16.0.0",
-    "firebase-admin": "10.1.0",
-    "i18n": "0.14.2",
-    "iblazingx-ms": "2.1.2",
-    "jimp": "0.16.1",
-    "jszip": "3.9.1",
-    "puppeteer": "13.7.0",
-    "ws": "8.5.0"
-  },
-  "engines": {
-    "node": "18",
-    "npm": "8.6.0"
-  },
-  "devDependencies": {
-    "@types/i18n": "0.13.2",
-    "@types/uniqid": "5.3.2",
-    "@typescript-eslint/eslint-plugin": "5.21.0",
-    "@typescript-eslint/parser": "5.21.0",
-    "eslint": "8.14.0",
-    "nodemon": "2.0.15",
-    "npm-check": "5.9.2",
-    "typescript": "4.7.0-dev.20220427"
-  }
+    "name": "oneki",
+    "version": "0.16.9",
+    "description": "Module of Oneki Bot in JavaScript",
+    "main": "src/index.js",
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "test": "node test.js",
+        "dev": "nodemon -e ts --exec \"npm run build && npm start\"",
+        "watch": "nodemon -e ts --exec \"npm run build\"",
+        "update": "npm-check -E -u -p",
+        "lint": "eslint",
+        "heroku": "git push heroku-oneki && git push heroku-resistance"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/OnekiDevs/oneki-ts.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "GPL",
+    "bugs": {
+        "url": "https://github.com/OnekiDevs/oneki-ts/issues"
+    },
+    "homepage": "https://github.com/OnekiDevs/oneki-ts#readme",
+    "dependencies": {
+        "@androz2091/discord-invites-tracker": "1.1.0",
+        "catch-decorator-ts": "0.0.3",
+        "cross-env": "7.0.3",
+        "discord.js": "14.0.0-dev.1653480262-68d5169",
+        "dotenv": "16.0.0",
+        "firebase-admin": "10.1.0",
+        "i18n": "0.14.2",
+        "iblazingx-ms": "2.1.2",
+        "jimp": "0.16.1",
+        "jszip": "3.9.1",
+        "puppeteer": "13.7.0",
+        "ws": "8.5.0"
+    },
+    "engines": {
+        "node": "18",
+        "npm": "8.6.0"
+    },
+    "devDependencies": {
+        "@types/i18n": "0.13.2",
+        "@types/uniqid": "5.3.2",
+        "@typescript-eslint/eslint-plugin": "5.21.0",
+        "@typescript-eslint/parser": "5.21.0",
+        "eslint": "8.14.0",
+        "nodemon": "2.0.15",
+        "npm-check": "5.9.2",
+        "typescript": "4.7.0-dev.20220427"
+    }
 }

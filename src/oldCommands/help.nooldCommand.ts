@@ -1,4 +1,15 @@
-import { OldCommand, Client, oldCommandData, Server, Message, EmbedBuilder, ButtonBuilder, ActionRowBuilder, MessageActionRowComponentBuilder, ButtonStyle } from '../utils/classes.js'
+import {
+    OldCommand,
+    Client,
+    oldCommandData,
+    Server,
+    Message,
+    EmbedBuilder,
+    ButtonBuilder,
+    ActionRowBuilder,
+    MessageActionRowComponentBuilder,
+    ButtonStyle
+} from '../utils/classes.js'
 import { sendError, Util } from '../utils/utils.js'
 
 export default class Help extends OldCommand {
@@ -44,14 +55,15 @@ export default class Help extends OldCommand {
             embed.setThumbnail(msg.client.user?.avatarURL() ?? '')
             let j = 0,
                 k = 0
-            
+
             const components = []
             for (const i of categories) {
                 const btn = new ButtonBuilder()
                     .setStyle(i == categories[0] ? ButtonStyle.Success : ButtonStyle.Primary)
                     .setLabel(i)
                     .setCustomId(`help_${server?.lang}_${i}`)
-                if (j == 0) components.push(new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([btn]))
+                if (j == 0)
+                    components.push(new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([btn]))
                 else components[k].addComponents([btn])
                 if (j == 4) {
                     j = 0

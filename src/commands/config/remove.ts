@@ -6,7 +6,8 @@ export function suggest_channel(interaction: ChatInputCommandInteraction<'cached
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     const server = (interaction.client as Client).getServer(interaction.guild)
-    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
+    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
+        return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const channelId = interaction.options.getString('alias')
     if (!channelId) return interaction.reply(translate('config_cmd.remove_suggest_channel.dont_exist'))
     server.removeSuggestChannel(channelId)
@@ -18,7 +19,8 @@ export function prefix(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     const server = (interaction.client as Client).getServer(interaction.guild)
-    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
+    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
+        return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const prefix = interaction.options.getString('prefix') as string
     server.removePrefix(prefix)
     interaction.reply(translate('config_cmd.remove_prefix'))
@@ -29,7 +31,8 @@ export function log(interaction: ChatInputCommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     const translate = Translator(interaction)
     const server = (interaction.client as Client).getServer(interaction.guild)
-    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
+    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
+        return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const log = interaction.options.getString('logname') as string
     if (log === 'message_update') server.removeMessageUpdateLog()
     else if (log === 'message_delete') server.removeMessageDeleteLog()
@@ -43,7 +46,8 @@ export function birthday_channel(interaction: ChatInputCommandInteraction<'cache
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     const server = (interaction.client as Client).getServer(interaction.guild)
-    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
+    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
+        return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     server.removeBirthdayChannel()
     interaction.reply(translate('config_cmd.birthday.remove_channel'))
 }
@@ -55,21 +59,23 @@ export async function blacklisted_word(interaction: ChatInputCommandInteraction<
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     const server = (interaction.client as Client).getServer(interaction.guild)
 
-    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
+    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
+        return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
 
     const word = interaction.options.getString('word') as string
     server.removeBlacklistedWord(word)
     interaction.editReply(translate('config_cmd.remove_blacklisted_word', { word }))
 }
 
-export async function ignored_channel(interaction: ChatInputCommandInteraction<'cached'>){
+export async function ignored_channel(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply()
 
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     const server = (interaction.client as Client).getServer(interaction.guild)
 
-    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator)) return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
+    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
+        return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
 
     const channel = interaction.options.getChannel('channel') as TextChannel
     const channelID = channel.id

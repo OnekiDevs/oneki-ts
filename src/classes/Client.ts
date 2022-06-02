@@ -37,26 +37,28 @@ export class Client extends BaseClient {
     private _wsInterval = setInterval(() => '', 20_000)
     private _wsintent = 1
     uno: Collection<string, UnoGame> = new Collection()
-    embeds = new Collection<string, {embed: EmbedBuilder, interactionId: string}>()
+    embeds = new Collection<string, { embed: EmbedBuilder; interactionId: string }>()
 
     constructor(options: ClientOptions) {
         super(options)
-        
+
         this.oldCommands = new OldCommandManager(this, options.routes.oldCommands)
         this.commands = new CommandManager(this, options.routes.commands)
         this.components = new ComponentManager(this, options.routes.components)
 
         this.i18n.configure(options.i18n)
-        this.version = version??'1.0.0'
+        this.version = version ?? '1.0.0'
 
-        this.db = getFirestore(initializeApp({
-            credential: cert(options.firebaseToken),
-        }))
+        this.db = getFirestore(
+            initializeApp({
+                credential: cert(options.firebaseToken)
+            })
+        )
 
         this.constants = options.constants
 
         this.once('ready', () => this._onReady({ eventsPath: options.routes?.events ?? join(__dirname, '../events') }))
-        
+
         this._initWebSocket()
     }
 
@@ -104,7 +106,7 @@ export class Client extends BaseClient {
 
         await this.initializeEventListener(options.eventsPath)
         console.log('\x1b[35m%s\x1b[0m', 'Eventos Cargados!!')
-        
+
         await this._checkBirthdays()
         await this.checkBans()
 
@@ -121,7 +123,7 @@ export class Client extends BaseClient {
         // for (const command of this.application?.commands.cache.values()??[]) {
         //     await command.delete()
         // }
-        
+
         console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
     }
 
@@ -137,24 +139,24 @@ export class Client extends BaseClient {
     initializeEventListener(path: string) {
         return Promise.all(
             readdirSync(path)
-                .filter((f) => f.includes('.event.'))
-                .map(async (file) => {
-                    const event = await import('file:///'+join(path, file))
+                .filter(f => f.includes('.event.'))
+                .map(async file => {
+                    const event = await import('file:///' + join(path, file))
                     const [eventName] = file.split('.')
                     this.on(eventName, (...args) => event.default(...args))
-                }),
+                })
         )
     }
 
-    private async checkBans(){
-        console.log('\x1b[32m%s\x1b[0m','Revisando bans...')
+    private async checkBans() {
+        console.log('\x1b[32m%s\x1b[0m', 'Revisando bans...')
         this.servers.map(async server => {
             const bansSnap = await server.db.collection('bans').get()
             bansSnap.forEach(async bannedUser => {
                 const bannedDate = bannedUser.data().date
                 const timeSinceBanned = new Date().getTime() - bannedDate
                 const banDuration = bannedUser.data().duration
-                if(timeSinceBanned > banDuration){
+                if (timeSinceBanned > banDuration) {
                     server.guild.members.unban(bannedUser.id)
                     server.db.collection('bans').doc(bannedUser.id).delete()
                 }
@@ -167,34 +169,36 @@ export class Client extends BaseClient {
         }, 900000)
     }
 
-    private async _checkBirthdays(){
-        console.log('\x1b[34m%s\x1b[0m','Revisando cumpleaños...')
+    private async _checkBirthdays() {
+        console.log('\x1b[34m%s\x1b[0m', 'Revisando cumpleaños...')
         const usersSnap = await this.db.collection('users').get()
         usersSnap.forEach(async user => {
-            
             const birthday = user.data().birthday
             if (!birthday) return
-            const [ month, day, year ] = birthday.split('/')
+            const [month, day, year] = birthday.split('/')
 
             //Check if it's the user's birthday
-            if(year > new Date().getFullYear()) return
-            if(month > new Date().getMonth() + 1 || day > new Date().getDate()) return
+            if (year > new Date().getFullYear()) return
+            if (month > new Date().getMonth() + 1 || day > new Date().getDate()) return
             //Celebrate user's birthday
             this.servers.map(async server => {
                 const birthdayChannel = server.birthday.channel
-                if(!birthdayChannel) return
+                if (!birthdayChannel) return
 
                 /* Revisar si el usuario está en el servidor */
                 let member = server.guild.members.cache.get(user.id)
-                if(!member) member = await server.guild.members.fetch(user.id)
-                if(!member) return //Si no está tampoco en la API retornamos
+                if (!member) member = await server.guild.members.fetch(user.id)
+                if (!member) return //Si no está tampoco en la API retornamos
 
                 /* Revisar si el canal sigue existiendo y obtenerlo */
                 let channel = server.guild.channels.cache.get(birthdayChannel) as TextChannel
-                if(!channel) channel = await server.guild.channels.fetch(birthdayChannel) as TextChannel
-                if(!channel) return server.removeBirthdayChannel() //Si no está tampoco en la API lo borramos de la base de datos
+                if (!channel) channel = (await server.guild.channels.fetch(birthdayChannel)) as TextChannel
+                if (!channel) return server.removeBirthdayChannel() //Si no está tampoco en la API lo borramos de la base de datos
 
-                channel.send(server.birthday.message?.replaceAll('{username}',`<@${user.id}>`) ?? server.translate('birthday_cmd.default_message', { username: `<@${user.id}>` }))
+                channel.send(
+                    server.birthday.message?.replaceAll('{username}', `<@${user.id}>`) ??
+                        server.translate('birthday_cmd.default_message', { username: `<@${user.id}>` })
+                )
             })
 
             //Update user's birthday
@@ -205,13 +209,12 @@ export class Client extends BaseClient {
         setTimeout(() => {
             this._checkBirthdays()
         }, 86400000)
-
     }
 
     /**
      * Return a new Server cached
-     * @param {Guild} guild 
-     * @param {GuildDataBaseModel} data 
+     * @param {Guild} guild
+     * @param {GuildDataBaseModel} data
      * @returns {Server}
      */
     newServer(guild: Guild): Server {
@@ -227,5 +230,5 @@ export class Client extends BaseClient {
      */
     getServer(guild: Guild): Server {
         return this.servers.get(guild.id) ?? this.newServer(guild)
-    }   
+    }
 }

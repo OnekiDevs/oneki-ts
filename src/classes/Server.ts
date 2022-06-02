@@ -52,8 +52,7 @@ export class Server {
     }
 
     async syncDB(dataPriority?: boolean): Promise<any> {
-        if (this.guild.client.user?.id === '897298074915975269'
-            && this.guild.id === '885674114310881362') return
+        if (this.guild.client.user?.id === '897298074915975269' && this.guild.id === '885674114310881362') return
         const db = await this.db.get()
 
         if (!db.exists || dataPriority) {
@@ -63,14 +62,15 @@ export class Server {
 
         const data = db.data() as GuildDataBaseModel
 
-        if(data.disabled_channels) this.disabledChannels = data.disabled_channels
-        if(data.blacklisted_words) this.blacklistedWords = data.blacklisted_words
-        if(data.keep_roles && data.premium) this.keepRoles = data.keep_roles
+        if (data.disabled_channels) this.disabledChannels = data.disabled_channels
+        if (data.blacklisted_words) this.blacklistedWords = data.blacklisted_words
+        if (data.keep_roles && data.premium) this.keepRoles = data.keep_roles
         if (data.premium) this.premium = true
         if (data.last_suggest) this.lastSuggestId = data.last_suggest
         if (data.suggest_channels) this.suggestChannels = data.suggest_channels
         if (data.logs_channels) {
-            const { message_update, message_delete, message_attachment, invite, member_update, sanction } = data.logs_channels
+            const { message_update, message_delete, message_attachment, invite, member_update, sanction } =
+                data.logs_channels
 
             if (message_update) this.logsChannels.messageUpdate = message_update
             if (message_delete) this.logsChannels.messageDelete = message_delete
@@ -145,7 +145,7 @@ export class Server {
      * Return all the prefixes that the bot listens to in the guild
      */
     get prefixes(): string[] {
-        return [`<@!${this.guild.me?.id}>`, `<@${this.guild.me?.id}>`, ...this._prefixes]
+        return [`<@!${this.guild.members.me?.id}>`, `<@${this.guild.members.me?.id}>`, ...this._prefixes]
     }
 
     set prefixes(value: string[]) {
@@ -217,7 +217,7 @@ export class Server {
                     .update({ prefixies: FieldValue.arrayRemove(prefix) })
                     .catch(() => this.db.set({ prefixies: FieldValue.arrayRemove(prefix) }))
         }
-        (this.guild.client as Client).websocket?.send(
+        ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'remove_prefix',
                 from: 'mts',
@@ -631,8 +631,8 @@ export class Server {
     }
 
     /**
-     * 
-     * @param {string} inviteChannel - The channel id to send the invite 
+     *
+     * @param {string} inviteChannel - The channel id to send the invite
      */
     setInviteChannel(inviteChannel: string) {
         this.logsChannels.invite = inviteChannel
@@ -653,10 +653,10 @@ export class Server {
     }
 
     /**
-     * 
+     *
      * @param {string} memberUpdateChannel The channel id to send the member update logs
      */
-    setMemberUpdateChannel(memberUpdateChannel: string){
+    setMemberUpdateChannel(memberUpdateChannel: string) {
         this.logsChannels.memberUpdate = memberUpdateChannel
         this.db
             .update({ ['logs_channels.member_update']: memberUpdateChannel })
@@ -667,13 +667,13 @@ export class Server {
                 from: 'mts',
                 data: {
                     log: 'GUILD_MEMBER_UPDATE',
-                    channel: memberUpdateChannel,
+                    channel: memberUpdateChannel
                 }
             })
         )
     }
 
-    removeMemberUpdateChannel(){
+    removeMemberUpdateChannel() {
         if (!this.logsChannels.memberUpdate) return
         ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
@@ -691,7 +691,7 @@ export class Server {
     }
 
     removeInviteChannel() {
-        if (!this.logsChannels.invite) return        
+        if (!this.logsChannels.invite) return
         ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'remove_log',
@@ -707,11 +707,9 @@ export class Server {
         this.updateChannelsLogsInDB()
     }
 
-    setKeepRoles(keepRoles: boolean){
+    setKeepRoles(keepRoles: boolean) {
         this.keepRoles = keepRoles
-        this.db
-            .update({ ['keep_roles']: keepRoles })
-            .catch(() => this.db.set({ ['keep_roles']: keepRoles }))
+        this.db.update({ ['keep_roles']: keepRoles }).catch(() => this.db.set({ ['keep_roles']: keepRoles }))
         ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'keep_roles',
@@ -721,7 +719,7 @@ export class Server {
         )
     }
 
-    addBlacklistedWord(word: string){
+    addBlacklistedWord(word: string) {
         this.blacklistedWords.push(word)
         this.db
             .update({ ['blacklisted_words']: FieldValue.arrayUnion(word) })
@@ -735,7 +733,7 @@ export class Server {
         )
     }
 
-    removeBlacklistedWord(word: string){
+    removeBlacklistedWord(word: string) {
         this.blacklistedWords = this.blacklistedWords.filter(dbWord => dbWord !== word)
         this.db
             .update({ ['blacklisted_words']: FieldValue.arrayRemove(word) })
@@ -749,7 +747,7 @@ export class Server {
         )
     }
 
-    addDisabledChannel(channelID: string){
+    addDisabledChannel(channelID: string) {
         this.disabledChannels.push(channelID)
         this.db
             .update({ ['disabled_channels']: FieldValue.arrayUnion(channelID) })
@@ -763,7 +761,7 @@ export class Server {
         )
     }
 
-    removeDisabledChannel(channelID: string){
+    removeDisabledChannel(channelID: string) {
         this.disabledChannels = this.disabledChannels.filter(dbChannel => dbChannel !== channelID)
         this.db
             .update({ ['disabled_channels']: FieldValue.arrayRemove(channelID) })
@@ -777,7 +775,7 @@ export class Server {
         )
     }
 
-    setSanctionChannel(channelID: string){
+    setSanctionChannel(channelID: string) {
         this.logsChannels.sanction = channelID
         this.db
             .update({ ['logs_channels.sanction']: channelID })
@@ -791,45 +789,67 @@ export class Server {
         )
     }
 
-    /** 
+    /**
      * Punishes a user
      * @param {PunishUser} options Params to punish a user. See PunishUser for more info
      */
 
-    punishUser({ userId, type, reason, duration = 'permanent', moderatorId }: PunishUser ) {
+    punishUser({ userId, type, reason, duration = 'permanent', moderatorId }: PunishUser) {
         return new Promise((resolve, reject) => {
-            if(type === PunishmentType.WARN) 
-                this.warnUser(userId, reason, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+            if (type === PunishmentType.WARN)
+                this.warnUser(userId, reason, moderatorId)
+                    .then(() => resolve(null))
+                    .catch(error => reject(error))
 
-            if(type === PunishmentType.MUTE)
-                this.muteUser(userId, reason, duration, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+            if (type === PunishmentType.MUTE)
+                this.muteUser(userId, reason, duration, moderatorId)
+                    .then(() => resolve(null))
+                    .catch(error => reject(error))
 
-            if(type === PunishmentType.KICK)
-                this.kickUser(userId, reason, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+            if (type === PunishmentType.KICK)
+                this.kickUser(userId, reason, moderatorId)
+                    .then(() => resolve(null))
+                    .catch(error => reject(error))
 
-            if(type === PunishmentType.BAN)
-                this.banUser(userId, reason, duration, moderatorId).then(() => resolve(null)).catch(error => reject(error))
+            if (type === PunishmentType.BAN)
+                this.banUser(userId, reason, duration, moderatorId)
+                    .then(() => resolve(null))
+                    .catch(error => reject(error))
 
-            if(type === PunishmentType.HACKBAN)
-                this.hackbanUser(userId, reason, duration, moderatorId).then(() => resolve(null)).catch(error => reject(error))
-            
+            if (type === PunishmentType.HACKBAN)
+                this.hackbanUser(userId, reason, duration, moderatorId)
+                    .then(() => resolve(null))
+                    .catch(error => reject(error))
         })
     }
 
-    private async warnUser(userId: string, reason: string, moderatorId: string){
+    private async warnUser(userId: string, reason: string, moderatorId: string) {
         const user = await this.guild.members.fetch(userId)
 
         const moderator = await this.guild.members.fetch(moderatorId)
 
-        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+        if (moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0)
+            return Promise.reject('user_higher_role')
 
-        this.db.collection('users').doc(userId).update({ 
-            sanctions: FieldValue.arrayUnion({ type: 'WARN', reason, moderator: moderatorId, date: new Date().getTime() })
-        }).catch(() => {
-            this.db.collection('users').doc(userId).set({ 
-                sanctions: [{ type: 'WARN', reason, moderator: moderatorId, date: new Date().getTime() }]
+        this.db
+            .collection('users')
+            .doc(userId)
+            .update({
+                sanctions: FieldValue.arrayUnion({
+                    type: 'WARN',
+                    reason,
+                    moderator: moderatorId,
+                    date: new Date().getTime()
+                })
             })
-        })
+            .catch(() => {
+                this.db
+                    .collection('users')
+                    .doc(userId)
+                    .set({
+                        sanctions: [{ type: 'WARN', reason, moderator: moderatorId, date: new Date().getTime() }]
+                    })
+            })
         return Promise.resolve()
     }
 
@@ -838,62 +858,101 @@ export class Server {
 
         const moderator = await this.guild.members.fetch(moderatorId)
 
-        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+        if (moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0)
+            return Promise.reject('user_higher_role')
 
         const durationToMs = ms(duration)
         user.timeout(durationToMs, reason)
 
-        this.db.collection('users').doc(userId).update({ 
-            sanctions: FieldValue.arrayUnion({ type: 'MUTE', reason, moderator: moderatorId, date: new Date().getTime() })
-        }).catch(() => {
-            this.db.collection('users').doc(userId).set({ 
-                sanctions: [{ type: 'MUTE', reason, moderator: moderatorId, date: new Date().getTime() }]
+        this.db
+            .collection('users')
+            .doc(userId)
+            .update({
+                sanctions: FieldValue.arrayUnion({
+                    type: 'MUTE',
+                    reason,
+                    moderator: moderatorId,
+                    date: new Date().getTime()
+                })
             })
-        })
+            .catch(() => {
+                this.db
+                    .collection('users')
+                    .doc(userId)
+                    .set({
+                        sanctions: [{ type: 'MUTE', reason, moderator: moderatorId, date: new Date().getTime() }]
+                    })
+            })
         return Promise.resolve()
     }
 
-    private async kickUser(userId: string, reason: string, moderatorId: string){
+    private async kickUser(userId: string, reason: string, moderatorId: string) {
         const user = await this.guild.members.fetch(userId)
 
         const moderator = await this.guild.members.fetch(moderatorId)
 
-        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+        if (moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0)
+            return Promise.reject('user_higher_role')
 
         user.kick(reason)
 
-        this.db.collection('users').doc(userId).update({ 
-            sanctions: FieldValue.arrayUnion({ type: 'KICK', reason, moderator: moderatorId, date: new Date().getTime() })
-        }).catch(() => {
-            this.db.collection('users').doc(userId).set({ 
-                sanctions: [{ type: 'KICK', reason, moderator: moderatorId, date: new Date().getTime() }]
+        this.db
+            .collection('users')
+            .doc(userId)
+            .update({
+                sanctions: FieldValue.arrayUnion({
+                    type: 'KICK',
+                    reason,
+                    moderator: moderatorId,
+                    date: new Date().getTime()
+                })
             })
-        })
+            .catch(() => {
+                this.db
+                    .collection('users')
+                    .doc(userId)
+                    .set({
+                        sanctions: [{ type: 'KICK', reason, moderator: moderatorId, date: new Date().getTime() }]
+                    })
+            })
         return Promise.resolve()
     }
 
-    private async banUser(userId: string, reason: string, duration: string, moderatorId: string){
+    private async banUser(userId: string, reason: string, duration: string, moderatorId: string) {
         const user = await this.guild.members.fetch(userId)
 
         const moderator = await this.guild.members.fetch(moderatorId)
 
-        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+        if (moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0)
+            return Promise.reject('user_higher_role')
 
-        this.db.collection('users').doc(userId).update({ 
-            sanctions: FieldValue.arrayUnion({ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() })
-        }).catch(() => {
-            this.db.collection('users').doc(userId).set({ 
-                sanctions: [{ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() }]
+        this.db
+            .collection('users')
+            .doc(userId)
+            .update({
+                sanctions: FieldValue.arrayUnion({
+                    type: 'BAN',
+                    reason,
+                    moderator: moderatorId,
+                    date: new Date().getTime()
+                })
             })
-        })
+            .catch(() => {
+                this.db
+                    .collection('users')
+                    .doc(userId)
+                    .set({
+                        sanctions: [{ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() }]
+                    })
+            })
 
-        if(duration === 'permanent'){
+        if (duration === 'permanent') {
             user.ban({ reason })
             return Promise.resolve()
         }
-        
+
         user.ban({ reason }).then(() => {
-            if(ms(duration) < 86400000){
+            if (ms(duration) < 86400000) {
                 setTimeout(() => {
                     this.guild.members.unban(userId)
                 }, ms(duration))
@@ -902,33 +961,46 @@ export class Server {
         return Promise.resolve()
     }
 
-    private async hackbanUser(userId: string, reason: string, duration: string, moderatorId: string){
+    private async hackbanUser(userId: string, reason: string, duration: string, moderatorId: string) {
         const user = await this.guild.members.fetch(userId)
 
         const moderator = await this.guild.members.fetch(moderatorId)
 
-        if(moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0) return Promise.reject('user_higher_role')
+        if (moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0)
+            return Promise.reject('user_higher_role')
 
-        this.db.collection('users').doc(userId).update({ 
-            sanctions: FieldValue.arrayUnion({ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() })
-        }).catch(() => {
-            this.db.collection('users').doc(userId).set({ 
-                sanctions: [{ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() }]
+        this.db
+            .collection('users')
+            .doc(userId)
+            .update({
+                sanctions: FieldValue.arrayUnion({
+                    type: 'BAN',
+                    reason,
+                    moderator: moderatorId,
+                    date: new Date().getTime()
+                })
             })
-        })
+            .catch(() => {
+                this.db
+                    .collection('users')
+                    .doc(userId)
+                    .set({
+                        sanctions: [{ type: 'BAN', reason, moderator: moderatorId, date: new Date().getTime() }]
+                    })
+            })
 
-        if(duration === 'permanent'){
+        if (duration === 'permanent') {
             user.ban({ reason })
             return Promise.resolve()
         }
-        
+
         user.ban({ reason }).then(() => {
-            if(ms(duration) < 86400000){
+            if (ms(duration) < 86400000) {
                 setTimeout(() => {
                     this.guild.members.unban(userId)
                 }, ms(duration))
             }
         })
-        return Promise.resolve()    
+        return Promise.resolve()
     }
 }

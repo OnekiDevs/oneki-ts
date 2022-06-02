@@ -25,12 +25,11 @@ export default class Poll extends Command {
                 'en-US': 'Make a poll',
                 'es-ES': 'Hacer una encuesta'
             },
-            global: false,
+            global: false
         })
     }
 
     async createData(guild: Guild): Promise<void> {
-
         const server = this.client.getServer(guild)
         this.clearOptions()
 
@@ -44,48 +43,58 @@ export default class Poll extends Command {
                 name: 'make',
                 description: 'Make a new poll',
                 type: ApplicationCommandOptionType.Subcommand,
-                options: [{
-                    name: 'context',
-                    description: 'Add a description of context of the poll',
-                    type: ApplicationCommandOptionType.String,
-                    required: true
-                }, {
-                    name: 'title',
-                    description: 'Add a title for the poll',
-                    type: ApplicationCommandOptionType.String,
-                }, {
-                    name: 'block_choice',
-                    description: 'Blocks the response so as not to be modified',
-                    type: ApplicationCommandOptionType.Boolean,
-                }, {
-                    name: 'show_results',
-                    description: 'Show the results of the poll in the moment',
-                    type: ApplicationCommandOptionType.Boolean,
-                }, {
-                    name: 'multiple_choices',
-                    description: 'Allow multiple choices',
-                    type: ApplicationCommandOptionType.Boolean,
-                }].concat(new Array(20).fill(0).map((_, i) => ({
-                    name: `option${i + 1}`,
-                    description: `Add an option for the poll`,
-                    type: ApplicationCommandOptionType.String,
-                })))
+                options: [
+                    {
+                        name: 'context',
+                        description: 'Add a description of context of the poll',
+                        type: ApplicationCommandOptionType.String,
+                        required: true
+                    },
+                    {
+                        name: 'title',
+                        description: 'Add a title for the poll',
+                        type: ApplicationCommandOptionType.String
+                    },
+                    {
+                        name: 'block_choice',
+                        description: 'Blocks the response so as not to be modified',
+                        type: ApplicationCommandOptionType.Boolean
+                    },
+                    {
+                        name: 'show_results',
+                        description: 'Show the results of the poll in the moment',
+                        type: ApplicationCommandOptionType.Boolean
+                    },
+                    {
+                        name: 'multiple_choices',
+                        description: 'Allow multiple choices',
+                        type: ApplicationCommandOptionType.Boolean
+                    }
+                ].concat(
+                    new Array(20).fill(0).map((_, i) => ({
+                        name: `option${i + 1}`,
+                        description: `Add an option for the poll`,
+                        type: ApplicationCommandOptionType.String
+                    }))
+                )
             })
-        } 
+        }
 
         if (!snap.empty) {
             const choices: { name: string; value: string }[] = []
-            snap.forEach((doc) => choices.push({ name: doc.id, value: doc.id }))
+            snap.forEach(doc => choices.push({ name: doc.id, value: doc.id }))
             this.addOption({
                 name: 'finalize',
                 description: 'Finalize the poll',
                 type: ApplicationCommandOptionType.Subcommand,
-                options: [{
-                    name: 'id',
-                    description: 'Select the poll to finalize',
-                    type: ApplicationCommandOptionType.String,
-                    choices,
-                }]
+                options: [
+                    {
+                        name: 'id',
+                        description: 'Select the poll to finalize',
+                        type: ApplicationCommandOptionType.String,
+                        choices
+                    }
+                ]
             })
         }
     }
@@ -101,9 +110,9 @@ export default class Poll extends Command {
 
         const server = this.client.getServer(interaction.guild)
         const snap = await this.client.db.collection('polls').where('guild', '==', interaction.guildId).get()
-        if (!server?.premium && !snap.empty)
-            return interaction.editReply(translate('poll_cmd.make.dont_premium'))
-        if (!checkSend(interaction.channel as TextChannel, interaction.guild.me as GuildMember)) return interaction.editReply(translate('poll_cmd.make.havent_permissions'))
+        if (!server?.premium && !snap.empty) return interaction.editReply(translate('poll_cmd.make.dont_premium'))
+        if (!checkSend(interaction.channel as TextChannel, interaction.guild.members.me as GuildMember))
+            return interaction.editReply(translate('poll_cmd.make.havent_permissions'))
         this.deploy(interaction.guild as Guild)
 
         const title = interaction.options.getString('title') ?? translate('poll_cmd.make.new_poll')
@@ -117,13 +126,17 @@ export default class Poll extends Command {
             .setDescription(context)
             .setURL(`https://oneki.herokuapp.com/poll/${idPoll}`)
             .setFooter({
-                text: translate('poll_cmd.make.footer', { id: idPoll, bot: this.client.user?.username, version: this.client.version }),
-                iconURL: this.client.user?.avatarURL() ?? '',
+                text: translate('poll_cmd.make.footer', {
+                    id: idPoll,
+                    bot: this.client.user?.username,
+                    version: this.client.version
+                }),
+                iconURL: this.client.user?.avatarURL() ?? ''
             })
 
         const options =
             interaction.options.data[0].options
-                ?.filter((o) => o.name.startsWith('option_'))
+                ?.filter(o => o.name.startsWith('option_'))
                 .sort((a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0))
                 .map((o, i) => ({ name: `option_${i + 1}`, value: o.value, votes: [] })) ?? []
 
@@ -135,12 +148,13 @@ export default class Poll extends Command {
             options.map((o, i) => ({
                 name: `${emojis[i]} Opcion ${i + 1}${show ? `: ${o.value}` : ''}`,
                 value: `${show ? '`                         ` 0%' : o.value}`,
-                inline: false,
-            })),
+                inline: false
+            }))
         )
 
         const buttons = [new ActionRowBuilder<MessageActionRowComponentBuilder>()]
-        let i = 1, j = 0
+        let i = 1,
+            j = 0
 
         for (const option of options) {
             if (i % 5 === 0) buttons.push(new ActionRowBuilder<MessageActionRowComponentBuilder>())
@@ -150,14 +164,14 @@ export default class Poll extends Command {
                     .setCustomId(`poll_${idPoll}_${option.name}`)
                     .setLabel(`${option.name.replace('_', ' ')}`)
                     .setStyle(ButtonStyle.Primary)
-                    .setEmoji(emojis[i - 1]),
+                    .setEmoji(emojis[i - 1])
             ])
             i++
         }
 
         const msg = await interaction.channel?.send({
             embeds: [embed],
-            components: buttons,
+            components: buttons
         })
 
         await this.client.db.collection('polls').doc(idPoll).set({
@@ -170,18 +184,21 @@ export default class Poll extends Command {
             author: interaction.user.id,
             block_choices: block,
             channel: msg?.channel.id,
-            message: msg?.id,
+            message: msg?.id
         })
 
         interaction.editReply(translate('poll_cmd.make.reply'))
 
-        this.client.commands.find((c) => c.name === 'poll')?.deploy(interaction.guild as Guild)
+        this.client.commands.find(c => c.name === 'poll')?.deploy(interaction.guild as Guild)
     }
 
     async finalize(interaction: ChatInputCommandInteraction<'cached'>) {
         const translate = Translator(interaction)
         await interaction.deferReply({ ephemeral: true })
-        const snap = await this.client.db.collection('polls').doc(interaction.options.getString('id') as string).get()
+        const snap = await this.client.db
+            .collection('polls')
+            .doc(interaction.options.getString('id') as string)
+            .get()
         if (snap.exists) {
             const data = snap.data() as PollDatabaseModel
             await this.client.db
@@ -193,36 +210,36 @@ export default class Poll extends Command {
                 .collection('polls')
                 .doc(interaction.options.getString('id') as string)
                 .delete()
-            await this.deploy(interaction.guild as Guild);
-            (interaction.client.channels.cache.get(data.channel) as TextChannel)?.messages
+            await this.deploy(interaction.guild as Guild)
+            ;(interaction.client.channels.cache.get(data.channel) as TextChannel)?.messages
                 .fetch(data.message)
-                .then(async (msg) => {
+                .then(async msg => {
                     await msg.edit({
-                        components: [],
+                        components: []
                     })
                     if (!data.show_results) {
                         const embed = new EmbedBuilder(msg.embeds[0]?.data)
                         let votesCount = 0
-                        await Promise.all(data.options.map((o) => (votesCount += o.votes.length)))
+                        await Promise.all(data.options.map(o => (votesCount += o.votes.length)))
                         embed.setFields(
                             await Promise.all(
                                 data.options.map((o, i) => ({
                                     name: `${emojis[i]} Opcion ${i + 1} ${o.value}`,
                                     value: `\`${filledBar((o.votes.length / votesCount) * 100)}\` ${Math.round(
-                                        (o.votes.length / votesCount) * 100,
+                                        (o.votes.length / votesCount) * 100
                                     )}%`,
-                                    inline: false,
-                                })),
-                            ),
+                                    inline: false
+                                }))
+                            )
                         )
                         msg.edit({
-                            embeds: [embed],
+                            embeds: [embed]
                         })
                     }
                 })
         }
         interaction.editReply(translate('poll_cmd.finalize'))
-        
-        this.client.commands.find((c) => c.name === 'poll')?.deploy(interaction.guild)
+
+        this.client.commands.find(c => c.name === 'poll')?.deploy(interaction.guild)
     }
 }
