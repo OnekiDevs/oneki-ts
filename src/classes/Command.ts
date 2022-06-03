@@ -27,7 +27,16 @@ export class Command {
     regex: RegExp | null = null
     constructor(
         client: Client,
-        { name, description, global = true, options = [], dm = true, permissions, hibrid = false, buttonRegex }: cmdOptions
+        {
+            name,
+            description,
+            global = true,
+            options = [],
+            dm = true,
+            permissions,
+            hibrid = false,
+            buttonRegex
+        }: cmdOptions
     ) {
         this.name = name['en-US']
         this.description = description['en-US']
@@ -50,25 +59,22 @@ export class Command {
     async deploy(guild?: Guild) {
         if (this.global) {
             await this.createData()
-            return this.client.application?.commands.create(this.data)
-                .catch(console.error)
+            return this.client.application?.commands.create(this.data).catch(console.error)
         }
         if (guild) {
             await this.createData(guild)
-            return guild.commands.create(this.data)
-                .catch(e => {
-                    if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
-                    else console.error(e)
-                })
+            return guild.commands.create(this.data).catch(e => {
+                if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
+                else console.error(e)
+            })
         }
         return Promise.all(
             this.client.guilds.cache.map(async guild => {
                 await this.createData(guild)
-                return guild.commands.create(this.data)
-                    .catch(e => {
-                        if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
-                        else console.error(e)
-                    })
+                return guild.commands.create(this.data).catch(e => {
+                    if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
+                    else console.error(e)
+                })
             })
         )
     }
@@ -78,15 +84,15 @@ export class Command {
      * @returns {object} The data is being returned as a JSON object.
      */
     get data() {
-        let command: any = new SlashCommandBuilder()
+        const command: any = new SlashCommandBuilder()
             .setName(this.name)
             .setDescription(this.description)
             .setNameLocalizations(this.local_names)
             .setDescriptionLocalizations(this.local_descriptions)
+            .setDefaultMemberPermissions(this.permissions?.bitfield ?? 0)
+            .setDMPermission(this.dm)
             .toJSON()
         command.options = this.options
-        if (this.global) command = { ...command, dm_permission: this.dm }
-        if (this.permissions) command = { ...command, default_member_permissions: this.permissions.bitfield }
         return command
     }
 
