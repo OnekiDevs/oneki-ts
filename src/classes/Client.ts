@@ -17,7 +17,8 @@ import {
     ComponentManager,
     OldCommandManager,
     UnoGame,
-    Server
+    Server,
+    UnoCards
 } from '../utils/classes.js'
 import i18n from 'i18n'
 
@@ -37,6 +38,7 @@ export class Client extends BaseClient {
     private _wsInterval = setInterval(() => '', 20_000)
     private _wsintent = 1
     uno: Collection<string, UnoGame> = new Collection()
+    UnoCards = UnoCards
     embeds = new Collection<string, { embed: EmbedBuilder; interactionId: string }>()
 
     constructor(options: ClientOptions) {

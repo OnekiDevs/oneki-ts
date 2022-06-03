@@ -16,42 +16,53 @@ export default class Uno extends Component {
         if (!uno) return interaction.deferUpdate()
 
         if (option === 'jn') {
-            if (!uno.players.has(interaction.user.id))
-                uno.emit('join', new Player(interaction.user.id))
+            if (!uno.players.has(interaction.user.id)) uno.emit('join', new Player(interaction.user.id, this.client))
             interaction.deferUpdate()
         } else if (option === 'st') {
             if (interaction.user.id === uno.host.id) {
                 interaction.deferUpdate()
-                uno.emit('start')
+                uno.emit('start', interaction)
             } else if (uno.players.has(interaction.user.id)) {
                 interaction.reply({
                     content: translate('uno_btn.start_no_host'),
-                    ephemeral: true,
+                    ephemeral: true
                 })
             } else
                 interaction.reply({
                     content: translate('uno_btn.start_out'),
-                    ephemeral: true,
+                    ephemeral: true
                 })
         } else if (option === 'mc') {
             if (uno.players.has(interaction.user.id)) {
-                uno.players
-                    .get(interaction.user.id)
-                    ?.setInteraction(interaction)
+                uno.players.get(interaction.user.id)?.setInteraction(interaction)
                 await interaction.deferReply({ ephemeral: true })
-                uno.emit('showCards', uno.players.get(interaction.user.id))
+                uno.emit('showCards', uno.players.get(interaction.user.id), interaction)
             } else interaction.deferUpdate()
         } else if (option === 'ea') {
             if (uno.players.has(interaction.user.id)) {
                 await interaction.deferUpdate()
-                uno.emit('eat', uno.players.get(interaction.user.id))
+                uno.emit('eat', uno.players.get(interaction.user.id), interaction)
             } else interaction.deferUpdate()
+        } else if (option === 'nw') {
+            if (interaction.user.id === uno.host.id) {
+                interaction.deferUpdate()
+                uno.emit('new', interaction)
+            } else if (uno.players.has(interaction.user.id)) {
+                interaction.reply({
+                    content: translate('uno_btn.start_no_host'),
+                    ephemeral: true
+                })
+            } else
+                interaction.reply({
+                    content: translate('uno_btn.start_out'),
+                    ephemeral: true
+                })
         } else {
             const player = uno.players.get(interaction.user.id)
             uno.emit(
                 'play',
                 player,
-                player?.cards.find((c) => c.id == option),
+                player?.cards.find(c => c.id == option),
                 interaction
             )
         }

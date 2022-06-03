@@ -21,7 +21,7 @@ export { Util }
  * @param {number} ms - The number of milliseconds to wait before resolving the promise.
  * @returns A promise that resolves after a certain amount of time.
  */
-export function sleep(ms: number) {
+export function sleep(ms: number = 1_000) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
@@ -58,7 +58,9 @@ export function permissionsError(
  * @returns {boolean} A boolean value.
  */
 export function checkSend(channel: TextChannel, member: GuildMember): boolean {
-    return channel.permissionsFor(member).has([PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel])
+    return channel
+        .permissionsFor(member)
+        .has([PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel])
 }
 
 /**
@@ -157,19 +159,23 @@ export async function sendError(client: Client, error: Error, file: string) {
                 new EmbedBuilder()
                     .setColor(Colors.Yellow)
                     .setTitle('New Error Detected')
-                    .addFields([{
-                        name: 'Error Type',
-                        value: Util.escapeCodeBlock(`cmd\n${error.name}\n`),
-                        inline: true
-                    }, {
-                        name: 'Error Message',
-                        value: Util.escapeCodeBlock(`cmd\n${error.message}\n`),
-                        inline: true
-                    }, {
-                        name: 'Error In',
-                        value: Util.escapeCodeBlock(`cmd\n${fileURLToPath(file)}\n`),
-                        inline: true
-                    }]),
+                    .addFields([
+                        {
+                            name: 'Error Type',
+                            value: Util.escapeCodeBlock(`cmd\n${error.name}\n`),
+                            inline: true
+                        },
+                        {
+                            name: 'Error Message',
+                            value: Util.escapeCodeBlock(`cmd\n${error.message}\n`),
+                            inline: true
+                        },
+                        {
+                            name: 'Error In',
+                            value: Util.escapeCodeBlock(`cmd\n${fileURLToPath(file)}\n`),
+                            inline: true
+                        }
+                    ]),
                 new EmbedBuilder()
                     .setColor(Colors.Yellow)
                     .setTitle('Error Stack')
@@ -181,8 +187,8 @@ export async function sendError(client: Client, error: Error, file: string) {
 /**
  * It takes a phrase and an optional object of parameters, and returns a translated string
  * @typedef {function name(phrase: string, params?:string): string} transalte
- * @param {string} phrase 
- * @param {string} [params] 
+ * @param {string} phrase
+ * @param {string} [params]
  * @returns {string}
  */
 
@@ -191,13 +197,13 @@ export async function sendError(client: Client, error: Error, file: string) {
  * @param {Interaction} interaction - Interaction - The interaction object that contains the locale and client.
  * @returns {transalte} A function that takes a phrase and params and returns a string.
  */
-export const Translator = function (interaction: Interaction | Message | {client: Client}) {
+export const Translator = function (interaction: Interaction | Message | { client: Client }) {
     let lang: string
     if (interaction instanceof Interaction) lang = interaction.locale?.slice(0, 2)
     else if (interaction instanceof Message) lang = interaction.guild?.preferredLocale.slice(0, 2) ?? 'en'
     else lang = 'en'
     const i18n = (interaction.client as Client).i18n
-    
+
     /**
      * It takes a phrase and an optional object of parameters, and returns a translated string
      * @param {string} phrase - The phrase to translate
@@ -208,7 +214,6 @@ export const Translator = function (interaction: Interaction | Message | {client
         return i18n.__mf({ phrase, locale: lang }, params)
     }
 }
-
 
 /* It's an enum. It's a way to define a set of constants. */
 export enum PunishmentType {
