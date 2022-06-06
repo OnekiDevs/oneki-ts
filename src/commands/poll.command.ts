@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { filledBar, pollEmojis as emojis, checkSend, randomId } from '../utils/utils.js'
-import { Command, Client, PollDatabaseModel, MessageActionRowComponentBuilder } from '../utils/classes.js'
+import { Command, Client, PollDatabaseModel } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
 import {
     ButtonBuilder,
@@ -11,7 +11,8 @@ import {
     TextChannel,
     GuildMember,
     ButtonStyle,
-    ApplicationCommandOptionType
+    ApplicationCommandOptionType,
+    MessageActionRowComponentBuilder
 } from 'discord.js'
 
 export default class Poll extends Command {

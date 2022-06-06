@@ -3,6 +3,8 @@ import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { config } from 'dotenv'
 
+console.log('Iniciando...')
+
 config()
 
 const __dirname = dirname(fileURLToPath(import.meta.url))

@@ -16,7 +16,6 @@ export default class Help extends OldCommand {
             if (!server.premium) return msg.reply(server.translate('premium'))
             if (!msg.member?.permissions.has(PermissionsBitField.Flags.Administrator))
                 return permissionsError(msg, PermissionsBitField.Flags.Administrator)
-
             if ((args.length === 0 || !['show', 'start', 'stop'].includes(args[0])) && server.emojiAnalisisEnabled)
                 this.show(msg, server)
             else if (args.length === 0 || !['show', 'start', 'stop'].includes(args[0])) this.start(msg, server)
@@ -45,35 +44,63 @@ export default class Help extends OldCommand {
         const embeds = [new EmbedBuilder().setDescription('Emojis uses')]
         let j = 0,
             t = '',
+            i = 0,
             updateDB = false
+
+        // filtro de emojis vigentes
+        const es = []
         for (const key in server.emojiStatistics) {
-            try {
-                const emoji = await msg.guild.emojis.fetch(key)
-                t += `${emoji} --- ${server.emojiStatistics[key]}\n`
-                if (++j == 6) {
-                    j = 0
-                    embeds[0].addFields([{
-                        name: 'Emojis',
-                        value: t,
-                        inline: true
-                    }])
-                    //ㅤ
-                    t = ''
-                }
-            } catch (error) {
-                delete server.emojiStatistics[key]
+            const emoji = await msg.guild.emojis
+                .fetch(key)
+                .then(e => e)
+                .catch(e => {
+                    console.log(e)
+                    return null
+                })
+
+            if (emoji)
+                es.push({
+                    name: emoji.toString(),
+                    uses: server.emojiStatistics[key]
+                })
+            else {
                 updateDB = true
+                delete server.emojiStatistics[key]
             }
         }
-        if (updateDB) server.db.update({
-            emoji_statistics: server.emojiStatistics
-        }).catch(() => server.db.set({ emoji_statistics: server.emojiStatistics }))
-        
-        if (embeds[0].data.fields?.length === 0) embeds[0].addFields([{
-            name: 'Emojis',
-            value: t,
-            inline: true
-        }])
+
+        // sort y recorrido
+        for (const em of es.sort((a, b) => b.uses - a.uses)) {
+            t += `${em.name} --- \`${em.uses}\`\n`
+
+            if (++i == 6) {
+                embeds[j].addFields([{ name: 'Emojis', value: t, inline: true }])
+                i = 0
+            }
+
+            if (embeds[j].data.fields?.length == 25) {
+                embeds.push(new EmbedBuilder().setDescription('Emojis uses'))
+                j++
+            }
+        }
+
+        // eliminacion de emojis que no estan vigentes
+        if (updateDB)
+            server.db
+                .update({ emoji_statistics: server.emojiStatistics })
+                .catch(() => server.db.set({ emoji_statistics: server.emojiStatistics }))
+
+        // si no hay emojis suficientes para mostrar
+        if (embeds[0].data.fields?.length === 0)
+            embeds[0].addFields([
+                {
+                    name: 'Emojis',
+                    value: t,
+                    inline: true
+                }
+            ])
+
+        // enviar
         msg.reply({ embeds })
     }
 }

@@ -8,11 +8,10 @@ import {
     ActionRowBuilder,
     EmbedBuilder,
     ButtonBuilder,
-    Message,
-    MessageActionRowComponentBuilder
+    Message
 } from '../utils/classes.js'
 import { randomId, imgToLink, Translator } from '../utils/utils.js'
-import { ButtonInteraction, ButtonStyle } from 'discord.js'
+import { ButtonInteraction, ButtonStyle, MessageActionRowComponentBuilder } from 'discord.js'
 import EventEmitter from 'node:events'
 
 export class UnoGame extends EventEmitter {
