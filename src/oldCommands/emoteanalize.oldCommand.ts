@@ -72,10 +72,12 @@ export default class Help extends OldCommand {
         // sort y recorrido
         for (const em of es.sort((a, b) => b.uses - a.uses)) {
             t += `${em.name} --- \`${em.uses}\`\n`
+            console.log(em.name, em.uses)
 
             if (++i == 6) {
                 embeds[j].addFields([{ name: 'Emojis', value: t, inline: true }])
                 i = 0
+                t = ''
             }
 
             if (embeds[j].data.fields?.length == 25) {
@@ -91,7 +93,7 @@ export default class Help extends OldCommand {
                 .catch(() => server.db.set({ emoji_statistics: server.emojiStatistics }))
 
         // si no hay emojis suficientes para mostrar
-        if (embeds[0].data.fields?.length === 0)
+        if (t && !embeds[0].data.fields)
             embeds[0].addFields([
                 {
                     name: 'Emojis',
@@ -99,6 +101,7 @@ export default class Help extends OldCommand {
                     inline: true
                 }
             ])
+        else if (!t) embeds[0].setDescription('Nada de momento')
 
         // enviar
         msg.reply({ embeds })

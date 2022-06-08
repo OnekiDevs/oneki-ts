@@ -85,7 +85,11 @@
             "havent_permissions": "I don't have permission to send messages here",
             "new_poll": "New poll",
             "footer": "Poll ID {id} | 0 votes | {bot} Bot v{version}",
-            "reply": "Poll sent"
+            "reply": "Poll sent",
+            "modal_title": "New poll",
+            "modal_title_placeholder": "Add a title to your poll",
+            "modal_title_value": "New poll",
+            "modal_context_placeholder": "Add a context to your poll"
         },
         "finalize": "Finalized"
     },
@@ -172,5 +176,8 @@
     "footer": "{bot} Bot v{version}",
     "premium": "Upgrade your membership to Premium to use this feature",
     "useractivitie": {},
-    "havent_write_permissions": "I don't have enough permissions to send messages in {channel}"
+    "havent_write_permissions": "I don't have enough permissions to send messages in {channel}",
+    "title": "Title",
+    "context": "Context",
+    "option": "Option"
 }

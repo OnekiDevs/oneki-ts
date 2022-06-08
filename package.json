@@ -5,12 +5,10 @@
     "main": "src/index.js",
     "type": "module",
     "scripts": {
-        "nw": "esbuild `find src \\( -name '*.ts' \\)` --platform=node --outdir=dist",
-        "es": "esbuild ./src/ --outfile=./dist/ --platform=node --format=esm --target=node18",
+        "compile": "esbuild `find src \\( -name '*.ts' \\)` --platform=node --outdir=build --minify --target=es2022 --bundle --format=esm --esModuleInterop",
         "build": "tsc",
-        "start": "node dist/index.js",
-        "test": "node dist/tests/test.js",
-        "tester": "nodemon --watch src/tests --exec \"npm run build && npm run test\"",
+        "start": "node --experimental-fetch build/index.js",
+        "test": "node build/tests/test.js",
         "dev": "nodemon -e ts --exec \"npm run build && npm start\"",
         "watch": "nodemon -e ts --exec \"npm run build\"",
         "update": "npm-check -E -u -p",
@@ -34,7 +32,6 @@
         "cross-env": "7.0.3",
         "discord.js": "14.0.0-dev.1653480262-68d5169",
         "dotenv": "16.0.0",
-        "esbuild": "0.14.42",
         "firebase-admin": "10.2.0",
         "i18n": "0.14.2",
         "iblazingx-ms": "2.1.2",
@@ -44,10 +41,11 @@
         "ws": "8.5.0"
     },
     "engines": {
-        "node": "18",
-        "npm": "8.6.0"
+        "node": "16.15.1",
+        "npm": "8.11.0"
     },
     "devDependencies": {
+        "esbuild": "0.14.42",
         "@sapphire/shapeshift": "3.0.0",
         "@types/i18n": "0.13.2",
         "@types/uniqid": "5.3.2",

@@ -1,175 +1,181 @@
 {
-    "------------>>>============ buttons ============<<<------------": "------------>>>============ buttons ============<<<------------",
-    "help_btn": {
-        "embed_title": "Lista de comandos de {bot} Bot",
-        "embed_desciption": "Categoria: {category}\n`<>` significa obligatorio\n`[]` significa opcional",
-        "command_field": "{cmd_description}\n**Alias:** {cmd_alias}\n**Uso:** `{cmd_prefix}{cmd_use}`"
-    },
-    "poll_btn": {
-        "reply": "Voto enviado",
-        "option": "{emoji} Opción {number} {value}",
-        "embed_footer": "Encuesta ID : {id} | {votes} votos | {bot} BOT v{version}"
-    },
-    "uno_btn": {
-        "start_out": "Debes unirte a la partida primero",
-        "start_no_host": "Sólo el host puede iniciar la partida"
-    },
-    "autoroll_btn": {
-        "remove": "Rol removido correctamente",
-        "add": "Rol agregado correctamente"
-    },
-    "------------>>>============ commands ============<<<------------": "------------>>>============ commands ============<<<------------",
-    "activitie_cmd": {
-        "whotout_voice": "Ingresa a un canal de voz o específica uno",
-        "reply": "Actividad `{activitie}` creada en {channel}"
-    },
-    "config_cmd": {
-        "set_log": "Logs establecidos en {channel}",
-        "remove_log": "Log removido",
-        "set_lang": "Lenguaje establecido en `{lang}`",
-        "set_prefix": "Prefijo establecido a `{prefix}`",
-        "add_prefix": "Prefijo `{prefix}` agregado correctamente\nAhora el bot escucha los prefijos `{prefixies}`",
-        "remove_prefix": "Prefijo removido\nAhora el bot escucha `{prefixies}`",
-        "add_suggest_channel": {
-            "reply": "Canal {channel} establecido para las sugerencias de {alias}",
-            "message": "Este canal ahora esta establecido para las sugerencias de {alias}\nPara hacer una sugerencia usa **/suggest `channel:{alias}`**"
-        },
-        "remove_suggest_channel": {
-            "dont_exist": "No existe ningún canal configurado",
-            "reply": "Canal removido"
-        },
-        "set_suggest_channel": {
-            "reply": "Canal {channel} establecido para las sugerencias",
-            "message": "Este canal ahora esta establecido para las sugerencias\nPara hacer una sugerencia usa **/suggest**"
-        },
-        "birthday": {
-            "set_channel": "Canal {channel} establecido para celebrar los cumpleaños de los usuarios",
-            "remove_channel": "Has eliminado el canal de cumpleaños. A partir de ahora los usuarios dejarán de recibir notificaciones en sus cumpleaños.",
-            "set_message": "El anuncio que se enviará cuando cada usuario cumpla años ha sido cambiado por: {message}"
-        },
-        "invites": {
-            "set_channel": "El canal para recibir notificaciones de invitaciones ha sido cambiado a {channel}"
-        },
-        "autoroles": {
-            "create": "Se ha creado el grupo de autoroles **{name}**",
-            "added": "Se agrego el rol {roll} al grupo **{group}**",
-            "remove": "Rol {roll} eliminado de **{group}**",
-            "remove_group": "Grupo eliminado",
-            "displaying": "Desplegando...",
-            "displaying_error": "No existe ese grupo",
-            "sending_error": "No permisos para enviar mensajes en el canal"
-        },
-        "auto_logs": "Log `message_update` establecido en {message}\nLog `message_delete` establecido en {message}\nLog `message_attachment` establecido en {attachment}\nLog `invites` establecido en {invites}\nLog `member_update` establecido en {members}",
-        "set_keep_roles": "¡La opción de mantener roles ha sido seleccionada como {keepRole}!",
-        "add_blacklisted_word": "¡La palabra `{word}` ha sido prohibida satisfactoriamente!",
-        "remove_blacklisted_word": "¡La palabra `{word}` ha sido removida de las prohibidas satisfactoriamente!",
-        "add_no_filter_channel": "¡El canal {channel} ha sido agregado a la lista de canales sin filtro!",
-        "remove_no_filter_channel": "¡El canal {channel} ha sido removido de la lista de canales sin filtro!",
-        "import_file": {
-            "reply": "Archivo importado correctamente",
-            "error": "No se pudo importar el archivo"
-        }
-    },
-    "info_cmd": {
-        "member": {
-            "title": "Información de {user}",
-            "member_color": "Color del miembro",
-            "user_color": "Color de usuario",
-            "boosting_from": "Boosteando desde",
-            "roles": "Roles"
-        }
-    },
-    "poll_cmd": {
-        "make": {
-            "dont_premium": "Solo se puede tener una encuesta a la vez.\nActualize su membresia a Premium o finalize la encuesta existente",
-            "havent_permissions": "No tengo permisos para enviar mensajes aquí",
-            "new_poll": "Nueva encuesta",
-            "footer": "Encuesta ID {id} | 0 votos | {bot} Bot v{version}",
-            "reply": "Encuesta enviada"
-        },
-        "finalize": "Finalizada"
-    },
-    "suggest_cmd": {
-        "whitout_channel": "Este servidor no tiene un canal de sugerencias establecido",
-        "sent": "Sugerencia enviada",
-        "title": "Sugerencia #{id}",
-        "error_permissions": "Error, El canal {channe} esta establecido para sugerencia pero no tengo permisos para acceder. {owner}",
-        "missing_channel": "Canal no encontrado"
-    },
-    "birthday_cmd": {
-        "set": "Tu fecha de cumpleaños ha sido cambiada a {birthday}",
-        "remove": "A partir de ahora no recibirás notificaciones por tu cumpleaños",
-        "error": "Lo siento, no puedo entender eso. Por favor, comprueba que hayas escrito tu fecha de cumpleaños como en este ejemplo: `MES/DÍA`",
-        "default_message": "¡Feliz cumpleaños {username}!"
-    },
-    "ban_cmd": {
-        "user_permissions": "No tienes permisos suficientes para banear a ese usuario",
-        "reply": "{user} ha sido baneado correctamente"
-    },
-    "kick_cmd": {
-        "user_permissions": "No tienes permisos suficientes para patear a ese usuario",
-        "reply": "{user} ha sido pateado correctamente"
-    },
-    "timeout_cmd": {
-        "user_permissions": "No tienes permisos suficientes para aislar a ese usuario",
-        "reply": "{user} ha sido aislado correctamente"
-    },
-    "------------>>>============ events ============<<<------------": "------------>>>============ events ============<<<------------",
-    "invites_event": {
-        "default_message": "¡{invited} ha entrado al servidor! *Ha sido invitado por {inviter}*",
-        "custom_url": "{invited} ha entrado al servidor. `Se ha unido usando la URL especial del servidor.`",
-        "cant_find_inviter": "{invited} ha entrado al servidor. `No pude encontrar quién lo invitó.`",
-        "permissions_error": "⚠️{invited} ha entrado al servidor, sin embargo no tengo permisos para revisar quién lo invitó.⚠️"
-    },
-    "useractivitie_event": {
-        "set_channel": "¡El canal {channel} ha sido seleccionado como el canal para recibir la actividad de los usuarios!",
-        "nickname_change": "El usuario {user} acaba de cambiar su apodo. **Viejo apodo**: {oldNickname}, **Nuevo apodo**: {newNickname}",
-        "serveravatar_change": {
-            "title": "♻️ Actualización de avatar del servidor de {username}",
-            "description": "El usuario {user} ha actualizado su avatar del servidor."
-        },
-        "roles_change": {
-            "added": "Se le ha agregado el rol {role} al usuario {user}.",
-            "removed": "Se le ha removido el rol {role} al usuario {user}."
-        }
-    },
-    "sanction_event": {
-        "set_channel": "¡El canal {channel} ha sido seleccionado como el canal para recibir las sanciones realizadas!",
-        "mute_user": "El usuario {user} ha sido silenciado por el {moderator} por {time}. Razón: {reason}"
-    },
-    "ghost_ping_event": {
-        "realized": "⛔ El usuario {ghostingUser} le ha hecho ghost ping al usuario {ghostedUser}. ⛔`",
-        "warned": "El usuario {ghostingUser} ha hecho su primer ghost ping hacia el usuario {ghostedUser} y ha sido advertido de ello.",
-        "cant_warn": "⚠️ El usuario {ghostingUser} ha hecho su primer ghost ping hacia el usuario {ghostedUser}. Sin embargo, no puedo darle una advertencia porque su rol es mayor al mío. ⚠️",
-        "muted": "El usuario {ghostingUser} le ha hecho ghost ping al usuario {ghostedUser} y ha sido muteado por ello.",
-        "cant_mute": "⚠️ El usuario {ghostingUser} ha hecho ghost ping al usuario {ghostedUser}. Sin embargo, no pude mutearlo debido a que su rol es mayor al mío. ⚠️"
-    },
-    "------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
-    "emoji_old": {
-        "missing": "Emoji no encontrado",
-        "link": "Enlace",
-        "forget": "Olvidaste mencionar un emoji"
-    },
-    "uno_old": {
-        "updating": "Actualizando cartas ...",
-        "gg": "GG, has ganado",
-        "waiting": "Esperando jugadores, se requieren minimo 2",
-        "end": "Partida terminada\nGanador: {user}",
-        "turn": "Turno de {user}",
-        "join": "Unirme",
-        "start": "Iniciar partida",
-        "show": "Mostrar cartas",
-        "eat": "Comer cartas",
-        "new": "Regenerar mensaje",
-        "your_turn": "Es tu turno"
-    },
-    "emote_analize_old": {
-        "start": "Iniciando análisis",
-        "end": "Parando análisis"
-    },
-    "------------>>>============ commons ============<<<------------": "------------>>>============ commons ============<<<------------",
-    "footer": "{bot} Bot v{version}",
-    "premium": "Actualize su membresia a Premium para usar esta caracteristica",
-    "useractivitie": {},
-    "havent_write_permissions": "No tengo permisos para escribir en {channel}"
+	"------------>>>============ buttons ============<<<------------": "------------>>>============ buttons ============<<<------------",
+	"help_btn": {
+		"embed_title": "Lista de comandos de {bot} Bot",
+		"embed_desciption": "Categoria: {category}\n`<>` significa obligatorio\n`[]` significa opcional",
+		"command_field": "{cmd_description}\n**Alias:** {cmd_alias}\n**Uso:** `{cmd_prefix}{cmd_use}`"
+	},
+	"poll_btn": {
+		"reply": "Voto enviado",
+		"option": "{emoji} Opción {number} {value}",
+		"embed_footer": "Encuesta ID : {id} | {votes} votos | {bot} BOT v{version}"
+	},
+	"uno_btn": {
+		"start_out": "Debes unirte a la partida primero",
+		"start_no_host": "Sólo el host puede iniciar la partida"
+	},
+	"autoroll_btn": {
+		"remove": "Rol removido correctamente",
+		"add": "Rol agregado correctamente"
+	},
+	"------------>>>============ commands ============<<<------------": "------------>>>============ commands ============<<<------------",
+	"activitie_cmd": {
+		"whotout_voice": "Ingresa a un canal de voz o específica uno",
+		"reply": "Actividad `{activitie}` creada en {channel}"
+	},
+	"config_cmd": {
+		"set_log": "Logs establecidos en {channel}",
+		"remove_log": "Log removido",
+		"set_lang": "Lenguaje establecido en `{lang}`",
+		"set_prefix": "Prefijo establecido a `{prefix}`",
+		"add_prefix": "Prefijo `{prefix}` agregado correctamente\nAhora el bot escucha los prefijos `{prefixies}`",
+		"remove_prefix": "Prefijo removido\nAhora el bot escucha `{prefixies}`",
+		"add_suggest_channel": {
+			"reply": "Canal {channel} establecido para las sugerencias de {alias}",
+			"message": "Este canal ahora esta establecido para las sugerencias de {alias}\nPara hacer una sugerencia usa **/suggest `channel:{alias}`**"
+		},
+		"remove_suggest_channel": {
+			"dont_exist": "No existe ningún canal configurado",
+			"reply": "Canal removido"
+		},
+		"set_suggest_channel": {
+			"reply": "Canal {channel} establecido para las sugerencias",
+			"message": "Este canal ahora esta establecido para las sugerencias\nPara hacer una sugerencia usa **/suggest**"
+		},
+		"birthday": {
+			"set_channel": "Canal {channel} establecido para celebrar los cumpleaños de los usuarios",
+			"remove_channel": "Has eliminado el canal de cumpleaños. A partir de ahora los usuarios dejarán de recibir notificaciones en sus cumpleaños.",
+			"set_message": "El anuncio que se enviará cuando cada usuario cumpla años ha sido cambiado por: {message}"
+		},
+		"invites": {
+			"set_channel": "El canal para recibir notificaciones de invitaciones ha sido cambiado a {channel}"
+		},
+		"autoroles": {
+			"create": "Se ha creado el grupo de autoroles **{name}**",
+			"added": "Se agrego el rol {roll} al grupo **{group}**",
+			"remove": "Rol {roll} eliminado de **{group}**",
+			"remove_group": "Grupo eliminado",
+			"displaying": "Desplegando...",
+			"displaying_error": "No existe ese grupo",
+			"sending_error": "No permisos para enviar mensajes en el canal"
+		},
+		"auto_logs": "Log `message_update` establecido en {message}\nLog `message_delete` establecido en {message}\nLog `message_attachment` establecido en {attachment}\nLog `invites` establecido en {invites}\nLog `member_update` establecido en {members}",
+		"set_keep_roles": "¡La opción de mantener roles ha sido seleccionada como {keepRole}!",
+		"add_blacklisted_word": "¡La palabra `{word}` ha sido prohibida satisfactoriamente!",
+		"remove_blacklisted_word": "¡La palabra `{word}` ha sido removida de las prohibidas satisfactoriamente!",
+		"add_no_filter_channel": "¡El canal {channel} ha sido agregado a la lista de canales sin filtro!",
+		"remove_no_filter_channel": "¡El canal {channel} ha sido removido de la lista de canales sin filtro!",
+		"import_file": {
+			"reply": "Archivo importado correctamente",
+			"error": "No se pudo importar el archivo"
+		}
+	},
+	"info_cmd": {
+		"member": {
+			"title": "Información de {user}",
+			"member_color": "Color del miembro",
+			"user_color": "Color de usuario",
+			"boosting_from": "Boosteando desde",
+			"roles": "Roles"
+		}
+	},
+	"poll_cmd": {
+		"make": {
+			"dont_premium": "Solo se puede tener una encuesta a la vez.\nActualize su membresia a Premium o finalize la encuesta existente",
+			"havent_permissions": "No tengo permisos para enviar mensajes aquí",
+			"new_poll": "Nueva encuesta",
+			"footer": "Encuesta ID {id} | 0 votos | {bot} Bot v{version}",
+			"reply": "Encuesta enviada",
+			"modal_title": "Nueva encuesta",
+			"modal_title_placeholder": "Agrega un pequenio título a tu encuesta",
+			"modal_title_value": "Nueva encuesta"
+		},
+		"finalize": "Finalizada"
+	},
+	"suggest_cmd": {
+		"whitout_channel": "Este servidor no tiene un canal de sugerencias establecido",
+		"sent": "Sugerencia enviada",
+		"title": "Sugerencia #{id}",
+		"error_permissions": "Error, El canal {channe} esta establecido para sugerencia pero no tengo permisos para acceder. {owner}",
+		"missing_channel": "Canal no encontrado"
+	},
+	"birthday_cmd": {
+		"set": "Tu fecha de cumpleaños ha sido cambiada a {birthday}",
+		"remove": "A partir de ahora no recibirás notificaciones por tu cumpleaños",
+		"error": "Lo siento, no puedo entender eso. Por favor, comprueba que hayas escrito tu fecha de cumpleaños como en este ejemplo: `MES/DÍA`",
+		"default_message": "¡Feliz cumpleaños {username}!"
+	},
+	"ban_cmd": {
+		"user_permissions": "No tienes permisos suficientes para banear a ese usuario",
+		"reply": "{user} ha sido baneado correctamente"
+	},
+	"kick_cmd": {
+		"user_permissions": "No tienes permisos suficientes para patear a ese usuario",
+		"reply": "{user} ha sido pateado correctamente"
+	},
+	"timeout_cmd": {
+		"user_permissions": "No tienes permisos suficientes para aislar a ese usuario",
+		"reply": "{user} ha sido aislado correctamente"
+	},
+	"------------>>>============ events ============<<<------------": "------------>>>============ events ============<<<------------",
+	"invites_event": {
+		"default_message": "¡{invited} ha entrado al servidor! *Ha sido invitado por {inviter}*",
+		"custom_url": "{invited} ha entrado al servidor. `Se ha unido usando la URL especial del servidor.`",
+		"cant_find_inviter": "{invited} ha entrado al servidor. `No pude encontrar quién lo invitó.`",
+		"permissions_error": "⚠️{invited} ha entrado al servidor, sin embargo no tengo permisos para revisar quién lo invitó.⚠️"
+	},
+	"useractivitie_event": {
+		"set_channel": "¡El canal {channel} ha sido seleccionado como el canal para recibir la actividad de los usuarios!",
+		"nickname_change": "El usuario {user} acaba de cambiar su apodo. **Viejo apodo**: {oldNickname}, **Nuevo apodo**: {newNickname}",
+		"serveravatar_change": {
+			"title": "♻️ Actualización de avatar del servidor de {username}",
+			"description": "El usuario {user} ha actualizado su avatar del servidor."
+		},
+		"roles_change": {
+			"added": "Se le ha agregado el rol {role} al usuario {user}.",
+			"removed": "Se le ha removido el rol {role} al usuario {user}."
+		}
+	},
+	"sanction_event": {
+		"set_channel": "¡El canal {channel} ha sido seleccionado como el canal para recibir las sanciones realizadas!",
+		"mute_user": "El usuario {user} ha sido silenciado por el {moderator} por {time}. Razón: {reason}"
+	},
+	"ghost_ping_event": {
+		"realized": "⛔ El usuario {ghostingUser} le ha hecho ghost ping al usuario {ghostedUser}. ⛔`",
+		"warned": "El usuario {ghostingUser} ha hecho su primer ghost ping hacia el usuario {ghostedUser} y ha sido advertido de ello.",
+		"cant_warn": "⚠️ El usuario {ghostingUser} ha hecho su primer ghost ping hacia el usuario {ghostedUser}. Sin embargo, no puedo darle una advertencia porque su rol es mayor al mío. ⚠️",
+		"muted": "El usuario {ghostingUser} le ha hecho ghost ping al usuario {ghostedUser} y ha sido muteado por ello.",
+		"cant_mute": "⚠️ El usuario {ghostingUser} ha hecho ghost ping al usuario {ghostedUser}. Sin embargo, no pude mutearlo debido a que su rol es mayor al mío. ⚠️"
+	},
+	"------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
+	"emoji_old": {
+		"missing": "Emoji no encontrado",
+		"link": "Enlace",
+		"forget": "Olvidaste mencionar un emoji"
+	},
+	"uno_old": {
+		"updating": "Actualizando cartas ...",
+		"gg": "GG, has ganado",
+		"waiting": "Esperando jugadores, se requieren minimo 2",
+		"end": "Partida terminada\nGanador: {user}",
+		"turn": "Turno de {user}",
+		"join": "Unirme",
+		"start": "Iniciar partida",
+		"show": "Mostrar cartas",
+		"eat": "Comer cartas",
+		"new": "Regenerar mensaje",
+		"your_turn": "Es tu turno"
+	},
+	"emote_analize_old": {
+		"start": "Iniciando análisis",
+		"end": "Parando análisis"
+	},
+	"------------>>>============ commons ============<<<------------": "------------>>>============ commons ============<<<------------",
+	"footer": "{bot} Bot v{version}",
+	"premium": "Actualize su membresia a Premium para usar esta caracteristica",
+	"useractivitie": {},
+	"havent_write_permissions": "No tengo permisos para escribir en {channel}",
+	"title": "Titulo",
+	"context": "Contexto",
+	"option": "Opcion"
 }
