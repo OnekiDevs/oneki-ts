@@ -122,7 +122,7 @@ export class Command {
         return interacion
     }
 
-    async modal(interaction: ModalSubmitInteraction<'cached'>) {
+    async modal(interaction: ModalSubmitInteraction<'cached'>): Promise<any> {
         return interaction.deferReply()
     }
 
