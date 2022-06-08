@@ -2,6 +2,7 @@ import { Client, GatewayIntentBits } from './utils/classes.js'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { config } from 'dotenv'
+import { sendError } from './utils/utils.js'
 
 console.log('Iniciando...')
 
@@ -9,7 +10,7 @@ config()
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-new Client({
+const client = new Client({
     intents: [
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.Guilds,
@@ -39,12 +40,25 @@ new Client({
         defaultLocale: 'en',
         retryInDefaultLocale: true,
         objectNotation: true,
+        fallbacks: {
+            'en-*': 'en',
+            'es-*': 'es'
+        },
         logWarnFn: msg => console.warn('WARN _l', msg),
         logErrorFn: msg => console.error('ERROR _l', msg),
-        missingKeyFn: msg => console.error('LANG _l', msg),
+        missingKeyFn: (locale: string, value: string) => {
+            sendError(
+                client,
+                new Error(`Missing translation for "${value}" in "${locale}"`),
+                join(__dirname, '..', 'lang', locale + '.json')
+            )
+            return value ?? '_'
+        },
         mustacheConfig: {
             tags: ['{{', '}}'],
             disable: false
         }
     }
-}).login()
+})
+
+client.login()

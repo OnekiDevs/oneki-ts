@@ -88,7 +88,8 @@
 			"reply": "Encuesta enviada",
 			"modal_title": "Nueva encuesta",
 			"modal_title_placeholder": "Agrega un pequenio título a tu encuesta",
-			"modal_title_value": "Nueva encuesta"
+			"modal_title_value": "Nueva encuesta",
+			"modal_context_placeholder": "Add a context to your poll"
 		},
 		"finalize": "Finalizada"
 	},

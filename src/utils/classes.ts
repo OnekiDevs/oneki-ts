@@ -133,14 +133,15 @@ export interface ClientOptions extends BaseClientOptions {
         components: string
     }
     i18n: {
+        fallbacks: { [locale: string]: string }
         locales: string[]
         directory: string
         defaultLocale: string
         retryInDefaultLocale: boolean
         objectNotation: boolean
-        logWarnFn: anyFunction
-        logErrorFn: anyFunction
-        missingKeyFn: anyFunction
+        logWarnFn: (msg: string) => void
+        logErrorFn: (msg: string) => void
+        missingKeyFn: (locale: string, value: string) => string
         mustacheConfig: {
             tags: [string, string]
             disable: boolean
@@ -155,4 +156,4 @@ export interface GuildMemberOptions {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type anyFunction = (msg: string) => any
+export type anyFunction = (msg: string, k?: any) => any

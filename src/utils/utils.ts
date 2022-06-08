@@ -11,7 +11,9 @@ import {
     Message,
     Interaction,
     Util,
-    Colors
+    Colors,
+    TextInputBuilder,
+    ActionRowBuilder
 } from 'discord.js'
 
 export { Util }
@@ -142,9 +144,9 @@ export function imgToLink(img: Buffer, client: Client): Promise<string> {
  */
 export async function sendError(client: Client, error: Error, file: string) {
     console.log(
-        '\x1b[31m*****************************************************************\x1b[0m',
+        '\x1b[31m***************************************************************************\x1b[0m\n',
         error,
-        '\n\x1b[31m*****************************************************************\x1b[0m'
+        '\n\x1b[31m***************************************************************************\x1b[0m'
     )
     const channel = await client.channels.fetch(client.constants.errorChannel as string)
     if (channel)
@@ -197,11 +199,10 @@ export async function sendError(client: Client, error: Error, file: string) {
  * @param {Interaction} interaction - Interaction - The interaction object that contains the locale and client.
  * @returns {transalte} A function that takes a phrase and params and returns a string.
  */
-export const Translator = function (interaction: Interaction | Message | { client: Client }) {
-    let lang: string
-    if (interaction instanceof Interaction) lang = interaction.locale?.slice(0, 2)
-    else if (interaction instanceof Message) lang = interaction.guild?.preferredLocale.slice(0, 2) ?? 'en'
-    else lang = 'en'
+export const Translator = function (interaction: Interaction | Message<true>) {
+    let lang: string = interaction instanceof Interaction ? interaction.locale : interaction.guild.preferredLocale
+    // if (interaction instanceof Interaction) lang = interaction.locale
+    // else lang = interaction.guild.preferredLocale
     const i18n = (interaction.client as Client).i18n
 
     /**
@@ -239,4 +240,8 @@ export interface PunishUser {
     reason: string
     duration?: string
     moderatorId: string
+}
+
+export function createModalComponent(data: TextInputBuilder) {
+    return new ActionRowBuilder<TextInputBuilder>().addComponents([data])
 }

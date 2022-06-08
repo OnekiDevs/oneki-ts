@@ -233,7 +233,7 @@ export class Server {
      * Return a lang of the guild for the Server.lang
      */
     get lang(): string {
-        return this.guild.preferredLocale.slice(0, 2)
+        return this.guild.preferredLocale
     }
 
     /**
