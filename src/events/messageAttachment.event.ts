@@ -37,7 +37,7 @@ export default async function (msg: Message<true>) {
                 })
             else {
                 const channel = msg.guild.channels.cache.find(
-                    c => c.isText() && checkSend(c as TextChannel, msg.guild?.members.me as GuildMember)
+                    c => c.isTextBased() && checkSend(c as TextChannel, msg.guild?.members.me as GuildMember)
                 )
                 if (channel)
                     (channel as TextChannel).send(

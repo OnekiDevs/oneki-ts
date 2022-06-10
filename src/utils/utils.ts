@@ -6,7 +6,7 @@ import {
     TextChannel,
     GuildMember,
     PermissionsBitField,
-    Attachment,
+    AttachmentBuilder,
     EmbedBuilder,
     Message,
     Interaction,
@@ -125,7 +125,7 @@ export function imgToLink(img: Buffer, client: Client): Promise<string> {
         if (channel)
             (channel as TextChannel)
                 .send({
-                    files: [new Attachment(img)]
+                    files: [new AttachmentBuilder(img)]
                 })
                 .then(msg => {
                     resolve(msg.attachments.first()?.url ?? '')

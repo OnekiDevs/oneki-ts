@@ -1,4 +1,4 @@
-import { PermissionsBitField, ChatInputCommandInteraction, Attachment } from 'discord.js'
+import { PermissionsBitField, ChatInputCommandInteraction, AttachmentBuilder } from 'discord.js'
 import { permissionsError } from '../../utils/utils.js'
 import { Client, GuildDataBaseModel } from '../../utils/classes.js'
 
@@ -30,10 +30,9 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
 
     return interaction.editReply({
         files: [
-            new Attachment(
-                Buffer.from(JSON.stringify({ ...defaultConfig, ...server.toDBObject() }, null, 4)),
-                `${interaction.guild?.name}_${interaction.client.user?.username}_config.json`
-            )
+            new AttachmentBuilder(Buffer.from(JSON.stringify({ ...defaultConfig, ...server.toDBObject() }, null, 4)), {
+                name: `${interaction.guild?.name}_${interaction.client.user?.username}_config.json`
+            })
         ]
     })
 }

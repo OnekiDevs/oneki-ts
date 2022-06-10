@@ -1,4 +1,9 @@
-import { ChatInputCommandInteraction, Attachment, ApplicationCommandOptionType, UserFlagsBitField } from 'discord.js'
+import {
+    ChatInputCommandInteraction,
+    ApplicationCommandOptionType,
+    UserFlagsBitField,
+    AttachmentBuilder
+} from 'discord.js'
 import { Command, Client } from '../utils/classes.js'
 // import cw from 'capture-website'
 import Jimp from 'jimp'
@@ -60,7 +65,7 @@ export default class SS extends Command {
         ss = await c.getBufferAsync(Jimp.MIME_PNG)
 
         interaction.editReply({
-            files: [new Attachment(ss, 'ss.jpg')]
+            files: [new AttachmentBuilder(ss, { name: 'ss.jpg' })]
         })
     }
 }

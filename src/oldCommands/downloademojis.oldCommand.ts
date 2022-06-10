@@ -1,4 +1,4 @@
-import { Message, Attachment, PermissionsBitField } from 'discord.js'
+import { Message, PermissionsBitField, AttachmentBuilder } from 'discord.js'
 import { OldCommand, Client, Server } from '../utils/classes.js'
 import { permissionsError, sendError } from '../utils/utils.js'
 import JSZip from 'jszip'
@@ -37,7 +37,7 @@ export default class DownloadEmojis extends OldCommand {
             const zipGenerated = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' })
 
             msg.reply({
-                files: [new Attachment(zipGenerated, `${msg.guild.name}_emojis.zip`)]
+                files: [new AttachmentBuilder(zipGenerated, { name: `${msg.guild.name}_emojis.zip` })]
             })
         } catch (error) {
             msg.reply('Ha ocurrido un error, reporte generado')

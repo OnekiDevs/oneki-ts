@@ -54,11 +54,6 @@ export default class Poll extends Command {
                 type: ApplicationCommandOptionType.Subcommand,
                 options: [
                     {
-                        name: 'title',
-                        description: 'Add a title for the poll',
-                        type: ApplicationCommandOptionType.String
-                    },
-                    {
                         name: 'block_choice',
                         description: 'Blocks the response so as not to be modified',
                         type: ApplicationCommandOptionType.Boolean
