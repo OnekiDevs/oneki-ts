@@ -5,11 +5,6 @@
         "embed_desciption": "Category: {category}\n`<>` Means optional\n`[]` Means mandatory",
         "command_field": "{cmd_description}\n**Alias:** {cmd_alias}\n**Use:** `{cmd_prefix}{cmd_use}`"
     },
-    "poll_btn": {
-        "reply": "Voto enviado",
-        "option": "{emoji} Option {number} {value}",
-        "embed_footer": "Poll ID : {id} | {votes} votes | {bot} BOT v{version}"
-    },
     "uno_btn": {
         "start_out": "You must join the game first",
         "start_no_host": "Only the host can start the game"
@@ -89,7 +84,18 @@
             "modal_title": "New poll",
             "modal_title_placeholder": "Add a title to your poll",
             "modal_title_value": "New poll",
-            "modal_context_placeholder": "Add a context to your poll"
+            "modal_context_placeholder": "Add a context to your poll",
+            "comment": "max of ''modal_options_label'' is 45 characters",
+            "modal_options_label": "Options separated by line breaks",
+            "modal_options_placeholder": "yes\nno\nmaybe"
+        },
+        "edit": {
+            "more_options": "Is necessary to add minimum 2 options",
+            "success": "created successfully"
+        },
+        "buttons": {
+            "success": "Vote sent",
+            "already_voted": "You have already voted"
         },
         "finalize": "Finalized"
     },
@@ -179,5 +185,6 @@
     "havent_write_permissions": "I don't have enough permissions to send messages in {channel}",
     "title": "Title",
     "context": "Context",
-    "option": "Option"
+    "options": "Options",
+    "option": "option"
 }

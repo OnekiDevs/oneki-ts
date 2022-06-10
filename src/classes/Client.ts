@@ -35,7 +35,7 @@ export class Client extends BaseClient {
     servers: ServerManager = new ServerManager(this)
     websocket?: WebSocket
     constants: ClientConstants
-    private _wsInterval = setInterval(() => '', 20_000)
+    private _wsInterval?: ReturnType<typeof setInterval>
     private _wsintent = 1
     uno: Collection<string, UnoGame> = new Collection()
     UnoCards = UnoCards
@@ -74,7 +74,7 @@ export class Client extends BaseClient {
                 this._wsintent = 1
             })
             this.websocket.on('close', () => {
-                clearInterval(this._wsInterval)
+                clearInterval(this._wsInterval!)
                 console.error('Socket Cerrado!!')
                 console.timeEnd('WebSocket Connection')
                 setTimeout(() => {

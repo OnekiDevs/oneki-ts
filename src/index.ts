@@ -50,7 +50,7 @@ const client = new Client({
             sendError(
                 client,
                 new Error(`Missing translation for "${value}" in "${locale}"`),
-                join(__dirname, '..', 'lang', locale + '.json')
+                join(import.meta.url, '..', 'lang', locale + '.json')
             )
             return value ?? '_'
         },

@@ -5,7 +5,8 @@ import {
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
-    ApplicationCommandOptionType
+    ApplicationCommandOptionType,
+    ButtonInteraction
 } from 'discord.js'
 import { Command, Client } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
@@ -51,7 +52,8 @@ export default class Activitie extends Command {
                     type: ApplicationCommandOptionType.Channel,
                     channel_types: [2]
                 }
-            ]
+            ],
+            buttonRegex: /act_.+/i
         })
     }
 
@@ -82,9 +84,14 @@ export default class Activitie extends Command {
                     new ButtonBuilder()
                         .setLabel('show link')
                         .setStyle(ButtonStyle.Primary)
-                        .setCustomId(`act_sl_${invite.code}`)
+                        .setCustomId(`act_${invite.code}`)
                 ])
             ]
         })
+    }
+
+    async button(interaction: ButtonInteraction<'cached'>) {
+        const [, code] = interaction.customId.split(/_/gi)
+        interaction.reply(`https://discord.com/invite/${code}`)
     }
 }

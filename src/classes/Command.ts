@@ -110,8 +110,8 @@ export class Command {
         return message
     }
 
-    async button(interacion: ButtonInteraction<'cached'>): Promise<any> {
-        return interacion.deferUpdate()
+    async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
+        return interaction.deferUpdate()
     }
 
     async select(interacion: SelectMenuInteraction<'cached'>): Promise<any> {

@@ -13,7 +13,8 @@ import {
     Util,
     Colors,
     TextInputBuilder,
-    ActionRowBuilder
+    ActionRowBuilder,
+    TextInputStyle
 } from 'discord.js'
 
 export { Util }
@@ -242,6 +243,7 @@ export interface PunishUser {
     moderatorId: string
 }
 
-export function createModalComponent(data: TextInputBuilder) {
-    return new ActionRowBuilder<TextInputBuilder>().addComponents([data])
+export function createModalComponent(input: TextInputBuilder) {
+    if (!input.data.style) input.setStyle(TextInputStyle.Short)
+    return new ActionRowBuilder<TextInputBuilder>().addComponents([input])
 }
