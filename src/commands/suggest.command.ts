@@ -29,21 +29,36 @@ export default class Suggest extends Command {
         const server = this.client.getServer(guild)
 
         this.addOption({
-            name: 'suggestion',
+            name: {
+                'en-US': 'suggestion',
+                'es-ES': 'sugerencia'
+            },
             type: ApplicationCommandOptionType.String,
-            description: 'The suggestion',
+            description: {
+                'en-US': 'The suggestion',
+                'es-ES': 'La sugerencia'
+            },
             required: true
         })
 
         if (server.suggestChannels.length > 0) {
             const channels = server.suggestChannels.map(c => {
-                return { name: c.alias ?? 'predetermined', value: c.channel }
+                return {
+                    name: { 'en-US': c.alias ?? 'predetermined', 'es-ES': c.alias ?? 'predeterminado' },
+                    value: c.channel
+                }
             })
 
             this.addOption({
-                name: 'channel',
+                name: {
+                    'en-US': 'channel',
+                    'es-ES': 'canal'
+                },
                 type: ApplicationCommandOptionType.String,
-                description: 'The channel to send the suggestion',
+                description: {
+                    'en-US': 'The channel where the suggestion will be sent',
+                    'es-ES': 'El canal donde se enviará la sugerencia'
+                },
                 required: true,
                 choices: channels
             })

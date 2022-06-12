@@ -24,8 +24,14 @@ export default class Activitie extends Command {
             },
             options: [
                 {
-                    name: 'game',
-                    description: 'select a game',
+                    name: {
+                        'en-US': 'game',
+                        'es-ES': 'juego'
+                    },
+                    description: {
+                        'en-US': 'select a game',
+                        'es-ES': 'selecciona un juego'
+                    },
                     type: ApplicationCommandOptionType.String,
                     required: true,
                     choices: [
@@ -47,8 +53,14 @@ export default class Activitie extends Command {
                     ]
                 },
                 {
-                    name: 'channel',
-                    description: 'voice channel',
+                    name: {
+                        'en-US': 'channel',
+                        'es-ES': 'canal'
+                    },
+                    description: {
+                        'en-US': 'select a voice channel',
+                        'es-ES': 'selecciona un canal de voz'
+                    },
                     type: ApplicationCommandOptionType.Channel,
                     channel_types: [2]
                 }

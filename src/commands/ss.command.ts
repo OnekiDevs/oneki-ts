@@ -22,15 +22,27 @@ export default class SS extends Command {
             },
             options: [
                 {
-                    name: 'text',
+                    name: {
+                        'en-US': 'text',
+                        'es-ES': 'texto'
+                    },
                     type: ApplicationCommandOptionType.String,
-                    description: 'The text of the message',
+                    description: {
+                        'en-US': 'The text of the message',
+                        'es-ES': 'El texto del mensaje'
+                    },
                     required: true
                 },
                 {
-                    name: 'user',
+                    name: {
+                        'en-US': 'user',
+                        'es-ES': 'usuario'
+                    },
                     type: ApplicationCommandOptionType.User,
-                    description: 'The user of the message'
+                    description: {
+                        'en-US': 'The user of the message',
+                        'es-ES': 'El usuario del mensaje'
+                    }
                 }
             ]
         })

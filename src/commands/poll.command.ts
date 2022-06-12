@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { filledBar, pollEmojis as emojis, checkSend, randomId, createModalComponent } from '../utils/utils.js'
-import { Command, Client } from '../utils/classes.js'
+import { Command, Client, ChoicesStringCommandOption } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
 import {
     ChatInputCommandInteraction,
@@ -49,28 +49,58 @@ export default class Poll extends Command {
 
         if (server.premium || snap.empty) {
             this.addOption({
-                name: 'make',
-                description: 'Make a new poll',
+                name: {
+                    'en-US': 'make',
+                    'es-ES': 'crear'
+                },
+                description: {
+                    'en-US': 'Make a new poll',
+                    'es-ES': 'Crear una nueva encuesta'
+                },
                 type: ApplicationCommandOptionType.Subcommand,
                 options: [
                     {
-                        name: 'block_choice',
-                        description: 'Blocks the response so as not to be modified',
+                        name: {
+                            'en-US': 'block_choice',
+                            'es-ES': 'bloquear_seleccion'
+                        },
+                        description: {
+                            'en-US': 'Block the choice of the user',
+                            'es-ES': 'Bloquear la selección del usuario'
+                        },
                         type: ApplicationCommandOptionType.Boolean
                     },
                     {
-                        name: 'show_results',
-                        description: 'Show the results of the poll in the moment',
+                        name: {
+                            'en-US': 'show_results',
+                            'es-ES': 'mostrar_resultados'
+                        },
+                        description: {
+                            'en-US': 'Show the results of the poll in real time',
+                            'es-ES': 'Mostrar los resultados de la encuesta en tiempo real'
+                        },
                         type: ApplicationCommandOptionType.Boolean
                     },
                     {
-                        name: 'multiple_choices',
-                        description: 'Allow multiple choices',
+                        name: {
+                            'en-US': 'multiple_choices',
+                            'es-ES': 'seleccion_multiple'
+                        },
+                        description: {
+                            'en-US': 'Allow multiple choices',
+                            'es-ES': 'Permitir múltiples selecciones'
+                        },
                         type: ApplicationCommandOptionType.Boolean
                     },
                     {
-                        name: 'time',
-                        description: 'Set the time of the poll',
+                        name: {
+                            'en-US': 'time',
+                            'es-ES': 'tiempo'
+                        },
+                        description: {
+                            'en-US': 'Set the time of the poll',
+                            'es-ES': 'Establecer el tiempo de la encuesta'
+                        },
                         type: ApplicationCommandOptionType.String
                     }
                 ]
@@ -78,20 +108,36 @@ export default class Poll extends Command {
         }
 
         if (!snap.empty) {
-            const choices: { name: string; value: string }[] = []
+            const choices: ChoicesStringCommandOption[] = []
             let i = 0
             snap.forEach(doc => {
-                const name = doc.data().title ?? 'New poll ' + ++i
-                choices.push({ name: name.length > 100 ? name.substring(0, 96) + '...' : name, value: doc.id })
+                const name = (doc.data().title ?? 'New poll ' + ++i) as string
+                const format = name.length > 100 ? name.substring(0, 96) + '...' : name
+                choices.push({
+                    name: format,
+                    value: doc.id
+                })
             })
             this.addOption({
-                name: 'finalize',
-                description: 'Finalize the poll',
+                name: {
+                    'en-US': 'finalize',
+                    'es-ES': 'finalizar'
+                },
+                description: {
+                    'en-US': 'Finalize a poll',
+                    'es-ES': 'Finalizar una encuesta'
+                },
                 type: ApplicationCommandOptionType.Subcommand,
                 options: [
                     {
-                        name: 'poll',
-                        description: 'Select the poll to finalize',
+                        name: {
+                            'en-US': 'poll',
+                            'es-ES': 'encuesta'
+                        },
+                        description: {
+                            'en-US': 'Select the poll to finalize',
+                            'es-ES': 'Seleccionar la encuesta a finalizar'
+                        },
                         type: ApplicationCommandOptionType.String,
                         choices
                     }

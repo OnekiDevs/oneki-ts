@@ -7,7 +7,9 @@ import {
     SlashCommandBuilder,
     ButtonInteraction,
     Message,
-    Guild
+    Guild,
+    ApplicationCommandOptionType,
+    ChannelType
 } from 'discord.js'
 import { Client, Local } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
@@ -93,7 +95,13 @@ export class Command {
             .setDefaultMemberPermissions(this.permissions?.bitfield ?? 0)
             .setDMPermission(this.dm)
             .toJSON()
-        command.options = this.options
+        command.options = this.options.map(o => ({
+            ...o,
+            name_localizations: o.name,
+            name: o.name['en-US'],
+            description_localizations: o.description,
+            description: o.description['en-US']
+        }))
         return command
     }
 
@@ -167,20 +175,89 @@ interface cmdOptions {
     buttonRegex?: RegExp
 }
 
-export interface CommandOptions {
-    name: string
-    description: string
-    type: number
+export interface ChoicesIntegerCommandOption {
+    name: Local | string
+    value: number
+}
+
+export interface ChoicesStringCommandOption {
+    name: Local | string
+    value: string
+}
+
+export interface BaseCommandOption {
+    name: Local
+    description: Local
     required?: boolean
-    choices?: {
-        name: string
-        value: string
-    }[]
-    name_localizations?: Partial<Local>
-    description_localizations?: Partial<Local>
+}
+
+export interface SubcommandCommandOptions {
+    type: ApplicationCommandOptionType.Subcommand
+    name: Local
+    description: Local
     options?: CommandOptions[]
-    channel_types?: number[]
-    min_value?: number
-    max_value?: number
+}
+
+export interface SubcommandGroupCommandOptions {
+    type: ApplicationCommandOptionType.SubcommandGroup
+    options?: SubcommandCommandOptions[]
+    name: Local
+    description: Local
+}
+
+export interface StringCommandOptions extends BaseCommandOption {
+    type: ApplicationCommandOptionType.String
+    choices?: ChoicesStringCommandOption[]
     autocomplete?: boolean
 }
+
+export interface IntegerCommandOptions extends BaseCommandOption {
+    type: ApplicationCommandOptionType.Integer
+    choices?: ChoicesIntegerCommandOption[]
+    min_value?: number
+    max_value?: number
+}
+
+export interface BooleanCommandOptions extends BaseCommandOption {
+    type: ApplicationCommandOptionType.Boolean
+}
+
+export interface UserCommandOptions extends BaseCommandOption {
+    type: ApplicationCommandOptionType.User
+}
+
+export interface ChannelCommandOptions extends BaseCommandOption {
+    type: ApplicationCommandOptionType.Channel
+    channel_types?: ChannelType[]
+}
+
+export interface RoleCommandOptions extends BaseCommandOption {
+    type: ApplicationCommandOptionType.Role
+}
+
+export interface MentionableCommandOptions extends BaseCommandOption {
+    type: ApplicationCommandOptionType.Mentionable
+}
+
+export interface NumberCommandOptions extends BaseCommandOption {
+    type: ApplicationCommandOptionType.Number
+    min_value?: number
+    max_value?: number
+}
+
+export interface AttachmentCommandOptions extends BaseCommandOption {
+    type: ApplicationCommandOptionType.Attachment
+}
+
+export type CommandOptions =
+    | SubcommandCommandOptions
+    | SubcommandGroupCommandOptions
+    | StringCommandOptions
+    | IntegerCommandOptions
+    | BooleanCommandOptions
+    | UserCommandOptions
+    | ChannelCommandOptions
+    | RoleCommandOptions
+    | MentionableCommandOptions
+    | NumberCommandOptions
+    | AttachmentCommandOptions

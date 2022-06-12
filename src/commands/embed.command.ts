@@ -30,11 +30,20 @@ export default class Embed extends Command {
             options: [
                 {
                     type: ApplicationCommandOptionType.Attachment,
-                    name: 'image',
-                    description: 'Set an image for the embed'
+                    name: {
+                        'en-US': 'image',
+                        'es-ES': 'imagen'
+                    },
+                    description: {
+                        'en-US': 'Set an image for the embed',
+                        'es-ES': 'Establece una imagen para el embed'
+                    }
                 }
             ],
-            permissions: new PermissionsBitField([PermissionsBitField.Flags.ManageMessages, PermissionsBitField.Flags.EmbedLinks])
+            permissions: new PermissionsBitField([
+                PermissionsBitField.Flags.ManageMessages,
+                PermissionsBitField.Flags.EmbedLinks
+            ])
         })
     }
 
@@ -42,7 +51,7 @@ export default class Embed extends Command {
         new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([
             new ButtonBuilder().setLabel('Edit Information').setStyle(ButtonStyle.Primary).setCustomId(`embed_edit`),
             new ButtonBuilder().setLabel('Add Field').setStyle(ButtonStyle.Primary).setCustomId(`embed_field`),
-            new ButtonBuilder().setLabel('Edit Fields').setStyle(ButtonStyle.Primary).setCustomId(`embed_edit_field`),
+            new ButtonBuilder().setLabel('Edit Fields').setStyle(ButtonStyle.Primary).setCustomId(`embed_edit_field`)
         ])
     ]
 
@@ -69,7 +78,6 @@ export default class Embed extends Command {
         const embed = new EmbedBuilder(interaction.message?.embeds[0]?.data as APIEmbed)
 
         if (interaction.customId === 'embed_edit') {
-
             const title = new ActionRowBuilder<TextInputBuilder>().addComponents([
                 new TextInputBuilder()
                     .setCustomId('title')
@@ -99,10 +107,13 @@ export default class Embed extends Command {
                     .setRequired(false)
             ])
 
-            interaction.showModal(new ModalBuilder().setCustomId(`embed_modal_edit`).setTitle('Edit Embed').addComponents([title, description, image]))
-
+            interaction.showModal(
+                new ModalBuilder()
+                    .setCustomId(`embed_modal_edit`)
+                    .setTitle('Edit Embed')
+                    .addComponents([title, description, image])
+            )
         } else if (interaction.customId === 'embed_field') {
-                
             const name = new ActionRowBuilder<TextInputBuilder>().addComponents([
                 new TextInputBuilder()
                     .setCustomId('name')
@@ -130,19 +141,21 @@ export default class Embed extends Command {
                     .setRequired(true)
             ])
 
-            interaction.showModal(new ModalBuilder().setTitle('New Field').setCustomId('embed_modal_field').addComponents([name, value, inline]))
-    
+            interaction.showModal(
+                new ModalBuilder()
+                    .setTitle('New Field')
+                    .setCustomId('embed_modal_field')
+                    .addComponents([name, value, inline])
+            )
         } else {
-
             const modal = new ModalBuilder().setTitle('Edit Fields').setCustomId('embed_modal_edit_field')
 
             let i = 0
             for (const field of embed.data.fields ?? []) {
-
                 modal.addComponents([
                     new ActionRowBuilder<TextInputBuilder>().addComponents([
                         new TextInputBuilder()
-                            .setCustomId('field_'+i++)
+                            .setCustomId('field_' + i++)
                             .setLabel(field.name)
                             .setStyle(TextInputStyle.Paragraph)
                             .setValue(field.value)
@@ -150,11 +163,9 @@ export default class Embed extends Command {
                             .setRequired(false)
                     ])
                 ])
-
             }
 
             interaction.showModal(modal)
-
         }
     }
 
@@ -162,7 +173,6 @@ export default class Embed extends Command {
         const embed = new EmbedBuilder(interaction.message?.embeds[0]?.data as APIEmbed)
 
         if (interaction.customId === 'embed_modal_edit') {
-
             const description = interaction.fields.getTextInputValue('description')
             embed.setDescription(description.length > 0 ? description : null)
 
@@ -179,18 +189,18 @@ export default class Embed extends Command {
                 embeds: [embed],
                 components: this.components
             })
-
         } else if (interaction.customId === 'embed_modal_field') {
-
             const name = interaction.fields.getTextInputValue('name')
             const value = interaction.fields.getTextInputValue('value')
             const inline = interaction.fields.getTextInputValue('inline')
 
-            embed.addFields([{
-                name,
-                value,
-                inline: ['yes', 'si', 'true'].includes(inline.toLowerCase())
-            }])
+            embed.addFields([
+                {
+                    name,
+                    value,
+                    inline: ['yes', 'si', 'true'].includes(inline.toLowerCase())
+                }
+            ])
 
             await interaction.deferReply()
             interaction.deleteReply()
@@ -199,23 +209,19 @@ export default class Embed extends Command {
                 embeds: [embed],
                 components: this.components
             })
-
-
         } else {
-
             const fields = []
 
             let i = 0
             for (const field of embed.data.fields ?? []) {
+                const value = interaction.fields.getTextInputValue('field_' + i++)
 
-                const value = interaction.fields.getTextInputValue('field_'+i++)
-
-                if (value.length > 0) fields.push({
-                    name: field.name,
-                    value,
-                    inline: field.inline
-                })
-
+                if (value.length > 0)
+                    fields.push({
+                        name: field.name,
+                        value,
+                        inline: field.inline
+                    })
             }
 
             embed.setFields(fields)
@@ -227,7 +233,6 @@ export default class Embed extends Command {
                 embeds: [embed],
                 components: this.components
             })
-
         }
     }
 }
