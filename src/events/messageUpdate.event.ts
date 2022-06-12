@@ -41,12 +41,16 @@ export default async function (old: Message<true>, msg: Message<true>) {
             if (old.content)
                 embed.addFields({
                     name: 'Antes:',
-                    value: Util.escapeCodeBlock(old.content)
+                    value: Util.escapeCodeBlock(
+                        old.content.length > 1024 ? old.content.substring(0, 1021) + '...' : old.content
+                    )
                 })
             if (msg.content)
                 embed.addFields({
                     name: 'Despues:',
-                    value: Util.escapeCodeBlock(msg.content)
+                    value: Util.escapeCodeBlock(
+                        msg.content.length > 1024 ? msg.content.substring(0, 1021) + '...' : msg.content
+                    )
                 })
             embed.setFooter({
                 text: `${msg.client.user?.username} Bot v${(msg.client as Client).version}`,
