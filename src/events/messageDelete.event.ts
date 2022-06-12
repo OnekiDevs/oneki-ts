@@ -25,7 +25,7 @@ export default async function (msg: Message<true>) {
             })
             embed.setTimestamp()
             embed.setThumbnail(msg.author.displayAvatarURL())
-            embed.addFields([
+            embed.addFields(
                 {
                     name: 'Eliminado en:',
                     value: String(msg.channel),
@@ -36,7 +36,7 @@ export default async function (msg: Message<true>) {
                     value: `<t:${Math.round(Date.now() / 1000)}>`,
                     inline: true
                 }
-            ])
+            )
             if (msg.content) embed.setDescription('```\n' + msg.content + '\n```') //LANG:
             embed.setFooter({
                 text: `${msg.client.user?.username} Bot v${(msg.client as Client).version}`,

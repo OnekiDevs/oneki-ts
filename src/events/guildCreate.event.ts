@@ -20,7 +20,7 @@ export default async function (guild: Guild) {
                 .setThumbnail(guild.iconURL() ?? '')
                 .setTitle('Me añadieron en un Nuevo Servidor')
                 .setDescription(`ahora estoy en ${(guild.client as Client).guilds.cache.size} servidores`)
-                .addFields([
+                .addFields(
                     {
                         name: 'Servidor',
                         value: Util.escapeCodeBlock(guild.name),
@@ -46,7 +46,7 @@ export default async function (guild: Guild) {
                         value: Util.escapeCodeBlock(`${owner.tag}\n${owner.id}`),
                         inline: true
                     }
-                ])
+                )
                 .setTimestamp()
                 .setColor(Util.resolveColor('Random'))
                 .setFooter({

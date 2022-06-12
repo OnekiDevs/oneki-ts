@@ -17,12 +17,10 @@ export default async function (msg: Message<true>) {
                     new EmbedBuilder()
                         .setTitle(`attachments sent by ${msg.member?.displayName}`)
                         .setThumbnail(msg.member?.displayAvatarURL() as string)
-                        .addFields([
-                            {
-                                name: 'Canal',
-                                value: Util.escapeCodeBlock(`${msg.channel} | ${msg.channel.name}`)
-                            }
-                        ])
+                        .addFields({
+                            name: 'Canal',
+                            value: Util.escapeCodeBlock(`${msg.channel} | ${msg.channel.name}`)
+                        })
                         .setURL(msg.url)
                 ],
                 content: msg.author.id

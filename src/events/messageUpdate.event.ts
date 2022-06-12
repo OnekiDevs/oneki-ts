@@ -19,7 +19,7 @@ export default async function (old: Message<true>, msg: Message<true>) {
                     name: msg.author.username,
                     iconURL: msg.author.displayAvatarURL()
                 })
-                .addFields([
+                .addFields(
                     {
                         name: 'Enviado en:',
                         value: String(msg.channel),
@@ -35,23 +35,19 @@ export default async function (old: Message<true>, msg: Message<true>) {
                         value: `<t:${Math.round(old.createdTimestamp / 1000)}>`,
                         inline: true
                     }
-                ])
+                )
                 .setTimestamp()
                 .setThumbnail(msg.author.displayAvatarURL({}))
             if (old.content)
-                embed.addFields([
-                    {
-                        name: 'Antes:',
-                        value: Util.escapeCodeBlock(old.content)
-                    }
-                ])
+                embed.addFields({
+                    name: 'Antes:',
+                    value: Util.escapeCodeBlock(old.content)
+                })
             if (msg.content)
-                embed.addFields([
-                    {
-                        name: 'Despues:',
-                        value: Util.escapeCodeBlock(msg.content)
-                    }
-                ])
+                embed.addFields({
+                    name: 'Despues:',
+                    value: Util.escapeCodeBlock(msg.content)
+                })
             embed.setFooter({
                 text: `${msg.client.user?.username} Bot v${(msg.client as Client).version}`,
                 iconURL: msg.client.user?.avatarURL() ?? ''

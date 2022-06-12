@@ -25,6 +25,7 @@ export class Command {
     dm = true
     permissions: PermissionsBitField | null = null
     regex: RegExp | null = null
+
     constructor(
         client: Client,
         {
@@ -155,10 +156,13 @@ export class Command {
 interface cmdOptions {
     name: Local
     description: Local
+    /** @default true */
     global?: boolean
     options?: CommandOptions[]
+    /** @default true */
     dm?: boolean
     permissions?: PermissionsBitField
+    /** @default false */
     hibrid?: boolean
     buttonRegex?: RegExp
 }
