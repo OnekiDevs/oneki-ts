@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Message } from 'discord.js'
-import { Client, Server } from '../utils/classes.js'
+import { Client } from '../utils/classes.js'
 
 export class OldCommand {
     name = 'ping'
@@ -8,20 +8,14 @@ export class OldCommand {
     alias: string[] = []
     client: Client
 
-    constructor(options: {
-        name: string;
-        description: string;
-        alias?: string[];
-        client: Client;
-    }) {
+    constructor(options: { name: string; description: string; alias?: string[]; client: Client }) {
         this.client = options.client
         this.name = options.name
         this.description = options.description
-        if(options.alias) this.alias = options.alias
+        if (options.alias) this.alias = options.alias
     }
 
-    run(msg: Message, server: Server, args?: string[]) {
+    run(msg: Message<true>, args?: string[]) {
         msg.reply('pong')
     }
-
 }

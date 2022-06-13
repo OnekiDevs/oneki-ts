@@ -109,13 +109,13 @@ export default class Tictactoe extends Command {
                         .setStyle(ButtonStyle.Primary)
                         .setEmoji({
                             id:
-                                cell == 'x'
+                                cell === 'x'
                                     ? '885693492632879104'
-                                    : cell == 'o'
+                                    : cell === 'o'
                                     ? '885693508533489694'
                                     : '985343180515987516'
                         })
-                        .setDisabled(cell === 'v' || finished)
+                        .setDisabled(cell !== 'v' || finished)
                 )
             }
         }

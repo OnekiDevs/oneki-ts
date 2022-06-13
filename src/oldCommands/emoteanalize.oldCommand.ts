@@ -1,5 +1,5 @@
 import { OldCommand, Client, Server, Message, EmbedBuilder, PermissionsBitField } from '../utils/classes.js'
-import { permissionsError, sendError } from '../utils/utils.js'
+import { permissionsError, sendError, Translator } from '../utils/utils.js'
 
 export default class Help extends OldCommand {
     constructor(client: Client) {
@@ -11,9 +11,11 @@ export default class Help extends OldCommand {
         })
     }
 
-    async run(msg: Message<true>, server: Server, args: string[]) {
+    async run(msg: Message<true>, args: string[]) {
         try {
-            if (!server.premium) return msg.reply(server.translate('premium'))
+            const translate = Translator(msg)
+            const server = this.client.getServer(msg.guild)
+            if (!server.premium) return msg.reply(translate('premium'))
             if (!msg.member?.permissions.has(PermissionsBitField.Flags.Administrator))
                 return permissionsError(msg, PermissionsBitField.Flags.Administrator)
             if ((args.length === 0 || !['show', 'start', 'stop'].includes(args[0])) && server.emojiAnalisisEnabled)

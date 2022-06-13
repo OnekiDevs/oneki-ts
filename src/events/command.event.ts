@@ -2,14 +2,12 @@ import { sendError } from '../utils/utils.js'
 import { Client } from '../utils/classes.js'
 import { Message } from 'discord.js'
 
-export default async function(msg: Message<true>, command: string, args?: string[]) {
+export default async function (msg: Message<true>, command: string, args: string[] = []) {
     try {
+        const client = msg.client as Client
         if (msg.author.bot) return
-        const cmd = (msg.client as Client).oldCommands.getCommand(command)
-        if (!cmd) return
-        let server = (msg.client as Client).servers.get(msg.guild.id)
-        if (!server) server = (msg.client as Client).newServer(msg.guild)
-        cmd.run(msg, server, args)
+        client.oldCommands.getCommand(command)?.run(msg, args)
+        client.commands.get(command)?.message(msg, args)
     } catch (error) {
         sendError(msg.client as Client, error as Error, import.meta.url)
     }

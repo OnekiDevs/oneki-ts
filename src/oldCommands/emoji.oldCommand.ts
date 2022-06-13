@@ -1,5 +1,5 @@
-import { OldCommand, Client, Server, EmbedBuilder, Message, Colors } from '../utils/classes.js'
-import { sendError } from '../utils/utils.js'
+import { OldCommand, Client, EmbedBuilder, Message, Colors } from '../utils/classes.js'
+import { sendError, Translator } from '../utils/utils.js'
 
 export default class Emoji extends OldCommand {
     constructor(client: Client) {
@@ -11,25 +11,28 @@ export default class Emoji extends OldCommand {
         })
     }
 
-    async run(msg: Message, server: Server, args?: string[]) {
+    async run(msg: Message<true>, args?: string[]) {
         try {
+            const translate = Translator(msg)
             const emojiString = (msg.content.match(/<a?:(.+):\d{18}>/) ?? args)?.[0]
             const emojiId = (emojiString ?? '').replace(/<a?:(.+):/, '').replace(/>/, '')
             if (args && args[0] && /\d{18}/.test(emojiId)) {
                 fetch(`https://cdn.discordapp.com/emojis/${emojiId}.gif`).then(a => {
                     if (a.status != 200) {
                         fetch(`https://cdn.discordapp.com/emojis/${emojiId}.png`).then(e => {
-                            if (e.status != 200) msg.reply(server.translate('emoji_old.missing'))
+                            if (e.status != 200) msg.reply(translate('emoji_old.missing'))
                             else
                                 msg.reply({
                                     embeds: [
                                         new EmbedBuilder()
                                             .setColor(Colors.White)
                                             .setImage(e.url)
-                                            .addFields([{
-                                                name: server.translate('emoji_old.link'),
-                                                value: `[PNG](${e.url})`,
-                                            }])
+                                            .addFields([
+                                                {
+                                                    name: translate('emoji_old.link'),
+                                                    value: `[PNG](${e.url})`
+                                                }
+                                            ])
                                     ]
                                 })
                         })
@@ -39,14 +42,16 @@ export default class Emoji extends OldCommand {
                                 new EmbedBuilder()
                                     .setColor(Colors.White)
                                     .setImage(a.url)
-                                    .addFields([{
-                                        name: server.translate('emoji_old.link'),
-                                        value: `[GIF](${a.url})`,
-                                    }])
+                                    .addFields([
+                                        {
+                                            name: translate('emoji_old.link'),
+                                            value: `[GIF](${a.url})`
+                                        }
+                                    ])
                             ]
                         })
                 })
-            } else msg.reply(server!.translate('emoji_old.forget'))
+            } else msg.reply(translate('emoji_old.forget'))
         } catch (error) {
             msg.reply('Ha ocurrido un error, reporte genrado')
             sendError(this.client, error as Error, import.meta.url)

@@ -1,5 +1,5 @@
 import { Message, PermissionsBitField, AttachmentBuilder } from 'discord.js'
-import { OldCommand, Client, Server } from '../utils/classes.js'
+import { OldCommand, Client } from '../utils/classes.js'
 import { permissionsError, sendError } from '../utils/utils.js'
 import JSZip from 'jszip'
 
@@ -13,7 +13,7 @@ export default class DownloadEmojis extends OldCommand {
         })
     }
 
-    async run(msg: Message<true>, server: Server, args?: string[]) {
+    async run(msg: Message<true>, args?: string[]) {
         try {
             if (!msg.member?.permissions.has(PermissionsBitField.Flags.Administrator))
                 return permissionsError(msg, PermissionsBitField.Flags.Administrator)
