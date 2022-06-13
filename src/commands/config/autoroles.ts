@@ -90,7 +90,7 @@ export async function display(interaction: ChatInputCommandInteraction<'cached'>
             new ButtonBuilder()
                 .setLabel(roll.name)
                 .setStyle(ButtonStyle.Primary)
-                .setCustomId(`config_autoroll_aor_${rollId}`)
+                .setCustomId(`config_autoroll_${rollId}`)
         ])
     }
 

@@ -8,6 +8,7 @@ import {
 } from 'discord.js'
 import { Command, Client } from '../utils/classes.js'
 import { SubcommandCommandOptions } from '../classes/Command.js'
+import { Translator } from '../utils/utils.js'
 
 export default class Config extends Command {
     constructor(client: Client) {
@@ -366,7 +367,7 @@ export default class Config extends Command {
                     ]
                 }
             ],
-            buttonRegex: /^config_.*_.*$/i
+            buttonRegex: /^config_.*$/i
         })
     }
 
@@ -823,7 +824,25 @@ export default class Config extends Command {
     }
 
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
-        const [, subcommandGroup, subcommand] = interaction.customId.split('_')
-        import(`./config/${subcommandGroup}.js`).then(scg => scg[subcommand](interaction)).catch(console.error)
+        const [, sub] = interaction.customId.split('_')
+        if (sub === 'autoroll') this.autorollBtn(interaction)
+    }
+
+    async autorollBtn(interaction: ButtonInteraction<'cached'>) {
+        const [, , rollId] = interaction.customId.split(/_/gi)
+        const translate = Translator(interaction)
+        if (interaction.member.roles.cache.has(rollId)) {
+            interaction.member.roles.remove(rollId)
+            interaction.reply({
+                content: translate('config_cmd.autoroles.remove'),
+                ephemeral: true
+            })
+        } else {
+            interaction.member.roles.add(rollId)
+            interaction.reply({
+                content: translate('config_cmd.autoroles.add'),
+                ephemeral: true
+            })
+        }
     }
 }
