@@ -4,7 +4,8 @@ import {
     GuildMember,
     EmbedBuilder,
     TextChannel,
-    ApplicationCommandOptionType
+    ApplicationCommandOptionType,
+    ButtonInteraction
 } from 'discord.js'
 import { Command, Client, Server } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
@@ -21,7 +22,8 @@ export default class Suggest extends Command {
                 'es-ES': 'Sugiere algo en el servidor',
                 'en-US': 'Suggest something in the server'
             },
-            global: false
+            global: false,
+            buttonRegex: /^sug_[ar]_.+$/i
         })
     }
 
@@ -127,8 +129,6 @@ export default class Suggest extends Command {
         } else if (!channelId || !channel) {
             server.removeSuggestChannel(channelId as string)
             return interaction.reply({ content: translate('suggest_cmd.missing_channel'), ephemeral: true })
-            //;(interaction.client as Client).commands.get(interaction.commandName)?.deploy(interaction.guild as Guild)
-            //;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild as Guild)
         }
     }
 
@@ -137,5 +137,13 @@ export default class Suggest extends Command {
             const server = this.client.servers.get(guild?.id as string)
             resolve((server && server.suggestChannels.length == 0) as boolean)
         })
+    }
+
+    async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
+        const [, m, id] = interaction.customId.split(/_/gi)
+        const server = this.client.getServer(interaction.guild)
+        if (m === 'a') server.aceptSug(id)
+        else server.rejectSug(id)
+        interaction.deferUpdate()
     }
 }

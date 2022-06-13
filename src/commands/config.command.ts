@@ -1,5 +1,11 @@
 // /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, Guild, PermissionsBitField } from 'discord.js'
+import {
+    ApplicationCommandOptionType,
+    ButtonInteraction,
+    ChatInputCommandInteraction,
+    Guild,
+    PermissionsBitField
+} from 'discord.js'
 import { Command, Client } from '../utils/classes.js'
 import { SubcommandCommandOptions } from '../classes/Command.js'
 
@@ -359,7 +365,8 @@ export default class Config extends Command {
                         }
                     ]
                 }
-            ]
+            ],
+            buttonRegex: /^config_.*_.*$/i
         })
     }
 
@@ -812,6 +819,11 @@ export default class Config extends Command {
     async interacion(interaction: ChatInputCommandInteraction<'cached'>) {
         const subcommand = interaction.options.getSubcommand()
         const subcommandGroup = interaction.options.getSubcommandGroup()
+        import(`./config/${subcommandGroup}.js`).then(scg => scg[subcommand](interaction)).catch(console.error)
+    }
+
+    async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
+        const [, subcommandGroup, subcommand] = interaction.customId.split('_')
         import(`./config/${subcommandGroup}.js`).then(scg => scg[subcommand](interaction)).catch(console.error)
     }
 }

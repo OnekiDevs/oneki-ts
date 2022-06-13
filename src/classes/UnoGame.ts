@@ -51,14 +51,14 @@ export class UnoGame extends EventEmitter {
             console.time('uno_eat')
             player.addCard(randomCard(this.client))
             const nesesitoAyuda = await player.interaction?.editReply({
-                content: translate('uno_old.updating'),
+                content: translate('uno_cmd.updating'),
                 components: []
             })
             if (!nesesitoAyuda) return
             const cards = await player.cardsToImage(),
                 components = player.cardsToButtons(this),
                 content =
-                    translate('uno_old.' + player.toString() == this.turn.toString() ? 'your_turn' : 'turn') +
+                    translate('uno_cmd.' + player.toString() == this.turn.toString() ? 'your_turn' : 'turn') +
                     '\n' +
                     (await imgToLink(cards, this.client))
             await player.interaction?.editReply({ content, components })
@@ -81,7 +81,7 @@ export class UnoGame extends EventEmitter {
             const cards = await player.cardsToImage()
             const components = player.cardsToButtons(this)
             const content =
-                translate('uno_old.' + player.toString() == this.turn.toString() ? 'your_turn' : 'turn') +
+                translate('uno_cmd.' + player.toString() == this.turn.toString() ? 'your_turn' : 'turn') +
                 '\n' +
                 (await imgToLink(cards, this.client))
             player.interaction?.editReply({ content, components })
@@ -98,7 +98,7 @@ export class UnoGame extends EventEmitter {
             // check winer
             if (player.cards.length === 0) {
                 player.interaction?.editReply({
-                    content: translate('uno_old.gg'),
+                    content: translate('uno_cmd.gg'),
                     components: []
                 })
                 this.winner = player
@@ -108,7 +108,7 @@ export class UnoGame extends EventEmitter {
             }
 
             await player.interaction?.editReply({
-                content: translate('uno_old.updating'),
+                content: translate('uno_cmd.updating'),
                 components: []
             })
 
@@ -118,31 +118,31 @@ export class UnoGame extends EventEmitter {
             if (card.symbol == '+2') {
                 await this.players.rotate(this.direction)
                 await this.turn.interaction?.editReply({
-                    content: translate('uno_old.updating'),
+                    content: translate('uno_cmd.updating'),
                     components: []
                 })
                 this.turn.addCard(randomCard(this.client))
                 this.turn.addCard(randomCard(this.client))
                 cards = await this.turn.cardsToImage()
-                content = translate('uno_old.your_turn') + '\n' + (await imgToLink(cards, this.client))
+                content = translate('uno_cmd.your_turn') + '\n' + (await imgToLink(cards, this.client))
                 components = this.turn.cardsToButtons(this)
                 this.turn.interaction?.editReply({ content, components })
             } else if (card.symbol == 'reverse') {
                 this.direction = !this.direction
                 await this.players.rotate(this.direction)
                 components = this.turn.cardsToButtons(this)
-                content = translate('uno_old.your_turn') + '\n' + this.turn.interaction?.message.content
+                content = translate('uno_cmd.your_turn') + '\n' + this.turn.interaction?.message.content
                 this.turn.interaction?.editReply({ content, components })
             } else if (card.symbol == 'cancell') {
                 await this.players.rotate(this.direction)
                 await this.players.rotate(this.direction)
                 components = this.turn.cardsToButtons(this)
-                content = translate('uno_old.your_turn') + '\n' + this.turn.interaction?.message.content
+                content = translate('uno_cmd.your_turn') + '\n' + this.turn.interaction?.message.content
                 this.turn.interaction?.editReply({ content, components })
             } else if (card.id == 'p4') {
                 await this.players.rotate(this.direction)
                 await this.turn.interaction?.editReply({
-                    content: translate('uno_old.your_turn') + '\n' + translate('uno_old.updating'),
+                    content: translate('uno_cmd.your_turn') + '\n' + translate('uno_cmd.updating'),
                     components: []
                 })
                 this.turn.addCard(randomCard(this.client))
@@ -150,7 +150,7 @@ export class UnoGame extends EventEmitter {
                 this.turn.addCard(randomCard(this.client))
                 this.turn.addCard(randomCard(this.client))
                 cards = await this.turn.cardsToImage()
-                content = translate('uno_old.your_turn') + '\n' + (await imgToLink(cards, this.client))
+                content = translate('uno_cmd.your_turn') + '\n' + (await imgToLink(cards, this.client))
                 components = this.turn.cardsToButtons(this)
                 this.turn.interaction?.editReply({ content, components })
                 //pedir color
@@ -159,7 +159,7 @@ export class UnoGame extends EventEmitter {
             cards = await player.cardsToImage()
             components = player.cardsToButtons(this)
             content =
-                translate('uno_old.turn', { user: this.turn.toString() }) + '\n' + (await imgToLink(cards, this.client))
+                translate('uno_cmd.turn', { user: this.turn.toString() }) + '\n' + (await imgToLink(cards, this.client))
             if (this.turn.id !== player.id) player.interaction?.editReply({ content, components })
             this.message.edit(this.embed)
             return
@@ -178,10 +178,10 @@ export class UnoGame extends EventEmitter {
             .setTitle('Uno Game v1.1')
             .setDescription(
                 this.status == 'waiting'
-                    ? this.server.translate('uno_old.waiting')
+                    ? this.server.translate('uno_cmd.waiting')
                     : this.status === 'end'
-                    ? this.server.translate('uno_old.end', { user: this.winner })
-                    : this.server.translate('uno_old.turn', { user: this.turn })
+                    ? this.server.translate('uno_cmd.end', { user: this.winner })
+                    : this.server.translate('uno_cmd.turn', { user: this.turn })
             )
             .addFields([
                 {
@@ -202,11 +202,11 @@ export class UnoGame extends EventEmitter {
         if (this.status == 'waiting')
             buttons.addComponents([
                 new ButtonBuilder()
-                    .setLabel(this.server.translate('uno_old.join'))
+                    .setLabel(this.server.translate('uno_cmd.join'))
                     .setStyle(ButtonStyle.Success)
                     .setCustomId(`uno_${this.id}_jn`),
                 new ButtonBuilder()
-                    .setLabel(this.server.translate('uno_old.start'))
+                    .setLabel(this.server.translate('uno_cmd.start'))
                     .setStyle(ButtonStyle.Primary)
                     .setCustomId(`uno_${this.id}_st`)
                     .setDisabled(this.players.size < this.minPlayers)
@@ -215,15 +215,15 @@ export class UnoGame extends EventEmitter {
             embed.setImage(this.actualCard.url)
             buttons.addComponents([
                 new ButtonBuilder()
-                    .setLabel(this.server.translate('uno_old.show'))
+                    .setLabel(this.server.translate('uno_cmd.show'))
                     .setStyle(ButtonStyle.Primary)
                     .setCustomId(`uno_${this.id}_mc`),
                 new ButtonBuilder()
-                    .setLabel(this.server.translate('uno_old.eat'))
+                    .setLabel(this.server.translate('uno_cmd.eat'))
                     .setStyle(ButtonStyle.Primary)
                     .setCustomId(`uno_${this.id}_ea`),
                 new ButtonBuilder()
-                    .setLabel(this.server.translate('uno_old.new'))
+                    .setLabel(this.server.translate('uno_cmd.new'))
                     .setStyle(ButtonStyle.Primary)
                     .setCustomId(`uno_${this.id}_nw`)
             ])

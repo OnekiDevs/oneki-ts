@@ -1,19 +1,21 @@
 {
     "------------>>>============ buttons ============<<<------------": "------------>>>============ buttons ============<<<------------",
-    "help_btn": {
-        "embed_title": "{bot} Bot command list",
-        "embed_desciption": "Category: {category}\n`<>` Means optional\n`[]` Means mandatory",
-        "command_field": "{cmd_description}\n**Alias:** {cmd_alias}\n**Use:** `{cmd_prefix}{cmd_use}`"
-    },
-    "uno_btn": {
+    "------------>>>============ commands ============<<<------------": "------------>>>============ commands ============<<<------------",
+    "uno_cmd": {
+        "updating": "Updating cards...",
+        "gg": "GG, you've won",
+        "waiting": "Waiting for players, minimum 2 required",
+        "end": "Game over\nWinner: {user}",
+        "turn": "{user}'s turn",
+        "join": "Join",
+        "start": "Start game",
+        "show": "Show cards",
+        "eat": "Eat cards",
+        "new": "Regenerate message",
+        "your_turn": "Your turn",
         "start_out": "You must join the game first",
         "start_no_host": "Only the host can start the game"
     },
-    "autoroll_btn": {
-        "remove": "Roll removed sucesfull",
-        "add": "Roll added sucesfull"
-    },
-    "------------>>>============ commands ============<<<------------": "------------>>>============ commands ============<<<------------",
     "activitie_cmd": {
         "whotout_voice": "Enter a voice channel or specify one",
         "reply": "Activitie `{activitie}` created in {channel}"
@@ -52,7 +54,9 @@
             "remove_group": "Group deleted",
             "displaying": "Deploying...",
             "displaying_error": "Don't exist this group",
-            "sending_error": "I don't have the permissions to send messages in this channel"
+            "sending_error": "I don't have the permissions to send messages in this channel",
+            "add_btn": "Roll added sucesfull",
+            "remove_btn": "Roll removed sucesfull"
         },
         "auto_logs": "Log `message_update` set in {message}\nLog `message_delete` set in {message}\nLog `message_attachment` set in {attachment}\nLog `invites` set in {invites}\nLog `member_update` set in {members}",
         "set_keep_roles": "The option of keeping or keeping roles has been set to {keepRole}!",
@@ -160,19 +164,6 @@
         "missing": "Emoji not found",
         "link": "Link",
         "forget": "You forgot to mention an emoji"
-    },
-    "uno_old": {
-        "updating": "Updating cards...",
-        "gg": "GG, you've won",
-        "waiting": "Waiting for players, minimum 2 required",
-        "end": "Game over\nWinner: {user}",
-        "turn": "{user}'s turn",
-        "join": "Join",
-        "start": "Start game",
-        "show": "Show cards",
-        "eat": "Eat cards",
-        "new": "Regenerate message",
-        "your_turn": "Your turn"
     },
     "emote_analize_old": {
         "start": "Starting analysis",

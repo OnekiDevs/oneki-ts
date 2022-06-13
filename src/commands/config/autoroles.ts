@@ -87,7 +87,10 @@ export async function display(interaction: ChatInputCommandInteraction<'cached'>
             components[++row] = new ActionRowBuilder<MessageActionRowComponentBuilder>()
         }
         components[row].addComponents([
-            new ButtonBuilder().setLabel(roll.name).setStyle(ButtonStyle.Primary).setCustomId(`autoroll_${rollId}`)
+            new ButtonBuilder()
+                .setLabel(roll.name)
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId(`config_autoroll_aor_${rollId}`)
         ])
     }
 

@@ -1,14 +1,46 @@
-import { ButtonInteraction } from 'discord.js'
-import { Component, Client } from '../utils/classes.js'
-import { Player } from '../classes/Player.js'
-import { Translator } from '../utils/utils.js'
+import { ButtonInteraction, ChatInputCommandInteraction, Message } from 'discord.js'
+import { Command, Client, UnoGame, Player } from '../utils/classes.js'
+import { sendError, Translator } from '../utils/utils.js'
 
-export default class Uno extends Component {
+export default class SS extends Command {
     constructor(client: Client) {
-        super(client, /uno_.{8}_.{2}(_.{2})?$/i)
+        super(client, {
+            name: {
+                'en-US': 'uno',
+                'es-ES': 'uno'
+            },
+            description: {
+                'en-US': 'Generates a UNO game',
+                'es-ES': 'Genera un juego de UNO'
+            },
+            buttonRegex: /^uno_.{8}_.{2}(_.{2})?$/i
+        })
     }
 
-    async button(interaction: ButtonInteraction<'cached'>) {
+    async interacion(interaction: ChatInputCommandInteraction<'cached'>) {
+        try {
+            const message = (await interaction.channel?.send('Generando juego...')) as Message<true>
+            new UnoGame(message, this.client)
+            interaction.reply({
+                content: 'Juego generado',
+                ephemeral: true
+            })
+        } catch (error) {
+            interaction.reply('Ha ocurrido un error, reporte genrado')
+            sendError(this.client, error as Error, import.meta.url)
+        }
+    }
+
+    async message(message: Message<true>, args: string[]): Promise<any> {
+        try {
+            new UnoGame(message, this.client)
+        } catch (error) {
+            message.reply('Ha ocurrido un error, reporte genrado')
+            sendError(this.client, error as Error, import.meta.url)
+        }
+    }
+
+    async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
         const translate = Translator(interaction)
         const [, id, option] = interaction.customId.split(/_/gi)
 
@@ -24,12 +56,12 @@ export default class Uno extends Component {
                 uno.emit('start', interaction)
             } else if (uno.players.has(interaction.user.id)) {
                 interaction.reply({
-                    content: translate('uno_btn.start_no_host'),
+                    content: translate('uno_cmd.start_no_host'),
                     ephemeral: true
                 })
             } else
                 interaction.reply({
-                    content: translate('uno_btn.start_out'),
+                    content: translate('uno_cmd.start_out'),
                     ephemeral: true
                 })
         } else if (option === 'mc') {
@@ -49,12 +81,12 @@ export default class Uno extends Component {
                 uno.emit('new', interaction)
             } else if (uno.players.has(interaction.user.id)) {
                 interaction.reply({
-                    content: translate('uno_btn.start_no_host'),
+                    content: translate('uno_cmd.start_no_host'),
                     ephemeral: true
                 })
             } else
                 interaction.reply({
-                    content: translate('uno_btn.start_out'),
+                    content: translate('uno_cmd.start_out'),
                     ephemeral: true
                 })
         } else {

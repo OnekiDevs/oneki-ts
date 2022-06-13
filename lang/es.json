@@ -1,27 +1,24 @@
 {
     "------------>>>============ buttons ============<<<------------": "------------>>>============ buttons ============<<<------------",
-    "help_btn": {
-        "embed_title": "Lista de comandos de {bot} Bot",
-        "embed_desciption": "Categoria: {category}\n`<>` significa obligatorio\n`[]` significa opcional",
-        "command_field": "{cmd_description}\n**Alias:** {cmd_alias}\n**Uso:** `{cmd_prefix}{cmd_use}`"
-    },
-    "poll_btn": {
-        "reply": "Voto enviado",
-        "option": "{emoji} Opción {number} {value}",
-        "embed_footer": "Encuesta ID : {id} | {votes} votos | {bot} BOT v{version}"
-    },
-    "uno_btn": {
-        "start_out": "Debes unirte a la partida primero",
-        "start_no_host": "Sólo el host puede iniciar la partida"
-    },
-    "autoroll_btn": {
-        "remove": "Rol removido correctamente",
-        "add": "Rol agregado correctamente"
-    },
     "------------>>>============ commands ============<<<------------": "------------>>>============ commands ============<<<------------",
     "activitie_cmd": {
         "whotout_voice": "Ingresa a un canal de voz o específica uno",
         "reply": "Actividad `{activitie}` creada en {channel}"
+    },
+    "uno_cmd": {
+        "updating": "Actualizando cartas ...",
+        "gg": "GG, has ganado",
+        "waiting": "Esperando jugadores, se requieren minimo 2",
+        "end": "Partida terminada\nGanador: {user}",
+        "turn": "Turno de {user}",
+        "join": "Unirme",
+        "start": "Iniciar partida",
+        "show": "Mostrar cartas",
+        "eat": "Comer cartas",
+        "new": "Regenerar mensaje",
+        "your_turn": "Es tu turno",
+        "start_out": "Debes unirte a la partida primero",
+        "start_no_host": "Sólo el host puede iniciar la partida"
     },
     "config_cmd": {
         "set_log": "Logs establecidos en {channel}",
@@ -57,7 +54,9 @@
             "remove_group": "Grupo eliminado",
             "displaying": "Desplegando...",
             "displaying_error": "No existe ese grupo",
-            "sending_error": "No permisos para enviar mensajes en el canal"
+            "sending_error": "No permisos para enviar mensajes en el canal",
+            "add_btn": "Rol agregado correctamente",
+            "remove_btn": "Rol removido correctamente"
         },
         "auto_logs": "Log `message_update` establecido en {message}\nLog `message_delete` establecido en {message}\nLog `message_attachment` establecido en {attachment}\nLog `invites` establecido en {invites}\nLog `member_update` establecido en {members}",
         "set_keep_roles": "¡La opción de mantener roles ha sido seleccionada como {keepRole}!",
@@ -163,19 +162,6 @@
         "missing": "Emoji no encontrado",
         "link": "Enlace",
         "forget": "Olvidaste mencionar un emoji"
-    },
-    "uno_old": {
-        "updating": "Actualizando cartas ...",
-        "gg": "GG, has ganado",
-        "waiting": "Esperando jugadores, se requieren minimo 2",
-        "end": "Partida terminada\nGanador: {user}",
-        "turn": "Turno de {user}",
-        "join": "Unirme",
-        "start": "Iniciar partida",
-        "show": "Mostrar cartas",
-        "eat": "Comer cartas",
-        "new": "Regenerar mensaje",
-        "your_turn": "Es tu turno"
     },
     "emote_analize_old": {
         "start": "Iniciando análisis",
