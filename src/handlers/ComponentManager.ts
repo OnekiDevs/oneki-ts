@@ -9,12 +9,15 @@ export class ComponentManager extends Collection<string, Component> {
     constructor(client: Client, path: string) {
         super()
         this.client = client
-        for (const file of fs.readdirSync(path).filter((f) => f.includes('.component.'))) {
-            import('file:///'+join(path, file)).then(componentClass => {
-
-                const component: Component = new componentClass.default(client)
-                this.set(randomId(), component)
-            })
+        try {
+            for (const file of fs.readdirSync(path).filter(f => f.includes('.component.'))) {
+                import('file:///' + join(path, file)).then(componentClass => {
+                    const component: Component = new componentClass.default(client)
+                    this.set(randomId(), component)
+                })
+            }
+        } catch (error) {
+            console.log(`${error}`)
         }
     }
 }
