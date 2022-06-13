@@ -66,9 +66,9 @@ export class Command {
         }
         if (guild) {
             await this.createData(guild)
-            return guild.commands.create(this.data).catch(e => {
+            return guild.commands.create(this.data).catch((e: Error) => {
                 if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
-                else console.error(e)
+                // else console.error(e)
             })
         }
         return Promise.all(
@@ -76,7 +76,7 @@ export class Command {
                 await this.createData(guild)
                 return guild.commands.create(this.data).catch(e => {
                     if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
-                    else console.error(e)
+                    // else console.error(e)
                 })
             })
         )
@@ -84,7 +84,7 @@ export class Command {
 
     /**
      * It returns the data of the command.
-     * @returns {object} The data is being returned as a JSON object.
+     * @returns {ApplicationCommandDataResolvable} The data is being returned as a JSON object.
      */
     get data() {
         const command: any = new SlashCommandBuilder()
@@ -95,14 +95,32 @@ export class Command {
             .setDefaultMemberPermissions(this.permissions?.bitfield ?? 0)
             .setDMPermission(this.dm)
             .toJSON()
-        command.options = this.options.map(o => ({
-            ...o,
-            name_localizations: o.name,
-            name: o.name['en-US'],
-            description_localizations: o.description,
-            description: o.description['en-US']
-        }))
+
+        command.options = this.parseOption(this.options)
+
         return command
+    }
+
+    parseOption(option: CommandOptions[] = []): any {
+        return option.map(o => {
+            return {
+                ...o,
+                name_localizations: o.name,
+                name: o.name['en-US'],
+                description_localizations: o.description,
+                description: o.description['en-US'],
+                choices:
+                    o.type === 3 || o.type === 4 || o.type === 10
+                        ? o.choices?.map(c => ({
+                              ...c,
+                              name_localizations: typeof c.name === 'string' ? null : c.name,
+                              name: typeof c.name === 'string' ? c.name : c.name['en-US'],
+                              value: c.value
+                          }))
+                        : null,
+                options: 'options' in o ? this.parseOption(o.options) : undefined
+            }
+        })
     }
 
     /**
@@ -115,7 +133,7 @@ export class Command {
         return interaction.deferReply()
     }
 
-    async message(message: Message<true>): Promise<any> {
+    async message(message: Message<true>, args: string[]): Promise<any> {
         return message
     }
 
@@ -243,6 +261,7 @@ export interface NumberCommandOptions extends BaseCommandOption {
     type: ApplicationCommandOptionType.Number
     min_value?: number
     max_value?: number
+    choices?: ChoicesIntegerCommandOption[]
 }
 
 export interface AttachmentCommandOptions extends BaseCommandOption {
