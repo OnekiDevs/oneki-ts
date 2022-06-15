@@ -13,7 +13,8 @@
         "watch": "nodemon -e ts --exec \"npm run build\"",
         "update": "npm-check -E -u -p",
         "lint": "eslint",
-        "heroku": "git push heroku-oneki && git push heroku-resistance"
+        "heroku:push": "git push heroku-oneki && git push heroku-resistance",
+        "heroku:remote": "git remote add heroku-oneki https://git.heroku.com/oneki-js.git && git remote add heroku-resistance https://git.heroku.com/resistancemts.git"
     },
     "repository": {
         "type": "git",
