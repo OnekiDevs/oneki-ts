@@ -263,8 +263,9 @@ export class Server {
      */
     addSuggestChannel(suggestChannelObject: SuggestChannelObject) {
         if (suggestChannelObject.default)
-            this.suggestChannels = this.suggestChannels.map(i => ({ ...i, default: false }))
-        this.suggestChannels.push(suggestChannelObject)
+            this.suggestChannels = this.suggestChannels.map(i => (i.default ? suggestChannelObject : i))
+        else this.suggestChannels.push(suggestChannelObject)
+
         this.db
             .update({ suggest_channels: this.suggestChannels })
             .catch(() => this.db.set({ suggest_channels: this.suggestChannels }))

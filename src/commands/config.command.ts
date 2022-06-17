@@ -470,10 +470,14 @@ export default class Config extends Command {
             { name: '>', value: '>' },
             { name: '?', value: '?' }
         ]
-        const suggestChannelsChoices = server.suggestChannels.map(c => ({
-            name: c.default ? 'default' : (c.alias as string),
-            value: c.channel
-        }))
+        const suggestChannelsChoices = server.suggestChannels.map(c => {
+            console.log(c)
+
+            return {
+                name: c.default ? 'default' : (c.alias as string),
+                value: c.channel
+            }
+        })
         const logsChoices = logs.map(l => ({
             name: l,
             value: l
