@@ -23,27 +23,27 @@ export default async function (guild: Guild) {
                 .addFields(
                     {
                         name: 'Servidor',
-                        value: Util.escapeCodeBlock(guild.name),
+                        value: '```' + guild.name + '```',
                         inline: true
                     },
                     {
                         name: 'ID',
-                        value: Util.escapeCodeBlock(guild.id),
+                        value: '```' + guild.id + '```',
                         inline: true
                     },
                     {
                         name: 'Roles',
-                        value: Util.escapeCodeBlock(String(guild.roles.cache.size)),
+                        value: '```' + String(guild.roles.cache.size) + '```',
                         inline: true
                     },
                     {
                         name: 'Miembros',
-                        value: Util.escapeCodeBlock(`Users: ${u.size}\nBots: ${b.size}`),
+                        value: '```' + `Users: ${u.size}\nBots: ${b.size}` + '```',
                         inline: true
                     },
                     {
                         name: 'Dueño',
-                        value: Util.escapeCodeBlock(`${owner.tag}\n${owner.id}`),
+                        value: '```' + `${owner.tag}\n${owner.id}` + '```',
                         inline: true
                     }
                 )

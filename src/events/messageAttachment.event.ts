@@ -19,7 +19,7 @@ export default async function (msg: Message<true>) {
                         .setThumbnail(msg.member?.displayAvatarURL() as string)
                         .addFields({
                             name: 'Canal',
-                            value: Util.escapeCodeBlock(`${msg.channel} | ${msg.channel.name}`)
+                            value: '```' + `${msg.channel} | ${msg.channel.name}` + '```'
                         })
                         .setURL(msg.url)
                 ],

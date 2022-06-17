@@ -43,9 +43,9 @@ export default async function (message: Message<true>) {
 
             if (message.content)
                 embed.setDescription(
-                    Util.escapeCodeBlock(
-                        message.content.length > 1024 ? message.content.substring(0, 1020) + '...' : message.content
-                    )
+                    '```' +
+                        (message.content.length > 1024 ? message.content.substring(0, 1020) + '...' : message.content) +
+                        '```'
                 )
 
             if (message.reference) {
@@ -54,11 +54,12 @@ export default async function (message: Message<true>) {
                     if (reference.content)
                         embed.addFields({
                             name: translate('message_delete_event.reference'),
-                            value: Util.escapeCodeBlock(
-                                reference.content.length > 1024
+                            value:
+                                '```' +
+                                (reference.content.length > 1024
                                     ? reference.content.substring(0, 1020) + '...'
-                                    : reference.content
-                            )
+                                    : reference.content) +
+                                '```'
                         })
                 } catch {}
             }

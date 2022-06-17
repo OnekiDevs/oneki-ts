@@ -165,24 +165,24 @@ export async function sendError(client: Client, error: Error, file: string) {
                     .addFields([
                         {
                             name: 'Error Type',
-                            value: Util.escapeCodeBlock(`cmd\n${error.name}\n`),
+                            value: '```' + `cmd\n${error.name}\n`,
                             inline: true
                         },
                         {
                             name: 'Error Message',
-                            value: Util.escapeCodeBlock(`cmd\n${error.message}\n`),
+                            value: '```' + `cmd\n${error.message}\n` + '```',
                             inline: true
                         },
                         {
                             name: 'Error In',
-                            value: Util.escapeCodeBlock(`cmd\n${fileURLToPath(file)}\n`),
+                            value: '```' + `cmd\n${fileURLToPath(file)}\n` + '```',
                             inline: true
                         }
                     ]),
                 new EmbedBuilder()
                     .setColor(Colors.Yellow)
                     .setTitle('Error Stack')
-                    .setDescription(Util.escapeCodeBlock(`cmd\n${error.stack}\n`))
+                    .setDescription('```' + `cmd\n${error.stack}\n` + '```')
             ]
         })
 }

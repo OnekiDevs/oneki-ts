@@ -36,7 +36,7 @@ export default async function (old: Message<true>, message: Message<true>) {
                         inline: true
                     },
                     {
-                        name: translate('message_update_event.writen_on'),
+                        name: translate('message_update_event.written_on'),
                         value: `<t:${Math.round(old.createdTimestamp / 1000)}>`,
                         inline: true
                     }
@@ -47,17 +47,19 @@ export default async function (old: Message<true>, message: Message<true>) {
             if (old.content)
                 embed.addFields({
                     name: translate('before') + ':',
-                    value: Util.escapeCodeBlock(
-                        old.content.length > 1024 ? old.content.substring(0, 1021) + '...' : old.content
-                    )
+                    value:
+                        '```' +
+                        (old.content.length > 1024 ? old.content.substring(0, 1021) + '...' : old.content) +
+                        '```'
                 })
 
             if (message.content)
                 embed.addFields({
                     name: translate('after') + ':',
-                    value: Util.escapeCodeBlock(
-                        message.content.length > 1024 ? message.content.substring(0, 1021) + '...' : message.content
-                    )
+                    value:
+                        '```' +
+                        (message.content.length > 1024 ? message.content.substring(0, 1021) + '...' : message.content) +
+                        '```'
                 })
             embed.setFooter((message.client as Client).embedFooter)
 
@@ -67,11 +69,12 @@ export default async function (old: Message<true>, message: Message<true>) {
                     if (reference.content)
                         embed.addFields({
                             name: translate('message_update_event.reference'),
-                            value: Util.escapeCodeBlock(
-                                reference.content.length > 1024
+                            value:
+                                '```' +
+                                (reference.content.length > 1024
                                     ? reference.content.substring(0, 1020) + '...'
-                                    : reference.content
-                            )
+                                    : reference.content) +
+                                '```'
                         })
                 } catch {}
             }
