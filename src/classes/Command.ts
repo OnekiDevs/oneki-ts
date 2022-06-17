@@ -102,30 +102,23 @@ export class Command {
     }
 
     parseOption(option: CommandOptions[] = []): any {
-        return option.map(o => {
-            console.log(o.name['en-US'])
-            return {
-                ...o,
-                name_localizations: o.name,
-                name: o.name['en-US'],
-                description_localizations: o.description,
-                description: o.description['en-US'],
-                choices:
-                    o.type === 3 || o.type === 4 || o.type === 10
-                        ? o.choices?.map(c => {
-                              console.log(c)
-
-                              return {
-                                  ...c,
-                                  name_localizations: typeof c.name === 'string' ? null : c.name,
-                                  name: typeof c.name === 'string' ? c.name : c.name['en-US'],
-                                  value: c.value
-                              }
-                          })
-                        : null,
-                options: 'options' in o ? this.parseOption(o.options) : undefined
-            }
-        })
+        return option.map(o => ({
+            ...o,
+            name_localizations: o.name,
+            name: o.name['en-US'],
+            description_localizations: o.description,
+            description: o.description['en-US'],
+            choices:
+                o.type === 3 || o.type === 4 || o.type === 10
+                    ? o.choices?.map(c => ({
+                          ...c,
+                          name_localizations: typeof c.name === 'string' ? null : c.name,
+                          name: typeof c.name === 'string' ? c.name : c.name['en-US'],
+                          value: c.value
+                      }))
+                    : null,
+            options: 'options' in o ? this.parseOption(o.options) : undefined
+        }))
     }
 
     /**
