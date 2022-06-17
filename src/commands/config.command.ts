@@ -44,7 +44,30 @@ export default class Config extends Command {
                                 'en-US': "Export the bot's configuration to a file",
                                 'es-ES': 'Exportar la configuración del bot a un archivo'
                             },
-                            type: ApplicationCommandOptionType.Subcommand
+                            type: ApplicationCommandOptionType.Subcommand,
+                            options: [
+                                {
+                                    name: {
+                                        'en-US': 'format',
+                                        'es-ES': 'formato'
+                                    },
+                                    description: {
+                                        'en-US': 'Choose the format of the exported file',
+                                        'es-ES': 'Elige el formato del archivo exportado'
+                                    },
+                                    type: ApplicationCommandOptionType.String,
+                                    choices: [
+                                        {
+                                            name: 'JSON',
+                                            value: 'json'
+                                        },
+                                        {
+                                            name: 'YAML',
+                                            value: 'yml'
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 },
@@ -76,8 +99,8 @@ export default class Config extends Command {
                                         'es-ES': 'archivo'
                                     },
                                     description: {
-                                        'en-US': 'Configuration JSON file',
-                                        'es-ES': 'Archivo JSON de configuración'
+                                        'en-US': 'Configuration JSON or YAML file',
+                                        'es-ES': 'Archivo JSON o YAML de configuración'
                                     },
                                     type: ApplicationCommandOptionType.Attachment,
                                     required: true

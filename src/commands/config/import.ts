@@ -1,6 +1,7 @@
 import { PermissionsBitField, ChatInputCommandInteraction, Attachment } from 'discord.js'
 import { permissionsError, Translator } from '../../utils/utils.js'
 import { GuildDataBaseModel, Client, SuggestChannelObject } from '../../utils/classes.js'
+import YAML from 'yaml'
 
 export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
@@ -9,16 +10,32 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
 
-    const { url } = interaction.options.getAttachment('json') as Attachment
-    let json
-    try {
-        const res = await fetch(url)
-        json = (await res.json()) as GuildDataBaseModel
-    } catch (error) {
-        return interaction.reply(translate('config_cmd.import_file.error'))
-    }
+    const { url, contentType } = interaction.options.getAttachment('config') as Attachment
 
-    if (!json) return interaction.reply(translate('config_cmd.import_file.error'))
+    if (!(!contentType || contentType?.includes('application/json') || contentType?.includes('text/plain')))
+        return interaction.reply({
+            content: translate('config_cmd.import_file.invalid_file'),
+            ephemeral: true
+        })
+
+    const file = await fetch(url).then(res => res.text())
+
+    if (!file)
+        return interaction.reply({
+            content: translate('config_cmd.import_file.error'),
+            ephemeral: true
+        })
+
+    let json: GuildDataBaseModel
+    try {
+        if (contentType?.includes('application/json')) json = JSON.parse(file)
+        else json = YAML.parse(file)
+    } catch {
+        return interaction.reply({
+            content: translate('config_cmd.import_file.error'),
+            ephemeral: true
+        })
+    }
 
     const {
         prefixes,

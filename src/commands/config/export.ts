@@ -1,6 +1,7 @@
 import { PermissionsBitField, ChatInputCommandInteraction, AttachmentBuilder } from 'discord.js'
 import { permissionsError } from '../../utils/utils.js'
 import { Client, GuildDataBaseModel } from '../../utils/classes.js'
+import YAML from 'yaml'
 
 export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)
@@ -8,6 +9,8 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     await interaction.deferReply()
+
+    const type = interaction.options.getString('format') ?? 'json'
 
     const defaultConfig: GuildDataBaseModel = {
         prefixes: ['>', '?'],
@@ -28,10 +31,12 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
         keep_roles: false
     }
 
+    const file = (type === 'json' ? JSON : YAML).stringify({ ...defaultConfig, ...server.toDBObject() }, null, 4)
+
     return interaction.editReply({
         files: [
-            new AttachmentBuilder(Buffer.from(JSON.stringify({ ...defaultConfig, ...server.toDBObject() }, null, 4)), {
-                name: `${interaction.guild?.name}_${interaction.client.user?.username}_config.json`
+            new AttachmentBuilder(Buffer.from(file), {
+                name: `${interaction.guild?.name}_${interaction.client.user?.username}_config.${type}`
             })
         ]
     })
