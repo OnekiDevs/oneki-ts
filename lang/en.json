@@ -148,6 +148,17 @@
             "removed": "The {role} has been removed from the user {user}"
         }
     },
+    "message_delete_event": {
+        "deleted": "Message deleted",
+        "in": "Delete in",
+        "on": "Deleted on"
+    },
+    "message_update_event": {
+        "edited": "Message edited",
+        "in": "Edit in",
+        "edited_on": "Edited on",
+        "written_on": "Written on"
+    },
     "ghost_ping": {
         "realized": "⛔ The user {ghostingUser} has ghost pinged {ghostedUser}. ⛔",
         "warned": "The user {ghostingUser} has made his first ghost ping to the user {ghostedUser} and has been warned about it.",
@@ -177,5 +188,7 @@
     "title": "Title",
     "context": "Context",
     "options": "Options",
-    "option": "option"
+    "option": "option",
+    "before": "Before",
+    "after": "After"
 }

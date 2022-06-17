@@ -49,10 +49,7 @@ export default async function (guild: Guild) {
                 )
                 .setTimestamp()
                 .setColor(Util.resolveColor('Random'))
-                .setFooter({
-                    text: `${(guild.client as Client).user?.username} Bot v${(guild.client as Client).version}`,
-                    iconURL: guild.client.user?.avatarURL() ?? ''
-                })
+                .setFooter((guild.client as Client).embedFooter)
                 .setImage(guild.bannerURL() ?? '')
             channel.send({
                 embeds: [embed]

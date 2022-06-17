@@ -146,6 +146,17 @@
             "removed": "Se le ha removido el rol {role} al usuario {user}."
         }
     },
+    "message_delete_event": {
+        "deleted": "Message deleted",
+        "in": "Delete in",
+        "on": "Deleted on"
+    },
+    "message_update_event": {
+        "edited": "Message edited",
+        "in": "Edit in",
+        "edited_on": "Edited on",
+        "written_on": "Written on"
+    },
     "sanction_event": {
         "set_channel": "¡El canal {channel} ha sido seleccionado como el canal para recibir las sanciones realizadas!",
         "mute_user": "El usuario {user} ha sido silenciado por el {moderator} por {time}. Razón: {reason}"
@@ -175,5 +186,7 @@
     "title": "Titulo",
     "context": "Contexto",
     "options": "Opciones",
-    "option": "option"
+    "option": "option",
+    "before": "Antes",
+    "after": "Después"
 }

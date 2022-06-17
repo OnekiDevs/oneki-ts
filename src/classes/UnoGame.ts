@@ -195,9 +195,7 @@ export class UnoGame extends EventEmitter {
                     inline: true
                 }
             ])
-            .setFooter({
-                text: this.server.translate('footer', { bot: this.client.user?.username, version: this.client.version })
-            })
+            .setFooter(this.client.embedFooter)
         const buttons = new ActionRowBuilder<MessageActionRowComponentBuilder>()
         if (this.status == 'waiting')
             buttons.addComponents([

@@ -1,59 +1,80 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { EmbedBuilder, Message, TextChannel, GuildMember, User } from 'discord.js'
-import { sendError, checkSend, PunishmentType, Util } from '../utils/utils.js'
+import { sendError, checkSend, PunishmentType, Util, Translator } from '../utils/utils.js'
 import { Client, Server } from '../utils/classes.js'
 
-export default async function (msg: Message<true>) {
-    if (!(msg.client as Client).servers.has(msg.guild.id)) return
-    const server = (msg.client as Client).getServer(msg.guild)
-    if (msg.author.bot) return
-    if (!msg.guild) return
-
-    await checkGhostPing(server, msg)
-
+export default async function (message: Message<true>) {
     try {
-        if (!server?.logsChannels.messageDelete) return
-        const channel: TextChannel = msg.client.channels.cache.get(server.logsChannels.messageDelete) as TextChannel
-        if (channel && checkSend(channel, msg.guild.members.me as GuildMember)) {
+        if (!(message.client as Client).servers.has(message.guild.id)) return
+        const server = (message.client as Client).getServer(message.guild)
+        if (message.author.bot) return
+        if (!message.guild) return
+        const translate = Translator(message)
+
+        await checkGhostPing(server, message)
+
+        if (!server.logsChannels.messageDelete) return
+        const channel: TextChannel = message.client.channels.cache.get(server.logsChannels.messageDelete) as TextChannel
+
+        if (channel && checkSend(channel, message.guild.members.me as GuildMember)) {
             const embed = new EmbedBuilder()
-            embed.setTitle('Mensaje Eliminado') //LANG:
-            embed.setURL(msg.url)
-            embed.setColor(Util.resolveColor('Random')) //FEATURE: server.logsColors
-            embed.setAuthor({
-                name: msg.author.username,
-                iconURL: msg.author.displayAvatarURL()
-            })
-            embed.setTimestamp()
-            embed.setThumbnail(msg.author.displayAvatarURL())
-            embed.addFields(
-                {
-                    name: 'Eliminado en:',
-                    value: String(msg.channel),
-                    inline: true
-                },
-                {
-                    name: 'Eliminado el:',
-                    value: `<t:${Math.round(Date.now() / 1000)}>`,
-                    inline: true
-                }
-            )
-            if (msg.content) embed.setDescription('```\n' + msg.content + '\n```') //LANG:
-            embed.setFooter({
-                text: `${msg.client.user?.username} Bot v${(msg.client as Client).version}`,
-                iconURL: msg.client.user?.avatarURL() ?? ''
-            })
-            channel.send({ embeds: [embed], content: msg.author.id })
+                .setTitle(translate('message_delete_event.deleted'))
+                .setURL(message.url)
+                .setColor(Util.resolveColor('Random')) //FEATURE: server.logsColors
+                .setAuthor({
+                    name: message.author.username,
+                    iconURL: message.author.displayAvatarURL()
+                })
+                .setTimestamp()
+                .setThumbnail(message.author.displayAvatarURL())
+                .addFields(
+                    {
+                        name: translate('message_delete_event.in'),
+                        value: String(message.channel),
+                        inline: true
+                    },
+                    {
+                        name: translate('message_delete_event.on'),
+                        value: `<t:${Math.round(Date.now() / 1000)}>`,
+                        inline: true
+                    }
+                )
+                .setFooter((message.client as Client).embedFooter)
+
+            if (message.content)
+                embed.setDescription(
+                    Util.escapeCodeBlock(
+                        message.content.length > 1024 ? message.content.substring(0, 1020) + '...' : message.content
+                    )
+                )
+
+            if (message.reference) {
+                try {
+                    const reference = await message.fetchReference()
+                    if (reference.content)
+                        embed.addFields({
+                            name: translate('message_delete_event.reference'),
+                            value: Util.escapeCodeBlock(
+                                reference.content.length > 1024
+                                    ? reference.content.substring(0, 1020) + '...'
+                                    : reference.content
+                            )
+                        })
+                } catch {}
+            }
+
+            channel.send({ embeds: [embed], content: message.author.id })
         } else {
             if (
-                msg.guild.publicUpdatesChannel &&
-                checkSend(msg.guild.publicUpdatesChannel, msg.guild.members.me as GuildMember)
+                message.guild.publicUpdatesChannel &&
+                checkSend(message.guild.publicUpdatesChannel, message.guild.members.me as GuildMember)
             )
-                msg.guild.publicUpdatesChannel.send(
+                message.guild.publicUpdatesChannel.send(
                     `El canal <#${server.logsChannels.messageDelete}> esta configurado para mostrar logs de mensajes eliminados, sin embargo no tengo acceso a ese canal o no existe.\nSe eliminara de la configuracion, para volver a activarlo debe ejecutar el comando **/config log message_delete** nuevamente`
                 )
             else {
-                const channel = msg.guild.channels.cache.find(
-                    c => c.isTextBased() && checkSend(c as TextChannel, msg.guild?.members.me as GuildMember)
+                const channel = message.guild.channels.cache.find(
+                    c => c.isTextBased() && checkSend(c as TextChannel, message.guild?.members.me as GuildMember)
                 )
                 if (channel)
                     (channel as TextChannel).send(
@@ -63,11 +84,12 @@ export default async function (msg: Message<true>) {
             server.removeMessageDeleteLog()
         }
     } catch (error) {
-        sendError(msg.client as Client, error as Error, import.meta.url)
+        sendError(message.client as Client, error as Error, import.meta.url)
     }
 }
 
-async function checkGhostPing(server: Server, msg: Message) {
+async function checkGhostPing(server: Server, msg: Message<true>) {
+    const translate = Translator(msg)
     const regex = /<@!?\d{18}>/
     if (!regex.test(msg.content)) return
 
@@ -81,7 +103,7 @@ async function checkGhostPing(server: Server, msg: Message) {
 
     const channel = (await msg.client.channels.fetch('885674115615301650')) as TextChannel
     channel.send({
-        content: server.translate('ghost_ping_event.realized', {
+        content: translate('ghost_ping_event.realized', {
             ghostingUser: msg.member?.toString(),
             ghostedUser: user?.toString()
         }),
@@ -106,7 +128,7 @@ async function checkGhostPing(server: Server, msg: Message) {
         })
         .then(() => {
             channel.send({
-                content: server.translate('ghost_ping_event.muted', {
+                content: translate('ghost_ping_event.muted', {
                     ghostingUser: msg.member?.toString(),
                     ghostedUser: user?.toString()
                 }),
@@ -115,7 +137,7 @@ async function checkGhostPing(server: Server, msg: Message) {
         })
         .catch(() => {
             channel.send({
-                content: server.translate('ghost_ping_event.cant_mute', {
+                content: translate('ghost_ping_event.cant_mute', {
                     ghostingUser: msg.member?.toString(),
                     ghostedUser: user?.toString()
                 }),
@@ -124,7 +146,8 @@ async function checkGhostPing(server: Server, msg: Message) {
         })
 }
 
-function warnUser(server: Server, channel: TextChannel, msg: Message, user: User) {
+function warnUser(server: Server, channel: TextChannel, msg: Message<true>, user: User) {
+    const translate = Translator(msg)
     server
         .punishUser({
             userId: msg.author.id,
@@ -134,7 +157,7 @@ function warnUser(server: Server, channel: TextChannel, msg: Message, user: User
         })
         .then(() => {
             channel.send({
-                content: server.translate('ghost_ping_event.warned', {
+                content: translate('ghost_ping_event.warned', {
                     ghostingUser: msg.member?.toString(),
                     ghostedUser: user?.toString()
                 }),
@@ -143,7 +166,7 @@ function warnUser(server: Server, channel: TextChannel, msg: Message, user: User
         })
         .catch(() => {
             channel.send({
-                content: server.translate('ghost_ping_event.cant_warn', {
+                content: translate('ghost_ping_event.cant_warn', {
                     ghostingUser: msg.member?.toString(),
                     ghostedUser: user?.toString()
                 }),

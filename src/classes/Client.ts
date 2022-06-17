@@ -64,6 +64,13 @@ export class Client extends BaseClient {
         this._initWebSocket()
     }
 
+    get embedFooter() {
+        return {
+            text: `${this.user?.username} Bot v${this.version}`,
+            iconURL: this.user?.avatarURL() as string
+        }
+    }
+
     private _initWebSocket() {
         try {
             this.websocket = new WebSocket('wss://oneki.up.railway.app/')

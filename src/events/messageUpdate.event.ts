@@ -1,73 +1,93 @@
 import { Client } from '../utils/classes.js'
 import { EmbedBuilder, Message, TextChannel, GuildMember } from 'discord.js'
-import { checkSend, sendError, Util } from '../utils/utils.js'
+import { checkSend, sendError, Translator, Util } from '../utils/utils.js'
 
-export default async function (old: Message<true>, msg: Message<true>) {
+export default async function (old: Message<true>, message: Message<true>) {
     try {
-        if (msg.author.bot) return
-        if (!msg.guild) return
-        if (!(msg.client as Client).servers.has(msg.guild?.id ?? '')) return
-        const server = (msg.client as Client).getServer(msg.guild)
+        if (message.author.bot) return
+        if (!message.guild) return
+
+        if (!(message.client as Client).servers.has(message.guild?.id ?? '')) return
+        const server = (message.client as Client).getServer(message.guild)
+
+        const translate = Translator(message)
+
         if (!server?.logsChannels.messageUpdate) return
-        const channel: TextChannel = msg.client.channels.cache.get(server.logsChannels.messageUpdate) as TextChannel
-        if (channel && checkSend(channel, msg.guild?.members.me as GuildMember)) {
+        const channel: TextChannel = message.client.channels.cache.get(server.logsChannels.messageUpdate) as TextChannel
+
+        if (channel && checkSend(channel, message.guild?.members.me as GuildMember)) {
             const embed = new EmbedBuilder()
-                .setTitle('Mensaje Editado') //LANG:
-                .setURL(msg.url)
+                .setTitle(translate('message_update_event.edited'))
+                .setURL(message.url)
                 .setColor(Util.resolveColor('Random')) //FEATURE: server.logsColors
                 .setAuthor({
-                    name: msg.author.username,
-                    iconURL: msg.author.displayAvatarURL()
+                    name: message.author.username,
+                    iconURL: message.author.displayAvatarURL()
                 })
                 .addFields(
                     {
-                        name: 'Enviado en:',
-                        value: String(msg.channel),
+                        name: translate('message_update_event.in'),
+                        value: String(message.channel),
                         inline: true
                     },
                     {
-                        name: 'Editado el:',
+                        name: translate('message_update_event.edited_on'),
                         value: `<t:${Math.round(Date.now() / 1000)}>`,
                         inline: true
                     },
                     {
-                        name: 'Escrito el:',
+                        name: translate('message_update_event.writen_on'),
                         value: `<t:${Math.round(old.createdTimestamp / 1000)}>`,
                         inline: true
                     }
                 )
                 .setTimestamp()
-                .setThumbnail(msg.author.displayAvatarURL({}))
+                .setThumbnail(message.author.displayAvatarURL({}))
+
             if (old.content)
                 embed.addFields({
-                    name: 'Antes:',
+                    name: translate('before') + ':',
                     value: Util.escapeCodeBlock(
                         old.content.length > 1024 ? old.content.substring(0, 1021) + '...' : old.content
                     )
                 })
-            if (msg.content)
+
+            if (message.content)
                 embed.addFields({
-                    name: 'Despues:',
+                    name: translate('after') + ':',
                     value: Util.escapeCodeBlock(
-                        msg.content.length > 1024 ? msg.content.substring(0, 1021) + '...' : msg.content
+                        message.content.length > 1024 ? message.content.substring(0, 1021) + '...' : message.content
                     )
                 })
-            embed.setFooter({
-                text: `${msg.client.user?.username} Bot v${(msg.client as Client).version}`,
-                iconURL: msg.client.user?.avatarURL() ?? ''
-            })
-            channel.send({ embeds: [embed], content: msg.author.id })
+            embed.setFooter((message.client as Client).embedFooter)
+
+            if (message.reference) {
+                try {
+                    const reference = await message.fetchReference()
+                    if (reference.content)
+                        embed.addFields({
+                            name: translate('message_update_event.reference'),
+                            value: Util.escapeCodeBlock(
+                                reference.content.length > 1024
+                                    ? reference.content.substring(0, 1020) + '...'
+                                    : reference.content
+                            )
+                        })
+                } catch {}
+            }
+
+            channel.send({ embeds: [embed], content: message.author.id })
         } else {
             if (
-                msg.guild?.publicUpdatesChannel &&
-                checkSend(msg.guild?.publicUpdatesChannel, msg.guild.members.me as GuildMember)
+                message.guild?.publicUpdatesChannel &&
+                checkSend(message.guild?.publicUpdatesChannel, message.guild.members.me as GuildMember)
             )
-                msg.guild?.publicUpdatesChannel.send({
+                message.guild?.publicUpdatesChannel.send({
                     content: `El canal <#${server.logsChannels.messageUpdate}> esta configurado para mostrar logs de mensajes editados, sin embargo no tengo acceso a ese canal o no existe.\nSe eliminara de la configuracion, para volver a activarlo debe ejecutar el comando **/config log message_update** nuevamente`
                 })
             else {
-                const channel = msg.guild.channels.cache.find(
-                    c => c.isTextBased() && checkSend(c as TextChannel, msg.guild?.members.me as GuildMember)
+                const channel = message.guild.channels.cache.find(
+                    c => c.isTextBased() && checkSend(c as TextChannel, message.guild?.members.me as GuildMember)
                 )
                 if (channel)
                     (channel as TextChannel).send(
@@ -77,6 +97,6 @@ export default async function (old: Message<true>, msg: Message<true>) {
             server.removeMessageUpdateLog()
         }
     } catch (error) {
-        sendError(msg.client as Client, error as Error, import.meta.url)
+        sendError(message.client as Client, error as Error, import.meta.url)
     }
 }

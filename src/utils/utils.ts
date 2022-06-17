@@ -202,8 +202,6 @@ export async function sendError(client: Client, error: Error, file: string) {
  */
 export const Translator = function (interaction: Interaction | Message<true>) {
     let lang: string = interaction instanceof Interaction ? interaction.locale : interaction.guild.preferredLocale
-    // if (interaction instanceof Interaction) lang = interaction.locale
-    // else lang = interaction.guild.preferredLocale
     const i18n = (interaction.client as Client).i18n
 
     /**

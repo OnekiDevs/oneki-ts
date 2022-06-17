@@ -98,10 +98,7 @@ export default class Suggest extends Command {
                 .setTitle(translate('suggest_cmd.title', { id: server?.lastSuggestId }))
                 .setColor(16313844)
                 .setDescription(sug as string)
-                .setFooter({
-                    text: translate('footer', { bot: this.client.user?.username, version: this.client.version }),
-                    iconURL: this.client.user?.avatarURL() as string
-                })
+                .setFooter(this.client.embedFooter)
                 .setTimestamp()
             channel
                 .send({
