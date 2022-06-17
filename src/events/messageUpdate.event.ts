@@ -49,7 +49,7 @@ export default async function (old: Message<true>, message: Message<true>) {
                     name: translate('before') + ':',
                     value:
                         '```' +
-                        (old.content.length > 1024 ? old.content.substring(0, 1021) + '...' : old.content) +
+                        (old.content.length > 1024 ? old.content.substring(0, 1015) + '...' : old.content) +
                         '```'
                 })
 
@@ -58,7 +58,7 @@ export default async function (old: Message<true>, message: Message<true>) {
                     name: translate('after') + ':',
                     value:
                         '```' +
-                        (message.content.length > 1024 ? message.content.substring(0, 1021) + '...' : message.content) +
+                        (message.content.length > 1024 ? message.content.substring(0, 1015) + '...' : message.content) +
                         '```'
                 })
             embed.setFooter((message.client as Client).embedFooter)
@@ -75,7 +75,7 @@ export default async function (old: Message<true>, message: Message<true>) {
                                 (reference.content.length > 1024
                                     ? reference.content.substring(
                                           0,
-                                          1018 - (reference.member?.displayName.length as number)
+                                          1012 - (reference.member?.displayName.length as number)
                                       ) + '...'
                                     : reference.content) +
                                 '```'

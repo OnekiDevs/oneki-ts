@@ -165,7 +165,7 @@ export async function sendError(client: Client, error: Error, file: string) {
                     .addFields([
                         {
                             name: 'Error Type',
-                            value: '```' + `\n${error.name}\n`,
+                            value: '```' + `\n${error.name}\n` + '```',
                             inline: true
                         },
                         {
