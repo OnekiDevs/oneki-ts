@@ -70,9 +70,13 @@ export default async function (old: Message<true>, message: Message<true>) {
                         embed.addFields({
                             name: translate('message_update_event.reference'),
                             value:
-                                '```' +
+                                reference.member?.displayName +
+                                ': ```' +
                                 (reference.content.length > 1024
-                                    ? reference.content.substring(0, 1020) + '...'
+                                    ? reference.content.substring(
+                                          0,
+                                          1018 - (reference.member?.displayName.length as number)
+                                      ) + '...'
                                     : reference.content) +
                                 '```'
                         })

@@ -1,4 +1,4 @@
-import { TextChannel, GuildMember, EmbedBuilder, Message, Util } from 'discord.js'
+import { TextChannel, GuildMember, EmbedBuilder, Message } from 'discord.js'
 import { checkSend, sendError } from '../utils/utils.js'
 import { Client } from '../utils/classes.js'
 

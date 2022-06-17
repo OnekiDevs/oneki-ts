@@ -50,14 +50,18 @@ export default async function (message: Message<true>) {
 
             if (message.reference) {
                 try {
-                    const reference = await message.fetchReference()
+                    const reference = (await message.fetchReference()) as Message<true>
                     if (reference.content)
                         embed.addFields({
                             name: translate('message_delete_event.reference'),
                             value:
-                                '```' +
+                                reference.member?.displayName +
+                                ': ```' +
                                 (reference.content.length > 1024
-                                    ? reference.content.substring(0, 1020) + '...'
+                                    ? reference.content.substring(
+                                          0,
+                                          1018 - (reference.member?.displayName.length as number)
+                                      ) + '...'
                                     : reference.content) +
                                 '```'
                         })
