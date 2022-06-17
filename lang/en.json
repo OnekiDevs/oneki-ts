@@ -151,13 +151,15 @@
     "message_delete_event": {
         "deleted": "Message deleted",
         "in": "Delete in",
-        "on": "Deleted on"
+        "on": "Deleted on",
+        "reference": "Response to"
     },
     "message_update_event": {
         "edited": "Message edited",
         "in": "Edit in",
         "edited_on": "Edited on",
-        "written_on": "Written on"
+        "written_on": "Written on",
+        "reference": "Response to"
     },
     "ghost_ping": {
         "realized": "⛔ The user {ghostingUser} has ghost pinged {ghostedUser}. ⛔",

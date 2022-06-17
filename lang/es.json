@@ -147,15 +147,17 @@
         }
     },
     "message_delete_event": {
-        "deleted": "Message deleted",
-        "in": "Delete in",
-        "on": "Deleted on"
+        "deleted": "Mensaje eliminado",
+        "in": "Escrito en",
+        "on": "Eliminado el",
+        "reference": "Respuesta a"
     },
     "message_update_event": {
-        "edited": "Message edited",
-        "in": "Edit in",
-        "edited_on": "Edited on",
-        "written_on": "Written on"
+        "edited": "Mensaje editado",
+        "in": "Editado en",
+        "edited_on": "Editado el",
+        "written_on": "Escrito el",
+        "reference": "Respuesta a"
     },
     "sanction_event": {
         "set_channel": "¡El canal {channel} ha sido seleccionado como el canal para recibir las sanciones realizadas!",
