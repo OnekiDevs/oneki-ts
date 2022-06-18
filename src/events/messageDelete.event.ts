@@ -43,9 +43,11 @@ export default async function (message: Message<true>) {
 
             if (message.content)
                 embed.setDescription(
-                    '```' +
-                        (message.content.length > 1024 ? message.content.substring(0, 1020) + '...' : message.content) +
-                        '```'
+                    '```\n' +
+                        (Util.escapeCodeBlock(message.content).length > 1024
+                            ? Util.escapeCodeBlock(message.content).substring(0, 1015) + '...'
+                            : Util.escapeCodeBlock(message.content)) +
+                        '\n```'
                 )
 
             if (message.reference) {
@@ -56,14 +58,14 @@ export default async function (message: Message<true>) {
                             name: translate('message_delete_event.reference'),
                             value:
                                 reference.member?.displayName +
-                                ': ```' +
-                                (reference.content.length > 1024
-                                    ? reference.content.substring(
+                                ': \n```\n' +
+                                (Util.escapeCodeBlock(reference.content).length > 1024
+                                    ? Util.escapeCodeBlock(reference.content).substring(
                                           0,
-                                          1018 - (reference.member?.displayName.length as number)
+                                          1013 - (reference.member?.displayName.length as number)
                                       ) + '...'
-                                    : reference.content) +
-                                '```'
+                                    : Util.escapeCodeBlock(reference.content)) +
+                                '\n```'
                         })
                 } catch {}
             }

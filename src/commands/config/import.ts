@@ -10,7 +10,7 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
 
-    const { url, contentType } = interaction.options.getAttachment('config') as Attachment
+    const { url, contentType } = interaction.options.getAttachment('file') as Attachment
 
     if (!(!contentType || contentType?.includes('application/json') || contentType?.includes('text/plain')))
         return interaction.reply({
@@ -28,13 +28,16 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
 
     let json: GuildDataBaseModel
     try {
-        if (contentType?.includes('application/json')) json = JSON.parse(file)
-        else json = YAML.parse(file)
+        json = JSON.parse(file)
     } catch {
-        return interaction.reply({
-            content: translate('config_cmd.import_file.error'),
-            ephemeral: true
-        })
+        try {
+            json = YAML.parse(file)
+        } catch {
+            return interaction.reply({
+                content: translate('config_cmd.import_file.error'),
+                ephemeral: true
+            })
+        }
     }
 
     const {

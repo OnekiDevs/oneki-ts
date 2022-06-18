@@ -21,6 +21,7 @@ import {
     UnoCards
 } from '../utils/classes.js'
 import i18n from 'i18n'
+import { sendError } from '../utils/utils.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const version = createRequire(import.meta.url)('../../package.json').version
@@ -40,6 +41,7 @@ export class Client extends BaseClient {
     uno: Collection<string, UnoGame> = new Collection()
     UnoCards = UnoCards
     embeds = new Collection<string, { embed: EmbedBuilder; interactionId: string }>()
+    reconect = true
 
     constructor(options: ClientOptions) {
         super(options)
@@ -73,14 +75,17 @@ export class Client extends BaseClient {
 
     private _initWebSocket() {
         try {
-            this.websocket = new WebSocket('wss://oneki.up.railway.app/')
+            this.websocket = new WebSocket('ws://localhost:3000')
+            // this.websocket = new WebSocket('wss://oneki.up.railway.app/')
             this.websocket.on('open', () => {
                 console.time('WebSocket Connection')
+                this.websocket?.send(this.token)
                 console.log('\x1b[33m%s\x1b[0m', 'Socket Conectado!!!')
                 this._wsInterval = setInterval(() => this.websocket?.ping(() => ''), 20_000)
                 this._wsintent = 1
             })
             this.websocket.on('close', () => {
+                if (!this.reconect) return
                 clearInterval(this._wsInterval!)
                 console.error('Socket Cerrado!!')
                 console.timeEnd('WebSocket Connection')
@@ -91,6 +96,7 @@ export class Client extends BaseClient {
             })
             this.websocket.on('message', () => this._onWebSocketMessage)
             this.websocket.on('error', () => {
+                if (!this.reconect) return
                 console.log('Socket no disponible\nReintentando en un momento...')
                 setTimeout(() => {
                     console.log('Reconectando Socket...')
@@ -98,6 +104,7 @@ export class Client extends BaseClient {
                 }, 1_000 * this._wsintent++)
             })
         } catch (error) {
+            if (!this.reconect) return
             console.log('Socket no disponible\nReintentando en un momento...')
             setTimeout(() => {
                 console.log('Reconectando Socket...')
@@ -139,7 +146,11 @@ export class Client extends BaseClient {
     private _onWebSocketMessage(message: string): void {
         try {
             const data = JSON.parse(message)
-            if (data.event) this.emit(data.event, data.data)
+            if (data.event === 'error') {
+                this.reconect = false
+                console.error(data.message)
+                sendError(this, new Error(data.message), import.meta.url)
+            } else if (data.event) this.emit(data.event, data.data)
         } catch (error) {
             if ((error as string).startsWith('SyntaxError')) console.error('SyntaxError on socket', message)
         }

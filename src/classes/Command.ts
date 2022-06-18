@@ -97,6 +97,14 @@ export class Command {
             .toJSON()
 
         command.options = this.parseOption(this.options)
+        console.assert(
+            command.name != 'config',
+            JSON.stringify(
+                command.options.find((c: any) => c.name == 'import'),
+                null,
+                2
+            )
+        )
 
         return command
     }

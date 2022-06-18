@@ -48,18 +48,22 @@ export default async function (old: Message<true>, message: Message<true>) {
                 embed.addFields({
                     name: translate('before') + ':',
                     value:
-                        '```' +
-                        (old.content.length > 1024 ? old.content.substring(0, 1015) + '...' : old.content) +
-                        '```'
+                        '```\n' +
+                        (Util.escapeCodeBlock(old.content).length > 1024
+                            ? Util.escapeCodeBlock(old.content).substring(0, 1013) + '...'
+                            : Util.escapeCodeBlock(old.content)) +
+                        '\n```'
                 })
 
             if (message.content)
                 embed.addFields({
                     name: translate('after') + ':',
                     value:
-                        '```' +
-                        (message.content.length > 1024 ? message.content.substring(0, 1015) + '...' : message.content) +
-                        '```'
+                        '```\n' +
+                        (Util.escapeCodeBlock(message.content).length > 1024
+                            ? Util.escapeCodeBlock(message.content).substring(0, 1013) + '...'
+                            : Util.escapeCodeBlock(message.content)) +
+                        '\n```'
                 })
             embed.setFooter((message.client as Client).embedFooter)
 
@@ -71,14 +75,14 @@ export default async function (old: Message<true>, message: Message<true>) {
                             name: translate('message_update_event.reference'),
                             value:
                                 reference.member?.displayName +
-                                ': ```' +
-                                (reference.content.length > 1024
-                                    ? reference.content.substring(
+                                ': \n```\n' +
+                                (Util.escapeCodeBlock(reference.content).length > 1024
+                                    ? Util.escapeCodeBlock(reference.content).substring(
                                           0,
-                                          1012 - (reference.member?.displayName.length as number)
+                                          1010 - (reference.member?.displayName.length as number)
                                       ) + '...'
-                                    : reference.content) +
-                                '```'
+                                    : Util.escapeCodeBlock(reference.content)) +
+                                '\n```'
                         })
                 } catch {}
             }

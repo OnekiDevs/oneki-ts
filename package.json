@@ -7,7 +7,7 @@
     "scripts": {
         "compile": "esbuild `find src \\( -name '*.ts' \\)` --platform=node --outdir=build --minify --target=es2022 --bundle --format=esm --esModuleInterop",
         "build": "tsc",
-        "start": "node --experimental-fetch build/index.js",
+        "start": "node --experimental-fetch oneki",
         "test": "node build/tests/test.js",
         "dev": "nodemon -e ts --exec \"npm run build && npm start\"",
         "watch": "nodemon -e ts --exec \"npm run build\"",
