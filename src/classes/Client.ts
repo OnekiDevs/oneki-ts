@@ -75,8 +75,8 @@ export class Client extends BaseClient {
 
     private _initWebSocket() {
         try {
-            this.websocket = new WebSocket('ws://localhost:3000')
-            // this.websocket = new WebSocket('wss://oneki.up.railway.app/')
+            // this.websocket = new WebSocket('ws://localhost:3000')
+            this.websocket = new WebSocket('wss://oneki.up.railway.app/')
             this.websocket.on('open', () => {
                 console.time('WebSocket Connection')
                 this.websocket?.send(this.token)
