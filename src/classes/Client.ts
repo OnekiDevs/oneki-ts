@@ -42,6 +42,7 @@ export class Client extends BaseClient {
     UnoCards = UnoCards
     embeds = new Collection<string, { embed: EmbedBuilder; interactionId: string }>()
     reconect = true
+    _wsw = false
 
     constructor(options: ClientOptions) {
         super(options)
@@ -75,6 +76,7 @@ export class Client extends BaseClient {
 
     private _initWebSocket() {
         console.log('\x1b[36m%s\x1b[0m', 'Iniciando WebSocket...')
+        this._wsw = false
         // this.websocket = new WebSocket('ws://localhost:3000')
         this.websocket = new WebSocket('wss://oneki.up.railway.app/')
 
@@ -89,9 +91,11 @@ export class Client extends BaseClient {
         this.websocket.on('close', () => {
             if (!this.reconect) return
 
+            console.log('ws closed event')
             console.log(`WebSocket closed, reconnecting in ${5_000 * this._wsintent++} seconds...`)
             clearInterval(this._wsInterval)
-            setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
+            if (!this._wsw) setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
+            this._wsw = true
         })
 
         this.websocket.on('message', () => this._onWebSocketMessage)
@@ -99,9 +103,11 @@ export class Client extends BaseClient {
         this.websocket.on('error', () => {
             if (!this.reconect) return
 
+            console.log('ws error event')
             console.log(`WebSocket closed, reconnecting in ${5_000 * this._wsintent++} seconds...`)
             clearInterval(this._wsInterval)
-            setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
+            if (!this._wsw) setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
+            this._wsw = true
         })
     }
 

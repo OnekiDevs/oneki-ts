@@ -55,10 +55,7 @@ export default class Help extends OldCommand {
             const emoji = await msg.guild.emojis
                 .fetch(key)
                 .then(e => e)
-                .catch(e => {
-                    console.log(e)
-                    return null
-                })
+                .catch(console.log)
 
             if (emoji)
                 es.push({
@@ -74,7 +71,6 @@ export default class Help extends OldCommand {
         // sort y recorrido
         for (const em of es.sort((a, b) => b.uses - a.uses)) {
             t += `${em.name} --- \`${em.uses}\`\n`
-            console.log(em.name, em.uses)
 
             if (++i == 6) {
                 embeds[j].addFields([{ name: 'Emojis', value: t, inline: true }])

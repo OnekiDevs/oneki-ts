@@ -5,7 +5,6 @@ import {
     AttachmentBuilder
 } from 'discord.js'
 import { Command, Client } from '../utils/classes.js'
-// import cw from 'capture-website'
 import Jimp from 'jimp'
 import puppeteer from 'puppeteer'
 

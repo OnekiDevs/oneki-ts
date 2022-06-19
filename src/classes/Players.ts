@@ -29,7 +29,6 @@ export class Players extends Array<Player> {
         return this[0]
     }
     async rotate(rigth: boolean) {
-        console.log(this.keys())
         if (rigth) this.push(this.shift()!)
         else this.unshift(this.pop()!)
         this.#updateMessage()
