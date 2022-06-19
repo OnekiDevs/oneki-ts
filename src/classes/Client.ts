@@ -4,6 +4,7 @@ import { getFirestore, Firestore } from 'firebase-admin/firestore'
 // import InvitesTracker from '@androz2091/discord-invites-tracker'
 import { initializeApp, cert } from 'firebase-admin/app'
 import { EmbedBuilder } from '@discordjs/builders'
+import { sendError } from '../utils/utils.js'
 import { createRequire } from 'module'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -21,7 +22,6 @@ import {
     UnoCards
 } from '../utils/classes.js'
 import i18n from 'i18n'
-import { sendError } from '../utils/utils.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const version = createRequire(import.meta.url)('../../package.json').version
@@ -36,7 +36,7 @@ export class Client extends BaseClient {
     servers: ServerManager = new ServerManager(this)
     websocket?: WebSocket
     constants: ClientConstants
-    private _wsInterval?: ReturnType<typeof setInterval>
+    private _wsInterval!: ReturnType<typeof setInterval>
     private _wsintent = 1
     uno: Collection<string, UnoGame> = new Collection()
     UnoCards = UnoCards
@@ -74,43 +74,35 @@ export class Client extends BaseClient {
     }
 
     private _initWebSocket() {
-        try {
-            // this.websocket = new WebSocket('ws://localhost:3000')
-            this.websocket = new WebSocket('wss://oneki.up.railway.app/')
-            this.websocket.on('open', () => {
-                console.time('WebSocket Connection')
-                this.websocket?.send(this.token)
-                console.log('\x1b[33m%s\x1b[0m', 'Socket Conectado!!!')
-                this._wsInterval = setInterval(() => this.websocket?.ping(() => ''), 20_000)
-                this._wsintent = 1
-            })
-            this.websocket.on('close', () => {
-                if (!this.reconect) return
-                clearInterval(this._wsInterval!)
-                console.error('Socket Cerrado!!')
-                console.timeEnd('WebSocket Connection')
-                setTimeout(() => {
-                    console.log('Reconectando Socket ...')
-                    this._initWebSocket()
-                }, 1_000 * this._wsintent++)
-            })
-            this.websocket.on('message', () => this._onWebSocketMessage)
-            this.websocket.on('error', () => {
-                if (!this.reconect) return
-                console.log('Socket no disponible\nReintentando en un momento...')
-                setTimeout(() => {
-                    console.log('Reconectando Socket...')
-                    this._initWebSocket()
-                }, 1_000 * this._wsintent++)
-            })
-        } catch (error) {
+        console.log('\x1b[36m%s\x1b[0m', 'Iniciando WebSocket...')
+        // this.websocket = new WebSocket('ws://localhost:3000')
+        this.websocket = new WebSocket('wss://oneki.up.railway.app/')
+
+        this.websocket.on('open', () => {
+            console.time('WebSocket Connection')
+            this.websocket?.send(this.token)
+            console.log('\x1b[33m%s\x1b[0m', 'Socket Conectado!!!')
+            this._wsInterval = setInterval(() => this.websocket?.ping(() => ''), 20_000)
+            this._wsintent = 1
+        })
+
+        this.websocket.on('close', () => {
             if (!this.reconect) return
-            console.log('Socket no disponible\nReintentando en un momento...')
-            setTimeout(() => {
-                console.log('Reconectando Socket...')
-                this._initWebSocket()
-            }, 1_000 * this._wsintent++)
-        }
+
+            console.log(`WebSocket closed, reconnecting in ${5_000 * this._wsintent++} seconds...`)
+            clearInterval(this._wsInterval)
+            setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
+        })
+
+        this.websocket.on('message', () => this._onWebSocketMessage)
+
+        this.websocket.on('error', () => {
+            if (!this.reconect) return
+
+            console.log(`WebSocket closed, reconnecting in ${5_000 * this._wsintent++} seconds...`)
+            clearInterval(this._wsInterval)
+            setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
+        })
     }
 
     private async _onReady(options: { eventsPath: string }) {
