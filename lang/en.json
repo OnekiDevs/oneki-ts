@@ -173,6 +173,7 @@
         "set_channel": "The channel {channel} has been set as the channel to recieve all sanctions!",
         "mute_user": "The user {user} has been muted by {moderator} for {time}. Reason: {reason}"
     },
+    "attachment_event": "The user {user} has sent a attachment",
     "------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
     "emoji_old": {
         "missing": "Emoji not found",
@@ -193,5 +194,6 @@
     "options": "Options",
     "option": "option",
     "before": "Before",
-    "after": "After"
+    "after": "After",
+    "channel": "Channel"
 }

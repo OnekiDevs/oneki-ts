@@ -171,6 +171,7 @@
         "muted": "El usuario {ghostingUser} le ha hecho ghost ping al usuario {ghostedUser} y ha sido muteado por ello.",
         "cant_mute": "⚠️ El usuario {ghostingUser} ha hecho ghost ping al usuario {ghostedUser}. Sin embargo, no pude mutearlo debido a que su rol es mayor al mío. ⚠️"
     },
+    "attachment_event": "El usuario {user} ha enviado un archivo",
     "------------>>>============ olds ============<<<------------": "------------>>>============ olds ============<<<------------",
     "emoji_old": {
         "missing": "Emoji no encontrado",
@@ -191,5 +192,6 @@
     "options": "Opciones",
     "option": "option",
     "before": "Antes",
-    "after": "Después"
+    "after": "Después",
+    "channel": "Canal"
 }
