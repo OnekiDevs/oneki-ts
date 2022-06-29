@@ -141,7 +141,7 @@ export interface ClientOptions extends BaseClientOptions {
         objectNotation: boolean
         logWarnFn: (msg: string) => void
         logErrorFn: (msg: string) => void
-        missingKeyFn: (locale: string, value: string) => string
+        missingKeyFn?: (locale: string, value: string) => string
         mustacheConfig: {
             tags: [string, string]
             disable: boolean

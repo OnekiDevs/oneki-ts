@@ -60,7 +60,7 @@ export default async function (msg: Message<true>) {
         const args = msg.content.slice(prefix?.length).split(/ /gi)
         msg.client.emit('command', msg, args.shift(), args)
     } catch (error) {
-        sendError(msg.client as Client, error as Error, import.meta.url)
+        sendError(error as Error, import.meta.url)
     }
 
     if (msg.member?.permissions.has(PermissionsBitField.Flags.Administrator)) return //If it's an admin

@@ -29,6 +29,6 @@ export default async function (interaction: AnyInteraction) {
                 .find(cmd => !!cmd.regex && cmd.regex.test(interaction.customId))
                 ?.modal(interaction as ModalSubmitInteraction<'cached'>)
     } catch (error) {
-        sendError(interaction.client as Client, error as Error, import.meta.url)
+        sendError(error as Error, import.meta.url)
     }
 }

@@ -41,7 +41,7 @@ export default class DownloadEmojis extends OldCommand {
             })
         } catch (error) {
             msg.reply('Ha ocurrido un error, reporte generado')
-            sendError(this.client, error as Error, import.meta.url)
+            sendError(error as Error, import.meta.url)
         }
     }
 }

@@ -27,7 +27,7 @@ export default class SS extends Command {
             })
         } catch (error) {
             interaction.reply('Ha ocurrido un error, reporte genrado')
-            sendError(this.client, error as Error, import.meta.url)
+            sendError(error as Error, import.meta.url)
         }
     }
 
@@ -36,7 +36,7 @@ export default class SS extends Command {
             new UnoGame(message, this.client)
         } catch (error) {
             message.reply('Ha ocurrido un error, reporte genrado')
-            sendError(this.client, error as Error, import.meta.url)
+            sendError(error as Error, import.meta.url)
         }
     }
 

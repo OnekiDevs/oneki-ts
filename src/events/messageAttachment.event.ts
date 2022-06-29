@@ -45,6 +45,6 @@ export default async function (msg: Message<true>) {
             server.removeMessageDeleteLog()
         }
     } catch (error) {
-        sendError(msg.client as Client, error as Error, import.meta.url)
+        sendError(error as Error, import.meta.url)
     }
 }

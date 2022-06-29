@@ -9,6 +9,6 @@ export default async function (msg: Message<true>, command: string, args: string
         client.oldCommands.getCommand(command)?.run(msg, args)
         client.commands.get(command)?.message(msg, args)
     } catch (error) {
-        sendError(msg.client as Client, error as Error, import.meta.url)
+        sendError(error as Error, import.meta.url)
     }
 }

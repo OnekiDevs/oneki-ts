@@ -26,7 +26,7 @@ import i18n from 'i18n'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const version = createRequire(import.meta.url)('../../package.json').version
 
-export class Client extends BaseClient {
+export class Client extends BaseClient<true> {
     db: Firestore
     version: string
     i18n = i18n
@@ -147,7 +147,7 @@ export class Client extends BaseClient {
             if (data.event === 'error') {
                 this.reconect = false
                 console.error(data.message)
-                sendError(this, new Error(data.message), import.meta.url)
+                sendError(new Error(data.message), import.meta.url)
             } else if (data.event) this.emit(data.event, data.data)
         } catch (error) {
             if ((error as string).startsWith('SyntaxError')) console.error('SyntaxError on socket', message)

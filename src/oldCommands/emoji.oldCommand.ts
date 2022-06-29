@@ -54,7 +54,7 @@ export default class Emoji extends OldCommand {
             } else msg.reply(translate('emoji_old.forget'))
         } catch (error) {
             msg.reply('Ha ocurrido un error, reporte genrado')
-            sendError(this.client, error as Error, import.meta.url)
+            sendError(error as Error, import.meta.url)
         }
     }
 }

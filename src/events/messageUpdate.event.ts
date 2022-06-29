@@ -108,6 +108,6 @@ export default async function (old: Message<true>, message: Message<true>) {
             server.removeMessageUpdateLog()
         }
     } catch (error) {
-        sendError(message.client as Client, error as Error, import.meta.url)
+        sendError(error as Error, import.meta.url)
     }
 }

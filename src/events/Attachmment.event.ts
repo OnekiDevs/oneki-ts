@@ -37,6 +37,6 @@ export default async function (message: Message<true>) {
                     ?.join('\n') || null
         })
     } catch (error) {
-        sendError(message.client as Client, error as Error, import.meta.url)
+        sendError(error as Error, import.meta.url)
     }
 }

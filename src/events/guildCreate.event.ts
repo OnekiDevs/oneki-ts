@@ -56,6 +56,6 @@ export default async function (guild: Guild) {
             })
         }
     } catch (error) {
-        sendError(guild.client as Client, error as Error, import.meta.url)
+        sendError(error as Error, import.meta.url)
     }
 }

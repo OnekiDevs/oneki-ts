@@ -26,7 +26,7 @@ export default class Help extends OldCommand {
             else this.end(msg, server)
         } catch (error) {
             msg.reply('Ha ocurrido un error, reporte generado')
-            sendError(this.client, error as Error, import.meta.url)
+            sendError(error as Error, import.meta.url)
         }
     }
 

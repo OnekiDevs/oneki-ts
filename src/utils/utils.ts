@@ -17,6 +17,8 @@ import {
     TextInputStyle
 } from 'discord.js'
 
+import client from '../client.js'
+
 export { Util }
 
 /**
@@ -143,12 +145,13 @@ export function imgToLink(img: Buffer, client: Client): Promise<string> {
  * @param {Error} error - Error
  * @param {string} file - The file that the error occurred in.
  */
-export async function sendError(client: Client, error: Error, file: string) {
+export async function sendError(error: Error, file: string) {
     console.log(
         '\x1b[31m***************************************************************************\x1b[0m\n',
         error,
         '\n\x1b[31m***************************************************************************\x1b[0m'
     )
+
     const channel = await client.channels.fetch(client.constants.errorChannel as string)
     if (channel)
         (channel as TextChannel).send({
@@ -244,4 +247,20 @@ export interface PunishUser {
 export function createModalComponent(input: TextInputBuilder) {
     if (!input.data.style) input.setStyle(TextInputStyle.Short)
     return new ActionRowBuilder<TextInputBuilder>().addComponents([input])
+}
+
+export function errorCatch(file: string) {
+    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+        console.log('first(): called', `${target}.${propertyKey}.${descriptor}`)
+        return {
+            ...descriptor,
+            value: function (...args: any) {
+                try {
+                    descriptor.value(...args)
+                } catch (error) {
+                    sendError(error as Error, file)
+                }
+            }
+        }
+    }
 }
