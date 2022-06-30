@@ -23,7 +23,7 @@ export default async function (msg: Message<true>) {
 
         // suggestions
         const cs = server.suggestChannels.find(c => c.channel === msg.channelId)
-        if (cs) {
+        if (cs && !msg.author.bot) {
             const channel = client.channels.cache.get(cs.channel) as TextChannel
             if (channel) {
                 const embed = new EmbedBuilder()
