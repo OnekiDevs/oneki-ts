@@ -51,6 +51,7 @@ export default async function (msg: Message<true>) {
                         })
                     })
                 server.lastSuggestId += 1
+                return msg.delete()
             }
         }
 
