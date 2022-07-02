@@ -17,6 +17,7 @@ export default class SS extends Command {
         })
     }
 
+    // @errorCatch(import.meta.url)
     async interacion(interaction: ChatInputCommandInteraction<'cached'>) {
         try {
             const message = (await interaction.channel?.send('Generando juego...')) as Message<true>
