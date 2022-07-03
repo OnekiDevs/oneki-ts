@@ -18,8 +18,7 @@ import {
     ComponentManager,
     OldCommandManager,
     UnoGame,
-    Server,
-    UnoCards
+    Server
 } from '../utils/classes.js'
 import i18n from 'i18n'
 
@@ -39,7 +38,6 @@ export class Client extends BaseClient<true> {
     private _wsInterval!: ReturnType<typeof setInterval>
     private _wsintent = 1
     uno: Collection<string, UnoGame> = new Collection()
-    UnoCards = UnoCards
     embeds = new Collection<string, { embed: EmbedBuilder; interactionId: string }>()
     reconect = true
     _wsw = false

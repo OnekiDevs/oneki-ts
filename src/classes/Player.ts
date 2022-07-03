@@ -6,7 +6,7 @@ import {
     ButtonStyle
 } from 'discord.js'
 import Jimp from 'jimp'
-import Client, { UnoCard, randomCard, UnoGame } from '../utils/classes.js'
+import Client, { UnoCard, UnoGame } from '../utils/classes.js'
 import { randomId } from '../utils/utils.js'
 
 export class Player {
@@ -15,18 +15,11 @@ export class Player {
     interaction?: ButtonInteraction
     client: Client
 
-    constructor(id: string, client: Client) {
+    constructor(id: string, client: Client, cards: UnoCard[]) {
         this.id = id
         this.client = client
-        this.cards.push(
-            randomCard(client),
-            randomCard(client),
-            randomCard(client),
-            randomCard(client),
-            randomCard(client),
-            randomCard(client),
-            randomCard(client)
-        )
+        const rc = () => cards[Math.floor(Math.random() * cards.length)]
+        this.cards.push(rc(), rc(), rc(), rc(), rc(), rc(), rc())
     }
 
     addCard(card: UnoCard) {
