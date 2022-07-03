@@ -1,8 +1,7 @@
 import { GuildMember } from 'discord.js'
-import { Client } from '../classes/Client.js'
+import client from '../client.js'
 
 export default async function(oldMember: GuildMember, newMember: GuildMember) {
-    const client = (newMember.client) as Client
     const server = client.getServer(newMember.guild)
 
     if(oldMember.nickname !== newMember.nickname) client.emit('customGuildMemberNickameUpdate', { server, oldMember, newMember })
