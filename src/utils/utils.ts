@@ -251,15 +251,12 @@ export function createModalComponent(input: TextInputBuilder) {
 
 export function errorCatch(file: string) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-        console.log('first(): called', `${target}.${propertyKey}.${descriptor}`)
-        return {
-            ...descriptor,
-            value: function (...args: any) {
-                try {
-                    descriptor.value(...args)
-                } catch (error) {
-                    sendError(error as Error, file)
-                }
+        return function (...args: any[]) {
+            try {
+                // return descriptor.value.call(this, ...args)
+            } catch (error) {
+                sendError(error as Error, file)
+                throw error
             }
         }
     }

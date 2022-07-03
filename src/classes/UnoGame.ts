@@ -3,7 +3,6 @@ import {
     Player,
     Players,
     UnoCard,
-    randomCard,
     Server,
     ActionRowBuilder,
     EmbedBuilder,
@@ -26,18 +25,20 @@ export class UnoGame extends EventEmitter {
     direction = true
     winner: Player | undefined
     server: Server
+    allCards: UnoCard[] = []
 
-    constructor(msg: Message<true>, client: Client) {
+    constructor(msg: Message<true>, client: Client, cards: UnoCard[]) {
         super()
 
         this.server = client.getServer(msg.guild)
 
-        this.host = new Player(msg.author.id, client)
+        this.host = new Player(msg.author.id, client, cards)
         this.client = client
+        this.allCards = cards
 
         this.players.add(this.host)
         msg.reply(this.embed).then(message => (this.message = message))
-        this.actualCard = randomCard(this.client)
+        this.actualCard = this.rc()
 
         this.client.uno.set(this.id, this)
 
@@ -49,7 +50,7 @@ export class UnoGame extends EventEmitter {
         this.on('eat', async (player: Player, interaction: ButtonInteraction) => {
             const translate = Translator(interaction)
             console.time('uno_eat')
-            player.addCard(randomCard(this.client))
+            player.addCard(this.rc())
             const nesesitoAyuda = await player.interaction?.editReply({
                 content: translate('uno_cmd.updating'),
                 components: []
@@ -121,8 +122,8 @@ export class UnoGame extends EventEmitter {
                     content: translate('uno_cmd.updating'),
                     components: []
                 })
-                this.turn.addCard(randomCard(this.client))
-                this.turn.addCard(randomCard(this.client))
+                this.turn.addCard(this.rc())
+                this.turn.addCard(this.rc())
                 cards = await this.turn.cardsToImage()
                 content = translate('uno_cmd.your_turn') + '\n' + (await imgToLink(cards, this.client))
                 components = this.turn.cardsToButtons(this)
@@ -145,10 +146,10 @@ export class UnoGame extends EventEmitter {
                     content: translate('uno_cmd.your_turn') + '\n' + translate('uno_cmd.updating'),
                     components: []
                 })
-                this.turn.addCard(randomCard(this.client))
-                this.turn.addCard(randomCard(this.client))
-                this.turn.addCard(randomCard(this.client))
-                this.turn.addCard(randomCard(this.client))
+                this.turn.addCard(this.rc())
+                this.turn.addCard(this.rc())
+                this.turn.addCard(this.rc())
+                this.turn.addCard(this.rc())
                 cards = await this.turn.cardsToImage()
                 content = translate('uno_cmd.your_turn') + '\n' + (await imgToLink(cards, this.client))
                 components = this.turn.cardsToButtons(this)
@@ -164,6 +165,10 @@ export class UnoGame extends EventEmitter {
             this.message.edit(this.embed)
             return
         })
+    }
+
+    rc() {
+        return this.allCards[Math.floor(Math.random() * this.allCards.length)]
     }
 
     get turn(): Player {

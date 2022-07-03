@@ -1,19 +1,19 @@
 import { PermissionsBitField, ChatInputCommandInteraction, TextChannel, GuildMember } from 'discord.js'
 import { checkSend, permissionsError, Translator } from '../../utils/utils.js'
 import { Client } from '../../utils/classes.js'
+import client from '../../client.js'
 
 export function file(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
-    const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server =
-        (interaction.client as Client).servers.get(interaction.guildId) ??
-        (interaction.client as Client).newServer(interaction.guild)
+    const member = interaction.guild.members.cache.get(interaction.user.id)
+    const server = client.getServer(interaction.guild)
+
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const prefix = interaction.options.getString('prefix') as string
     server.addPrefix(prefix)
     interaction.reply(translate('config_cmd.add_prefix', { prefix, prefixies: server.prefixes }))
-    ;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
+    client.commands.get('config')?.deploy(interaction.guild)
 }
 
 export async function suggest_channel(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -37,7 +37,7 @@ export async function suggest_channel(interaction: ChatInputCommandInteraction<'
     interaction.reply(translate('config_cmd.add_suggest_channel.reply', { channel, alias }))
     await channel.sendTyping()
     channel.send(translate('config_cmd.add_suggest_channel.message', { channel, alias }))
-    ;(interaction.client as Client).commands.get('config')?.deploy(interaction.guild)
+    client.commands.get('config')?.deploy(interaction.guild)
     channel.setRateLimitPerUser(21600)
 }
 
@@ -45,7 +45,7 @@ export async function blacklisted_word(interaction: ChatInputCommandInteraction<
     await interaction.deferReply()
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = (interaction.client as Client).getServer(interaction.guild)
+    const server = client.getServer(interaction.guild)
 
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
@@ -61,7 +61,7 @@ export async function ignored_channel(interaction: ChatInputCommandInteraction<'
 
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = (interaction.client as Client).getServer(interaction.guild)
+    const server = client.getServer(interaction.guild)
 
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)

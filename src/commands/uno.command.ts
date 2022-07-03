@@ -1,6 +1,7 @@
 import { ButtonInteraction, ChatInputCommandInteraction, Message } from 'discord.js'
 import { Command, Client, UnoGame, Player } from '../utils/classes.js'
 import { sendError, Translator } from '../utils/utils.js'
+import { getAllCards } from '../classes/UnoCards.js'
 
 export default class SS extends Command {
     constructor(client: Client) {
@@ -17,14 +18,16 @@ export default class SS extends Command {
         })
     }
 
+    // @errorCatch(import.meta.url)
     async interacion(interaction: ChatInputCommandInteraction<'cached'>) {
         try {
             const message = (await interaction.channel?.send('Generando juego...')) as Message<true>
-            new UnoGame(message, this.client)
             interaction.reply({
-                content: 'Juego generado',
+                content: 'Generando juego...',
                 ephemeral: true
             })
+            const cards = await getAllCards()
+            new UnoGame(message, this.client, cards)
         } catch (error) {
             interaction.reply('Ha ocurrido un error, reporte genrado')
             sendError(error as Error, import.meta.url)
@@ -33,7 +36,8 @@ export default class SS extends Command {
 
     async message(message: Message<true>, args: string[]): Promise<any> {
         try {
-            new UnoGame(message, this.client)
+            const cards = await getAllCards()
+            new UnoGame(message, this.client, cards)
         } catch (error) {
             message.reply('Ha ocurrido un error, reporte genrado')
             sendError(error as Error, import.meta.url)
@@ -48,7 +52,9 @@ export default class SS extends Command {
         if (!uno) return interaction.deferUpdate()
 
         if (option === 'jn') {
-            if (!uno.players.has(interaction.user.id)) uno.emit('join', new Player(interaction.user.id, this.client))
+            const cards = await getAllCards()
+            if (!uno.players.has(interaction.user.id))
+                uno.emit('join', new Player(interaction.user.id, this.client, cards))
             interaction.deferUpdate()
         } else if (option === 'st') {
             if (interaction.user.id === uno.host.id) {
