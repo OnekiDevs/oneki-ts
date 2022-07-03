@@ -1,6 +1,5 @@
 import { PermissionsBitField, ChatInputCommandInteraction, TextChannel, GuildMember } from 'discord.js'
 import { checkSend, permissionsError, Translator } from '../../utils/utils.js'
-import { Client } from '../../utils/classes.js'
 import client from '../../client.js'
 
 export function file(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -19,7 +18,7 @@ export function file(interaction: ChatInputCommandInteraction<'cached'>) {
 export async function suggest_channel(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = (interaction.client as Client).getServer(interaction.guild)
+    const server = client.getServer(interaction.guild)
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const channel = interaction.options.getChannel('channel') as TextChannel

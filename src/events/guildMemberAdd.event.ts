@@ -1,8 +1,7 @@
 import { GuildMember, TextChannel } from 'discord.js'
-import { Client } from '../classes/Client'
+import client from '../client.js'
 
 export default async function(member: GuildMember){
-    const client = (member.client) as Client
     const server = client.getServer(member.guild)
 
     if(!server.keepRoles || !server.premium) return

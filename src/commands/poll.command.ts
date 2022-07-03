@@ -21,6 +21,7 @@ import {
     Message
 } from 'discord.js'
 import { ActionRowBuilder, MessageActionRowComponentBuilder } from '@discordjs/builders'
+import client from '../client.js'
 
 export default class Poll extends Command {
     constructor(client: Client) {
@@ -236,7 +237,7 @@ export default class Poll extends Command {
 
             await this.deploy(interaction.guild as Guild)
             if (data.options)
-                (interaction.client.channels.cache.get(data.channel) as TextChannel)?.messages
+                (client.channels.cache.get(data.channel) as TextChannel)?.messages
                     .fetch(data.message!)
                     .then(async msg => {
                         await msg.edit({

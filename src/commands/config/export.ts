@@ -1,11 +1,12 @@
 import { PermissionsBitField, ChatInputCommandInteraction, AttachmentBuilder } from 'discord.js'
 import { permissionsError } from '../../utils/utils.js'
-import { Client, GuildDataBaseModel } from '../../utils/classes.js'
+import { GuildDataBaseModel } from '../../utils/classes.js'
 import YAML from 'yaml'
+import client from '../../client.js'
 
 export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = (interaction.client as Client).getServer(interaction.guild)
+    const server = client.getServer(interaction.guild)
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     await interaction.deferReply()

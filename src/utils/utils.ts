@@ -205,7 +205,7 @@ export async function sendError(error: Error, file: string) {
  */
 export const Translator = function (interaction: Interaction | Message<true>) {
     let lang: string = interaction instanceof Interaction ? interaction.locale : interaction.guild.preferredLocale
-    const i18n = (interaction.client as Client).i18n
+    const i18n = client.i18n
 
     /**
      * It takes a phrase and an optional object of parameters, and returns a translated string
