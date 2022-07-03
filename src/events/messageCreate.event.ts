@@ -19,7 +19,7 @@ export default async function (msg: Message<true>) {
                     /\.(jpeg|jpg|gif|png|webp|mp4|webm|mp3|ogg|wav|flac|aac|m4a|opus|midi|pdf|doc|docx|xls|xlsx|ppt|pptx|txt|md|rtf|csv|tsv|xml|json|js|css|html|htm|svg|woff2|apng|bmp|tiff|cur|eot|ttf|ico|otf)$/
                 ))
         )
-            msg.client.emit('Attachment', msg)
+            msg.client.emit('attachment', msg)
 
         // suggestions
         const cs = server.suggestChannels.find(c => c.channel === msg.channelId)

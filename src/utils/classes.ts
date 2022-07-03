@@ -124,7 +124,7 @@ export interface ClientConstants {
 
 export interface ClientOptions extends BaseClientOptions {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    firebaseToken: any
+    firebaseToken?: any
     constants: ClientConstants
     routes: {
         commands: string
