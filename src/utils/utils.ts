@@ -1,4 +1,3 @@
-import { Client } from './classes.js'
 import { fileURLToPath } from 'url'
 import {
     PermissionResolvable,
@@ -120,7 +119,7 @@ export function randomId() {
  * @param {Client} client - Client - The discord.js client
  * @returns {Promise<string>} - A promise that resolves to a string.
  */
-export function imgToLink(img: Buffer, client: Client): Promise<string> {
+export function imgToLink(img: Buffer): Promise<string> {
     return new Promise((resolve, reject) => {
         const channel = client.channels.cache.get(client.constants.imgChannel)
 

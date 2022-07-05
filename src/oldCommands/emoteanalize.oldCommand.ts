@@ -1,20 +1,20 @@
-import { OldCommand, Client, Server, Message, EmbedBuilder, PermissionsBitField } from '../utils/classes.js'
+import { OldCommand, Server, Message, EmbedBuilder, PermissionsBitField } from '../utils/classes.js'
 import { permissionsError, sendError, Translator } from '../utils/utils.js'
+import client from '../client.js'
 
 export default class Help extends OldCommand {
-    constructor(client: Client) {
+    constructor() {
         super({
             name: 'emote_analize',
             description: 'Start an analysis of emojis from the server',
-            alias: ['emoteanalize', 'emojianalize', 'emoji_analize'],
-            client
+            alias: ['emoteanalize', 'emojianalize', 'emoji_analize']
         })
     }
 
     async run(msg: Message<true>, args: string[]) {
         try {
             const translate = Translator(msg)
-            const server = this.client.getServer(msg.guild)
+            const server = client.getServer(msg.guild)
             if (!server.premium) return msg.reply(translate('premium'))
             if (!msg.member?.permissions.has(PermissionsBitField.Flags.Administrator))
                 return permissionsError(msg, PermissionsBitField.Flags.Administrator)

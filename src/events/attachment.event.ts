@@ -1,10 +1,9 @@
-import { checkSend, sendError, Translator } from '../utils/utils.js'
-import { Client } from '../utils/classes.js'
 import { AttachmentBuilder, EmbedBuilder, GuildMember, Message, TextChannel } from 'discord.js'
+import { checkSend, sendError, Translator } from '../utils/utils.js'
+import client from '../client.js'
 
 export default async function (message: Message<true>) {
     try {
-        const client = message.client as Client
         const server = client.getServer(message.guild)
         const translate = Translator(message)
 

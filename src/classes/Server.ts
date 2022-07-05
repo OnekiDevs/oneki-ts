@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Collection, Guild, GuildChannel, Message } from 'discord.js'
-import { GuildDataBaseModel, Client, SuggestChannelObject } from '../utils/classes.js'
+import { GuildDataBaseModel, SuggestChannelObject } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import { PunishmentType, PunishUser } from '../utils/utils.js'
 import ms from 'iblazingx-ms'
+import client from '../client.js'
 export class Server {
     autoroles: Collection<string, Set<string>> = new Collection()
     rejectSug(id: string) {
@@ -44,7 +45,7 @@ export class Server {
      */
     constructor(guild: Guild) {
         this.guild = guild
-        this.db = (guild.client as Client).db.collection('guilds').doc(guild.id)
+        this.db = client.db.collection('guilds').doc(guild.id)
     }
 
     async init() {
@@ -52,7 +53,7 @@ export class Server {
     }
 
     async syncDB(dataPriority?: boolean): Promise<any> {
-        if (this.guild.client.user?.id === '897298074915975269' && this.guild.id === '885674114310881362') return
+        if (client.user?.id === '897298074915975269' && this.guild.id === '885674114310881362') return
         const db = await this.db.get()
 
         if (!db.exists || dataPriority) {
@@ -169,7 +170,7 @@ export class Server {
     setPrefix(prefix: string) {
         this._prefixes = [prefix]
         this.db.update({ prefix: [prefix] }).catch(() => this.db.update({ prefix: [prefix] }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'set_prefix',
                 from: 'mts',
@@ -188,7 +189,7 @@ export class Server {
     addPrefix(prefix: string) {
         this._prefixes.push(prefix)
         this.db.update({ prefixies: this._prefixes }).catch(() => this.db.set({ prefixies: this._prefixes }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'add_prefix',
                 from: 'mts',
@@ -217,7 +218,7 @@ export class Server {
                     .update({ prefixies: FieldValue.arrayRemove(prefix) })
                     .catch(() => this.db.set({ prefixies: FieldValue.arrayRemove(prefix) }))
         }
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'remove_prefix',
                 from: 'mts',
@@ -245,7 +246,7 @@ export class Server {
         this.db
             .update({ suggest_channels: [{ channel: channel.id, default: true }] })
             .catch(() => this.db.set({ suggest_channels: [{ channel: channel.id, default: true }] }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'set_suggest_channel',
                 from: 'mts',
@@ -269,7 +270,7 @@ export class Server {
         this.db
             .update({ suggest_channels: this.suggestChannels })
             .catch(() => this.db.set({ suggest_channels: this.suggestChannels }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'add_suggest_channel',
                 from: 'mts',
@@ -299,7 +300,7 @@ export class Server {
         this.db
             .update({ suggest_channels: this.suggestChannels })
             .catch(() => this.db.set({ suggest_channels: this.suggestChannels }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'remove_suggest_channel',
                 from: 'mts',
@@ -335,7 +336,7 @@ export class Server {
         this.db
             .update({ ['logs_channels.message_update']: channel })
             .catch(() => this.db.set({ ['logs_channels.message_update']: channel }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'set_log',
                 from: 'mts',
@@ -353,7 +354,7 @@ export class Server {
      */
     removeMessageUpdateLog() {
         if (!this.logsChannels.messageUpdate) return
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
@@ -377,7 +378,7 @@ export class Server {
         this.db
             .update({ ['logs_channels.message_delete']: channel })
             .catch(() => this.db.set({ ['logs_channels.message_delete']: channel }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'set_log',
                 from: 'mts',
@@ -395,7 +396,7 @@ export class Server {
      */
     removeMessageDeleteLog() {
         if (!this.logsChannels.messageDelete) return
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
@@ -419,7 +420,7 @@ export class Server {
         this.db
             .update({ ['logs_channels.message_attachment']: channel })
             .catch(() => this.db.set({ ['logs_channels.message_attachment']: channel }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'set_log',
                 from: 'mts',
@@ -437,7 +438,7 @@ export class Server {
      */
     removeAttachmentLog() {
         if (!this.logsChannels.Attachment) return
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
@@ -459,7 +460,7 @@ export class Server {
      * @returns {string} string
      */
     translate(phrase: string, params?: object): string {
-        const i18n = (this.guild.client as Client).i18n
+        const i18n = client.i18n
         if (params) return i18n.__mf({ phrase, locale: this.lang }, params).toString()
         return i18n.__({ phrase, locale: this.lang }).toString()
     }
@@ -473,7 +474,7 @@ export class Server {
         this.db
             .update({ ['birthday.channel']: birthdayChannel })
             .catch(() => this.db.set({ ['birthday.channel']: birthdayChannel }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'set_birthdaychannel',
                 from: 'mts',
@@ -495,7 +496,7 @@ export class Server {
         this.db
             .update({ ['birthday.message']: birthdayMessage })
             .catch(() => this.db.set({ ['birthday.message']: birthdayMessage }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'set_birthdaymessage',
                 from: 'mts',
@@ -513,7 +514,7 @@ export class Server {
      */
     removeBirthdayChannel() {
         if (!this.birthday.channel) return
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'remove_birthday',
                 from: 'mts',
@@ -533,7 +534,7 @@ export class Server {
      */
     removeBirthdayMessage() {
         if (!this.birthday.message) return
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'remove_birthday',
                 from: 'mts',
@@ -561,7 +562,7 @@ export class Server {
                 .catch(() => this.db.set({ emoji_statistics: this.emojiStatistics }))
         }, 600_000)
 
-        this.guild.client.on('messageCreate', msg => {
+        client.on('messageCreate', msg => {
             if (!msg.guild || !msg.content) return
 
             const emojis = msg.content.match(/<a?:[a-z_]+:\d{18}>/gi)
@@ -582,7 +583,7 @@ export class Server {
 
         if (this.emojiTimeout) clearInterval(this.emojiTimeout)
 
-        this.guild.client.removeListener('messageCreate', this.emojiAnalisis)
+        client.removeListener('messageCreate', this.emojiAnalisis)
     }
 
     emojiAnalisis(msg: Message) {
@@ -640,7 +641,7 @@ export class Server {
         this.db
             .update({ ['logs_channels.invite']: inviteChannel })
             .catch(() => this.db.set({ ['logs_channels.invite']: inviteChannel }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'set_log',
                 from: 'mts',
@@ -662,7 +663,7 @@ export class Server {
         this.db
             .update({ ['logs_channels.member_update']: memberUpdateChannel })
             .catch(() => this.db.set({ ['logs_channels.member_update']: memberUpdateChannel }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'set_log',
                 from: 'mts',
@@ -676,7 +677,7 @@ export class Server {
 
     removeMemberUpdateChannel() {
         if (!this.logsChannels.memberUpdate) return
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
@@ -693,7 +694,7 @@ export class Server {
 
     removeInviteChannel() {
         if (!this.logsChannels.invite) return
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
@@ -711,7 +712,7 @@ export class Server {
     setKeepRoles(keepRoles: boolean) {
         this.keepRoles = keepRoles
         this.db.update({ ['keep_roles']: keepRoles }).catch(() => this.db.set({ ['keep_roles']: keepRoles }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'keep_roles',
                 from: 'mts',
@@ -725,7 +726,7 @@ export class Server {
         this.db
             .update({ ['blacklisted_words']: FieldValue.arrayUnion(word) })
             .catch(() => this.db.set({ ['blacklisted_words']: this.blacklistedWords }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'add_blacklisted_word',
                 from: 'mts',
@@ -739,7 +740,7 @@ export class Server {
         this.db
             .update({ ['blacklisted_words']: FieldValue.arrayRemove(word) })
             .catch(() => this.db.set({ ['blacklisted_words']: this.blacklistedWords }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'remove_blacklisted_word',
                 from: 'mts',
@@ -753,7 +754,7 @@ export class Server {
         this.db
             .update({ ['disabled_channels']: FieldValue.arrayUnion(channelID) })
             .catch(() => this.db.set({ ['disabled_channels']: this.disabledChannels }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'add_disabled_channel',
                 from: 'mts',
@@ -767,7 +768,7 @@ export class Server {
         this.db
             .update({ ['disabled_channels']: FieldValue.arrayRemove(channelID) })
             .catch(() => this.db.set({ ['disabled_channels']: this.disabledChannels }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'remove_disabled_channel',
                 from: 'mts',
@@ -781,7 +782,7 @@ export class Server {
         this.db
             .update({ ['logs_channels.sanction']: channelID })
             .catch(() => this.db.set({ ['logs_channels.sanction']: channelID }))
-        ;(this.guild.client as Client).websocket?.send(
+        client.websocket?.send(
             JSON.stringify({
                 event: 'set_sanction_channel',
                 from: 'mts',

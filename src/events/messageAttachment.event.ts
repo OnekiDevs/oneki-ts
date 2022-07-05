@@ -1,15 +1,15 @@
 import { TextChannel, GuildMember, EmbedBuilder, Message } from 'discord.js'
 import { checkSend, sendError } from '../utils/utils.js'
-import { Client } from '../utils/classes.js'
+import client from '../client.js'
 
 export default async function (msg: Message<true>) {
     try {
         if (!msg.guild) return
-        if (!(msg.client as Client).servers.has(msg.guild?.id ?? '')) return
-        const server = (msg.client as Client).getServer(msg.guild)
+        if (!client.servers.has(msg.guild.id)) return
+        const server = client.getServer(msg.guild)
         if (!server?.logsChannels.Attachment) return
         if (msg.channel.id === server.logsChannels.Attachment) return
-        const channel: TextChannel = msg.client.channels.cache.get(server.logsChannels.Attachment) as TextChannel
+        const channel: TextChannel = client.channels.cache.get(server.logsChannels.Attachment) as TextChannel
         if (channel && checkSend(channel, msg.guild?.members.me as GuildMember)) {
             channel.send({
                 files: msg.attachments.map(attachment => attachment),

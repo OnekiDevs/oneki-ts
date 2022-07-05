@@ -40,10 +40,10 @@ export default class Poll extends Command {
     }
 
     async createData(guild: Guild): Promise<void> {
-        const server = this.client.getServer(guild)
+        const server = client.getServer(guild)
         this.clearOptions()
 
-        const snap = await this.client.db
+        const snap = await client.db
             .collection('polls')
             .where('guild', '==', (guild as Guild).id)
             .get()
@@ -154,7 +154,7 @@ export default class Poll extends Command {
 
     async make(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         const translate = Translator(interaction)
-        // const server = this.client.getServer(interaction.guild)
+        // const server = client.getServer(interaction.guild)
 
         if (!checkSend(interaction.channel as TextChannel, interaction.guild.members.me as GuildMember))
             return interaction.reply({
@@ -169,7 +169,7 @@ export default class Poll extends Command {
         const id = randomId()
 
         // time
-        await this.client.db.collection('polls').doc(id).set({
+        await client.db.collection('polls').doc(id).set({
             guild: interaction.guildId,
             show_results,
             multiple_choices,
@@ -212,7 +212,7 @@ export default class Poll extends Command {
 
         interaction.showModal(modal)
 
-        this.client.commands.find(c => c.name === 'poll')?.deploy(interaction.guild as Guild)
+        client.commands.find(c => c.name === 'poll')?.deploy(interaction.guild as Guild)
     }
 
     async finalize(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -221,19 +221,19 @@ export default class Poll extends Command {
 
         const id = interaction.options.getString('poll') as string
 
-        const snap = await this.client.db.collection('polls').doc(id).get()
+        const snap = await client.db.collection('polls').doc(id).get()
 
         if (snap.exists) {
             const data = snap.data() as PollDatabaseModel
 
             if (data.options)
-                await this.client.db
+                await client.db
                     .collection('finalized-polls')
                     .doc(id)
                     .set(data)
                     .catch(() => '')
 
-            await this.client.db.collection('polls').doc(id).delete()
+            await client.db.collection('polls').doc(id).delete()
 
             await this.deploy(interaction.guild as Guild)
             if (data.options)
@@ -267,12 +267,12 @@ export default class Poll extends Command {
 
         interaction.editReply(translate('poll_cmd.finalize'))
 
-        this.client.commands.find(c => c.name === 'poll')?.deploy(interaction.guild)
+        client.commands.find(c => c.name === 'poll')?.deploy(interaction.guild)
     }
 
     async modal(interaction: ModalSubmitInteraction<'cached'>): Promise<any> {
         const translate = Translator(interaction)
-        // const server = this.client.getServer(interaction.guild)
+        // const server = client.getServer(interaction.guild)
 
         const [, id] = interaction.customId.split('_')
         const title = interaction.fields.getTextInputValue('title')
@@ -289,12 +289,12 @@ export default class Poll extends Command {
         if (options.length < 2)
             return interaction.reply({ content: translate('poll_cmd.edit.more_options'), ephemeral: true })
 
-        const snap = (await this.client.db.collection('polls').doc(id).get()).data() as PollDatabaseModel
+        const snap = (await client.db.collection('polls').doc(id).get()).data() as PollDatabaseModel
 
         const member =
             (await interaction.guild.members.cache.get(snap.author)) ??
             (await interaction.guild.members.fetch(snap.author)) ??
-            (await this.client.users.fetch(snap.author))
+            (await client.users.fetch(snap.author))
 
         const embed = this.createEmbed({ ...snap, id, member, title, context, options }, translate)
         const buttons = this.createButtons(options, id, translate)
@@ -304,7 +304,7 @@ export default class Poll extends Command {
         if (snap.message) msg = await channel.messages.fetch(snap.message!)
         if (!msg) msg = await channel.send({ embeds: [embed], components: buttons })
 
-        const db = this.client.db.collection('polls').doc(id)
+        const db = client.db.collection('polls').doc(id)
 
         db.set({
             ...snap,
@@ -323,7 +323,7 @@ export default class Poll extends Command {
         const [, id, selected] = interaction.customId.split('_')
         const translate = Translator(interaction)
 
-        const snap = await this.client.db.collection('polls').doc(id).get()
+        const snap = await client.db.collection('polls').doc(id).get()
         if (!snap.exists) return interaction.editReply({ content: 'Poll finalized' })
 
         const data = snap.data() as PollDatabaseModel
@@ -341,7 +341,7 @@ export default class Poll extends Command {
         const member =
             (await interaction.guild.members.cache.get(data.author)) ??
             (await interaction.guild.members.fetch(data.author)) ??
-            (await this.client.users.fetch(data.author))
+            (await client.users.fetch(data.author))
 
         const embed = this.createEmbed({ ...data, id, member }, translate)
         const buttons = this.createButtons(data.options!, id, translate)
@@ -354,7 +354,7 @@ export default class Poll extends Command {
             components: buttons
         })
 
-        const db = this.client.db.collection('polls').doc(id)
+        const db = client.db.collection('polls').doc(id)
         db.set({ ...data, options: data.options })
         interaction.editReply({
             content: translate('poll_cmd.buttons.success')
@@ -370,11 +370,11 @@ export default class Poll extends Command {
             .setDescription(poll.context)
             .setColor(Util.resolveColor('Random'))
             .setFooter({
-                iconURL: this.client.user?.displayAvatarURL(),
+                iconURL: client.user?.displayAvatarURL(),
                 text: translate('poll_cmd.make.footer', {
                     id: poll.id,
-                    bot: this.client.user?.username,
-                    version: this.client.version
+                    bot: client.user?.username,
+                    version: client.version
                 })
             })
             .setAuthor({

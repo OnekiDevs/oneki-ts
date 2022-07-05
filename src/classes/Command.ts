@@ -13,6 +13,7 @@ import {
 } from 'discord.js'
 import { Client, Local } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
+import client from '../client.js'
 
 export class Command {
     hibrid = false
@@ -20,7 +21,6 @@ export class Command {
     description: string
     local_names: Local
     local_descriptions: Local
-    client: Client
     translator = Translator
     global = true
     options: CommandOptions[] = []
@@ -45,7 +45,6 @@ export class Command {
         this.description = description['en-US']
         this.local_names = name
         this.local_descriptions = description
-        this.client = client
         this.global = global
         this.options = options
         this.dm = dm
@@ -62,7 +61,7 @@ export class Command {
     async deploy(guild?: Guild) {
         if (this.global) {
             await this.createData()
-            return this.client.application?.commands.create(this.data).catch(console.error)
+            return client.application?.commands.create(this.data).catch(console.error)
         }
         if (guild) {
             await this.createData(guild)
@@ -72,7 +71,7 @@ export class Command {
             })
         }
         return Promise.all(
-            this.client.guilds.cache.map(async guild => {
+            client.guilds.cache.map(async guild => {
                 await this.createData(guild)
                 return guild.commands.create(this.data).catch(e => {
                     if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)

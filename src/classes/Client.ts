@@ -12,13 +12,12 @@ import { readdirSync } from 'fs'
 import { WebSocket } from 'ws'
 import {
     CommandManager,
-    ClientOptions,
-    ServerManager,
-    ClientConstants,
     ComponentManager,
     OldCommandManager,
     UnoGame,
-    Server
+    Server,
+    ClientConstants,
+    ClientOptions
 } from '../utils/classes.js'
 import i18n from 'i18n'
 
@@ -32,7 +31,7 @@ export class Client extends BaseClient<true> {
     commands: CommandManager
     oldCommands: OldCommandManager
     components: ComponentManager
-    servers: ServerManager = new ServerManager(this)
+    servers = new Collection<string, Server>()
     websocket?: WebSocket
     constants: ClientConstants
     private _wsInterval!: ReturnType<typeof setInterval>
@@ -45,9 +44,9 @@ export class Client extends BaseClient<true> {
     constructor(options: ClientOptions) {
         super(options)
 
-        this.oldCommands = new OldCommandManager(this, options.routes.oldCommands)
-        this.commands = new CommandManager(this, options.routes.commands)
-        this.components = new ComponentManager(this, options.routes.components)
+        this.oldCommands = new OldCommandManager(options.routes.oldCommands)
+        this.commands = new CommandManager(options.routes.commands)
+        this.components = new ComponentManager(options.routes.components)
 
         this.i18n.configure(options.i18n)
         this.version = version ?? '1.0.0'
@@ -110,7 +109,13 @@ export class Client extends BaseClient<true> {
     }
 
     private async _onReady(options: { eventsPath: string }) {
-        await this.servers.initialize()
+        await Promise.all(
+            this.guilds.cache.map(async guild => {
+                const server = new Server(guild)
+                await server.init()
+                return this.servers.set(guild.id, server)
+            })
+        )
         console.log('\x1b[34m%s\x1b[0m', 'Servidores Desplegados!!')
 
         await this.commands.deploy()

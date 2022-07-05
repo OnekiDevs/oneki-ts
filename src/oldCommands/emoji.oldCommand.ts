@@ -1,13 +1,12 @@
-import { OldCommand, Client, EmbedBuilder, Message, Colors } from '../utils/classes.js'
+import { OldCommand, EmbedBuilder, Message, Colors } from '../utils/classes.js'
 import { sendError, Translator } from '../utils/utils.js'
 
 export default class Emoji extends OldCommand {
-    constructor(client: Client) {
+    constructor() {
         super({
             name: 'emoji',
             description: 'Get the emoji as a URL',
-            alias: ['emote', 'emogi'],
-            client
+            alias: ['emote', 'emogi']
         })
     }
 

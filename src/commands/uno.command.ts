@@ -2,7 +2,7 @@ import { ButtonInteraction, ChatInputCommandInteraction, Message } from 'discord
 import { Command, Client, UnoGame, Player } from '../utils/classes.js'
 import { sendError, Translator } from '../utils/utils.js'
 import { getAllCards } from '../classes/UnoCards.js'
-
+import client from '../client.js'
 export default class SS extends Command {
     constructor(client: Client) {
         super(client, {
@@ -27,7 +27,7 @@ export default class SS extends Command {
                 ephemeral: true
             })
             const cards = await getAllCards()
-            new UnoGame(message, this.client, cards)
+            new UnoGame(message, cards)
         } catch (error) {
             interaction.reply('Ha ocurrido un error, reporte genrado')
             sendError(error as Error, import.meta.url)
@@ -37,7 +37,7 @@ export default class SS extends Command {
     async message(message: Message<true>, args: string[]): Promise<any> {
         try {
             const cards = await getAllCards()
-            new UnoGame(message, this.client, cards)
+            new UnoGame(message, cards)
         } catch (error) {
             message.reply('Ha ocurrido un error, reporte genrado')
             sendError(error as Error, import.meta.url)
@@ -48,13 +48,12 @@ export default class SS extends Command {
         const translate = Translator(interaction)
         const [, id, option] = interaction.customId.split(/_/gi)
 
-        const uno = this.client.uno.get(id)
+        const uno = client.uno.get(id)
         if (!uno) return interaction.deferUpdate()
 
         if (option === 'jn') {
             const cards = await getAllCards()
-            if (!uno.players.has(interaction.user.id))
-                uno.emit('join', new Player(interaction.user.id, this.client, cards))
+            if (!uno.players.has(interaction.user.id)) uno.emit('join', new Player(interaction.user.id, cards))
             interaction.deferUpdate()
         } else if (option === 'st') {
             if (interaction.user.id === uno.host.id) {

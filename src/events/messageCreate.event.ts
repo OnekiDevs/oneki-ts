@@ -1,9 +1,8 @@
 import { PermissionsBitField, Message, EmbedBuilder, TextChannel } from 'discord.js'
-import { Client } from '../utils/classes.js'
 import { sendError, Translator } from '../utils/utils.js'
+import client from '../client.js'
 
 export default async function (msg: Message<true>) {
-    const client = msg.client as Client
     const server = client.getServer(msg.guild)
     const translate = Translator(msg)
     if (server.disabledChannels.includes(msg.channelId)) return //If it's a disabled channel
@@ -19,7 +18,7 @@ export default async function (msg: Message<true>) {
                     /\.(jpeg|jpg|gif|png|webp|mp4|webm|mp3|ogg|wav|flac|aac|m4a|opus|midi|pdf|doc|docx|xls|xlsx|ppt|pptx|txt|md|rtf|csv|tsv|xml|json|js|css|html|htm|svg|woff2|apng|bmp|tiff|cur|eot|ttf|ico|otf)$/
                 ))
         )
-            msg.client.emit('attachment', msg)
+            client.emit('attachment', msg)
 
         // suggestions
         const cs = server.suggestChannels.find(c => c.channel === msg.channelId)
@@ -59,7 +58,7 @@ export default async function (msg: Message<true>) {
         const prefix = server?.prefixes.find(p => msg.content.startsWith(p))
         if (!prefix) return
         const args = msg.content.slice(prefix?.length).split(/ /gi)
-        msg.client.emit('command', msg, args.shift(), args)
+        client.emit('command', msg, args.shift(), args)
     } catch (error) {
         sendError(error as Error, import.meta.url)
     }

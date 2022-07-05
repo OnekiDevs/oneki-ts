@@ -9,6 +9,7 @@ import {
 import { Command, Client } from '../utils/classes.js'
 import { SubcommandCommandOptions } from '../classes/Command.js'
 import { Translator } from '../utils/utils.js'
+import client from '../client.js'
 
 export default class Config extends Command {
     constructor(client: Client) {
@@ -395,7 +396,7 @@ export default class Config extends Command {
     }
 
     async createData(guild: Guild): Promise<void> {
-        const server = this.client.getServer(guild)
+        const server = client.getServer(guild)
 
         // logs
         const logs = ['message_update', 'message_delete', 'message_attachment', 'invites', 'member_update']

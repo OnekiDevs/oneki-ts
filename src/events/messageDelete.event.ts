@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { EmbedBuilder, Message, TextChannel, GuildMember, User } from 'discord.js'
 import { sendError, checkSend, PunishmentType, Util, Translator } from '../utils/utils.js'
-import { Client, Server } from '../utils/classes.js'
+import { Server } from '../utils/classes.js'
+import client from '../client.js'
 
 export default async function (message: Message<true>) {
     try {
-        if (!(message.client as Client).servers.has(message.guild.id)) return
-        const server = (message.client as Client).getServer(message.guild)
+        if (!client.servers.has(message.guild.id)) return
+        const server = client.getServer(message.guild)
         if (message.author.bot) return
         if (!message.guild) return
         const translate = Translator(message)
@@ -14,7 +15,7 @@ export default async function (message: Message<true>) {
         await checkGhostPing(server, message)
 
         if (!server.logsChannels.messageDelete) return
-        const channel: TextChannel = message.client.channels.cache.get(server.logsChannels.messageDelete) as TextChannel
+        const channel: TextChannel = client.channels.cache.get(server.logsChannels.messageDelete) as TextChannel
 
         if (channel && checkSend(channel, message.guild.members.me as GuildMember)) {
             const embed = new EmbedBuilder()
@@ -39,7 +40,7 @@ export default async function (message: Message<true>) {
                         inline: true
                     }
                 )
-                .setFooter((message.client as Client).embedFooter)
+                .setFooter(client.embedFooter)
 
             if (message.content)
                 embed.setDescription(
@@ -108,7 +109,7 @@ async function checkGhostPing(server: Server, msg: Message<true>) {
 
     if (timeBeforeDeletioninSecs > 7) return
 
-    const channel = (await msg.client.channels.fetch('885674115615301650')) as TextChannel
+    const channel = (await client.channels.fetch('885674115615301650')) as TextChannel
     channel.send({
         content: translate('ghost_ping_event.realized', {
             ghostingUser: msg.member?.toString(),
@@ -131,7 +132,7 @@ async function checkGhostPing(server: Server, msg: Message<true>) {
             type: PunishmentType.MUTE,
             reason: 'Ghost pinging',
             duration: '10m',
-            moderatorId: msg.client.user!.id
+            moderatorId: client.user.id
         })
         .then(() => {
             channel.send({
@@ -160,7 +161,7 @@ function warnUser(server: Server, channel: TextChannel, msg: Message<true>, user
             userId: msg.author.id,
             type: PunishmentType.WARN,
             reason: 'Ghost pining',
-            moderatorId: msg.client.user!.id
+            moderatorId: client.user.id
         })
         .then(() => {
             channel.send({

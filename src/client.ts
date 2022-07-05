@@ -42,8 +42,8 @@ export default new Client({
             'en-*': 'en',
             'es-*': 'es'
         },
-        logWarnFn: msg => console.warn('WARN _l', msg),
-        logErrorFn: msg => console.error('ERROR _l', msg),
+        logWarnFn: (msg: string) => console.warn('WARN _l', msg),
+        logErrorFn: (msg: string) => console.error('ERROR _l', msg),
         missingKeyFn: (locale: string, value: string) => {
             sendError(
                 new Error(`Missing translation for "${value}" in "${locale}"`),

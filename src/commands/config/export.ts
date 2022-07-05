@@ -1,8 +1,8 @@
 import { PermissionsBitField, ChatInputCommandInteraction, AttachmentBuilder } from 'discord.js'
 import { permissionsError } from '../../utils/utils.js'
 import { GuildDataBaseModel } from '../../utils/classes.js'
-import YAML from 'yaml'
 import client from '../../client.js'
+import YAML from 'yaml'
 
 export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)
@@ -37,7 +37,7 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
     return interaction.editReply({
         files: [
             new AttachmentBuilder(Buffer.from(file), {
-                name: `${interaction.guild?.name}_${interaction.client.user?.username}_config.${type}`
+                name: `${interaction.guild?.name}_${client.user.username}_config.${type}`
             })
         ]
     })

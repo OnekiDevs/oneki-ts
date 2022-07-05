@@ -10,6 +10,7 @@ import {
 import { Command, Client, Server } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
 import { checkSend } from '../utils/utils.js'
+import client from '../client.js'
 
 export default class Suggest extends Command {
     constructor(client: Client) {
@@ -28,7 +29,7 @@ export default class Suggest extends Command {
     }
 
     async createData(guild: Guild): Promise<void> {
-        const server = this.client.getServer(guild)
+        const server = client.getServer(guild)
 
         this.addOption({
             name: {
@@ -70,14 +71,14 @@ export default class Suggest extends Command {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     interacion(interaction: ChatInputCommandInteraction<'cached'>): any {
         const translate = Translator(interaction)
-        let server = this.client.servers.get(interaction.guildId as string)
+        let server = client.servers.get(interaction.guildId as string)
         if (!server || server.suggestChannels.length === 0) {
             server = new Server(interaction.guild)
             interaction.reply({
                 content: translate('suggest_cmd.whitout_channel'),
                 ephemeral: true
             })
-            const guild = interaction.guild ?? this.client.guilds.cache.get(interaction.guildId as string)
+            const guild = interaction.guild ?? client.guilds.cache.get(interaction.guildId as string)
             return (
                 guild?.name,
                 guild?.commands.cache.map(c => {
@@ -87,7 +88,7 @@ export default class Suggest extends Command {
         }
         const channelId = interaction.options.getString('channel')
         const sug = interaction.options.getString('suggestion')
-        const channel = this.client.channels.cache.get(channelId as string) as TextChannel
+        const channel = client.channels.cache.get(channelId as string) as TextChannel
         if (channel && checkSend(channel, interaction.guild?.members.me as GuildMember)) {
             server.lastSuggestId += 1
             const embed = new EmbedBuilder()
@@ -98,7 +99,7 @@ export default class Suggest extends Command {
                 .setTitle(translate('suggest_cmd.title', { id: server?.lastSuggestId }))
                 .setColor(16313844)
                 .setDescription(sug as string)
-                .setFooter(this.client.embedFooter)
+                .setFooter(client.embedFooter)
                 .setTimestamp()
             channel
                 .send({
@@ -131,14 +132,14 @@ export default class Suggest extends Command {
 
     checkDeploy(guild?: Guild): Promise<boolean> {
         return new Promise<boolean>(resolve => {
-            const server = this.client.servers.get(guild?.id as string)
+            const server = client.servers.get(guild?.id as string)
             resolve((server && server.suggestChannels.length == 0) as boolean)
         })
     }
 
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
         const [, m, id] = interaction.customId.split(/_/gi)
-        const server = this.client.getServer(interaction.guild)
+        const server = client.getServer(interaction.guild)
         if (m === 'a') server.aceptSug(id)
         else server.rejectSug(id)
         interaction.deferUpdate()

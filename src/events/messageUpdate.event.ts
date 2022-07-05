@@ -1,19 +1,19 @@
-import { Client } from '../utils/classes.js'
 import { EmbedBuilder, Message, TextChannel, GuildMember } from 'discord.js'
 import { checkSend, sendError, Translator, Util } from '../utils/utils.js'
+import client from '../client.js'
 
 export default async function (old: Message<true>, message: Message<true>) {
     try {
         if (message.author.bot) return
         if (!message.guild) return
 
-        if (!(message.client as Client).servers.has(message.guild?.id ?? '')) return
-        const server = (message.client as Client).getServer(message.guild)
+        if (!client.servers.has(message.guild?.id ?? '')) return
+        const server = client.getServer(message.guild)
 
         const translate = Translator(message)
 
         if (!server?.logsChannels.messageUpdate) return
-        const channel: TextChannel = message.client.channels.cache.get(server.logsChannels.messageUpdate) as TextChannel
+        const channel: TextChannel = client.channels.cache.get(server.logsChannels.messageUpdate) as TextChannel
 
         if (channel && checkSend(channel, message.guild?.members.me as GuildMember)) {
             const embed = new EmbedBuilder()
@@ -65,7 +65,7 @@ export default async function (old: Message<true>, message: Message<true>) {
                             : Util.escapeCodeBlock(message.content)) +
                         '\n```'
                 })
-            embed.setFooter((message.client as Client).embedFooter)
+            embed.setFooter(client.embedFooter)
 
             if (message.reference) {
                 try {
