@@ -122,7 +122,7 @@ async function checkGhostPing(server: Server, msg: Message<true>) {
         (sanction: { reason: string }) => sanction.reason === 'Ghost pinging'
     )
 
-    if (ghostSanctions?.length === 0 || ghostSanctions === undefined) return warnUser(server, channel, msg, user)
+    if (!ghostSanctions?.length) return warnUser(server, channel, msg, user)
 
     server
         .punishUser({

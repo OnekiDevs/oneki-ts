@@ -1,11 +1,10 @@
-import { PermissionsBitField, Message, EmbedBuilder, TextChannel } from 'discord.js'
+import { PermissionsBitField, Message, TextChannel } from 'discord.js'
 import { Client } from '../utils/classes.js'
-import { sendError, Translator } from '../utils/utils.js'
+import { sendError} from '../utils/utils.js'
 
 export default async function (msg: Message<true>) {
     const client = msg.client as Client
     const server = client.getServer(msg.guild)
-    const translate = Translator(msg)
     if (server.disabledChannels.includes(msg.channelId)) return //If it's a disabled channel
 
     try {
@@ -26,31 +25,7 @@ export default async function (msg: Message<true>) {
         if (cs && !msg.author.bot) {
             const channel = client.channels.cache.get(cs.channel) as TextChannel
             if (channel) {
-                const embed = new EmbedBuilder()
-                    .setAuthor({
-                        name: msg.author.username,
-                        iconURL: msg.author.displayAvatarURL()
-                    })
-                    .setTitle(translate('suggest_cmd.title', { id: server?.lastSuggestId }))
-                    .setColor(16313844)
-                    .setDescription(msg.content)
-                    .setFooter(client.embedFooter)
-                    .setTimestamp()
-                channel
-                    .send({
-                        embeds: [embed]
-                    })
-                    .then(msg => {
-                        msg.startThread({
-                            name: translate('suggest_cmd.sent', { id: server?.lastSuggestId })
-                        })
-                        server.db.collection('suggests').doc(`suggest_${server.lastSuggestId}`).set({
-                            author: msg.author.id,
-                            channel: msg.channel.id,
-                            suggest: msg.content
-                        })
-                    })
-                server.lastSuggestId += 1
+                server.sendSuggestion(msg)
                 return msg.delete()
             }
         }

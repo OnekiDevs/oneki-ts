@@ -30,7 +30,8 @@ export async function suggest_channel(interaction: ChatInputCommandInteraction<'
     interaction.reply(translate('config_cmd.set_suggest_channel.reply', { channel: channel.toString() }))
     await channel.sendTyping()
     channel.send(translate('config_cmd.set_suggest_channel.message'))
-    ;client.commands.get('config')?.deploy(interaction.guild)
+    client.commands.get('config')?.deploy(interaction.guild)
+    client.commands.get('suggest')?.deploy(interaction.guild)
 }
 
 export async function birthday_channel(interaction: ChatInputCommandInteraction<'cached'>) {

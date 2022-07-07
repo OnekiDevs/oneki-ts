@@ -244,6 +244,11 @@ export interface PunishUser {
     moderatorId: string
 }
 
+export interface Suggestion {
+    interaction?: ChatInputCommandInteraction<"cached"> | null,
+    message?: Message<true> | null
+}
+
 export function createModalComponent(input: TextInputBuilder) {
     if (!input.data.style) input.setStyle(TextInputStyle.Short)
     return new ActionRowBuilder<TextInputBuilder>().addComponents([input])

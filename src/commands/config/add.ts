@@ -37,6 +37,7 @@ export async function suggest_channel(interaction: ChatInputCommandInteraction<'
     await channel.sendTyping()
     channel.send(translate('config_cmd.add_suggest_channel.message', { channel, alias }))
     client.commands.get('config')?.deploy(interaction.guild)
+    client.commands.get('suggest')?.deploy(interaction.guild)
     channel.setRateLimitPerUser(21600)
 }
 

@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Collection, Guild, GuildChannel, Message } from 'discord.js'
+import { ChatInputCommandInteraction, Collection, EmbedBuilder, Guild, GuildChannel, Message, TextChannel, User } from 'discord.js'
 import { GuildDataBaseModel, Client, SuggestChannelObject } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import { PunishmentType, PunishUser } from '../utils/utils.js'
 import ms from 'iblazingx-ms'
+import client from '../client.js'
 export class Server {
     autoroles: Collection<string, Set<string>> = new Collection()
     rejectSug(id: string) {
@@ -1000,5 +1001,47 @@ export class Server {
             }
         })
         return Promise.resolve()
+    }
+
+    sendSuggestion(interaction: ChatInputCommandInteraction<'cached'> | Message<true>) { 
+        let sug: string, channel, author: User
+
+        if(interaction instanceof ChatInputCommandInteraction){
+            channel = (interaction.options.getChannel('channel') ?? client.channels.cache.get(this.suggestChannels[0].channel)) as TextChannel
+            sug = interaction.options.getString('suggestion')!
+            author = interaction.user
+        }else{
+            author = interaction.author
+            channel = interaction.channel as TextChannel
+            sug = interaction.content
+        }
+
+        this.lastSuggestId += 1
+        const embed = new EmbedBuilder()
+            .setAuthor({
+                name: author.username,
+                iconURL: author.displayAvatarURL()
+            })
+            .setTitle(this.translate('suggest_cmd.title', { id: this?.lastSuggestId }))
+            .setColor(16313844)
+            .setDescription(sug as string)
+            .setFooter(client.embedFooter)
+            .setTimestamp()
+        channel
+            .send({
+                embeds: [embed]
+            })
+            .then(msg => {
+                msg.react('<:yes:885693508533489694>')
+                msg.react('<:no:885693492632879104>')
+                msg.startThread({
+                    name: this.translate('suggest_cmd.sent', { id: this?.lastSuggestId })
+                })
+                this?.db?.collection('suggests').doc(`suggest_${this.lastSuggestId}`).set({
+                    author: author.id,
+                    channel: msg.channel.id,
+                    suggest: sug
+                })
+            })
     }
 }

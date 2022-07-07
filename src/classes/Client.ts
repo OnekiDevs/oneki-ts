@@ -90,7 +90,7 @@ export class Client extends BaseClient<true> {
             if (!this.reconect) return
 
             console.log('ws closed event')
-            console.log(`WebSocket closed, reconnecting in ${5_000 * this._wsintent++} seconds...`)
+            console.log(`WebSocket closed, reconnecting in ${5_000 * this._wsintent++} miliseconds...`)
             clearInterval(this._wsInterval)
             if (!this._wsw) setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
             this._wsw = true
@@ -102,7 +102,7 @@ export class Client extends BaseClient<true> {
             if (!this.reconect) return
 
             console.log('ws error event')
-            console.log(`WebSocket closed, reconnecting in ${5_000 * this._wsintent++} seconds...`)
+            console.log(`WebSocket closed, reconnecting in ${5_000 * this._wsintent++} miliseconds...`)
             clearInterval(this._wsInterval)
             if (!this._wsw) setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
             this._wsw = true

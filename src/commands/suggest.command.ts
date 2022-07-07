@@ -2,10 +2,10 @@ import {
     ChatInputCommandInteraction,
     Guild,
     GuildMember,
-    EmbedBuilder,
     TextChannel,
     ApplicationCommandOptionType,
-    ButtonInteraction
+    ButtonInteraction,
+    //Message
 } from 'discord.js'
 import { Command, Client, Server } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
@@ -85,35 +85,10 @@ export default class Suggest extends Command {
                 })
             )
         }
-        const channelId = interaction.options.getString('channel')
-        const sug = interaction.options.getString('suggestion')
+        const channelId = interaction.options.getString('channel') ?? server.suggestChannels[0].channel //change
         const channel = this.client.channels.cache.get(channelId as string) as TextChannel
         if (channel && checkSend(channel, interaction.guild?.members.me as GuildMember)) {
-            server.lastSuggestId += 1
-            const embed = new EmbedBuilder()
-                .setAuthor({
-                    name: interaction.user.username,
-                    iconURL: interaction.user.displayAvatarURL()
-                })
-                .setTitle(translate('suggest_cmd.title', { id: server?.lastSuggestId }))
-                .setColor(16313844)
-                .setDescription(sug as string)
-                .setFooter(this.client.embedFooter)
-                .setTimestamp()
-            channel
-                .send({
-                    embeds: [embed]
-                })
-                .then(msg => {
-                    msg.startThread({
-                        name: translate('suggest_cmd.sent', { id: server?.lastSuggestId })
-                    })
-                    server?.db?.collection('suggests').doc(`suggest_${server.lastSuggestId}`).set({
-                        author: interaction.user.id,
-                        channel: msg.channel.id,
-                        suggest: sug
-                    })
-                })
+            server.sendSuggestion(interaction)
             return interaction.reply({ content: translate('suggest_cmd.sent'), ephemeral: true })
         } else if (checkSend(channel, interaction.guild?.members.me as GuildMember)) {
             return interaction.reply({

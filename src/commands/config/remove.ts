@@ -12,7 +12,8 @@ export function suggest_channel(interaction: ChatInputCommandInteraction<'cached
     if (!channelId) return interaction.reply(translate('config_cmd.remove_suggest_channel.dont_exist'))
     server.removeSuggestChannel(channelId)
     interaction.reply(translate('config_cmd.remove_suggest_channel.dont_exist'))
-    ;client.commands.get('config')?.deploy(interaction.guild)
+    client.commands.get('config')?.deploy(interaction.guild)
+    client.commands.get('suggest')?.deploy(interaction.guild)
 }
 
 export function prefix(interaction: ChatInputCommandInteraction<'cached'>) {
