@@ -826,7 +826,6 @@ export class Server {
 
     private async warnUser(userId: string, reason: string, moderatorId: string) {
         const user = await this.guild.members.fetch(userId)
-
         const moderator = await this.guild.members.fetch(moderatorId)
 
         if (moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0)
@@ -856,7 +855,6 @@ export class Server {
 
     private async muteUser(userId: string, reason: string, duration: string, moderatorId: string) {
         const user = await this.guild.members.fetch(userId)
-
         const moderator = await this.guild.members.fetch(moderatorId)
 
         if (moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0)
@@ -889,7 +887,6 @@ export class Server {
 
     private async kickUser(userId: string, reason: string, moderatorId: string) {
         const user = await this.guild.members.fetch(userId)
-
         const moderator = await this.guild.members.fetch(moderatorId)
 
         if (moderator.roles.highest.comparePositionTo(user.roles.highest) <= 0)

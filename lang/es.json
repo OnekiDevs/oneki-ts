@@ -165,7 +165,7 @@
         "mute_user": "El usuario {user} ha sido silenciado por el {moderator} por {time}. Razón: {reason}"
     },
     "ghost_ping_event": {
-        "realized": "⛔ El usuario {ghostingUser} le ha hecho ghost ping al usuario {ghostedUser}. ⛔`",
+        "realized": "⛔ El usuario {ghostingUser} le ha hecho ghost ping al usuario {ghostedUser}. ⛔",
         "warned": "El usuario {ghostingUser} ha hecho su primer ghost ping hacia el usuario {ghostedUser} y ha sido advertido de ello.",
         "cant_warn": "⚠️ El usuario {ghostingUser} ha hecho su primer ghost ping hacia el usuario {ghostedUser}. Sin embargo, no puedo darle una advertencia porque su rol es mayor al mío. ⚠️",
         "muted": "El usuario {ghostingUser} le ha hecho ghost ping al usuario {ghostedUser} y ha sido muteado por ello.",

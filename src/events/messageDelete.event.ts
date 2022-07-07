@@ -118,12 +118,11 @@ async function checkGhostPing(server: Server, msg: Message<true>) {
     })
     const ghosterSnap = (await server.db.collection('users').doc(msg.author.id).get()).data()
     if (!ghosterSnap) return warnUser(server, channel, msg, user)
-
-    const ghostSanctions = ghosterSnap.sanctions.filter(
-        (sanction: { reason: string }) => sanction.reason === 'Ghosting'
+    const ghostSanctions = ghosterSnap.sanctions?.filter(
+        (sanction: { reason: string }) => sanction.reason === 'Ghost pinging'
     )
 
-    if (!ghostSanctions) return warnUser(server, channel, msg, user)
+    if (ghostSanctions?.length === 0 || ghostSanctions === undefined) return warnUser(server, channel, msg, user)
 
     server
         .punishUser({
@@ -159,7 +158,7 @@ function warnUser(server: Server, channel: TextChannel, msg: Message<true>, user
         .punishUser({
             userId: msg.author.id,
             type: PunishmentType.WARN,
-            reason: 'Ghost pining',
+            reason: 'Ghost pinging',
             moderatorId: msg.client.user!.id
         })
         .then(() => {
