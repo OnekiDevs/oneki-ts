@@ -1,5 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { ChatInputCommandInteraction, Collection, EmbedBuilder, Guild, GuildChannel, Message, TextChannel, User } from 'discord.js'
+import {
+    ChatInputCommandInteraction,
+    Collection,
+    EmbedBuilder,
+    Guild,
+    GuildChannel,
+    Message,
+    TextChannel,
+    User
+} from 'discord.js'
 import { GuildDataBaseModel, Client, SuggestChannelObject } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
 import { PunishmentType, PunishUser } from '../utils/utils.js'
@@ -603,14 +612,14 @@ export class Server {
 
     newAutorol(name: string) {
         this.autoroles.set(name, new Set())
-        this.db.update({ ['autoroles.' + name]: [] }).catch(() => this.db.set({ ['autoroles.' + name]: [] }))
+        return this.db.update({ ['autoroles.' + name]: [] }).catch(() => this.db.set({ ['autoroles.' + name]: [] }))
     }
 
     addAutorol(name: string, id: string) {
         if (!this.autoroles.has(name)) return
         this.autoroles.get(name)?.add(id)
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        this.db
+        return this.db
             .update({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) })
             .catch(() => this.db.set({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }))
     }
@@ -619,7 +628,7 @@ export class Server {
         if (!this.autoroles.has(name)) return
         this.autoroles.get(name)?.delete(id)
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        this.db
+        return this.db
             .update({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) })
             .catch(() => this.db.set({ ['autoroles.' + name]: Array.from(this.autoroles.get(name)!.values()) }))
     }
@@ -627,7 +636,7 @@ export class Server {
     removeAutorol(name: string) {
         if (!this.autoroles.has(name)) return
         this.autoroles.delete(name)
-        this.db
+        return this.db
             .update({ ['autoroles.' + name]: FieldValue.delete() })
             .catch(() => this.db.set({ ['autoroles.' + name]: FieldValue.delete() }))
     }
@@ -1003,14 +1012,15 @@ export class Server {
         return Promise.resolve()
     }
 
-    sendSuggestion(interaction: ChatInputCommandInteraction<'cached'> | Message<true>) { 
+    sendSuggestion(interaction: ChatInputCommandInteraction<'cached'> | Message<true>) {
         let sug: string, channel, author: User
 
-        if(interaction instanceof ChatInputCommandInteraction){
-            channel = (interaction.options.getChannel('channel') ?? client.channels.cache.get(this.suggestChannels[0].channel)) as TextChannel
+        if (interaction instanceof ChatInputCommandInteraction) {
+            channel = (interaction.options.getChannel('channel') ??
+                client.channels.cache.get(this.suggestChannels[0].channel)) as TextChannel
             sug = interaction.options.getString('suggestion')!
             author = interaction.user
-        }else{
+        } else {
             author = interaction.author
             channel = interaction.channel as TextChannel
             sug = interaction.content

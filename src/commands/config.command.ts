@@ -662,12 +662,19 @@ export default class Config extends Command {
             }
         ]
 
-        if (server.autoroles && server.autoroles.size > 0) {
-            const groupChoices = Array.from(server.autoroles.keys()).map(r => ({
+        console.log(server.autoroles)
+
+        if (server.autoroles.size) {
+            /**
+             * The name of the autorole group
+             */
+            const groupChoices = [...server.autoroles.keys()].map(r => ({
                 name: r,
                 value: r
             }))
+
             // add
+
             moreAutorolesOptions.push({
                 name: {
                     'en-US': 'add',

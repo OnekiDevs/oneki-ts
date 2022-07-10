@@ -225,6 +225,8 @@ export interface StringCommandOptions extends BaseCommandOption {
     type: ApplicationCommandOptionType.String
     choices?: ChoicesStringCommandOption[]
     autocomplete?: boolean
+    min_length?: number
+    max_length?: number
 }
 
 export interface IntegerCommandOptions extends BaseCommandOption {
