@@ -18,6 +18,7 @@ export async function create(interaction: ChatInputCommandInteraction<'cached'>)
     const name = (interaction.options.getString('name') as string).split(/ +/gi).join('_')
     const server = client.getServer(interaction.guild)
     await server.newAutorol(name)
+    console.log(client.commands.get('config'))
     await client.commands.get('config')?.deploy(interaction.guild)
     interaction.editReply(translate('config_cmd.autoroles.create', { name }))
 }

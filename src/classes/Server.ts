@@ -9,9 +9,9 @@ import {
     TextChannel,
     User
 } from 'discord.js'
-import { GuildDataBaseModel, Client, SuggestChannelObject } from '../utils/classes.js'
+import { GuildDataBaseModel, Client, SuggestChannelObject, ApiCommand } from '../utils/classes.js'
 import { FieldValue } from 'firebase-admin/firestore'
-import { PunishmentType, PunishUser } from '../utils/utils.js'
+import { PunishmentType, PunishUser, sleep } from '../utils/utils.js'
 import ms from 'iblazingx-ms'
 import client from '../client.js'
 export class Server {
@@ -1053,5 +1053,20 @@ export class Server {
                     suggest: sug
                 })
             })
+    }
+
+    async createCommands(commands: ApiCommand[]) {
+        for (const command of commands) {
+            fetch(`https://discord.com/api/v10/guilds/${this.guild.id}/commands`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bot ${client.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(command)
+            }).catch(console.error)
+            await sleep()
+        }
+        return Promise.resolve()
     }
 }

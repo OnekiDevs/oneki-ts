@@ -1,3 +1,5 @@
+import { Client, Local } from '../utils/classes.js'
+import { Translator } from '../utils/utils.js'
 import {
     ChatInputCommandInteraction,
     AutocompleteInteraction,
@@ -9,10 +11,9 @@ import {
     Message,
     Guild,
     ApplicationCommandOptionType,
-    ChannelType
+    ChannelType,
+    ApplicationCommandType
 } from 'discord.js'
-import { Client, Local } from '../utils/classes.js'
-import { Translator } from '../utils/utils.js'
 
 export class Command {
     hibrid = false
@@ -60,15 +61,17 @@ export class Command {
      * @returns A promise that resolves to an array of commands.
      */
     async deploy(guild?: Guild) {
+        console.log(`Deploying command ${this.name}`)
+
         if (this.global) {
             await this.createData()
-            return this.client.application?.commands.create(this.data).catch(console.error)
+            return this.client.application.commands.create(this.data).catch(console.error)
         }
         if (guild) {
             await this.createData(guild)
             return guild.commands.create(this.data).catch((e: Error) => {
                 if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
-                // else console.error(e)
+                else console.error(e)
             })
         }
         return Promise.all(
@@ -280,3 +283,15 @@ export type CommandOptions =
     | MentionableCommandOptions
     | NumberCommandOptions
     | AttachmentCommandOptions
+
+export type ApiCommand = {
+    name: string
+    description: string
+    name_localizations?: Local
+    description_localizations?: Local
+    type: ApplicationCommandType
+    options?: CommandOptions[]
+    default_member_permissions?: string
+    dm_permission?: boolean
+    default_permission?: boolean
+}

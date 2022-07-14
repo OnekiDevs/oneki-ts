@@ -163,8 +163,8 @@ export default class Poll extends Command {
             })
 
         const show_results = interaction.options.getBoolean('show_results') ?? true
-        const block_choices = interaction.options.getBoolean('block_choice') ?? false
-        const multiple_choices = interaction.options.getBoolean('multiple_choices') ?? false
+        const block_choice = interaction.options.getBoolean('block_choice') ?? false
+        const multiple_choice = interaction.options.getBoolean('multiple_choices') ?? false
         // const time = interaction.options.getString('time') ?? server.premium ? '1m' : '1w'
         const id = randomId()
 
@@ -172,9 +172,9 @@ export default class Poll extends Command {
         await this.client.db.collection('polls').doc(id).set({
             guild: interaction.guildId,
             show_results,
-            multiple_choices,
+            multiple_choice,
             author: interaction.user.id,
-            block_choices,
+            block_choice,
             channel: interaction.channel!.id
         })
 
@@ -250,7 +250,7 @@ export default class Poll extends Command {
                             embed.setFields(
                                 await Promise.all(
                                     data.options!.map((o, i) => ({
-                                        name: `${emojis[i]} Opcion ${i + 1} ${o.value}`,
+                                        name: `${emojis[i]} Opcion ${i + 1} ${o.title}`,
                                         value: `\`${filledBar((o.votes.length / votesCount) * 100)}\` ${Math.round(
                                             (o.votes.length / votesCount) * 100
                                         )}%`,
@@ -281,8 +281,8 @@ export default class Poll extends Command {
             .getTextInputValue('options')
             .split('\n')
             .map((o, i) => ({
-                n: i + 1,
-                value: o.trim(),
+                id: i + 1,
+                title: o.trim(),
                 votes: []
             }))
 
@@ -332,9 +332,9 @@ export default class Poll extends Command {
             return interaction.editReply(translate('poll_cmd.buttons.already_voted'))
 
         data.options = data.options!.map(o => {
-            if (!data.multiple_choices && o.votes.includes(interaction.user.id))
+            if (!data.multiple_choice && o.votes.includes(interaction.user.id))
                 o.votes = o.votes.filter(v => v !== interaction.user.id)
-            if (o.n === Number(selected)) o.votes.push(interaction.user.id)
+            if (o.id === Number(selected)) o.votes.push(interaction.user.id)
             return o
         })
 
@@ -383,13 +383,13 @@ export default class Poll extends Command {
             })
             .setFields(
                 poll.options?.map((o, i) => ({
-                    name: `${emojis[i]} Opcion ${i + 1}${poll.show_results ? `: ${o.value}` : ''}`,
+                    name: `${emojis[i]} Opcion ${i + 1}${poll.show_results ? `: ${o.title}` : ''}`,
                     value: `${
                         poll.show_results
                             ? `\`${filledBar((o.votes.length / votes) * 100)}\` ${Math.round(
                                   (o.votes.length / votes) * 100
                               )}%`
-                            : o.value
+                            : o.title
                     }`,
                     inline: false
                 })) ?? []
@@ -397,7 +397,7 @@ export default class Poll extends Command {
         return embed
     }
 
-    createButtons(options: { n: number }[], id: string, translate: ReturnType<typeof Translator>) {
+    createButtons(options: { id: number }[], id: string, translate: ReturnType<typeof Translator>) {
         const buttons = [new ActionRowBuilder<MessageActionRowComponentBuilder>()]
         let i = 1,
             j = 0
@@ -405,8 +405,8 @@ export default class Poll extends Command {
             if (i % 5 === 0) buttons.push(new ActionRowBuilder<MessageActionRowComponentBuilder>())
             buttons[i % 5 === 0 ? j++ : j].addComponents([
                 new ButtonBuilder()
-                    .setCustomId(`poll_${id}_${option.n}`)
-                    .setLabel(`${translate('option')} ${option.n}`)
+                    .setCustomId(`poll_${id}_${option.id}`)
+                    .setLabel(`${translate('option')} ${option.id}`)
                     .setStyle(ButtonStyle.Primary)
                     .setEmoji(emojis[i - 1])
             ])
@@ -419,13 +419,13 @@ export default class Poll extends Command {
 interface PollDatabaseModel {
     title: string
     context: string
-    options: { n: number; value: string; votes: string[] }[]
+    options: { id: number; title: string; votes: string[] }[]
     show_results: boolean
     message?: string
     channel: string
     guild: string
     block_choice: boolean
-    multiple_choices: boolean
+    multiple_choice: boolean
     time: number
     author: string
 }

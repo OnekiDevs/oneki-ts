@@ -1,6 +1,7 @@
 // /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     ApplicationCommandOptionType,
+    AutocompleteInteraction,
     ButtonInteraction,
     ChatInputCommandInteraction,
     Guild,
@@ -388,6 +389,86 @@ export default class Config extends Command {
                             ]
                         }
                     ]
+                },
+                {
+                    name: {
+                        'en-US': 'autorol',
+                        'es-ES': 'autorol'
+                    },
+                    description: {
+                        'en-US': 'Autorole management',
+                        'es-ES': 'Administración de autoroles'
+                    },
+                    type: ApplicationCommandOptionType.SubcommandGroup,
+                    options: [
+                        {
+                            name: {
+                                'en-US': 'create',
+                                'es-ES': 'crear'
+                            },
+                            description: {
+                                'en-US': 'Create a new autorole group',
+                                'es-ES': 'Crear un nuevo grupo de autoroles'
+                            },
+                            type: ApplicationCommandOptionType.Subcommand,
+                            options: [
+                                {
+                                    name: {
+                                        'en-US': 'name',
+                                        'es-ES': 'nombre'
+                                    },
+                                    description: {
+                                        'en-US': 'The name of the autorole group',
+                                        'es-ES': 'El nombre del grupo de autoroles'
+                                    },
+                                    type: ApplicationCommandOptionType.String,
+                                    required: true,
+                                    max_length: 30,
+                                    min_length: 1
+                                }
+                            ]
+                        },
+                        {
+                            name: {
+                                'en-US': 'add',
+                                'es-ES': 'agregar'
+                            },
+                            description: {
+                                'en-US': 'Add a new role to an autorole group',
+                                'es-ES': 'Agregar un nuevo rol a un grupo de autoroles'
+                            },
+                            type: ApplicationCommandOptionType.Subcommand,
+                            options: [
+                                {
+                                    name: {
+                                        'en-US': 'role',
+                                        'es-ES': 'rol'
+                                    },
+                                    description: {
+                                        'en-US': 'The role to add',
+                                        'es-ES': 'El rol a agregar'
+                                    },
+                                    type: ApplicationCommandOptionType.Role,
+                                    required: true
+                                },
+                                {
+                                    name: {
+                                        'en-US': 'group',
+                                        'es-ES': 'grupo'
+                                    },
+                                    description: {
+                                        'en-US': 'The group to add the role to',
+                                        'es-ES': 'El grupo al que agregar el rol'
+                                    },
+                                    type: ApplicationCommandOptionType.String,
+                                    required: true,
+                                    max_length: 30,
+                                    min_length: 1,
+                                    autocomplete: true
+                                }
+                            ]
+                        }
+                    ]
                 }
             ],
             buttonRegex: /^config_.*$/i
@@ -634,37 +715,10 @@ export default class Config extends Command {
 
         // autoroles
 
-        const moreAutorolesOptions: SubcommandCommandOptions[] = [
-            {
-                name: {
-                    'en-US': 'create',
-                    'es-ES': 'crear'
-                },
-                description: {
-                    'en-US': 'Create a new autorole group',
-                    'es-ES': 'Crear un nuevo grupo de autoroles'
-                },
-                type: ApplicationCommandOptionType.Subcommand,
-                options: [
-                    {
-                        name: {
-                            'en-US': 'name',
-                            'es-ES': 'nombre'
-                        },
-                        description: {
-                            'en-US': 'The name of the autorole group',
-                            'es-ES': 'El nombre del grupo de autoroles'
-                        },
-                        type: ApplicationCommandOptionType.String,
-                        required: true
-                    }
-                ]
-            }
-        ]
-
-        console.log(server.autoroles)
+        const moreAutorolesOptions: SubcommandCommandOptions[] = []
 
         if (server.autoroles.size) {
+            console.log(server.autoroles)
             /**
              * The name of the autorole group
              */
@@ -672,47 +726,6 @@ export default class Config extends Command {
                 name: r,
                 value: r
             }))
-
-            // add
-
-            moreAutorolesOptions.push({
-                name: {
-                    'en-US': 'add',
-                    'es-ES': 'añadir'
-                },
-                description: {
-                    'en-US': 'Add a new role in the autorole group',
-                    'es-ES': 'Añadir un nuevo rol al grupo de autoroles'
-                },
-                type: ApplicationCommandOptionType.Subcommand,
-                options: [
-                    {
-                        name: {
-                            'en-US': 'group',
-                            'es-ES': 'grupo'
-                        },
-                        description: {
-                            'en-US': 'The group to add the role',
-                            'es-ES': 'El grupo al que añadir el rol'
-                        },
-                        type: ApplicationCommandOptionType.String,
-                        required: true,
-                        choices: groupChoices
-                    },
-                    {
-                        name: {
-                            'en-US': 'role',
-                            'es-ES': 'rol'
-                        },
-                        description: {
-                            'en-US': 'The role to add',
-                            'es-ES': 'El rol a añadir'
-                        },
-                        type: ApplicationCommandOptionType.Role,
-                        required: true
-                    }
-                ]
-            })
 
             // remove
             moreAutorolesOptions.push({
@@ -854,6 +867,8 @@ export default class Config extends Command {
     }
 
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
+        console.log(interaction.customId.split('_'))
+
         const [, sub] = interaction.customId.split('_')
         if (sub === 'autoroll') this.autorollBtn(interaction)
     }
@@ -874,5 +889,14 @@ export default class Config extends Command {
                 ephemeral: true
             })
         }
+    }
+
+    async autocomplete(interacion: AutocompleteInteraction<'cached'>): Promise<any> {
+        console.log(
+            interacion.commandName,
+            interacion.options.getSubcommandGroup(),
+            interacion.options.getSubcommand(),
+            interacion.options.data
+        )
     }
 }
