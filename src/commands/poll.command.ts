@@ -20,10 +20,16 @@ import {
     TextInputStyle,
     ButtonInteraction,
     Message,
-    resolveColor
+    resolveColor,
+    Collection,
+    SelectMenuBuilder,
+    SelectMenuOptionBuilder,
+    SelectMenuInteraction
 } from 'discord.js'
+import { stringify } from 'yaml/dist/stringify/stringify.js'
 
 export default class Poll extends Command {
+    polls = new Collection<string, PollDatabaseModel>()
     constructor() {
         super({
             name: {
@@ -34,116 +40,95 @@ export default class Poll extends Command {
                 'en-US': 'Make a poll',
                 'es-ES': 'Hacer una encuesta'
             },
+            options: [
+                {
+                    name: {
+                        'en-US': 'make',
+                        'es-ES': 'crear'
+                    },
+                    description: {
+                        'en-US': 'Make a new poll',
+                        'es-ES': 'Crear una nueva encuesta'
+                    },
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: {
+                                'en-US': 'block_choice',
+                                'es-ES': 'bloquear_seleccion'
+                            },
+                            description: {
+                                'en-US': 'Block the choice of the user',
+                                'es-ES': 'Bloquear la selección del usuario'
+                            },
+                            type: ApplicationCommandOptionType.Boolean
+                        },
+                        {
+                            name: {
+                                'en-US': 'show_results',
+                                'es-ES': 'mostrar_resultados'
+                            },
+                            description: {
+                                'en-US': 'Show the results of the poll in real time',
+                                'es-ES': 'Mostrar los resultados de la encuesta en tiempo real'
+                            },
+                            type: ApplicationCommandOptionType.Boolean
+                        },
+                        {
+                            name: {
+                                'en-US': 'multiple_choices',
+                                'es-ES': 'seleccion_multiple'
+                            },
+                            description: {
+                                'en-US': 'Allow multiple choices',
+                                'es-ES': 'Permitir múltiples selecciones'
+                            },
+                            type: ApplicationCommandOptionType.Boolean
+                        },
+                        {
+                            name: {
+                                'en-US': 'time',
+                                'es-ES': 'tiempo'
+                            },
+                            description: {
+                                'en-US': 'Set the time of the poll',
+                                'es-ES': 'Establecer el tiempo de la encuesta'
+                            },
+                            type: ApplicationCommandOptionType.String
+                        }
+                    ]
+                },
+                {
+                    name: {
+                        'en-US': 'finalize',
+                        'es-ES': 'finalizar'
+                    },
+                    description: {
+                        'en-US': 'Finalize a poll',
+                        'es-ES': 'Finalizar una encuesta'
+                    },
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: {
+                                'en-US': 'id',
+                                'es-ES': 'id'
+                            },
+                            description: {
+                                'en-US': 'Select the poll to finalize',
+                                'es-ES': 'Seleccionar la encuesta a finalizar'
+                            },
+                            type: ApplicationCommandOptionType.String,
+                            autocomplete: true,
+                            max_length: 100,
+                            min_length: 1,
+                            required: true
+                        }
+                    ]
+                }
+            ],
             global: false
         })
-    }
-
-    async createData(guild: Guild): Promise<void> {
-        const server = client.getServer(guild)
-        this.clearOptions()
-
-        const snap = await client.db
-            .collection('polls')
-            .where('guild', '==', (guild as Guild).id)
-            .get()
-
-        if (server.premium || snap.empty) {
-            this.addOption({
-                name: {
-                    'en-US': 'make',
-                    'es-ES': 'crear'
-                },
-                description: {
-                    'en-US': 'Make a new poll',
-                    'es-ES': 'Crear una nueva encuesta'
-                },
-                type: ApplicationCommandOptionType.Subcommand,
-                options: [
-                    {
-                        name: {
-                            'en-US': 'block_choice',
-                            'es-ES': 'bloquear_seleccion'
-                        },
-                        description: {
-                            'en-US': 'Block the choice of the user',
-                            'es-ES': 'Bloquear la selección del usuario'
-                        },
-                        type: ApplicationCommandOptionType.Boolean
-                    },
-                    {
-                        name: {
-                            'en-US': 'show_results',
-                            'es-ES': 'mostrar_resultados'
-                        },
-                        description: {
-                            'en-US': 'Show the results of the poll in real time',
-                            'es-ES': 'Mostrar los resultados de la encuesta en tiempo real'
-                        },
-                        type: ApplicationCommandOptionType.Boolean
-                    },
-                    {
-                        name: {
-                            'en-US': 'multiple_choices',
-                            'es-ES': 'seleccion_multiple'
-                        },
-                        description: {
-                            'en-US': 'Allow multiple choices',
-                            'es-ES': 'Permitir múltiples selecciones'
-                        },
-                        type: ApplicationCommandOptionType.Boolean
-                    },
-                    {
-                        name: {
-                            'en-US': 'time',
-                            'es-ES': 'tiempo'
-                        },
-                        description: {
-                            'en-US': 'Set the time of the poll',
-                            'es-ES': 'Establecer el tiempo de la encuesta'
-                        },
-                        type: ApplicationCommandOptionType.String
-                    }
-                ]
-            })
-        }
-
-        if (!snap.empty) {
-            const choices: ChoicesStringCommandOption[] = []
-            let i = 0
-            snap.forEach(doc => {
-                const name = (doc.data().title ?? 'New poll ' + ++i) as string
-                const format = name.length > 100 ? name.substring(0, 96) + '...' : name
-                choices.push({
-                    name: format,
-                    value: doc.id
-                })
-            })
-            this.addOption({
-                name: {
-                    'en-US': 'finalize',
-                    'es-ES': 'finalizar'
-                },
-                description: {
-                    'en-US': 'Finalize a poll',
-                    'es-ES': 'Finalizar una encuesta'
-                },
-                type: ApplicationCommandOptionType.Subcommand,
-                options: [
-                    {
-                        name: {
-                            'en-US': 'poll',
-                            'es-ES': 'encuesta'
-                        },
-                        description: {
-                            'en-US': 'Select the poll to finalize',
-                            'es-ES': 'Seleccionar la encuesta a finalizar'
-                        },
-                        type: ApplicationCommandOptionType.String,
-                        choices
-                    }
-                ]
-            })
-        }
     }
 
     async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
@@ -168,16 +153,25 @@ export default class Poll extends Command {
         const id = randomId()
 
         // time
-        await client.db.collection('polls').doc(id).set({
+        this.polls.set(id, {
             guild: interaction.guildId,
             show_results,
             multiple_choice,
             author: interaction.user.id,
             block_choice,
-            channel: interaction.channel!.id
+            channel: interaction.channel!.id,
+            title: 'New poll',
+            context: '',
+            options: [],
+            message: ''
         })
 
-        const modal = new ModalBuilder()
+        const modal = this.getModal(id, translate)
+        interaction.showModal(modal)
+    }
+
+    getModal(id: string, translate: ReturnType<typeof Translator>) {
+        return new ModalBuilder()
             .setTitle(translate('poll_cmd.make.modal_title'))
             .setCustomId(`poll_${id}_modal`)
             .addComponents([
@@ -189,7 +183,7 @@ export default class Poll extends Command {
                         .setCustomId('title')
                         .setPlaceholder(translate('poll_cmd.make.modal_title_placeholder'))
                         .setValue(translate('poll_cmd.make.modal_title_value'))
-                        .setMaxLength(256)
+                        .setMaxLength(100)
                 ),
                 createModalComponent(
                     new TextInputBuilder()
@@ -208,65 +202,59 @@ export default class Poll extends Command {
                         .setCustomId('options')
                 )
             ])
-
-        interaction.showModal(modal)
-
-        client.commands.find(c => c.name === 'poll')?.deploy(interaction.guild as Guild)
     }
 
     async finalize(interaction: ChatInputCommandInteraction<'cached'>) {
         const translate = Translator(interaction)
         await interaction.deferReply({ ephemeral: true })
 
-        const id = interaction.options.getString('poll') as string
+        const id = interaction.options.getString('id') as string
 
         const snap = await client.db.collection('polls').doc(id).get()
 
         if (snap.exists) {
             const data = snap.data() as PollDatabaseModel
 
-            if (data.options)
-                await client.db
-                    .collection('finalized-polls')
-                    .doc(id)
-                    .set(data)
-                    .catch(() => '')
+            await client.db
+                .collection('finalized-polls')
+                .doc(id)
+                .set(data)
+                .catch(() => '')
 
-            await client.db.collection('polls').doc(id).delete()
+            snap.ref.delete()
 
-            await this.deploy(interaction.guild as Guild)
-            if (data.options)
-                (client.channels.cache.get(data.channel) as TextChannel)?.messages
-                    .fetch(data.message!)
-                    .then(async msg => {
-                        await msg.edit({
-                            components: []
-                        })
-                        if (!data.show_results) {
-                            const embed = new EmbedBuilder(msg.embeds[0]?.data)
-                            let votesCount = 0
-                            await Promise.all(data.options!.map(o => (votesCount += o.votes.length)))
-                            embed.setFields(
-                                await Promise.all(
-                                    data.options!.map((o, i) => ({
-                                        name: `${emojis[i]} Opcion ${i + 1} ${o.title}`,
-                                        value: `\`${filledBar((o.votes.length / votesCount) * 100)}\` ${Math.round(
-                                            (o.votes.length / votesCount) * 100
-                                        )}%`,
-                                        inline: false
-                                    }))
-                                )
-                            )
-                            msg.edit({
-                                embeds: [embed]
-                            })
-                        }
+            const chennel = client.channels.cache.get(data.channel) as TextChannel
+            chennel?.messages.fetch(data.message).then(async msg => {
+                await msg.edit({
+                    components: []
+                })
+                if (!data.show_results) {
+                    const embed = new EmbedBuilder(msg.embeds[0]?.data)
+                    let votesCount = 0
+                    await Promise.all(data.options!.map(o => (votesCount += o.votes.length)))
+                    embed.setFields(
+                        await Promise.all(
+                            data.options!.map((o, i) => ({
+                                name: `${emojis[i]} Opcion ${i + 1} ${o.title}`,
+                                value: `\`${filledBar((o.votes.length / votesCount) * 100)}\` ${Math.round(
+                                    (o.votes.length / votesCount) * 100
+                                )}%`,
+                                inline: false
+                            }))
+                        )
+                    )
+                    msg.edit({
+                        embeds: [embed]
                     })
+                }
+            })
+            interaction.editReply(translate('poll_cmd.finalize'))
+        } else {
+            await interaction.reply({
+                content: translate('poll_cmd.not_found'),
+                ephemeral: true
+            })
         }
-
-        interaction.editReply(translate('poll_cmd.finalize'))
-
-        client.commands.find(c => c.name === 'poll')?.deploy(interaction.guild)
     }
 
     async modal(interaction: ModalSubmitInteraction<'cached'>): Promise<any> {
@@ -287,77 +275,117 @@ export default class Poll extends Command {
 
         if (options.length < 2)
             return interaction.reply({ content: translate('poll_cmd.edit.more_options'), ephemeral: true })
+        if (options.find(o => o.title.trim().length > 100))
+            return interaction.reply({ content: translate('poll_cmd.edit.option_too_long'), ephemeral: true })
 
-        const snap = (await client.db.collection('polls').doc(id).get()).data() as PollDatabaseModel
+        if (!this.polls.has(id))
+            this.polls.set(id, {
+                guild: interaction.guildId,
+                show_results: true,
+                multiple_choice: false,
+                author: interaction.user.id,
+                block_choice: false,
+                channel: interaction.channel!.id,
+                title,
+                context,
+                options,
+                message: ''
+            })
 
-        const member =
-            (await interaction.guild.members.cache.get(snap.author)) ??
-            (await interaction.guild.members.fetch(snap.author)) ??
-            (await client.users.fetch(snap.author))
+        let snap = this.polls.get(id) as PollDatabaseModel
+        const snapshot = await client.db.collection('polls').doc(id).get()
+        if (snapshot.exists) snap = { ...snap, ...snapshot.data() }
+
+        const member = interaction.member
 
         const embed = this.createEmbed({ ...snap, id, member, title, context, options }, translate)
-        const buttons = this.createButtons(options, id, translate)
+        const buttons = this.createButtons(snap, id, translate)
         const channel = (await interaction.guild.channels.cache.get(snap.channel)) as TextChannel
 
         let msg: Message | undefined
         if (snap.message) msg = await channel.messages.fetch(snap.message!)
         if (!msg) msg = await channel.send({ embeds: [embed], components: buttons })
 
-        const db = client.db.collection('polls').doc(id)
+        if (snap.message) msg.edit({ embeds: [embed], components: buttons })
 
-        db.set({
+        this.polls.set(id, {
             ...snap,
-            title,
-            context,
-            options,
             message: msg.id
-        }).then(() => interaction.reply({ content: translate('poll_cmd.edit.success'), ephemeral: true }))
+        })
+        snapshot.ref
+            .set({
+                ...snap,
+                message: msg.id
+            })
+            .then(() => interaction.reply({ content: translate('poll_cmd.edit.success'), ephemeral: true }))
 
         // TODO: if time add timeout
     }
 
     // TODO: edit()
-    async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
+    async button(interaction: ButtonInteraction<'cached'>) {
         await interaction.deferReply({ ephemeral: true })
-        const [, id, selected] = interaction.customId.split('_')
+        const [, , id] = interaction.customId.split('_')
         const translate = Translator(interaction)
 
         const snap = await client.db.collection('polls').doc(id).get()
         if (!snap.exists) return interaction.editReply({ content: 'Poll finalized' })
 
-        const data = snap.data() as PollDatabaseModel
+        const modal = this.getModal(id, translate)
+        return interaction.showModal(modal)
+        // if (data.block_choice && data.options!.find(o => o.votes.includes(interaction.user.id)))
+        //     return interaction.editReply(translate('poll_cmd.buttons.already_voted'))
 
-        if (data.block_choice && data.options!.find(o => o.votes.includes(interaction.user.id)))
-            return interaction.editReply(translate('poll_cmd.buttons.already_voted'))
+        // data.options = data.options!.map(o => {
+        //     if (!data.multiple_choice && o.votes.includes(interaction.user.id))
+        //         o.votes = o.votes.filter(v => v !== interaction.user.id)
+        //     if (o.id === Number(selected)) o.votes.push(interaction.user.id)
+        //     return o
+        // })
+
+        // const member =
+        //     (await interaction.guild.members.cache.get(data.author)) ??
+        //     (await interaction.guild.members.fetch(data.author)) ??
+        //     (await client.users.fetch(data.author))
+
+        // const embed = this.createEmbed({ ...data, id, member }, translate)
+        // const buttons = this.createButtons(data, id, translate)
+        // const channel = (await interaction.guild.channels.cache.get(data.channel)) as TextChannel
+
+        // let msg = await channel.messages.fetch(data.message!)
+
+        // msg.edit({
+        //     embeds: [embed],
+        //     components: buttons
+        // })
+
+        // const db = client.db.collection('polls').doc(id)
+        // db.set({ ...data, options: data.options })
+        // interaction.editReply({
+        //     content: translate('poll_cmd.buttons.success')
+        // })
+    }
+
+    async select(interaction: SelectMenuInteraction<'cached'>) {
+        await interaction.deferReply()
+
+        const [, , id] = interaction.customId.split('_')
+        const translate = Translator(interaction)
+
+        const snap = await client.db.collection('polls').doc(id).get()
+        if (!snap.exists) return interaction.editReply({ content: 'Poll finalized' })
+        let data = snap.data() as PollDatabaseModel
 
         data.options = data.options!.map(o => {
             if (!data.multiple_choice && o.votes.includes(interaction.user.id))
                 o.votes = o.votes.filter(v => v !== interaction.user.id)
-            if (o.id === Number(selected)) o.votes.push(interaction.user.id)
+            if (interaction.values.includes(String(o.id))) o.votes.push(interaction.user.id)
             return o
         })
 
-        const member =
-            (await interaction.guild.members.cache.get(data.author)) ??
-            (await interaction.guild.members.fetch(data.author)) ??
-            (await client.users.fetch(data.author))
-
-        const embed = this.createEmbed({ ...data, id, member }, translate)
-        const buttons = this.createButtons(data.options!, id, translate)
-        const channel = (await interaction.guild.channels.cache.get(data.channel)) as TextChannel
-
-        let msg = await channel.messages.fetch(data.message!)
-
-        msg.edit({
-            embeds: [embed],
-            components: buttons
-        })
-
-        const db = client.db.collection('polls').doc(id)
-        db.set({ ...data, options: data.options })
-        interaction.editReply({
-            content: translate('poll_cmd.buttons.success')
-        })
+        const embeds = [this.createEmbed({ ...data, id, member: interaction.member }, translate)]
+        const components = this.createButtons(data, id, translate)
+        return interaction.message.edit({ embeds, components })
     }
 
     createEmbed(poll: pollInfo, translate: ReturnType<typeof Translator>) {
@@ -396,22 +424,22 @@ export default class Poll extends Command {
         return embed
     }
 
-    createButtons(options: { id: number }[], id: string, translate: ReturnType<typeof Translator>) {
-        const buttons = [new ActionRowBuilder<MessageActionRowComponentBuilder>()]
-        let i = 1,
-            j = 0
-        for (const option of options) {
-            if (i % 5 === 0) buttons.push(new ActionRowBuilder<MessageActionRowComponentBuilder>())
-            buttons[i % 5 === 0 ? j++ : j].addComponents([
-                new ButtonBuilder()
-                    .setCustomId(`poll_${id}_${option.id}`)
-                    .setLabel(`${translate('option')} ${option.id}`)
-                    .setStyle(ButtonStyle.Primary)
-                    .setEmoji(emojis[i - 1])
+    createButtons(poll: PollDatabaseModel, id: string, _translate: ReturnType<typeof Translator>) {
+        return [
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([
+                new SelectMenuBuilder()
+                    .setCustomId(`poll_vote_${id}`)
+                    .setPlaceholder('vote')
+                    .setMaxValues(poll.multiple_choice ? poll.options.length : 1)
+                    .setMinValues(1)
+                    .setOptions(
+                        ...poll.options.map(o => new SelectMenuOptionBuilder().setLabel(o.title).setValue(String(o.id)))
+                    )
+            ]),
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([
+                new ButtonBuilder().setCustomId(`poll_edit_${id}`).setLabel('Edit Poll').setStyle(ButtonStyle.Primary)
             ])
-            i++
-        }
-        return buttons
+        ]
     }
 }
 
@@ -420,12 +448,11 @@ interface PollDatabaseModel {
     context: string
     options: { id: number; title: string; votes: string[] }[]
     show_results: boolean
-    message?: string
+    message: string
     channel: string
     guild: string
     block_choice: boolean
     multiple_choice: boolean
-    time: number
     author: string
 }
 

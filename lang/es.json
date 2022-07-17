@@ -96,13 +96,15 @@
         },
         "edit": {
             "more_options": "Es nesesario agregar minimo 2 opciones",
-            "success": "Encuesta creada correctamente"
+            "success": "Encuesta creada correctamente",
+            "option_too_long": "Una de las opciones es muy larga, deben ser menor a 100 carecteres"
         },
         "buttons": {
             "success": "Voto enviado",
             "already_voted": "Ya has votado"
         },
-        "finalize": "Finalizada"
+        "finalize": "Finalizada",
+        "not_found": "Encuesta no encontrada"
     },
     "suggest_cmd": {
         "whitout_channel": "Este servidor no tiene un canal de sugerencias establecido",

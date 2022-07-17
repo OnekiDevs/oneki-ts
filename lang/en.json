@@ -97,13 +97,15 @@
         },
         "edit": {
             "more_options": "Is necessary to add minimum 2 options",
-            "success": "created successfully"
+            "success": "created successfully",
+            "option_too_long": "One of the options is too long, it should be less than 100 words."
         },
         "buttons": {
             "success": "Vote sent",
             "already_voted": "You have already voted"
         },
-        "finalize": "Finalized"
+        "finalize": "Finalized",
+        "not_found": "Poll not found"
     },
     "suggest_cmd": {
         "whitout_channel": "This servrt don't have any channel configured",
