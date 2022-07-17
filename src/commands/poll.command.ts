@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { filledBar, pollEmojis as emojis, checkSend, randomId, createModalComponent } from '../utils/utils.js'
 import { ActionRowBuilder, MessageActionRowComponentBuilder } from '@discordjs/builders'
-import { Command, ChoicesStringCommandOption } from '../utils/classes.js'
+import { Command } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
 import client from '../client.js'
 import {
     ChatInputCommandInteraction,
-    Guild,
     EmbedBuilder,
     TextChannel,
     ApplicationCommandOptionType,
@@ -26,8 +25,6 @@ import {
     SelectMenuOptionBuilder,
     SelectMenuInteraction
 } from 'discord.js'
-import { stringify } from 'yaml/dist/stringify/stringify.js'
-
 export default class Poll extends Command {
     polls = new Collection<string, PollDatabaseModel>()
     constructor() {
