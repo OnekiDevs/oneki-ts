@@ -1,6 +1,6 @@
 import { PermissionsBitField, ChatInputCommandInteraction, TextChannel, GuildMember } from 'discord.js'
-import { checkSend, permissionsError, Translator } from '../../utils/utils.js'
-import client from '../../client.js'
+import { checkSend, permissionsError, Translator } from '../../../utils/utils.js'
+import client from '../../../client.js'
 
 export function file(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)

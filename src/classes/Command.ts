@@ -1,4 +1,5 @@
-import { Client, Local } from '../utils/classes.js'
+import { Local } from '../utils/classes.js'
+import client from '../client.js'
 import { Translator } from '../utils/utils.js'
 import {
     ChatInputCommandInteraction,
@@ -21,38 +22,30 @@ export class Command {
     description: string
     local_names: Local
     local_descriptions: Local
-    client: Client
     translator = Translator
     global = true
     options: CommandOptions[] = []
     dm = true
     permissions: PermissionsBitField | null = null
-    regex: RegExp | null = null
 
-    constructor(
-        client: Client,
-        {
-            name,
-            description,
-            global = true,
-            options = [],
-            dm = true,
-            permissions,
-            hibrid = false,
-            buttonRegex
-        }: cmdOptions
-    ) {
+    constructor({
+        name,
+        description,
+        global = true,
+        options = [],
+        dm = true,
+        permissions,
+        hibrid = false
+    }: cmdOptions) {
         this.name = name['en-US']
         this.description = description['en-US']
         this.local_names = name
         this.local_descriptions = description
-        this.client = client
         this.global = global
         this.options = options
         this.dm = dm
         this.hibrid = hibrid
         if (permissions) this.permissions = permissions
-        if (buttonRegex) this.regex = buttonRegex
     }
 
     /**
@@ -65,7 +58,7 @@ export class Command {
 
         if (this.global) {
             await this.createData()
-            return this.client.application.commands.create(this.data).catch(console.error)
+            return client.application.commands.create(this.data).catch(console.error)
         }
         if (guild) {
             await this.createData(guild)
@@ -75,7 +68,7 @@ export class Command {
             })
         }
         return Promise.all(
-            this.client.guilds.cache.map(async guild => {
+            client.guilds.cache.map(async guild => {
                 await this.createData(guild)
                 return guild.commands.create(this.data).catch(e => {
                     if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
@@ -191,7 +184,6 @@ interface cmdOptions {
     permissions?: PermissionsBitField
     /** @default false */
     hibrid?: boolean
-    buttonRegex?: RegExp
 }
 
 export interface ChoicesIntegerCommandOption {

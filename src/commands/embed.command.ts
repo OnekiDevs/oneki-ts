@@ -13,11 +13,11 @@ import {
     TextInputBuilder,
     TextInputStyle
 } from 'discord.js'
-import { Command, Client } from '../utils/classes.js'
+import { Command } from '../utils/classes.js'
 
 export default class Embed extends Command {
-    constructor(client: Client) {
-        super(client, {
+    constructor() {
+        super({
             name: {
                 'en-US': 'embed',
                 'es-ES': 'embed'
@@ -26,7 +26,6 @@ export default class Embed extends Command {
                 'en-US': 'Create an embed',
                 'es-ES': 'Crea un embed'
             },
-            buttonRegex: /^embed_.+$/,
             options: [
                 {
                     type: ApplicationCommandOptionType.Attachment,

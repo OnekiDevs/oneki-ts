@@ -9,8 +9,8 @@ import {
     ButtonStyle,
     EmbedBuilder
 } from 'discord.js'
-import client from '../../client.js'
-import { checkSend, Translator } from '../../utils/utils.js'
+import client from '../../../client.js'
+import { checkSend, Translator } from '../../../utils/utils.js'
 
 export async function create(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply()

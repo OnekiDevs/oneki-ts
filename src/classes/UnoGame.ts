@@ -1,5 +1,4 @@
 import {
-    Client,
     Player,
     Players,
     UnoCard,
@@ -12,10 +11,10 @@ import {
 import { randomId, imgToLink, Translator } from '../utils/utils.js'
 import { ButtonInteraction, ButtonStyle, MessageActionRowComponentBuilder } from 'discord.js'
 import EventEmitter from 'node:events'
+import client from '../client.js'
 
 export class UnoGame extends EventEmitter {
     host: Player
-    client: Client
     players: Players = new Players(this)
     status = 'waiting'
     id: string = randomId()
@@ -27,20 +26,19 @@ export class UnoGame extends EventEmitter {
     server: Server
     allCards: UnoCard[] = []
 
-    constructor(msg: Message<true>, client: Client, cards: UnoCard[]) {
+    constructor(msg: Message<true>, cards: UnoCard[]) {
         super()
 
         this.server = client.getServer(msg.guild)
 
-        this.host = new Player(msg.author.id, client, cards)
-        this.client = client
+        this.host = new Player(msg.author.id, cards)
         this.allCards = cards
 
         this.players.add(this.host)
         msg.reply(this.embed).then(message => (this.message = message))
         this.actualCard = this.rc()
 
-        this.client.uno.set(this.id, this)
+        client.uno.set(this.id, this)
 
         this.on('join', player => {
             this.players.add(player)
@@ -61,7 +59,7 @@ export class UnoGame extends EventEmitter {
                 content =
                     translate('uno_cmd.' + player.toString() == this.turn.toString() ? 'your_turn' : 'turn') +
                     '\n' +
-                    (await imgToLink(cards, this.client))
+                    (await imgToLink(cards, client))
             await player.interaction?.editReply({ content, components })
         })
 
@@ -84,7 +82,7 @@ export class UnoGame extends EventEmitter {
             const content =
                 translate('uno_cmd.' + player.toString() == this.turn.toString() ? 'your_turn' : 'turn') +
                 '\n' +
-                (await imgToLink(cards, this.client))
+                (await imgToLink(cards, client))
             player.interaction?.editReply({ content, components })
         })
 
@@ -125,7 +123,7 @@ export class UnoGame extends EventEmitter {
                 this.turn.addCard(this.rc())
                 this.turn.addCard(this.rc())
                 cards = await this.turn.cardsToImage()
-                content = translate('uno_cmd.your_turn') + '\n' + (await imgToLink(cards, this.client))
+                content = translate('uno_cmd.your_turn') + '\n' + (await imgToLink(cards, client))
                 components = this.turn.cardsToButtons(this)
                 this.turn.interaction?.editReply({ content, components })
             } else if (card.symbol == 'reverse') {
@@ -151,7 +149,7 @@ export class UnoGame extends EventEmitter {
                 this.turn.addCard(this.rc())
                 this.turn.addCard(this.rc())
                 cards = await this.turn.cardsToImage()
-                content = translate('uno_cmd.your_turn') + '\n' + (await imgToLink(cards, this.client))
+                content = translate('uno_cmd.your_turn') + '\n' + (await imgToLink(cards, client))
                 components = this.turn.cardsToButtons(this)
                 this.turn.interaction?.editReply({ content, components })
                 //pedir color
@@ -160,7 +158,7 @@ export class UnoGame extends EventEmitter {
             cards = await player.cardsToImage()
             components = player.cardsToButtons(this)
             content =
-                translate('uno_cmd.turn', { user: this.turn.toString() }) + '\n' + (await imgToLink(cards, this.client))
+                translate('uno_cmd.turn', { user: this.turn.toString() }) + '\n' + (await imgToLink(cards, client))
             if (this.turn.id !== player.id) player.interaction?.editReply({ content, components })
             this.message.edit(this.embed)
             return
@@ -200,7 +198,7 @@ export class UnoGame extends EventEmitter {
                     inline: true
                 }
             ])
-            .setFooter(this.client.embedFooter)
+            .setFooter(client.embedFooter)
         const buttons = new ActionRowBuilder<MessageActionRowComponentBuilder>()
         if (this.status == 'waiting')
             buttons.addComponents([

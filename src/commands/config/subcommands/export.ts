@@ -1,8 +1,8 @@
 import { PermissionsBitField, ChatInputCommandInteraction, AttachmentBuilder } from 'discord.js'
-import { permissionsError } from '../../utils/utils.js'
-import { GuildDataBaseModel } from '../../utils/classes.js'
+import { permissionsError } from '../../../utils/utils.js'
+import { GuildDataBaseModel } from '../../../utils/classes.js'
 import YAML from 'yaml'
-import client from '../../client.js'
+import client from '../../../client.js'
 
 export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)

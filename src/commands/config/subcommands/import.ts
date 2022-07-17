@@ -1,8 +1,8 @@
 import { PermissionsBitField, ChatInputCommandInteraction, Attachment } from 'discord.js'
-import { permissionsError, Translator } from '../../utils/utils.js'
-import { GuildDataBaseModel, SuggestChannelObject } from '../../utils/classes.js'
+import { permissionsError, Translator } from '../../../utils/utils.js'
+import { GuildDataBaseModel, SuggestChannelObject } from '../../../utils/classes.js'
 import YAML from 'yaml'
-import client from '../../client.js'
+import client from '../../../client.js'
 
 export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)

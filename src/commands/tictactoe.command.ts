@@ -7,14 +7,14 @@ import {
     MessageActionRowComponentBuilder,
     ButtonInteraction
 } from 'discord.js'
-import { Command, Client } from '../utils/classes.js'
+import { Command } from '../utils/classes.js'
 
 type mark = 'x' | 'o' | 'v'
 
 export default class Tictactoe extends Command {
     games = new Collection<string, any>()
-    constructor(client: Client) {
-        super(client, {
+    constructor() {
+        super({
             name: {
                 'en-US': 'tictactoe',
                 'es-ES': 'gato'
@@ -22,8 +22,7 @@ export default class Tictactoe extends Command {
             description: {
                 'en-US': 'Generates a tic tac toe game',
                 'es-ES': 'Genera un juego de gato'
-            },
-            buttonRegex: /^ttt_\d_\d_[xov]$/i
+            }
         })
     }
 

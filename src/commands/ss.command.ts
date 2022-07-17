@@ -4,13 +4,13 @@ import {
     UserFlagsBitField,
     AttachmentBuilder
 } from 'discord.js'
-import { Command, Client } from '../utils/classes.js'
+import { Command } from '../utils/classes.js'
 import Jimp from 'jimp'
 import puppeteer from 'puppeteer'
 
 export default class SS extends Command {
-    constructor(client: Client) {
-        super(client, {
+    constructor() {
+        super({
             name: {
                 'en-US': 'ss',
                 'es-ES': 'ss'

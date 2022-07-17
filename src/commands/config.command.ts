@@ -7,13 +7,13 @@ import {
     Guild,
     PermissionsBitField
 } from 'discord.js'
-import { Command, Client } from '../utils/classes.js'
 import { SubcommandCommandOptions } from '../classes/Command.js'
-import { Translator } from '../utils/utils.js'
+import { Command } from '../utils/classes.js'
+import client from '../client.js'
 
 export default class Config extends Command {
-    constructor(client: Client) {
-        super(client, {
+    constructor() {
+        super({
             name: {
                 'en-US': 'config',
                 'es-ES': 'configuracion'
@@ -470,13 +470,12 @@ export default class Config extends Command {
                         }
                     ]
                 }
-            ],
-            buttonRegex: /^config_.*$/i
+            ]
         })
     }
 
     async createData(guild: Guild): Promise<void> {
-        const server = this.client.getServer(guild)
+        const server = client.getServer(guild)
 
         // logs
         const logs = ['message_update', 'message_delete', 'message_attachment', 'invites', 'member_update']
@@ -863,40 +862,18 @@ export default class Config extends Command {
     async interacion(interaction: ChatInputCommandInteraction<'cached'>) {
         const subcommand = interaction.options.getSubcommand()
         const subcommandGroup = interaction.options.getSubcommandGroup()
-        import(`./config/${subcommandGroup}.js`).then(scg => scg[subcommand](interaction)).catch(console.error)
+        import(`./config/subcommands/${subcommandGroup}.js`)
+            .then(scg => scg[subcommand](interaction))
+            .catch(console.error)
     }
 
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
-        console.log(interaction.customId.split('_'))
-
         const [, sub] = interaction.customId.split('_')
-        if (sub === 'autoroll') this.autorollBtn(interaction)
+        import(`./config/autocomplete.js`).then((a: any) => a[sub](interaction)).catch(console.error)
     }
 
-    async autorollBtn(interaction: ButtonInteraction<'cached'>) {
-        const [, , rollId] = interaction.customId.split(/_/gi)
-        const translate = Translator(interaction)
-        if (interaction.member.roles.cache.has(rollId)) {
-            interaction.member.roles.remove(rollId)
-            interaction.reply({
-                content: translate('config_cmd.autoroles.remove'),
-                ephemeral: true
-            })
-        } else {
-            interaction.member.roles.add(rollId)
-            interaction.reply({
-                content: translate('config_cmd.autoroles.add'),
-                ephemeral: true
-            })
-        }
-    }
-
-    async autocomplete(interacion: AutocompleteInteraction<'cached'>): Promise<any> {
-        console.log(
-            interacion.commandName,
-            interacion.options.getSubcommandGroup(),
-            interacion.options.getSubcommand(),
-            interacion.options.data
-        )
+    async autocomplete(interaction: AutocompleteInteraction<'cached'>) {
+        const name = interaction.options.getFocused(true).name
+        import(`./config/autocomplete.js`).then((a: any) => a[name](interaction)).catch(console.error)
     }
 }

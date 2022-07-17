@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChatInputCommandInteraction } from 'discord.js'
-import { Command, Client } from '../utils/classes.js'
+import { Command } from '../utils/classes.js'
 
 export default class Minesweeper extends Command {
-    constructor(client: Client) {
-        super(client, {
+    constructor() {
+        super({
             name: {
                 'en-US': 'minesweeper',
                 'es-ES': 'buscaminas'
@@ -37,7 +37,10 @@ export default class Minesweeper extends Command {
             bombas--
         }
         //recorremos todas las casillas para colocar los mumeros
-        for (let x = 0; x < filas; x++) for (let y = 0, c = 0; y < columnas; matriz[x][y] ||= c, c = 0, y++) if (matriz[x][y] != 9) for (let i = -1; i < 2; i++) for (let j = -1; j < 2; j++) if (matriz[x + i]?.[y + j] == 9) c++
+        for (let x = 0; x < filas; x++)
+            for (let y = 0, c = 0; y < columnas; matriz[x][y] ||= c, c = 0, y++)
+                if (matriz[x][y] != 9)
+                    for (let i = -1; i < 2; i++) for (let j = -1; j < 2; j++) if (matriz[x + i]?.[y + j] == 9) c++
         //creamos los emojis que remplazarán los muneros
         const choices = [
             '||:zero:||',
@@ -49,12 +52,13 @@ export default class Minesweeper extends Command {
             '||:six:||',
             '||:seven:||',
             '||:eight:||',
-            '||:bomb:||',
+            '||:bomb:||'
         ]
         //inicializamos el mensaje
         let buscaminas = ''
         //recorremos x
-        for (let x = 0; x < matriz.length; buscaminas += '\n', x++) for (let y = 0; y < matriz[0].length; y++) buscaminas += `${choices[matriz[x][y]]} `
+        for (let x = 0; x < matriz.length; buscaminas += '\n', x++)
+            for (let y = 0; y < matriz[0].length; y++) buscaminas += `${choices[matriz[x][y]]} `
 
         //terminando el ciclo entero se envia el mensaje
         interaction.reply(buscaminas)

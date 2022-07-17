@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ChatInputCommandInteraction, GuildMember, PermissionsBitField, TextChannel } from 'discord.js'
-import { checkSend, permissionsError, Translator } from '../../utils/utils.js'
-import client from '../../client.js'
+import { checkSend, permissionsError, Translator } from '../../../utils/utils.js'
+import client from '../../../client.js'
 
 export function prefix(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
@@ -12,7 +12,7 @@ export function prefix(interaction: ChatInputCommandInteraction<'cached'>) {
     const prefix = interaction.options.getString('prefix') as string
     server.setPrefix(prefix)
     interaction.reply(translate('config_cmd.set_prefix', { prefix }))
-    ;client.commands.get('config')?.deploy(interaction.guild)
+    client.commands.get('config')?.deploy(interaction.guild)
 }
 
 export async function suggest_channel(interaction: ChatInputCommandInteraction<'cached'>) {

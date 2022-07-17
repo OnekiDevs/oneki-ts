@@ -8,12 +8,12 @@ import {
     ApplicationCommandOptionType,
     ButtonInteraction
 } from 'discord.js'
-import { Command, Client } from '../utils/classes.js'
+import { Command } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
 
 export default class Activitie extends Command {
-    constructor(client: Client) {
-        super(client, {
+    constructor() {
+        super({
             name: {
                 'en-US': 'activitie',
                 'es-ES': 'actividad'
@@ -64,8 +64,7 @@ export default class Activitie extends Command {
                     type: ApplicationCommandOptionType.Channel,
                     channel_types: [2]
                 }
-            ],
-            buttonRegex: /act_.+/i
+            ]
         })
     }
 

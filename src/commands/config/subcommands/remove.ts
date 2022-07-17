@@ -1,6 +1,6 @@
 import { PermissionsBitField, ChatInputCommandInteraction, TextChannel } from 'discord.js'
-import { permissionsError, Translator } from '../../utils/utils.js'
-import client from '../../client.js'
+import { permissionsError, Translator } from '../../../utils/utils.js'
+import client from '../../../client.js'
 
 export function suggest_channel(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
@@ -25,7 +25,7 @@ export function prefix(interaction: ChatInputCommandInteraction<'cached'>) {
     const prefix = interaction.options.getString('prefix') as string
     server.removePrefix(prefix)
     interaction.reply(translate('config_cmd.remove_prefix'))
-    ;client.commands.get('config')?.deploy(interaction.guild)
+    client.commands.get('config')?.deploy(interaction.guild)
 }
 
 export function log(interaction: ChatInputCommandInteraction<'cached'>) {

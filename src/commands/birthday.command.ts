@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ApplicationCommandOptionType, ChatInputCommandInteraction } from 'discord.js'
 import { FieldValue } from 'firebase-admin/firestore'
-import Client, { Command } from '../utils/classes.js'
+import client from '../client.js'
+import { Command } from '../utils/classes.js'
 
 export default class Birthday extends Command {
-    constructor(client: Client) {
-        super(client, {
+    constructor() {
+        super({
             name: {
                 'en-US': 'birthday',
                 'es-ES': 'cumpleaños'
@@ -68,16 +69,16 @@ export default class Birthday extends Command {
             if (!regex.test(birthday!)) return interaction.editReply(translate('birthday_cmd.error'))
 
             const dateToSave = `${birthday}/${new Date().getFullYear() + 1}`
-            this.client.db
+            client.db
                 ?.collection('users')
                 .doc(interaction.user.id)
                 .update({ birthday: dateToSave })
-                .catch(() => this.client.db?.collection('users').doc(interaction.user.id).set({ birthday: dateToSave }))
+                .catch(() => client.db?.collection('users').doc(interaction.user.id).set({ birthday: dateToSave }))
             return interaction.editReply(translate('birthday_cmd.set', { birthday }))
         } // si la fecha dada es 5/22 añadirle el año actual osea 5/22/2022 y pasarlo a unixtime
 
         //If it's not the subcommand 'set' it's gotta be the 'remove' one
-        this.client.db.collection('users').doc(interaction.user.id).update({ birthday: FieldValue.delete() })
+        client.db.collection('users').doc(interaction.user.id).update({ birthday: FieldValue.delete() })
         interaction.editReply(translate('birthday_cmd.remove'))
     }
 }

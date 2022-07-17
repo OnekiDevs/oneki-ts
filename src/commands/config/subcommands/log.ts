@@ -6,8 +6,8 @@ import {
     ChannelType,
     EmbedBuilder
 } from 'discord.js'
-import { permissionsError, Translator } from '../../utils/utils.js'
-import client from '../../client.js'
+import { permissionsError, Translator } from '../../../utils/utils.js'
+import client from '../../../client.js'
 
 export function message_update(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
