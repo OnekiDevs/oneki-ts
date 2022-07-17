@@ -467,6 +467,124 @@ export default class Config extends Command {
                                     autocomplete: true
                                 }
                             ]
+                        },
+                        {
+                            name: {
+                                'en-US': 'remove',
+                                'es-ES': 'remover'
+                            },
+                            description: {
+                                'en-US': 'Remove a role from an autorole group',
+                                'es-ES': 'Remover un rol de un grupo de autoroles'
+                            },
+                            type: ApplicationCommandOptionType.Subcommand,
+                            options: [
+                                {
+                                    name: {
+                                        'en-US': 'role',
+                                        'es-ES': 'rol'
+                                    },
+                                    description: {
+                                        'en-US': 'The role to remove',
+                                        'es-ES': 'El rol a remover'
+                                    },
+                                    type: ApplicationCommandOptionType.Role,
+                                    required: true
+                                },
+                                {
+                                    name: {
+                                        'en-US': 'group',
+                                        'es-ES': 'grupo'
+                                    },
+                                    description: {
+                                        'en-US': 'The group to remove the role from',
+                                        'es-ES': 'El grupo del que remover el rol'
+                                    },
+                                    type: ApplicationCommandOptionType.String,
+                                    required: true,
+                                    max_length: 30,
+                                    min_length: 1,
+                                    autocomplete: true
+                                }
+                            ]
+                        },
+                        {
+                            name: {
+                                'en-US': 'remove_group',
+                                'es-ES': 'remover_grupo'
+                            },
+                            description: {
+                                'en-US': 'Remove an autorole group',
+                                'es-ES': 'Remover un grupo de autoroles'
+                            },
+                            type: ApplicationCommandOptionType.Subcommand,
+                            options: [
+                                {
+                                    name: {
+                                        'en-US': 'group',
+                                        'es-ES': 'grupo'
+                                    },
+                                    description: {
+                                        'en-US': 'The group to remove',
+                                        'es-ES': 'El grupo a remover'
+                                    },
+                                    type: ApplicationCommandOptionType.String,
+                                    required: true,
+                                    max_length: 30,
+                                    min_length: 1,
+                                    autocomplete: true
+                                }
+                            ]
+                        },
+                        {
+                            name: {
+                                'en-US': 'display',
+                                'es-ES': 'mostrar'
+                            },
+                            description: {
+                                'en-US': 'Display the autorole groups',
+                                'es-ES': 'Mostrar los grupos de autoroles'
+                            },
+                            type: ApplicationCommandOptionType.Subcommand,
+                            options: [
+                                {
+                                    name: {
+                                        'en-US': 'group',
+                                        'es-ES': 'grupo'
+                                    },
+                                    description: {
+                                        'en-US': 'The group to display',
+                                        'es-ES': 'El grupo a mostrar'
+                                    },
+                                    type: ApplicationCommandOptionType.String,
+                                    required: true,
+                                    max_length: 30,
+                                    min_length: 1,
+                                    autocomplete: true
+                                },
+                                {
+                                    name: {
+                                        'en-US': 'message',
+                                        'es-ES': 'mensaje'
+                                    },
+                                    description: {
+                                        'en-US': 'The message to display the autorole group in',
+                                        'es-ES': 'El mensaje en el que mostrar el grupo de autoroles'
+                                    },
+                                    type: ApplicationCommandOptionType.String
+                                },
+                                {
+                                    name: {
+                                        'en-US': 'channel',
+                                        'es-ES': 'canal'
+                                    },
+                                    description: {
+                                        'en-US': 'The channel to display the autorole group in',
+                                        'es-ES': 'El canal en el que mostrar el grupo de autoroles'
+                                    },
+                                    type: ApplicationCommandOptionType.Channel
+                                }
+                            ]
                         }
                     ]
                 }
@@ -710,152 +828,6 @@ export default class Config extends Command {
                     ]
                 }
             ]
-        })
-
-        // autoroles
-
-        const moreAutorolesOptions: SubcommandCommandOptions[] = []
-
-        if (server.autoroles.size) {
-            console.log(server.autoroles)
-            /**
-             * The name of the autorole group
-             */
-            const groupChoices = [...server.autoroles.keys()].map(r => ({
-                name: r,
-                value: r
-            }))
-
-            // remove
-            moreAutorolesOptions.push({
-                name: {
-                    'en-US': 'remove',
-                    'es-ES': 'eliminar'
-                },
-                description: {
-                    'en-US': 'Remove a role in the autorole group',
-                    'es-ES': 'Eliminar un rol del grupo de autoroles'
-                },
-                type: ApplicationCommandOptionType.Subcommand,
-                options: [
-                    {
-                        name: {
-                            'en-US': 'group',
-                            'es-ES': 'grupo'
-                        },
-                        description: {
-                            'en-US': 'The group to remove the role',
-                            'es-ES': 'El grupo del que eliminar el rol'
-                        },
-                        type: ApplicationCommandOptionType.String,
-                        required: true,
-                        choices: groupChoices
-                    },
-                    {
-                        name: {
-                            'en-US': 'role',
-                            'es-ES': 'rol'
-                        },
-                        description: {
-                            'en-US': 'The role to remove',
-                            'es-ES': 'El rol a eliminar'
-                        },
-                        type: ApplicationCommandOptionType.Role,
-                        required: true
-                    }
-                ]
-            })
-
-            // remove_group
-            moreAutorolesOptions.push({
-                name: {
-                    'en-US': 'remove_group',
-                    'es-ES': 'eliminar_grupo'
-                },
-                description: {
-                    'en-US': 'Remove an autorole group',
-                    'es-ES': 'Eliminar un grupo de autoroles'
-                },
-                type: ApplicationCommandOptionType.Subcommand,
-                options: [
-                    {
-                        name: {
-                            'en-US': 'group',
-                            'es-ES': 'grupo'
-                        },
-                        description: {
-                            'en-US': 'The group to remove',
-                            'es-ES': 'El grupo a eliminar'
-                        },
-                        type: ApplicationCommandOptionType.String,
-                        required: true,
-                        choices: groupChoices
-                    }
-                ]
-            })
-
-            // display
-            moreAutorolesOptions.push({
-                name: {
-                    'en-US': 'display',
-                    'es-ES': 'mostrar'
-                },
-                description: {
-                    'en-US': 'Display the autorole group',
-                    'es-ES': 'Mostrar el grupo de autoroles'
-                },
-                type: ApplicationCommandOptionType.Subcommand,
-                options: [
-                    {
-                        name: {
-                            'en-US': 'group',
-                            'es-ES': 'grupo'
-                        },
-                        description: {
-                            'en-US': 'The group to display',
-                            'es-ES': 'El grupo a mostrar'
-                        },
-                        type: ApplicationCommandOptionType.String,
-                        required: true,
-                        choices: groupChoices
-                    },
-                    {
-                        name: {
-                            'en-US': 'channel',
-                            'es-ES': 'canal'
-                        },
-                        description: {
-                            'en-US': 'The channel to display the autorole group',
-                            'es-ES': 'El canal para mostrar el grupo de autoroles'
-                        },
-                        type: ApplicationCommandOptionType.Channel,
-                        channel_types: [0]
-                    },
-                    {
-                        name: {
-                            'en-US': 'message',
-                            'es-ES': 'mensaje'
-                        },
-                        description: {
-                            'en-US': 'The message to display the autorole group',
-                            'es-ES': 'El mensaje para mostrar el grupo de autoroles'
-                        },
-                        type: ApplicationCommandOptionType.String
-                    }
-                ]
-            })
-        }
-        this.addOption({
-            name: {
-                'en-US': 'autoroles',
-                'es-ES': 'autoroles'
-            },
-            description: {
-                'en-US': 'Config the autoroles',
-                'es-ES': 'Configurar los autoroles'
-            },
-            type: ApplicationCommandOptionType.SubcommandGroup,
-            options: moreAutorolesOptions
         })
     }
 

@@ -56,7 +56,8 @@
             "displaying_error": "No existe ese grupo",
             "sending_error": "No permisos para enviar mensajes en el canal",
             "add_btn": "Rol agregado correctamente",
-            "remove_btn": "Rol removido correctamente"
+            "remove_btn": "Rol removido correctamente",
+            "not_found": "No se encontró el grupo"
         },
         "auto_logs": "Log `message_update` establecido en {message}\nLog `message_delete` establecido en {message}\nLog `message_attachment` establecido en {attachment}\nLog `invites` establecido en {invites}\nLog `member_update` establecido en {members}",
         "set_keep_roles": "¡La opción de mantener roles ha sido seleccionada como {keepRole}!",
