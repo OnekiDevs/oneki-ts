@@ -31,12 +31,12 @@
     "dependencies": {
         "@androz2091/discord-invites-tracker": "1.1.0",
         "cross-env": "7.0.3",
-        "discord.js": "14.0.0-dev.1654862727-0415300",
+        "discord.js": "14.0.0-dev.1657757514-fe34f48",
         "dotenv": "16.0.1",
         "firebase-admin": "10.3.0",
         "i18n": "0.15.0",
         "iblazingx-ms": "2.1.2",
-        "jimp": "^0.16.0",
+        "jimp": "0.16.0",
         "jszip": "3.10.0",
         "puppeteer": "13.7.0",
         "yaml": "^2.1.1"

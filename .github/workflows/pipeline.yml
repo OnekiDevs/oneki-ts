@@ -1,147 +1,146 @@
 name: Deployment Pipeline
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-    types: [opened, synchronize]
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+        types: [opened, synchronize]
 
 jobs:
+    avoid_reduncy:
+        runs-on: ubuntu-20.04
+        steps:
+            - name: Cancel Previous Redundant Builds
+              uses: styfle/cancel-workflow-action@0.9.1
+              with:
+                  access_token: ${{ github.token }}
 
-  avoid_reduncy:
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Cancel Previous Redundant Builds
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ github.token }}
+    lint:
+        runs-on: ubuntu-20.04
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+            - uses: actions/setup-node@v2
+              with:
+                  cache: 'npm'
+                  node-version: '16.15.1'
+            - name: Install dependencies
+              run: npm ci
+            - name: Lint
+              run: npm run lint
 
-  lint:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v2
-        with:
-          cache: 'npm'
-          node-version: '18'
-      - name: Install dependencies
-        run: npm ci
-      - name: Lint
-        run: npm run lint
+    build:
+        runs-on: ubuntu-20.04
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+            - uses: actions/setup-node@v3
+              with:
+                  cache: 'npm'
+                  node-version: '16.15.1'
+            - name: Install dependencies
+              run: npm ci
+            - name: Build
+              run: npm run build
+            - uses: actions/upload-artifact@v2
+              with:
+                  name: dist
+                  path: dist
 
-  build:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v3
-        with:
-          cache: 'npm'
-          node-version: '18'
-      - name: Install dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build
-      - uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: dist
+    # test:
+    #   needs: [lint, build]
+    #   runs-on: ubuntu-20.04
+    #   steps:
+    #     - uses: actions/checkout@v2
+    #       with:
+    #         fetch-depth: 0
+    #     - uses: actions/setup-node@v2
+    #       with:
+    #         cache: 'npm'
+    #         node-version: '18'
+    #     - name: Install dependencies
+    #       run: npm ci
+    #     - uses: actions/download-artifact@v2
+    #       with:
+    #         name: dist
+    #         path: dist
+    #     - name: Test
+    #       run: ls dist
 
-  # test:
-  #   needs: [lint, build]
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
-  #     - uses: actions/setup-node@v2
-  #       with:
-  #         cache: 'npm'
-  #         node-version: '18'
-  #     - name: Install dependencies
-  #       run: npm ci
-  #     - uses: actions/download-artifact@v2
-  #       with:
-  #         name: dist
-  #         path: dist
-  #     - name: Test
-  #       run: ls dist
+    # e2e:
+    #   needs: [lint, build]
+    #   runs-on: ubuntu-20.04
+    #   steps:
+    #     - uses: actions/checkout@v2
+    #       with:
+    #         fetch-depth: 0
+    #     - uses: actions/setup-node@v2
+    #       with:
+    #         cache: 'npm'
+    #         node-version: '18'
+    #     - name: Install dependencies
+    #       run: npm ci
+    #     - uses: actions/download-artifact@v2
+    #       with:
+    #         name: dist
+    #         path: dist
+    #     - name: E2E tests
+    #       uses: cypress-io/github-action@v2
+    #       with:
+    #         command: npm run test:e2e
+    #         start: npm run start-test
+    #         wait-on: http://localhost:5000
 
-  # e2e:
-  #   needs: [lint, build]
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
-  #     - uses: actions/setup-node@v2
-  #       with:
-  #         cache: 'npm'
-  #         node-version: '18'
-  #     - name: Install dependencies
-  #       run: npm ci
-  #     - uses: actions/download-artifact@v2
-  #       with:
-  #         name: dist
-  #         path: dist
-  #     - name: E2E tests
-  #       uses: cypress-io/github-action@v2
-  #       with:
-  #         command: npm run test:e2e
-  #         start: npm run start-test
-  #         wait-on: http://localhost:5000
+    # deploy-resistance:
+    #   needs: [test]
+    #   runs-on: ubuntu-20.04
+    #   steps:
+    #     - uses: actions/checkout@v2
+    #       with:
+    #         fetch-depth: 0
+    #     - name: Login to Heroku
+    #       if: ${{ github.event_name == 'push' }}
+    #       uses: akhileshns/heroku-deploy@v3.12.12
+    #       with:
+    #         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+    #         heroku_app_name: resistancemts
+    #         heroku_email: ${{ secrets.HEROKU_EMAIL }}
+    # justlogin: true
+    # - name: Add username
+    #   run: git config --global user.name "eliyya"
+    # - name: Create remote
+    #   run: heroku git:remote -a resistancemts -r heroku-resistance
+    # - name: Add remotes
+    #   run: git remote -v
+    # - name: Deploy to heroku
+    #   run: git push heroku-resistance main
 
-  # deploy-resistance:
-  #   needs: [test]
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
-  #     - name: Login to Heroku
-  #       if: ${{ github.event_name == 'push' }}
-  #       uses: akhileshns/heroku-deploy@v3.12.12
-  #       with:
-  #         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-  #         heroku_app_name: resistancemts
-  #         heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          # justlogin: true
-      # - name: Add username
-      #   run: git config --global user.name "eliyya"
-      # - name: Create remote
-      #   run: heroku git:remote -a resistancemts -r heroku-resistance
-      # - name: Add remotes
-      #   run: git remote -v
-      # - name: Deploy to heroku
-      #   run: git push heroku-resistance main
-
-  # deploy-oneki:
-  #   needs: [test]
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
-  #     - name: Git pull
-  #       run: git pull
-  #     - name: Login to Heroku
-  #       if: ${{ github.event_name == 'push' }}
-  #       uses: akhileshns/heroku-deploy@v3.12.12
-  #       with:
-  #         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-  #         heroku_app_name: oneki-js
-  #         heroku_email: ${{ secrets.HEROKU_EMAIL }}
-  #         branch: main
-      #     justlogin: true
-      # - name: Add username
-      #   run: git config --global user.name "eliyya"
-      # - name: Add remote
-      #   run: heroku git:remote -a oneki-js -r heroku-oneki
-      # - name: Check remotes
-      #   run: git remote -v
-      # - name: Deploy to heroku
-      #   run: git push heroku-oneki main
+    # deploy-oneki:
+    #   needs: [test]
+    #   runs-on: ubuntu-20.04
+    #   steps:
+    #     - uses: actions/checkout@v2
+    #       with:
+    #         fetch-depth: 0
+    #     - name: Git pull
+    #       run: git pull
+    #     - name: Login to Heroku
+    #       if: ${{ github.event_name == 'push' }}
+    #       uses: akhileshns/heroku-deploy@v3.12.12
+    #       with:
+    #         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+    #         heroku_app_name: oneki-js
+    #         heroku_email: ${{ secrets.HEROKU_EMAIL }}
+    #         branch: main
+    #     justlogin: true
+    # - name: Add username
+    #   run: git config --global user.name "eliyya"
+    # - name: Add remote
+    #   run: heroku git:remote -a oneki-js -r heroku-oneki
+    # - name: Check remotes
+    #   run: git remote -v
+    # - name: Deploy to heroku
+    #   run: git push heroku-oneki main
