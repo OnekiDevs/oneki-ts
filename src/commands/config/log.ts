@@ -50,7 +50,8 @@ export async function auto(interaction: ChatInputCommandInteraction<'cached'>) {
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const category = (interaction.options.getChannel('category') ??
-        interaction.guild.channels.create('logs', {
+        interaction.guild.channels.create({
+            name: 'logs',
             type: ChannelType.GuildCategory,
             permissionOverwrites: [
                 {
@@ -61,24 +62,28 @@ export async function auto(interaction: ChatInputCommandInteraction<'cached'>) {
             ]
         })) as CategoryChannel
 
-    const cm = await category.children.create('messages', {
+    const cm = await category.children.create({
+        name: 'messages',
         type: 0
     })
     server.setMessageDeleteLog(cm.id)
     server.setMessageUpdateLog(cm.id)
 
-    const ca = await category.children.create('attachments', {
+    const ca = await category.children.create({
+        name: 'attachments',
         type: 0,
         nsfw: true
     })
     server.setAttachmentLog(ca.id)
 
-    const cu = await category.children.create('members', {
+    const cu = await category.children.create({
+        name: 'members',
         type: 0
     })
     server.setMemberUpdateChannel(cu.id)
 
-    const ci = await category.children.create('invites', {
+    const ci = await category.children.create({
+        name: 'invites',
         type: 0
     })
     server.setInviteChannel(ci.id)

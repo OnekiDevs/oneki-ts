@@ -11,14 +11,14 @@ import {
     GuildMember,
     ModalBuilder,
     TextInputBuilder,
-    Util,
     User,
     ButtonBuilder,
     ButtonStyle,
     ModalSubmitInteraction,
     TextInputStyle,
     ButtonInteraction,
-    Message
+    Message,
+    resolveColor
 } from 'discord.js'
 import { ActionRowBuilder, MessageActionRowComponentBuilder } from '@discordjs/builders'
 import client from '../client.js'
@@ -368,7 +368,7 @@ export default class Poll extends Command {
         const embed = new EmbedBuilder()
             .setTitle(poll.title)
             .setDescription(poll.context)
-            .setColor(Util.resolveColor('Random'))
+            .setColor(resolveColor('Random'))
             .setFooter({
                 iconURL: this.client.user?.displayAvatarURL(),
                 text: translate('poll_cmd.make.footer', {

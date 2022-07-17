@@ -1,14 +1,14 @@
 import {
-    AnyInteraction,
     ButtonInteraction,
     ChatInputCommandInteraction,
     InteractionType,
-    ModalSubmitInteraction
+    ModalSubmitInteraction,
+    Interaction
 } from 'discord.js'
-import client from '../client.js';
+import client from '../client.js'
 import { sendError } from '../utils/utils.js'
 
-export default async function (interaction: AnyInteraction) {
+export default async function (interaction: Interaction) {
     try {
         if (interaction.isChatInputCommand())
             client.commands
@@ -16,10 +16,8 @@ export default async function (interaction: AnyInteraction) {
                 ?.interacion(interaction as ChatInputCommandInteraction<'cached'>)
 
         if (interaction.isButton()) {
-            ;client.components
-                .find(btn => btn.regex.test(interaction.customId))
-                ?.button(interaction)
-            ;client.commands
+            client.components.find(btn => btn.regex.test(interaction.customId))?.button(interaction)
+            client.commands
                 .find(cmd => !!cmd.regex && cmd.regex.test(interaction.customId))
                 ?.button(interaction as ButtonInteraction<'cached'>)
         }

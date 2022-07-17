@@ -9,17 +9,17 @@ import {
     AttachmentBuilder,
     EmbedBuilder,
     Message,
-    Interaction,
-    Util,
+    Utils,
     Colors,
     TextInputBuilder,
     ActionRowBuilder,
-    TextInputStyle
+    TextInputStyle,
+    BaseInteraction
 } from 'discord.js'
 
 import client from '../client.js'
 
-export { Util }
+export { Utils }
 
 /**
  * Sleep() returns a Promise that resolves after a given number of milliseconds.
@@ -203,8 +203,8 @@ export async function sendError(error: Error, file: string) {
  * @param {Interaction} interaction - Interaction - The interaction object that contains the locale and client.
  * @returns {transalte} A function that takes a phrase and params and returns a string.
  */
-export const Translator = function (interaction: Interaction | Message<true>) {
-    let lang: string = interaction instanceof Interaction ? interaction.locale : interaction.guild.preferredLocale
+export const Translator = function (interaction: BaseInteraction | Message<true>) {
+    let lang: string = interaction instanceof BaseInteraction ? interaction.locale : interaction.guild.preferredLocale
     const i18n = client.i18n
 
     /**
@@ -245,7 +245,7 @@ export interface PunishUser {
 }
 
 export interface Suggestion {
-    interaction?: ChatInputCommandInteraction<"cached"> | null,
+    interaction?: ChatInputCommandInteraction<'cached'> | null
     message?: Message<true> | null
 }
 

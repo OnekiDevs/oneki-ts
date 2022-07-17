@@ -1,6 +1,6 @@
-import { Guild, GuildMember, EmbedBuilder, TextChannel } from 'discord.js'
+import { Guild, GuildMember, EmbedBuilder, TextChannel, resolveColor } from 'discord.js'
 import { Client, Server } from '../utils/classes.js'
-import { checkSend, sendError, Util } from '../utils/utils.js'
+import { checkSend, sendError } from '../utils/utils.js'
 
 export default async function (guild: Guild) {
     try {
@@ -48,7 +48,7 @@ export default async function (guild: Guild) {
                     }
                 )
                 .setTimestamp()
-                .setColor(Util.resolveColor('Random'))
+                .setColor(resolveColor('Random'))
                 .setFooter((guild.client as Client).embedFooter)
                 .setImage(guild.bannerURL() ?? '')
             channel.send({

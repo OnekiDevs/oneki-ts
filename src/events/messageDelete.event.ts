@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { EmbedBuilder, Message, TextChannel, GuildMember, User } from 'discord.js'
-import { sendError, checkSend, PunishmentType, Util, Translator } from '../utils/utils.js'
+import {
+    EmbedBuilder,
+    Message,
+    TextChannel,
+    GuildMember,
+    User,
+    resolveColor,
+    escapeCodeBlock,
+    codeBlock
+} from 'discord.js'
+import { sendError, checkSend, PunishmentType, Translator } from '../utils/utils.js'
 import { Client, Server } from '../utils/classes.js'
 
 export default async function (message: Message<true>) {
@@ -20,7 +29,7 @@ export default async function (message: Message<true>) {
             const embed = new EmbedBuilder()
                 .setTitle(translate('message_delete_event.deleted'))
                 .setURL(message.url)
-                .setColor(Util.resolveColor('Random')) //FEATURE: server.logsColors
+                .setColor(resolveColor('Random')) //FEATURE: server.logsColors
                 .setAuthor({
                     name: message.author.username,
                     iconURL: message.author.displayAvatarURL()
@@ -43,11 +52,11 @@ export default async function (message: Message<true>) {
 
             if (message.content)
                 embed.setDescription(
-                    '```\n' +
-                        (Util.escapeCodeBlock(message.content).length > 1024
-                            ? Util.escapeCodeBlock(message.content).substring(0, 1015) + '...'
-                            : Util.escapeCodeBlock(message.content)) +
-                        '\n```'
+                    codeBlock(
+                        escapeCodeBlock(message.content).length > 1024
+                            ? escapeCodeBlock(message.content).substring(0, 1015) + '...'
+                            : escapeCodeBlock(message.content)
+                    )
                 )
 
             if (message.reference) {
@@ -58,14 +67,15 @@ export default async function (message: Message<true>) {
                             name: translate('message_delete_event.reference'),
                             value:
                                 reference.member?.displayName +
-                                ': \n```\n' +
-                                (Util.escapeCodeBlock(reference.content).length > 1024
-                                    ? Util.escapeCodeBlock(reference.content).substring(
-                                          0,
-                                          1013 - (reference.member?.displayName.length as number)
-                                      ) + '...'
-                                    : Util.escapeCodeBlock(reference.content)) +
-                                '\n```'
+                                ': \n' +
+                                codeBlock(
+                                    escapeCodeBlock(reference.content).length > 1024
+                                        ? escapeCodeBlock(reference.content).substring(
+                                              0,
+                                              1013 - (reference.member?.displayName.length as number)
+                                          ) + '...'
+                                        : escapeCodeBlock(reference.content)
+                                )
                         })
                 } catch {}
             }

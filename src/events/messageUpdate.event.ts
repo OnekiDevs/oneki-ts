@@ -1,6 +1,6 @@
 import { Client } from '../utils/classes.js'
-import { EmbedBuilder, Message, TextChannel, GuildMember } from 'discord.js'
-import { checkSend, sendError, Translator, Util } from '../utils/utils.js'
+import { EmbedBuilder, Message, TextChannel, GuildMember, resolveColor, escapeCodeBlock, codeBlock } from 'discord.js'
+import { checkSend, sendError, Translator } from '../utils/utils.js'
 
 export default async function (old: Message<true>, message: Message<true>) {
     try {
@@ -19,7 +19,7 @@ export default async function (old: Message<true>, message: Message<true>) {
             const embed = new EmbedBuilder()
                 .setTitle(translate('message_update_event.edited'))
                 .setURL(message.url)
-                .setColor(Util.resolveColor('Random')) //FEATURE: server.logsColors
+                .setColor(resolveColor('Random')) //FEATURE: server.logsColors
                 .setAuthor({
                     name: message.author.username,
                     iconURL: message.author.displayAvatarURL()
@@ -47,23 +47,21 @@ export default async function (old: Message<true>, message: Message<true>) {
             if (old.content)
                 embed.addFields({
                     name: translate('before') + ':',
-                    value:
-                        '```\n' +
-                        (Util.escapeCodeBlock(old.content).length > 1024
-                            ? Util.escapeCodeBlock(old.content).substring(0, 1013) + '...'
-                            : Util.escapeCodeBlock(old.content)) +
-                        '\n```'
+                    value: codeBlock(
+                        escapeCodeBlock(old.content).length > 1024
+                            ? escapeCodeBlock(old.content).substring(0, 1013) + '...'
+                            : escapeCodeBlock(old.content)
+                    )
                 })
 
             if (message.content)
                 embed.addFields({
                     name: translate('after') + ':',
-                    value:
-                        '```\n' +
-                        (Util.escapeCodeBlock(message.content).length > 1024
-                            ? Util.escapeCodeBlock(message.content).substring(0, 1013) + '...'
-                            : Util.escapeCodeBlock(message.content)) +
-                        '\n```'
+                    value: codeBlock(
+                        escapeCodeBlock(message.content).length > 1024
+                            ? escapeCodeBlock(message.content).substring(0, 1013) + '...'
+                            : escapeCodeBlock(message.content)
+                    )
                 })
             embed.setFooter((message.client as Client).embedFooter)
 
@@ -75,14 +73,15 @@ export default async function (old: Message<true>, message: Message<true>) {
                             name: translate('message_update_event.reference'),
                             value:
                                 reference.member?.displayName +
-                                ': \n```\n' +
-                                (Util.escapeCodeBlock(reference.content).length > 1024
-                                    ? Util.escapeCodeBlock(reference.content).substring(
-                                          0,
-                                          1010 - (reference.member?.displayName.length as number)
-                                      ) + '...'
-                                    : Util.escapeCodeBlock(reference.content)) +
-                                '\n```'
+                                ': \n' +
+                                codeBlock(
+                                    escapeCodeBlock(reference.content).length > 1024
+                                        ? escapeCodeBlock(reference.content).substring(
+                                              0,
+                                              1010 - (reference.member?.displayName.length as number)
+                                          ) + '...'
+                                        : escapeCodeBlock(reference.content)
+                                )
                         })
                 } catch {}
             }
