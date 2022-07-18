@@ -17,7 +17,7 @@ export class ComponentManager extends Collection<string, Component> {
                 })
             }
         } catch (error) {
-            console.log(`${error}`)
+            console.log('WARNING:', `${error}`)
         }
     }
 }
