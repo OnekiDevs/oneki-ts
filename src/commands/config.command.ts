@@ -592,8 +592,10 @@ export default class Config extends Command {
         })
     }
 
-    async createData(guild: Guild): Promise<void> {
+    async createData(guild: Guild) {
         const server = client.getServer(guild)
+
+        const baseCommand = this.baseCommand
 
         // logs
         const logs = ['message_update', 'message_delete', 'message_attachment', 'invites', 'member_update']
@@ -650,7 +652,7 @@ export default class Config extends Command {
                     }
                 ]
             })
-        this.addOption({
+        this.addOption(baseCommand, {
             name: {
                 'en-US': 'logs',
                 'es-ES': 'logs'
@@ -676,7 +678,7 @@ export default class Config extends Command {
             name: l,
             value: l
         }))
-        this.addOption({
+        this.addOption(baseCommand, {
             name: {
                 'en-US': 'remove',
                 'es-ES': 'eliminar'
@@ -829,6 +831,8 @@ export default class Config extends Command {
                 }
             ]
         })
+
+        return baseCommand
     }
 
     async interacion(interaction: ChatInputCommandInteraction<'cached'>) {

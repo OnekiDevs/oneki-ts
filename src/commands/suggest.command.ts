@@ -23,26 +23,30 @@ export default class Suggest extends Command {
                 'es-ES': 'Sugiere algo en el servidor',
                 'en-US': 'Suggest something in the server'
             },
+            options: [
+                {
+                    name: {
+                        'en-US': 'suggestion',
+                        'es-ES': 'sugerencia'
+                    },
+                    type: ApplicationCommandOptionType.String,
+                    description: {
+                        'en-US': 'The suggestion',
+                        'es-ES': 'La sugerencia'
+                    },
+                    required: true
+                }
+            ],
             global: false
         })
     }
 
-    async createData(guild: Guild): Promise<void> {
+    async createData(guild: Guild) {
         const server = client.getServer(guild)
 
-        this.addOption({
-            name: {
-                'en-US': 'suggestion',
-                'es-ES': 'sugerencia'
-            },
-            type: ApplicationCommandOptionType.String,
-            description: {
-                'en-US': 'The suggestion',
-                'es-ES': 'La sugerencia'
-            },
-            required: true
-        })
+        const baseCommand = this.baseCommand
 
+        //TODO: Add support for autocomplete
         if (server.suggestChannels.length > 0) {
             const channels = server.suggestChannels.map(c => {
                 return {
@@ -51,7 +55,7 @@ export default class Suggest extends Command {
                 }
             })
 
-            this.addOption({
+            this.addOption(baseCommand, {
                 name: {
                     'en-US': 'channel',
                     'es-ES': 'canal'
@@ -65,6 +69,8 @@ export default class Suggest extends Command {
                 choices: channels
             })
         }
+
+        return baseCommand
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

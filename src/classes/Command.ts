@@ -15,6 +15,7 @@ import {
     ChannelType,
     ApplicationCommandType
 } from 'discord.js'
+import { writeFileSync } from 'fs'
 
 export class Command {
     hibrid = false
@@ -55,24 +56,23 @@ export class Command {
      */
     async deploy(guild?: Guild) {
         console.log(`Deploying command ${this.name}`)
+        console.log(guild?.name)
 
-        if (this.global) {
-            await this.createData()
-            return client.application.commands.create(this.data).catch(console.error)
-        }
-        if (guild) {
-            await this.createData(guild)
-            return guild.commands.create(this.data).catch((e: Error) => {
+        if (this.global) return client.application.commands.create(await this.createData()).catch(console.error)
+
+        if (guild)
+            return guild.commands.create(await this.createData(guild)).catch((e: Error) => {
                 if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
                 else console.error(e)
             })
-        }
+
         return Promise.all(
             client.guilds.cache.map(async guild => {
-                await this.createData(guild)
-                return guild.commands.create(this.data).catch(e => {
+                if (this.name === 'config' && guild.id == '972563929836445778')
+                    writeFileSync('./config_ss.json', JSON.stringify(await this.createData(guild), null, 2))
+                guild.commands.create(await this.createData(guild)).catch(e => {
                     if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
-                    // else console.error(e)
+                    else console.error(e)
                 })
             })
         )
@@ -92,12 +92,27 @@ export class Command {
             .setDMPermission(this.dm)
             .toJSON()
 
-        command.options = this.parseOption(this.options)
+        command.options = this.parseOptions(this.options)
 
         return command
     }
 
-    parseOption(option: CommandOptions[] = []): any {
+    get baseCommand() {
+        const command: any = new SlashCommandBuilder()
+            .setName(this.name)
+            .setDescription(this.description)
+            .setNameLocalizations(this.local_names)
+            .setDescriptionLocalizations(this.local_descriptions)
+            .setDefaultMemberPermissions(this.permissions?.bitfield ?? 0)
+            .setDMPermission(this.dm)
+            .toJSON()
+
+        command.options = this.parseOptions(this.options)
+
+        return command as ApiCommand
+    }
+
+    parseOptions(option: CommandOptions[] = []): any {
         return option.map(o => ({
             ...o,
             name_localizations: o.name,
@@ -113,7 +128,7 @@ export class Command {
                           value: c.value
                       }))
                     : null,
-            options: 'options' in o ? this.parseOption(o.options) : undefined
+            options: 'options' in o ? this.parseOptions(o.options) : undefined
         }))
     }
 
@@ -121,7 +136,9 @@ export class Command {
      * It proces and modify the data of the command.
      * @param {Guild} [guild] - The guild to create the data for.
      */
-    async createData(guild?: Guild) {}
+    async createData(guild?: Guild) {
+        return this.baseCommand
+    }
 
     async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         return interaction.deferReply()
@@ -153,12 +170,12 @@ export class Command {
      * @returns {Command} The ApplicationCommand object
      */
     //addOption(option: ApplicationCommandOption)
-    addOption(option: CommandOptions) {
-        if (this.options.find(o => o.name === option.name)) {
-            const i = this.options.findIndex(o => o.name === option.name)
-            this.options.splice(i, 1, option)
-        } else this.options.push(option)
-        return this
+    addOption(command: ApiCommand, option: CommandOptions) {
+        if (command.options?.find(o => o.name['en-US'] === option.name['en-US'])) {
+            const i = this.options.findIndex(o => o.name['en-US'] === option.name['en-US'])
+            command.options.splice(i, 1, this.parseOptions([option]))
+        } else if (!command.options?.length) command.options = [this.parseOptions([option])]
+        return command
     }
 
     /**
@@ -282,7 +299,7 @@ export type ApiCommand = {
     name_localizations?: Local
     description_localizations?: Local
     type: ApplicationCommandType
-    options?: CommandOptions[]
+    options?: any[]
     default_member_permissions?: string
     dm_permission?: boolean
     default_permission?: boolean
