@@ -26,7 +26,7 @@ export default class Tictactoe extends Command {
         })
     }
 
-    async interacion(interaction: ChatInputCommandInteraction<'cached'>) {
+    async interaction(interaction: ChatInputCommandInteraction<'cached'>) {
         // respond with the new table
         interaction.reply({
             components: this.createButtons([

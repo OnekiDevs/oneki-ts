@@ -55,7 +55,7 @@ export default class Help extends OldCommand {
             const emoji = await msg.guild.emojis
                 .fetch(key)
                 .then(e => e)
-                .catch(console.log)
+                .catch(() => null)
 
             if (emoji)
                 es.push({

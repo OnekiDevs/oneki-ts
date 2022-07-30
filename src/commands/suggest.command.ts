@@ -1,13 +1,12 @@
 import {
     ChatInputCommandInteraction,
-    Guild,
     GuildMember,
     TextChannel,
     ApplicationCommandOptionType,
-    ButtonInteraction
-    //Message
+    ButtonInteraction,
+    AutocompleteInteraction
 } from 'discord.js'
-import { Command, Server } from '../utils/classes.js'
+import { Command } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
 import { checkSend } from '../utils/utils.js'
 import client from '../client.js'
@@ -35,64 +34,37 @@ export default class Suggest extends Command {
                         'es-ES': 'La sugerencia'
                     },
                     required: true
+                },
+                {
+                    name: {
+                        'en-US': 'channel',
+                        'es-ES': 'canal'
+                    },
+                    type: ApplicationCommandOptionType.String,
+                    description: {
+                        'en-US': 'The channel where the suggestion will be sent',
+                        'es-ES': 'El canal donde se enviará la sugerencia'
+                    },
+                    required: true,
+                    autocomplete: true
                 }
-            ],
-            global: false
+            ]
         })
     }
 
-    async createData(guild: Guild) {
-        const server = client.getServer(guild)
-
-        const baseCommand = this.baseCommand
-
-        //TODO: Add support for autocomplete
-        if (server.suggestChannels.length > 0) {
-            const channels = server.suggestChannels.map(c => {
-                return {
-                    name: { 'en-US': c.alias ?? 'predetermined', 'es-ES': c.alias ?? 'predeterminado' },
-                    value: c.channel
-                }
-            })
-
-            this.addOption(baseCommand, {
-                name: {
-                    'en-US': 'channel',
-                    'es-ES': 'canal'
-                },
-                type: ApplicationCommandOptionType.String,
-                description: {
-                    'en-US': 'The channel where the suggestion will be sent',
-                    'es-ES': 'El canal donde se enviará la sugerencia'
-                },
-                required: true,
-                choices: channels
-            })
-        }
-
-        return baseCommand
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    interacion(interaction: ChatInputCommandInteraction<'cached'>): any {
+    async interaction(interaction: ChatInputCommandInteraction<'cached'>) {
         const translate = Translator(interaction)
-        let server = client.servers.get(interaction.guildId as string)
-        if (!server || server.suggestChannels.length === 0) {
-            server = new Server(interaction.guild)
-            interaction.reply({
+        const server = client.getServer(interaction.guild)
+
+        if (!server.suggestChannels.length)
+            return interaction.reply({
                 content: translate('suggest_cmd.whitout_channel'),
                 ephemeral: true
             })
-            const guild = interaction.guild ?? client.guilds.cache.get(interaction.guildId as string)
-            return (
-                guild?.name,
-                guild?.commands.cache.map(c => {
-                    if (c.name == interaction.commandName) c.delete()
-                })
-            )
-        }
-        const channelId = interaction.options.getString('channel') ?? server.suggestChannels[0].channel //change
+
+        const channelId = interaction.options.getString('channel') ?? server.suggestChannels[0].channel
         const channel = client.channels.cache.get(channelId as string) as TextChannel
+
         if (channel && checkSend(channel, interaction.guild?.members.me as GuildMember)) {
             server.sendSuggestion(interaction)
             return interaction.reply({ content: translate('suggest_cmd.sent'), ephemeral: true })
@@ -107,14 +79,7 @@ export default class Suggest extends Command {
         } else if (!channelId || !channel) {
             server.removeSuggestChannel(channelId as string)
             return interaction.reply({ content: translate('suggest_cmd.missing_channel'), ephemeral: true })
-        }
-    }
-
-    checkDeploy(guild?: Guild): Promise<boolean> {
-        return new Promise<boolean>(resolve => {
-            const server = client.servers.get(guild?.id as string)
-            resolve((server && server.suggestChannels.length == 0) as boolean)
-        })
+        } else return
     }
 
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
@@ -122,6 +87,16 @@ export default class Suggest extends Command {
         const server = client.getServer(interaction.guild)
         if (m === 'a') server.aceptSug(id)
         else server.rejectSug(id)
-        interaction.deferUpdate()
+        return interaction.deferUpdate()
+    }
+
+    async autocomplete(interaction: AutocompleteInteraction<'cached'>): Promise<any> {
+        const server = client.getServer(interaction.guild)
+        return interaction.respond(
+            server.suggestChannels.map(c => ({
+                name: c.default ? 'default' : c.alias!,
+                value: c.channel
+            }))
+        )
     }
 }

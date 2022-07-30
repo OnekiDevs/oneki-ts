@@ -1,16 +1,40 @@
-// /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     ApplicationCommandOptionType,
     AutocompleteInteraction,
     ButtonInteraction,
+    ChannelType,
     ChatInputCommandInteraction,
-    Guild,
     PermissionsBitField
 } from 'discord.js'
-import { SubcommandCommandOptions } from '../classes/Command.js'
 import { Command } from '../utils/classes.js'
-import client from '../client.js'
 
+const logs = ['message_update', 'message_delete', 'message_attachment', 'invites', 'member_update'],
+    logsOptions = logs.map(log => ({
+        name: {
+            'en-US': log,
+            'es-ES': log
+        },
+        description: {
+            'en-US': `Config ${log} log`,
+            'es-ES': `Configura el log de ${log}`
+        },
+        type: 1,
+        options: [
+            {
+                name: {
+                    'en-US': 'channel',
+                    'es-ES': 'canal'
+                },
+                description: {
+                    'en-US': 'Channel where the bot will send the log',
+                    'es-ES': 'Canal donde el bot debe enviar el log'
+                },
+                type: ApplicationCommandOptionType.Channel,
+                channel_types: [ChannelType.GuildText],
+                required: true
+            }
+        ]
+    }))
 export default class Config extends Command {
     constructor() {
         super({
@@ -23,7 +47,6 @@ export default class Config extends Command {
                 'es-ES': 'Configurar el bot'
             },
             permissions: new PermissionsBitField(PermissionsBitField.Flags.ManageGuild),
-            global: false,
             options: [
                 {
                     name: {
@@ -587,118 +610,57 @@ export default class Config extends Command {
                             ]
                         }
                     ]
-                }
-            ]
-        })
-    }
-
-    async createData(guild: Guild) {
-        const server = client.getServer(guild)
-
-        const baseCommand = this.baseCommand
-
-        // logs
-        const logs = ['message_update', 'message_delete', 'message_attachment', 'invites', 'member_update']
-        const logsOptions = logs
-            .map(log => ({
-                name: {
-                    'en-US': log,
-                    'es-ES': log
                 },
-                description: {
-                    'en-US': `Config ${log} log`,
-                    'es-ES': `Configura el log de ${log}`
-                },
-                type: ApplicationCommandOptionType.Subcommand,
-                options: [
-                    {
-                        name: {
-                            'en-US': 'channel',
-                            'es-ES': 'canal'
-                        },
-                        description: {
-                            'en-US': 'Channel where the bot will send the log',
-                            'es-ES': 'Canal donde el bot debe enviar el log'
-                        },
-                        type: ApplicationCommandOptionType.Channel,
-                        channel_types: [0],
-                        required: true
-                    }
-                ]
-            }))
-            .concat({
-                name: {
-                    'en-US': 'auto',
-                    'es-ES': 'auto'
-                },
-                description: {
-                    'en-US': 'Config automactically the logs',
-                    'es-ES': 'Configura automáticamente los logs'
-                },
-                type: ApplicationCommandOptionType.Subcommand,
-                options: [
-                    {
-                        name: {
-                            'en-US': 'category',
-                            'es-ES': 'categoría'
-                        },
-                        description: {
-                            'en-US': 'Category where the channels will be created',
-                            'es-ES': 'Categoría donde se crearán los canales'
-                        },
-                        type: ApplicationCommandOptionType.Channel,
-                        channel_types: [4],
-                        required: true
-                    }
-                ]
-            })
-        this.addOption(baseCommand, {
-            name: {
-                'en-US': 'logs',
-                'es-ES': 'logs'
-            },
-            description: {
-                'en-US': 'Set the logs',
-                'es-ES': 'Configurar los logs'
-            },
-            type: ApplicationCommandOptionType.SubcommandGroup,
-            options: logsOptions as SubcommandCommandOptions[]
-        })
-
-        // remove
-        const prefixesChoices = server.getPrefixes(true).map(i => ({ name: i, value: i })) ?? [
-            { name: '>', value: '>' },
-            { name: '?', value: '?' }
-        ]
-        const suggestChannelsChoices = server.suggestChannels.map(c => ({
-            name: c.default ? 'default' : (c.alias as string),
-            value: c.channel
-        }))
-        const logsChoices = logs.map(l => ({
-            name: l,
-            value: l
-        }))
-        this.addOption(baseCommand, {
-            name: {
-                'en-US': 'remove',
-                'es-ES': 'eliminar'
-            },
-            description: {
-                'en-US': 'Remove a config',
-                'es-ES': 'Eliminar una configuración'
-            },
-            type: ApplicationCommandOptionType.SubcommandGroup,
-            options: [
                 {
                     name: {
-                        'en-US': 'prefix',
-                        'es-ES': 'prefijo'
+                        'en-US': 'logs',
+                        'es-ES': 'logs'
                     },
                     description: {
-                        'en-US': 'Remove a prefix',
-                        'es-ES': 'Eliminar un prefijo'
+                        'en-US': 'Set the logs',
+                        'es-ES': 'Configurar los logs'
                     },
-                    type: ApplicationCommandOptionType.Subcommand,
+                    type: ApplicationCommandOptionType.SubcommandGroup,
+                    options: [
+                        {
+                            name: {
+                                'en-US': 'auto',
+                                'es-ES': 'auto'
+                            },
+                            description: {
+                                'en-US': 'Config automactically the logs',
+                                'es-ES': 'Configura automáticamente los logs'
+                            },
+                            type: ApplicationCommandOptionType.Subcommand,
+                            options: [
+                                {
+                                    name: {
+                                        'en-US': 'category',
+                                        'es-ES': 'categoría'
+                                    },
+                                    description: {
+                                        'en-US': 'Category where the channels will be created',
+                                        'es-ES': 'Categoría donde se crearán los canales'
+                                    },
+                                    type: ApplicationCommandOptionType.Channel,
+                                    channel_types: [4],
+                                    required: true
+                                }
+                            ]
+                        },
+                        ...logsOptions
+                    ]
+                },
+                {
+                    name: {
+                        'en-US': 'remove',
+                        'es-ES': 'eliminar'
+                    },
+                    description: {
+                        'en-US': 'Remove a config',
+                        'es-ES': 'Eliminar una configuración'
+                    },
+                    type: ApplicationCommandOptionType.SubcommandGroup,
                     options: [
                         {
                             name: {
@@ -706,136 +668,150 @@ export default class Config extends Command {
                                 'es-ES': 'prefijo'
                             },
                             description: {
-                                'en-US': 'The prefix to remove',
-                                'es-ES': 'El prefijo a eliminar'
+                                'en-US': 'Remove a prefix',
+                                'es-ES': 'Eliminar un prefijo'
                             },
-                            type: ApplicationCommandOptionType.String,
-                            required: true,
-                            choices: prefixesChoices
-                        }
-                    ]
-                },
-                {
-                    name: {
-                        'en-US': 'suggest_channel',
-                        'es-ES': 'canal_de_sugerencias'
-                    },
-                    description: {
-                        'en-US': 'Remove a suggest channel',
-                        'es-ES': 'Eliminar un canal de sugerencias'
-                    },
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
+                            type: ApplicationCommandOptionType.Subcommand,
+                            options: [
+                                {
+                                    name: {
+                                        'en-US': 'prefix',
+                                        'es-ES': 'prefijo'
+                                    },
+                                    description: {
+                                        'en-US': 'The prefix to remove',
+                                        'es-ES': 'El prefijo a eliminar'
+                                    },
+                                    type: ApplicationCommandOptionType.String,
+                                    required: true,
+                                    autocomplete: true
+                                }
+                            ]
+                        },
                         {
                             name: {
-                                'en-US': 'alias',
-                                'es-ES': 'alias'
+                                'en-US': 'suggest_channel',
+                                'es-ES': 'canal_de_sugerencias'
                             },
                             description: {
-                                'en-US': 'The alias of the channel to remove',
-                                'es-ES': 'El alias del canal a eliminar'
+                                'en-US': 'Remove a suggest channel',
+                                'es-ES': 'Eliminar un canal de sugerencias'
                             },
-                            type: ApplicationCommandOptionType.String,
-                            required: true,
-                            choices: suggestChannelsChoices
-                        }
-                    ]
-                },
-                {
-                    name: {
-                        'en-US': 'log',
-                        'es-ES': 'log'
-                    },
-                    description: {
-                        'en-US': 'Remove a log',
-                        'es-ES': 'Eliminar un log'
-                    },
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
+                            type: ApplicationCommandOptionType.Subcommand,
+                            options: [
+                                {
+                                    name: {
+                                        'en-US': 'channel',
+                                        'es-ES': 'channel'
+                                    },
+                                    description: {
+                                        'en-US': 'The alias of the channel to remove',
+                                        'es-ES': 'El alias del canal a eliminar'
+                                    },
+                                    type: ApplicationCommandOptionType.String,
+                                    required: true,
+                                    autocomplete: true
+                                }
+                            ]
+                        },
                         {
                             name: {
-                                'en-US': 'logname',
-                                'es-ES': 'nombre_del_log'
+                                'en-US': 'log',
+                                'es-ES': 'log'
                             },
                             description: {
-                                'en-US': 'The name of the log to remove',
-                                'es-ES': 'El nombre del log a eliminar'
+                                'en-US': 'Remove a log',
+                                'es-ES': 'Eliminar un log'
                             },
-                            type: ApplicationCommandOptionType.String,
-                            required: true,
-                            choices: logsChoices
-                        }
-                    ]
-                },
-                {
-                    name: {
-                        'en-US': 'birthday_channel',
-                        'es-ES': 'canal_de_cumpleaños'
-                    },
-                    description: {
-                        'en-US': 'Remove a birthday channel',
-                        'es-ES': 'Eliminar un canal de cumpleaños'
-                    },
-                    type: ApplicationCommandOptionType.Subcommand
-                },
-                {
-                    name: {
-                        'en-US': 'blacklisted_word',
-                        'es-ES': 'palabra_blacklisteada'
-                    },
-                    description: {
-                        'en-US': 'Remove a blacklisted word',
-                        'es-ES': 'Eliminar una palabra blacklisteada'
-                    },
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
+                            type: ApplicationCommandOptionType.Subcommand,
+                            options: [
+                                {
+                                    name: {
+                                        'en-US': 'logname',
+                                        'es-ES': 'nombre_del_log'
+                                    },
+                                    description: {
+                                        'en-US': 'The name of the log to remove',
+                                        'es-ES': 'El nombre del log a eliminar'
+                                    },
+                                    type: ApplicationCommandOptionType.String,
+                                    required: true,
+                                    choices: logs.map(l => ({
+                                        name: l,
+                                        value: l
+                                    }))
+                                }
+                            ]
+                        },
                         {
                             name: {
-                                'en-US': 'word',
-                                'es-ES': 'palabra'
+                                'en-US': 'birthday_channel',
+                                'es-ES': 'canal_de_cumpleaños'
                             },
                             description: {
-                                'en-US': 'The word to remove',
-                                'es-ES': 'La palabra a eliminar'
+                                'en-US': 'Remove a birthday channel',
+                                'es-ES': 'Eliminar un canal de cumpleaños'
                             },
-                            type: ApplicationCommandOptionType.String,
-                            required: true
-                        }
-                    ]
-                },
-                {
-                    name: {
-                        'en-US': 'ignored_channel',
-                        'es-ES': 'canal_ignorado'
-                    },
-                    description: {
-                        'en-US': 'Remove an ignored channel',
-                        'es-ES': 'Eliminar un canal ignorado'
-                    },
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
+                            type: ApplicationCommandOptionType.Subcommand
+                        },
                         {
                             name: {
-                                'en-US': 'channel',
-                                'es-ES': 'canal'
+                                'en-US': 'blacklisted_word',
+                                'es-ES': 'palabra_blacklisteada'
                             },
                             description: {
-                                'en-US': 'The channel to remove',
-                                'es-ES': 'El canal a eliminar'
+                                'en-US': 'Remove a blacklisted word',
+                                'es-ES': 'Eliminar una palabra blacklisteada'
                             },
-                            type: ApplicationCommandOptionType.Channel,
-                            channel_types: [0],
-                            required: true
+                            type: ApplicationCommandOptionType.Subcommand,
+                            options: [
+                                {
+                                    name: {
+                                        'en-US': 'word',
+                                        'es-ES': 'palabra'
+                                    },
+                                    description: {
+                                        'en-US': 'The word to remove',
+                                        'es-ES': 'La palabra a eliminar'
+                                    },
+                                    type: ApplicationCommandOptionType.String,
+                                    required: true
+                                }
+                            ]
+                        },
+                        {
+                            name: {
+                                'en-US': 'ignored_channel',
+                                'es-ES': 'canal_ignorado'
+                            },
+                            description: {
+                                'en-US': 'Remove an ignored channel',
+                                'es-ES': 'Eliminar un canal ignorado'
+                            },
+                            type: ApplicationCommandOptionType.Subcommand,
+                            options: [
+                                {
+                                    name: {
+                                        'en-US': 'channel',
+                                        'es-ES': 'canal'
+                                    },
+                                    description: {
+                                        'en-US': 'The channel to remove',
+                                        'es-ES': 'El canal a eliminar'
+                                    },
+                                    type: ApplicationCommandOptionType.Channel,
+                                    channel_types: [ChannelType.GuildText],
+                                    required: true
+                                }
+                            ]
                         }
                     ]
                 }
             ]
         })
-
-        return baseCommand
     }
 
-    async interacion(interaction: ChatInputCommandInteraction<'cached'>) {
+    async interaction(interaction: ChatInputCommandInteraction<'cached'>) {
         const subcommand = interaction.options.getSubcommand()
         const subcommandGroup = interaction.options.getSubcommandGroup()
         import(`./config/subcommands/${subcommandGroup}.js`)

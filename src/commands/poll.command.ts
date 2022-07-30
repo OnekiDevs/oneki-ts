@@ -123,12 +123,11 @@ export default class Poll extends Command {
                         }
                     ]
                 }
-            ],
-            global: false
+            ]
         })
     }
 
-    async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
+    async interaction(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         if (interaction.options.getSubcommand() === 'make') this.make(interaction)
         else if (interaction.options.getSubcommand() === 'finalize') this.finalize(interaction)
     }
@@ -136,6 +135,7 @@ export default class Poll extends Command {
     async make(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         const translate = Translator(interaction)
         // const server = client.getServer(interaction.guild)
+        //TODO: Check if the guild has the permission to make a poll (premium)
 
         if (!checkSend(interaction.channel as TextChannel, interaction.guild.members.me as GuildMember))
             return interaction.reply({

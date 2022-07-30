@@ -47,7 +47,7 @@ export default class SS extends Command {
         })
     }
 
-    async interacion(interaction: ChatInputCommandInteraction<'cached'>) {
+    async interaction(interaction: ChatInputCommandInteraction<'cached'>) {
         await interaction.deferReply()
 
         const member = interaction.options.getMember('user') ?? interaction.member

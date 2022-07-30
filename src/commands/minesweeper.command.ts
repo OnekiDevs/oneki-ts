@@ -16,7 +16,7 @@ export default class Minesweeper extends Command {
         })
     }
 
-    async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
+    async interaction(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         //se definen las filas, columnas y bombas
         const filas = 9,
             columnas = 9

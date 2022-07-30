@@ -15,7 +15,6 @@ import {
     ChannelType,
     ApplicationCommandType
 } from 'discord.js'
-import { writeFileSync } from 'fs'
 
 export class Command {
     hibrid = false
@@ -55,9 +54,6 @@ export class Command {
      * @returns A promise that resolves to an array of commands.
      */
     async deploy(guild?: Guild) {
-        console.log(`Deploying command ${this.name}`)
-        console.log(guild?.name)
-
         if (this.global) return client.application.commands.create(await this.createData()).catch(console.error)
 
         if (guild)
@@ -67,14 +63,12 @@ export class Command {
             })
 
         return Promise.all(
-            client.guilds.cache.map(async guild => {
-                if (this.name === 'config' && guild.id == '972563929836445778')
-                    writeFileSync('./config_ss.json', JSON.stringify(await this.createData(guild), null, 2))
+            client.guilds.cache.map(async guild =>
                 guild.commands.create(await this.createData(guild)).catch(e => {
                     if (e.message.includes('Missing Access')) console.log('Missing Access on', guild.name, guild.id)
                     else console.error(e)
                 })
-            })
+            )
         )
     }
 
@@ -140,7 +134,7 @@ export class Command {
         return this.baseCommand
     }
 
-    async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
+    async interaction(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         return interaction.deferReply()
     }
 
@@ -152,12 +146,12 @@ export class Command {
         return interaction.deferUpdate()
     }
 
-    async select(interacion: SelectMenuInteraction<'cached'>): Promise<any> {
-        return interacion.deferUpdate()
+    async select(interaction: SelectMenuInteraction<'cached'>): Promise<any> {
+        return interaction.deferUpdate()
     }
 
-    async autocomplete(interacion: AutocompleteInteraction<'cached'>): Promise<any> {
-        return interacion
+    async autocomplete(interaction: AutocompleteInteraction<'cached'>): Promise<any> {
+        return interaction.respond([])
     }
 
     async modal(interaction: ModalSubmitInteraction<'cached'>): Promise<any> {

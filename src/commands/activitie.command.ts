@@ -69,7 +69,7 @@ export default class Activitie extends Command {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
+    async interaction(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         const translate = Translator(interaction)
         const [activitieId, activitie] = (interaction.options.getString('game') as string).split('/')
         const channel =
