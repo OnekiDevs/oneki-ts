@@ -31,7 +31,7 @@
     "dependencies": {
         "@androz2091/discord-invites-tracker": "1.1.0",
         "cross-env": "7.0.3",
-        "discord.js": "14.1.0-dev.1658103004-dda2895",
+        "discord.js": "14.1.1",
         "dotenv": "16.0.1",
         "firebase-admin": "10.3.0",
         "i18n": "0.15.0",
@@ -42,7 +42,7 @@
         "yaml": "^2.1.1"
     },
     "engines": {
-        "node": "16.15.1",
+        "node": "16.16.0",
         "npm": "8.11.0"
     },
     "devDependencies": {

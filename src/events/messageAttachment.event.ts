@@ -7,9 +7,9 @@ export default async function (msg: Message<true>) {
         if (!msg.guild) return
         if (!(msg.client as Client).servers.has(msg.guild?.id ?? '')) return
         const server = (msg.client as Client).getServer(msg.guild)
-        if (!server?.logsChannels.Attachment) return
-        if (msg.channel.id === server.logsChannels.Attachment) return
-        const channel: TextChannel = msg.client.channels.cache.get(server.logsChannels.Attachment) as TextChannel
+        if (!server?.logsChannels.attachment) return
+        if (msg.channel.id === server.logsChannels.attachment) return
+        const channel: TextChannel = msg.client.channels.cache.get(server.logsChannels.attachment) as TextChannel
         if (channel && checkSend(channel, msg.guild?.members.me as GuildMember)) {
             channel.send({
                 files: msg.attachments.map(attachment => attachment),

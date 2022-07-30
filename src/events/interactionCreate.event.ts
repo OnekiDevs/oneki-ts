@@ -4,7 +4,8 @@ import {
     InteractionType,
     ModalSubmitInteraction,
     Interaction,
-    AutocompleteInteraction
+    AutocompleteInteraction,
+    SelectMenuInteraction
 } from 'discord.js'
 import client from '../client.js'
 import { sendError } from '../utils/utils.js'
@@ -30,6 +31,11 @@ export default async function (interaction: Interaction) {
 
         if (interaction.type === InteractionType.ApplicationCommandAutocomplete)
             client.commands.get(interaction.commandName)?.autocomplete(interaction as AutocompleteInteraction<'cached'>)
+
+        if (interaction.isSelectMenu())
+            client.commands
+                .find(cmd => interaction.customId.startsWith(cmd.name))
+                ?.select(interaction as SelectMenuInteraction<'cached'>)
     } catch (error) {
         sendError(error as Error, import.meta.url)
     }

@@ -2,13 +2,10 @@ import { PermissionsBitField, ChatInputCommandInteraction, TextChannel, GuildMem
 import { checkSend, permissionsError, Translator } from '../../../utils/utils.js'
 import client from '../../../client.js'
 
-export function file(interaction: ChatInputCommandInteraction<'cached'>) {
+export function prefix(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
-    const member = interaction.guild.members.cache.get(interaction.user.id)
     const server = client.getServer(interaction.guild)
 
-    if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
-        return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const prefix = interaction.options.getString('prefix') as string
     server.addPrefix(prefix)
     interaction.reply(translate('config_cmd.add_prefix', { prefix, prefixies: server.prefixes }))

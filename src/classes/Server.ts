@@ -14,6 +14,7 @@ import { FieldValue } from 'firebase-admin/firestore'
 import { PunishmentType, PunishUser, sleep } from '../utils/utils.js'
 import ms from 'iblazingx-ms'
 import client from '../client.js'
+
 export class Server {
     autoroles: Collection<string, Set<string>> = new Collection()
     rejectSug(id: string) {
@@ -24,14 +25,14 @@ export class Server {
     }
     private _emojiAnalisisEnabled = false
     guild: Guild
-    private _prefixes: Array<string> = ['>', '?']
+    #prefixes: Array<string> = ['>', '?']
     db
     suggestChannels: SuggestChannelObject[] = []
     private _lastSuggestId = 0
     logsChannels: {
         messageUpdate?: string
         messageDelete?: string
-        Attachment?: string
+        attachment?: string
         invite?: string
         memberUpdate?: string
         sanction?: string
@@ -84,7 +85,7 @@ export class Server {
 
             if (message_update) this.logsChannels.messageUpdate = message_update
             if (message_delete) this.logsChannels.messageDelete = message_delete
-            if (message_attachment) this.logsChannels.Attachment = message_attachment
+            if (message_attachment) this.logsChannels.attachment = message_attachment
             if (invite) this.logsChannels.invite = invite
             if (member_update) this.logsChannels.memberUpdate = member_update
             if (sanction) this.logsChannels.sanction = sanction
@@ -104,11 +105,11 @@ export class Server {
 
     toDBObject(toPublic?: boolean): GuildDataBaseModel {
         const obj: GuildDataBaseModel = {}
-        if (JSON.stringify(this.getPrefixes(true)) !== JSON.stringify(['?', '>'])) obj.prefixes = this._prefixes
+        if (JSON.stringify(this.getPrefixes(true)) !== JSON.stringify(['?', '>'])) obj.prefixes = this.#prefixes
         if (this.lastSuggestId) obj.last_suggest = this.lastSuggestId
         if (this.suggestChannels) obj.suggest_channels = this.suggestChannels
         if (this.logsChannels) {
-            const { messageUpdate, messageDelete, Attachment, invite, memberUpdate } = this.logsChannels
+            const { messageUpdate, messageDelete, attachment: Attachment, invite, memberUpdate } = this.logsChannels
             obj.logs_channels = {}
 
             if (messageUpdate) obj.logs_channels.message_update = messageUpdate
@@ -155,11 +156,11 @@ export class Server {
      * Return all the prefixes that the bot listens to in the guild
      */
     get prefixes(): string[] {
-        return [`<@!${this.guild.members.me?.id}>`, `<@${this.guild.members.me?.id}>`, ...this._prefixes]
+        return [`<@!${this.guild.members.me?.id}>`, `<@${this.guild.members.me?.id}>`, ...this.#prefixes]
     }
 
     set prefixes(value: string[]) {
-        this._prefixes = value
+        this.#prefixes = value
     }
 
     /**
@@ -168,7 +169,7 @@ export class Server {
      * @returns {string[]} - Array of prefixes
      */
     getPrefixes(onlyDeclared?: boolean): string[] {
-        if (onlyDeclared === undefined || onlyDeclared) return this._prefixes
+        if (onlyDeclared === undefined || onlyDeclared) return this.#prefixes
         else return this.prefixes
     }
 
@@ -177,7 +178,7 @@ export class Server {
      * @param {string} prefix - prefix to set
      */
     setPrefix(prefix: string) {
-        this._prefixes = [prefix]
+        this.#prefixes = [prefix]
         this.db.update({ prefix: [prefix] }).catch(() => this.db.update({ prefix: [prefix] }))
         ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
@@ -196,8 +197,9 @@ export class Server {
      * @param prefix
      */
     addPrefix(prefix: string) {
-        this._prefixes.push(prefix)
-        this.db.update({ prefixies: this._prefixes }).catch(() => this.db.set({ prefixies: this._prefixes }))
+        if (this.#prefixes.includes(prefix)) return
+        this.#prefixes.push(prefix)
+        this.db.update({ prefixies: this.#prefixes }).catch(() => this.db.set({ prefixies: this.#prefixes }))
         ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'add_prefix',
@@ -215,10 +217,10 @@ export class Server {
      * @param {string} prefix - Prefix to remove
      */
     removePrefix(prefix: string) {
-        if (this._prefixes.includes(prefix)) {
-            this._prefixes.splice(this._prefixes.indexOf(prefix), 1)
-            if (this._prefixes.length < 1) {
-                this._prefixes = ['>', '?']
+        if (this.#prefixes.includes(prefix)) {
+            this.#prefixes.splice(this.#prefixes.indexOf(prefix), 1)
+            if (this.#prefixes.length < 1) {
+                this.#prefixes = ['>', '?']
                 this.db
                     .update({ prefixies: FieldValue.delete() })
                     .catch(() => this.db.set({ prefixies: FieldValue.delete() }))
@@ -328,7 +330,7 @@ export class Server {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data: any = {}
         if (this.logsChannels.messageUpdate) data['logs_channels.message_update'] = this.logsChannels.messageUpdate
-        if (this.logsChannels.Attachment) data['logs_channels.message_attachment'] = this.logsChannels.Attachment
+        if (this.logsChannels.attachment) data['logs_channels.message_attachment'] = this.logsChannels.attachment
         if (this.logsChannels.messageDelete) data['logs_channels.message_delete'] = this.logsChannels.messageDelete
         if (this.logsChannels.invite) data['logs_channels.invite'] = this.logsChannels.invite
         if (this.logsChannels.memberUpdate) data['logs_channels.member_update'] = this.logsChannels.memberUpdate
@@ -425,7 +427,7 @@ export class Server {
      * @param {string} channel - id of the channel to set
      */
     setAttachmentLog(channel: string) {
-        this.logsChannels.Attachment = channel
+        this.logsChannels.attachment = channel
         this.db
             .update({ ['logs_channels.message_attachment']: channel })
             .catch(() => this.db.set({ ['logs_channels.message_attachment']: channel }))
@@ -446,19 +448,19 @@ export class Server {
      * Remove the Message Attachments Log
      */
     removeAttachmentLog() {
-        if (!this.logsChannels.Attachment) return
+        if (!this.logsChannels.attachment) return
         ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
                 event: 'remove_log',
                 from: 'mts',
                 data: {
                     log: 'MESSAGE_ATTACHMENT',
-                    channel: this.logsChannels.Attachment,
+                    channel: this.logsChannels.attachment,
                     guild: this.guild.id
                 }
             })
         )
-        delete this.logsChannels.Attachment
+        delete this.logsChannels.attachment
         this.updateChannelsLogsInDB()
     }
 

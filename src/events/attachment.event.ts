@@ -9,10 +9,10 @@ export default async function (message: Message<true>) {
         const translate = Translator(message)
 
         if (server.disabledChannels.includes(message.channelId)) return // If it's a disabled channel
-        if (!server.logsChannels.Attachment) return // If it's a disabled channel
+        if (!server.logsChannels.attachment) return // If it's a disabled channel
         if (message.author.bot) return // If it's a bot
 
-        const channel = client.channels.cache.get(server.logsChannels.Attachment) as TextChannel | undefined
+        const channel = client.channels.cache.get(server.logsChannels.attachment) as TextChannel | undefined
         if (!channel || !checkSend(channel as TextChannel, message.guild.members.me as GuildMember)) return //If it's a disabled channel
 
         channel.send({
