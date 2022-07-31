@@ -14,8 +14,9 @@ import {
     EmbedBuilder,
     ChannelType,
     ButtonStyle,
+    inlineCode,
     BitField,
-    quote
+    GuildMember
 } from 'discord.js'
 
 import client from '../client.js'
@@ -46,59 +47,72 @@ export default class Settings extends Command {
     }
 
     embeds = {
-        logs(server: Server) {
-            return new EmbedBuilder().setDescription('El bot registra logs en canales que usted establezca').setFields(
-                {
-                    name: 'message_update log',
-                    value: server.logsChannels.messageUpdate
-                        ? `<#${server.logsChannels.messageUpdate}>`
-                        : 'Sin configurar',
-                    inline: true
-                },
-                {
-                    name: 'message_delete log',
-                    value: server.logsChannels.messageDelete
-                        ? `<#${server.logsChannels.messageDelete}>`
-                        : 'Sin configurar',
-                    inline: true
-                },
-                {
-                    name: 'message_attachment log',
-                    value: server.logsChannels.attachment ? `<#${server.logsChannels.attachment}>` : 'Sin configurar',
-                    inline: true
-                },
-                {
-                    name: 'invites log',
-                    value: server.logsChannels.invite ? `<#${server.logsChannels.invite}>` : 'Sin configurar',
-                    inline: true
-                },
-                {
-                    name: 'member_update log',
-                    value: server.logsChannels.memberUpdate
-                        ? `<#${server.logsChannels.memberUpdate}>`
-                        : 'Sin configurar',
-                    inline: true
-                },
-                {
-                    name: 'sanctions log',
-                    value: server.logsChannels.sanction ? `<#${server.logsChannels.sanction}>` : 'Sin configurar',
-                    inline: true
-                }
-            )
-        },
-        prefix(server: Server) {
+        logs(server: Server, member: GuildMember) {
             return new EmbedBuilder()
+                .setAuthor({
+                    name: member.displayName,
+                    iconURL: member.displayAvatarURL()
+                })
+                .setTitle('Logs Settings')
+                .setDescription('El bot registra logs en canales que usted establezca')
+                .setFields(
+                    {
+                        name: 'message_update log',
+                        value: server.logsChannels.messageUpdate
+                            ? `<#${server.logsChannels.messageUpdate}>`
+                            : 'Sin configurar',
+                        inline: true
+                    },
+                    {
+                        name: 'message_delete log',
+                        value: server.logsChannels.messageDelete
+                            ? `<#${server.logsChannels.messageDelete}>`
+                            : 'Sin configurar',
+                        inline: true
+                    },
+                    {
+                        name: 'message_attachment log',
+                        value: server.logsChannels.attachment
+                            ? `<#${server.logsChannels.attachment}>`
+                            : 'Sin configurar',
+                        inline: true
+                    },
+                    {
+                        name: 'invites log',
+                        value: server.logsChannels.invite ? `<#${server.logsChannels.invite}>` : 'Sin configurar',
+                        inline: true
+                    },
+                    {
+                        name: 'member_update log',
+                        value: server.logsChannels.memberUpdate
+                            ? `<#${server.logsChannels.memberUpdate}>`
+                            : 'Sin configurar',
+                        inline: true
+                    },
+                    {
+                        name: 'sanctions log',
+                        value: server.logsChannels.sanction ? `<#${server.logsChannels.sanction}>` : 'Sin configurar',
+                        inline: true
+                    }
+                )
+        },
+        prefix(server: Server, member: GuildMember) {
+            return new EmbedBuilder()
+                .setAuthor({
+                    name: member.displayName,
+                    iconURL: member.displayAvatarURL()
+                })
                 .setTitle('Prefix Settings')
                 .setDescription(
                     `El bot funciona principalmente con comandos de barra (/), sin embargo, aun mantiene algunos comandos de prefijo funcionando.\nPara esos comandos usted puede configurar el prefijo que el bot escuchara.\nPuede usar la mencion del bot como un prefijo (<@${
                         client.user.id
-                    }>)\nActualmente los prefijos que escucha el bot son: ${quote(
+                    }>)\n\nActualmente los prefijos que escucha el bot son: ${inlineCode(
                         server.getPrefixes().join('`, `')
-                    )}\n\nPuede establecer mas de un prefijo añadiendolo con el boton de ${quote(
+                    )}\n\nPuede establecer mas de un prefijo añadiendolo con el boton de ${inlineCode(
                         'Add Prefix'
-                    )}\nPuede eliminar un prefijo con el boton de ${quote(
+                    )}\nPuede eliminar un prefijo con el boton de ${inlineCode(
                         'Remove Prefix'
-                    )}\nPuede establecer un unico prefijo con el boton de ${quote('Set Prefix')}`
+                    )}\nPuede establecer un unico prefijo con el boton de ${inlineCode('Set Prefix')}`
                 )
         }
     }
@@ -117,6 +131,26 @@ export default class Settings extends Command {
             )
             .setCustomId('settings_menu')
             .setPlaceholder('Seleccione lo que desea configurar')
+    }
+
+    logsMenu(opt: 'set' | 'remove') {
+        return new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
+            new SelectMenuBuilder()
+                .addOptions(
+                    new SelectMenuOptionBuilder().setLabel('message_update').setValue(String(logBits.messageUpdate)),
+                    new SelectMenuOptionBuilder().setLabel('message_delete').setValue(String(logBits.messageDelete)),
+                    new SelectMenuOptionBuilder()
+                        .setLabel('message_attachment')
+                        .setValue(String(logBits.messageAttachment)),
+                    new SelectMenuOptionBuilder().setLabel('invites').setValue(String(logBits.invites)),
+                    new SelectMenuOptionBuilder().setLabel('member_update').setValue(String(logBits.memberUpdate)),
+                    new SelectMenuOptionBuilder().setLabel('sanctions').setValue(String(logBits.sanctions))
+                )
+                .setCustomId('settings_logs_' + opt)
+                .setPlaceholder('Seleccione los logs que desea configurar')
+                .setMaxValues(6)
+                .setMinValues(1)
+        )
     }
 
     components = {
@@ -161,7 +195,12 @@ export default class Settings extends Command {
     }
 
     async interaction(interaction: ChatInputCommandInteraction<'cached'>) {
-        const embed = new EmbedBuilder().setDescription('Settings')
+        // create initial embed
+        const embed = new EmbedBuilder().setDescription('Settings').setAuthor({
+            name: interaction.member.displayName,
+            iconURL: interaction.member.displayAvatarURL()
+        })
+        // response
         interaction.reply({
             embeds: [embed],
             components: [new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(this.mainMenu(''))]
@@ -169,20 +208,29 @@ export default class Settings extends Command {
     }
 
     async select(interaction: SelectMenuInteraction<'cached'>): Promise<any> {
-        const [, mn, opt, id] = interaction.customId.split('_') as [string, 'menu' | 'logs', 'remove' | 'set', string]
+        const [, mn, opt] = interaction.customId.split('_') as
+            | ['settings', 'menu']
+            | ['settings', 'logs', 'remove' | 'set']
         const server = client.getServer(interaction.guild)
 
         if (mn === 'menu') {
+            // chech if is the same user
+            if (interaction.message.embeds[0].author?.name !== interaction.member.displayName)
+                return interaction.deferUpdate()
+            // get the page and edit the embed
             const [pag] = interaction.values as ['logs' | 'prefix']
             interaction.message.edit({
-                embeds: [this.embeds[pag](server)],
+                embeds: [this.embeds[pag](server, interaction.member)],
                 components: this.components[pag](server)
             })
+            // response
             interaction.deferUpdate()
         } else if (mn === 'logs') {
             if (opt === 'remove') {
+                // get the logs selected
                 const logs = new BitField(interaction.values.map(Number).reduce((a, b) => a | b))
 
+                // remove the logs selected
                 if (logs.has(logBits.messageUpdate)) server.removeMessageUpdateLog()
                 if (logs.has(logBits.messageDelete)) server.removeMessageDeleteLog()
                 if (logs.has(logBits.messageAttachment)) server.removeAttachmentLog()
@@ -190,26 +238,24 @@ export default class Settings extends Command {
                 if (logs.has(logBits.memberUpdate)) server.removeMemberUpdateLog()
                 if (logs.has(logBits.sanctions)) server.removeSanctionChannel()
 
-                interaction.message.delete()
+                // edit the embed
+                const mr = await interaction.message.fetchReference()
+                mr?.edit({
+                    embeds: [this.embeds.logs(server, interaction.member)],
+                    components: this.components.logs(server)
+                })
 
-                interaction.channel?.messages.fetch(id)?.then(m =>
-                    m.edit({
-                        embeds: [this.embeds.logs(server)],
-                        components: this.components.logs(server)
-                    })
-                )
-            } else
+                // response
+                interaction.message.delete()
+            } // show modal
+            else
                 interaction.showModal(
                     new ModalBuilder()
                         .setCustomId(
                             'settings_logs_' +
                                 opt +
                                 '_' +
-                                new BitField(interaction.values.map(Number).reduce((a, b) => a | b)).bitfield +
-                                '_' +
-                                id +
-                                '_' +
-                                interaction.message.id
+                                new BitField(interaction.values.map(Number).reduce((a, b) => a | b)).bitfield
                         )
                         .setTitle(capitalize(opt) + ' Log')
                         .setComponents(
@@ -233,14 +279,10 @@ export default class Settings extends Command {
     }
 
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
-        const [, pag, opt, id] = interaction.customId.split('_') as [
-            string,
-            'logs' | 'prefix' | 'autologs',
-            string,
-            string
-        ]
+        const [, pag, opt] = interaction.customId.split('_') as buttonCustomIdSplit
 
         if (pag === 'prefix')
+            // show modal
             interaction.showModal(
                 new ModalBuilder()
                     .setCustomId('settings_prefix_' + opt)
@@ -259,6 +301,7 @@ export default class Settings extends Command {
             )
         else if (pag === 'logs') {
             if (opt === 'auto') {
+                // yes and no buttons
                 const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
                     new ButtonBuilder()
                         .setCustomId('settings_autologs_y_' + interaction.message.id)
@@ -269,74 +312,36 @@ export default class Settings extends Command {
                         .setLabel('No')
                         .setStyle(ButtonStyle.Danger)
                 )
+                // response
                 interaction.reply({
                     components: [row],
                     content:
                         'A continuacion se le pedira el ID de una categoria donde creara canales correspondientes para los logs.\n¿Desea continuar?'
                 })
-                setTimeout(() => interaction.deleteReply().catch(() => null), 60_000)
+                setTimeout(() => interaction.deleteReply().catch(() => null), 60_000) // timeout
             } else if (opt === 'set') {
-                const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
-                    new SelectMenuBuilder()
-                        .addOptions(
-                            new SelectMenuOptionBuilder()
-                                .setLabel('message_update')
-                                .setValue(String(logBits.messageUpdate)),
-                            new SelectMenuOptionBuilder()
-                                .setLabel('message_delete')
-                                .setValue(String(logBits.messageDelete)),
-                            new SelectMenuOptionBuilder()
-                                .setLabel('message_attachment')
-                                .setValue(String(logBits.messageAttachment)),
-                            new SelectMenuOptionBuilder().setLabel('invites').setValue(String(logBits.invites)),
-                            new SelectMenuOptionBuilder()
-                                .setLabel('member_update')
-                                .setValue(String(logBits.memberUpdate)),
-                            new SelectMenuOptionBuilder().setLabel('sanctions').setValue(String(logBits.sanctions))
-                        )
-                        .setCustomId('settings_logs_set_' + interaction.message.id)
-                        .setPlaceholder('Seleccione los logs que desea configurar')
-                        .setMaxValues(6)
-                        .setMinValues(1)
-                )
+                // menu of logs
+                const row = this.logsMenu('set')
+                // response
                 interaction.reply({
                     components: [row],
                     content:
                         'Seleccione uno o varios logs a establecer y a continuacion se le pedira el ID de una canal de texto donde configurara los correspondientes logs'
                 })
-                setTimeout(() => interaction.deleteReply().catch(() => null), 60_000)
+                setTimeout(() => interaction.deleteReply().catch(() => null), 60_000) // timeout
             } else if (opt === 'remove') {
-                const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
-                    new SelectMenuBuilder()
-                        .addOptions(
-                            new SelectMenuOptionBuilder()
-                                .setLabel('message_update')
-                                .setValue(String(logBits.messageUpdate)),
-                            new SelectMenuOptionBuilder()
-                                .setLabel('message_delete')
-                                .setValue(String(logBits.messageDelete)),
-                            new SelectMenuOptionBuilder()
-                                .setLabel('message_attachment')
-                                .setValue(String(logBits.messageAttachment)),
-                            new SelectMenuOptionBuilder().setLabel('invites').setValue(String(logBits.invites)),
-                            new SelectMenuOptionBuilder()
-                                .setLabel('member_update')
-                                .setValue(String(logBits.memberUpdate)),
-                            new SelectMenuOptionBuilder().setLabel('sanctions').setValue(String(logBits.sanctions))
-                        )
-                        .setCustomId('settings_logs_remove_' + interaction.message.id)
-                        .setPlaceholder('Seleccione los logs que desea eliminar')
-                        .setMaxValues(6)
-                        .setMinValues(1)
-                )
+                // menu of logs
+                const row = this.logsMenu('remove')
+                // response
                 interaction.reply({ components: [row], content: 'Seleccione uno o varios logs a eliminar' })
-                setTimeout(() => interaction.deleteReply().catch(() => null), 60_000)
+                setTimeout(() => interaction.deleteReply().catch(() => null), 60_000) // timeout
             }
         } else if (pag === 'autologs') {
             if (opt === 'y')
+                // si si muetra el modal
                 interaction.showModal(
                     new ModalBuilder()
-                        .setCustomId('settings_logs_auto_' + id)
+                        .setCustomId('settings_logs_auto')
                         .setTitle('Category')
                         .setComponents(
                             new ActionRowBuilder<TextInputBuilder>().setComponents(
@@ -355,27 +360,37 @@ export default class Settings extends Command {
                             )
                         )
                 )
-            else interaction.message.delete()
+            else interaction.message.delete() // si no solo borra el mensaje
         }
     }
 
     async modal(interaction: ModalSubmitInteraction<'cached'>): Promise<any> {
-        const [, pag, opt, arg1, arg2, arg3] = interaction.customId.split('_') as modalCustomIdSplit
+        const [, pag, opt, arg1] = interaction.customId.split('_') as modalCustomIdSplit
         const server = client.getServer(interaction.guild)
 
         if (pag === 'prefix') {
             const prefix = interaction.fields.getTextInputValue('prefix') as string
+            // add, remove or set prefix
             if (opt === 'add') server.addPrefix(prefix)
             else if (opt === 'remove') server.removePrefix(prefix)
             else server.setPrefix(prefix)
+            // edit the embed
+            interaction.message?.edit({
+                embeds: [this.embeds[pag](server, interaction.member)],
+                components: this.components[pag](server)
+            })
+            // response in the final
         } else if (pag === 'logs') {
             if (opt === 'auto') {
+                // get category
                 const category = interaction.guild.channels.cache.get(
                     interaction.fields.getTextInputValue('category') as string
                 )
+                // check if is valid
                 if (!category || category.type !== ChannelType.GuildCategory)
                     return interaction.reply({ content: 'El ID no es valido', ephemeral: true })
 
+                // create and config channels
                 const cm = await category.children.create({
                     name: 'messages',
                     type: 0
@@ -408,23 +423,28 @@ export default class Settings extends Command {
                 })
                 server.setSanctionChannel(cs.id)
 
-                interaction.channel?.messages.fetch(arg1 as string)?.then(m =>
-                    m.edit({
-                        embeds: [this.embeds[pag](server)],
-                        components: this.components[pag](server)
-                    })
-                )
+                // edit the embed
+                const rm = await interaction.message?.fetchReference()
+                rm?.edit({
+                    embeds: [this.embeds[pag](server, interaction.member)],
+                    components: this.components[pag](server)
+                })
 
+                // delete the message
                 interaction.message?.delete()
+                // response in the final
             } else {
+                // get channel
                 const channel = interaction.guild.channels.cache.get(
                     interaction.fields.getTextInputValue('channel') as string
                 )
+                // check if is valid
                 if (!channel || channel.type !== ChannelType.GuildText)
                     return interaction.reply({ content: 'El ID no es valido', ephemeral: true })
                 if (!checkSend(channel, interaction.guild.members.me!))
                     return interaction.reply({ content: 'No tengo permisos en ese canal', ephemeral: true })
 
+                // set the channel configs
                 const logs = new BitField(arg1)
                 if (logs.has(logBits.messageUpdate)) server.setMessageUpdateLog(channel.id)
                 if (logs.has(logBits.messageDelete)) server.setMessageDeleteLog(channel.id)
@@ -433,23 +453,18 @@ export default class Settings extends Command {
                 if (logs.has(logBits.memberUpdate)) server.setMemberUpdateChannel(channel.id)
                 if (logs.has(logBits.sanctions)) server.setSanctionChannel(channel.id)
 
-                interaction.channel?.messages.fetch(arg2 as string)?.then(m =>
-                    m.edit({
-                        embeds: [this.embeds[pag](server)],
-                        components: this.components[pag](server)
-                    })
-                )
+                // edit the embed
+                const rm = await interaction.message?.fetchReference()
+                rm?.edit({
+                    embeds: [this.embeds[pag](server, interaction.member)],
+                    components: this.components[pag](server)
+                })
 
-                interaction.channel?.messages.fetch(arg3 as string)?.then(m => m.delete())
+                // delete the message
+                interaction.message?.delete()
             }
         }
-
-        if (!arg1)
-            interaction.message?.edit({
-                embeds: [this.embeds[pag](server)],
-                components: this.components[pag](server)
-            })
-
+        // response
         await interaction.deferReply()
         return interaction.deleteReply()
     }
@@ -457,5 +472,10 @@ export default class Settings extends Command {
 
 type modalCustomIdSplit =
     | ['settings', 'prefix', 'add' | 'remove' | 'set']
-    | ['settings', 'logs', 'auto', string]
-    | ['settings', 'logs', 'set', string, string, string]
+    | ['settings', 'logs', 'auto']
+    | ['settings', 'logs', 'set', string]
+
+type buttonCustomIdSplit =
+    | ['settings', 'prefix', 'add' | 'remove' | 'set']
+    | ['settings', 'logs', 'auto' | 'remove' | 'set']
+    | ['settings', 'autologs', 'y' | 'n']
