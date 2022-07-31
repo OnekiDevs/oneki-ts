@@ -334,6 +334,7 @@ export class Server {
         if (this.logsChannels.messageDelete) data['logs_channels.message_delete'] = this.logsChannels.messageDelete
         if (this.logsChannels.invite) data['logs_channels.invite'] = this.logsChannels.invite
         if (this.logsChannels.memberUpdate) data['logs_channels.member_update'] = this.logsChannels.memberUpdate
+        if (this.logsChannels.sanction) data['logs_channels.sanction'] = this.logsChannels.sanction
         if (Object.values(data).length === 0) data.logs_channels = FieldValue.delete()
         this.db.update(data).catch(() => this.db.set(data))
     }
@@ -686,7 +687,7 @@ export class Server {
         )
     }
 
-    removeMemberUpdateChannel() {
+    removeMemberUpdateLog() {
         if (!this.logsChannels.memberUpdate) return
         ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
@@ -703,7 +704,7 @@ export class Server {
         this.updateChannelsLogsInDB()
     }
 
-    removeInviteChannel() {
+    removeInviteChannelLog() {
         if (!this.logsChannels.invite) return
         ;(this.guild.client as Client).websocket?.send(
             JSON.stringify({
@@ -800,6 +801,23 @@ export class Server {
                 data: channelID
             })
         )
+    }
+
+    removeSanctionChannel() {
+        if (!this.logsChannels.sanction) return
+        ;(this.guild.client as Client).websocket?.send(
+            JSON.stringify({
+                event: 'remove_log',
+                from: 'mts',
+                data: {
+                    log: 'SANCTION',
+                    message: this.logsChannels.sanction,
+                    guild: this.guild.id
+                }
+            })
+        )
+        delete this.logsChannels.sanction
+        this.updateChannelsLogsInDB()
     }
 
     /**

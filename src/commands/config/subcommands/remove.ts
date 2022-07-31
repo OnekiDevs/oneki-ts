@@ -38,8 +38,8 @@ export function log(interaction: ChatInputCommandInteraction<'cached'>) {
     if (log === 'message_update') server.removeMessageUpdateLog()
     else if (log === 'message_delete') server.removeMessageDeleteLog()
     else if (log === 'message_attachment') server.removeAttachmentLog()
-    else if (log === 'invite') server.removeInviteChannel()
-    else if (log === 'member_update') server.removeMemberUpdateChannel()
+    else if (log === 'invite') server.removeInviteChannelLog()
+    else if (log === 'member_update') server.removeMemberUpdateLog()
     interaction.reply(translate('config_cmd.remove_log'))
 }
 
