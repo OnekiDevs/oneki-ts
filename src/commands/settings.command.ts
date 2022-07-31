@@ -207,7 +207,9 @@ export default class Settings extends Command {
                                 '_' +
                                 new BitField(interaction.values.map(Number).reduce((a, b) => a | b)).bitfield +
                                 '_' +
-                                id
+                                id +
+                                '_' +
+                                interaction.message.id
                         )
                         .setTitle(capitalize(opt) + ' Log')
                         .setComponents(
@@ -272,7 +274,7 @@ export default class Settings extends Command {
                     content:
                         'A continuacion se le pedira el ID de una categoria donde creara canales correspondientes para los logs.\n¿Desea continuar?'
                 })
-                setTimeout(() => interaction.deleteReply(), 60_000)
+                setTimeout(() => interaction.deleteReply().catch(() => null), 60_000)
             } else if (opt === 'set') {
                 const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
                     new SelectMenuBuilder()
@@ -302,7 +304,7 @@ export default class Settings extends Command {
                     content:
                         'Seleccione uno o varios logs a establecer y a continuacion se le pedira el ID de una canal de texto donde configurara los correspondientes logs'
                 })
-                setTimeout(() => interaction.deleteReply(), 60_000)
+                setTimeout(() => interaction.deleteReply().catch(() => null), 60_000)
             } else if (opt === 'remove') {
                 const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
                     new SelectMenuBuilder()
@@ -328,7 +330,7 @@ export default class Settings extends Command {
                         .setMinValues(1)
                 )
                 interaction.reply({ components: [row], content: 'Seleccione uno o varios logs a eliminar' })
-                setTimeout(() => interaction.deleteReply(), 60_000)
+                setTimeout(() => interaction.deleteReply().catch(() => null), 60_000)
             }
         } else if (pag === 'autologs') {
             if (opt === 'y')
@@ -358,7 +360,7 @@ export default class Settings extends Command {
     }
 
     async modal(interaction: ModalSubmitInteraction<'cached'>): Promise<any> {
-        const [, pag, opt, arg1, arg2] = interaction.customId.split('_') as modalCustomIdSplit
+        const [, pag, opt, arg1, arg2, arg3] = interaction.customId.split('_') as modalCustomIdSplit
         const server = client.getServer(interaction.guild)
 
         if (pag === 'prefix') {
@@ -437,6 +439,8 @@ export default class Settings extends Command {
                         components: this.components[pag](server)
                     })
                 )
+
+                interaction.channel?.messages.fetch(arg3 as string)?.then(m => m.delete())
             }
         }
 
@@ -454,4 +458,4 @@ export default class Settings extends Command {
 type modalCustomIdSplit =
     | ['settings', 'prefix', 'add' | 'remove' | 'set']
     | ['settings', 'logs', 'auto', string]
-    | ['settings', 'logs', 'set', string, string]
+    | ['settings', 'logs', 'set', string, string, string]
