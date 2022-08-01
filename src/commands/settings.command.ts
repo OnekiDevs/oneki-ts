@@ -226,6 +226,11 @@ export default class Settings extends Command {
             // response
             interaction.deferUpdate()
         } else if (mn === 'logs') {
+            // get the original embed
+            const mr = await interaction.message.fetchReference()
+            // check if is the same user
+            if (mr.embeds[0].author?.name !== interaction.member.displayName) return interaction.deferUpdate()
+
             if (opt === 'remove') {
                 // get the logs selected
                 const logs = new BitField(interaction.values.map(Number).reduce((a, b) => a | b))
@@ -239,7 +244,7 @@ export default class Settings extends Command {
                 if (logs.has(logBits.sanctions)) server.removeSanctionChannel()
 
                 // edit the embed
-                const mr = await interaction.message.fetchReference()
+
                 mr?.edit({
                     embeds: [this.embeds.logs(server, interaction.member)],
                     components: this.components.logs(server)
@@ -281,7 +286,10 @@ export default class Settings extends Command {
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
         const [, pag, opt] = interaction.customId.split('_') as buttonCustomIdSplit
 
-        if (pag === 'prefix')
+        if (pag === 'prefix') {
+            // check if is the same user
+            if (interaction.message.embeds[0].author?.name !== interaction.member.displayName)
+                return interaction.deferUpdate()
             // show modal
             interaction.showModal(
                 new ModalBuilder()
@@ -299,18 +307,15 @@ export default class Settings extends Command {
                         )
                     )
             )
-        else if (pag === 'logs') {
+        } else if (pag === 'logs') {
             if (opt === 'auto') {
+                // check if is the same user
+                if (interaction.message.embeds[0].author?.name !== interaction.member.displayName)
+                    return interaction.deferUpdate()
                 // yes and no buttons
                 const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
-                    new ButtonBuilder()
-                        .setCustomId('settings_autologs_y_' + interaction.message.id)
-                        .setLabel('Si')
-                        .setStyle(ButtonStyle.Success),
-                    new ButtonBuilder()
-                        .setCustomId('settings_autologs_n_' + interaction.message.id)
-                        .setLabel('No')
-                        .setStyle(ButtonStyle.Danger)
+                    new ButtonBuilder().setCustomId('settings_autologs_y').setLabel('Si').setStyle(ButtonStyle.Success),
+                    new ButtonBuilder().setCustomId('settings_autologs_n').setLabel('No').setStyle(ButtonStyle.Danger)
                 )
                 // response
                 interaction.reply({
@@ -320,6 +325,9 @@ export default class Settings extends Command {
                 })
                 setTimeout(() => interaction.deleteReply().catch(() => null), 60_000) // timeout
             } else if (opt === 'set') {
+                // check if is the same user
+                if (interaction.message.embeds[0].author?.name !== interaction.member.displayName)
+                    return interaction.deferUpdate()
                 // menu of logs
                 const row = this.logsMenu('set')
                 // response
@@ -330,6 +338,9 @@ export default class Settings extends Command {
                 })
                 setTimeout(() => interaction.deleteReply().catch(() => null), 60_000) // timeout
             } else if (opt === 'remove') {
+                // check if is the same user
+                if (interaction.message.embeds[0].author?.name !== interaction.member.displayName)
+                    return interaction.deferUpdate()
                 // menu of logs
                 const row = this.logsMenu('remove')
                 // response
@@ -337,6 +348,11 @@ export default class Settings extends Command {
                 setTimeout(() => interaction.deleteReply().catch(() => null), 60_000) // timeout
             }
         } else if (pag === 'autologs') {
+            // get the original embed
+            const mr = await interaction.message.fetchReference()
+            // check if is the same user
+            if (mr.embeds[0].author?.name !== interaction.member.displayName) return interaction.deferUpdate()
+
             if (opt === 'y')
                 // si si muetra el modal
                 interaction.showModal(
@@ -369,6 +385,13 @@ export default class Settings extends Command {
         const server = client.getServer(interaction.guild)
 
         if (pag === 'prefix') {
+            // check if is the same user
+            if (interaction.message?.embeds[0].author?.name !== interaction.member.displayName)
+                return interaction.reply({
+                    content: 'Este modal no es para ti',
+                    ephemeral: true
+                })
+
             const prefix = interaction.fields.getTextInputValue('prefix') as string
             // add, remove or set prefix
             if (opt === 'add') server.addPrefix(prefix)
@@ -382,6 +405,12 @@ export default class Settings extends Command {
             // response in the final
         } else if (pag === 'logs') {
             if (opt === 'auto') {
+                // check if is the same user
+                if (interaction.message?.embeds[0].author?.name !== interaction.member.displayName)
+                    return interaction.reply({
+                        content: 'Este modal no es para ti',
+                        ephemeral: true
+                    })
                 // get category
                 const category = interaction.guild.channels.cache.get(
                     interaction.fields.getTextInputValue('category') as string
@@ -434,6 +463,14 @@ export default class Settings extends Command {
                 interaction.message?.delete()
                 // response in the final
             } else {
+                // get the original embed
+                const mr = await interaction.message?.fetchReference()
+                // check if is the same user
+                if (mr?.embeds[0].author?.name !== interaction.member.displayName)
+                    return interaction.reply({
+                        content: 'Este modal no es para ti',
+                        ephemeral: true
+                    })
                 // get channel
                 const channel = interaction.guild.channels.cache.get(
                     interaction.fields.getTextInputValue('channel') as string
@@ -454,8 +491,7 @@ export default class Settings extends Command {
                 if (logs.has(logBits.sanctions)) server.setSanctionChannel(channel.id)
 
                 // edit the embed
-                const rm = await interaction.message?.fetchReference()
-                rm?.edit({
+                mr?.edit({
                     embeds: [this.embeds[pag](server, interaction.member)],
                     components: this.components[pag](server)
                 })
