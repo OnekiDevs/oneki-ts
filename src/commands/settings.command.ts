@@ -16,7 +16,8 @@ import {
     ButtonStyle,
     inlineCode,
     BitField,
-    GuildMember
+    GuildMember,
+    PermissionsBitField
 } from 'discord.js'
 
 import client from '../client.js'
@@ -42,7 +43,8 @@ export default class Settings extends Command {
             description: {
                 'en-US': 'Config the bot',
                 'es-ES': 'Configura el bot'
-            }
+            },
+            permissions: new PermissionsBitField(PermissionsBitField.Flags.ManageGuild)
         })
     }
 
