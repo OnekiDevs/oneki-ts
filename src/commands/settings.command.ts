@@ -405,8 +405,10 @@ export default class Settings extends Command {
             // response in the final
         } else if (pag === 'logs') {
             if (opt === 'auto') {
+                // get the original embed
+                const mr = await interaction.message?.fetchReference()
                 // check if is the same user
-                if (interaction.message?.embeds[0].author?.name !== interaction.member.displayName)
+                if (mr?.embeds[0].author?.name !== interaction.member.displayName)
                     return interaction.reply({
                         content: 'Este modal no es para ti',
                         ephemeral: true
