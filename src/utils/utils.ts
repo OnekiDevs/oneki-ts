@@ -249,13 +249,15 @@ export function createModalComponent(input: TextInputBuilder) {
 }
 
 export function errorCatch(file: string) {
-    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-        return function (...args: any[]) {
-            try {
-                // return descriptor.value.call(this, ...args)
-            } catch (error) {
-                sendError(error as Error, file)
-                throw error
+    return function (target: Object, propertyKey: string, descriptor: any) {
+        return {
+            ...descriptor,
+            value: function (...args: any[]) {
+                try {
+                    descriptor.value.apply(this, args)
+                } catch (error) {
+                    sendError(error as Error, file)
+                }
             }
         }
     }
