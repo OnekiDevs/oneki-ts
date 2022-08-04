@@ -7,6 +7,7 @@ import {
 import { Command } from '../utils/classes.js'
 import Jimp from 'jimp'
 import puppeteer from 'puppeteer'
+import { errorCatch } from '../utils/utils.js'
 
 export default class SS extends Command {
     constructor() {
@@ -47,6 +48,7 @@ export default class SS extends Command {
         })
     }
 
+    @errorCatch(import.meta.url)
     async interaction(interaction: ChatInputCommandInteraction<'cached'>) {
         await interaction.deferReply()
 

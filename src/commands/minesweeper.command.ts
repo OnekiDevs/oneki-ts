@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChatInputCommandInteraction } from 'discord.js'
 import { Command } from '../utils/classes.js'
+import { errorCatch } from '../utils/utils.js'
 
 export default class Minesweeper extends Command {
     constructor() {
@@ -16,6 +17,7 @@ export default class Minesweeper extends Command {
         })
     }
 
+    @errorCatch(import.meta.url)
     async interaction(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         //se definen las filas, columnas y bombas
         const filas = 9,

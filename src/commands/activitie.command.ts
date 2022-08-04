@@ -9,7 +9,7 @@ import {
     ButtonInteraction
 } from 'discord.js'
 import { Command } from '../utils/classes.js'
-import { Translator } from '../utils/utils.js'
+import { errorCatch, Translator } from '../utils/utils.js'
 
 export default class Activitie extends Command {
     constructor() {
@@ -68,7 +68,7 @@ export default class Activitie extends Command {
         })
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    @errorCatch(import.meta.url)
     async interaction(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         const translate = Translator(interaction)
         const [activitieId, activitie] = (interaction.options.getString('game') as string).split('/')
@@ -101,6 +101,7 @@ export default class Activitie extends Command {
         })
     }
 
+    @errorCatch(import.meta.url)
     async button(interaction: ButtonInteraction<'cached'>) {
         const [, code] = interaction.customId.split(/_/gi)
         interaction.reply(`https://discord.com/invite/${code}`)

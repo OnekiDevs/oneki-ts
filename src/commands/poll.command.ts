@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { filledBar, pollEmojis as emojis, checkSend, randomId, createModalComponent } from '../utils/utils.js'
+import {
+    filledBar,
+    pollEmojis as emojis,
+    checkSend,
+    randomId,
+    createModalComponent,
+    errorCatch
+} from '../utils/utils.js'
 import { ActionRowBuilder, MessageActionRowComponentBuilder } from '@discordjs/builders'
 import { Command } from '../utils/classes.js'
 import { Translator } from '../utils/utils.js'
@@ -127,11 +134,13 @@ export default class Poll extends Command {
         })
     }
 
+    @errorCatch(import.meta.url)
     async interaction(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         if (interaction.options.getSubcommand() === 'make') this.make(interaction)
         else if (interaction.options.getSubcommand() === 'finalize') this.finalize(interaction)
     }
 
+    @errorCatch(import.meta.url)
     async make(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         const translate = Translator(interaction)
         // const server = client.getServer(interaction.guild)
@@ -167,6 +176,7 @@ export default class Poll extends Command {
         interaction.showModal(modal)
     }
 
+    @errorCatch(import.meta.url)
     getModal(id: string, translate: ReturnType<typeof Translator>) {
         return new ModalBuilder()
             .setTitle(translate('poll_cmd.make.modal_title'))
@@ -201,6 +211,7 @@ export default class Poll extends Command {
             ])
     }
 
+    @errorCatch(import.meta.url)
     async finalize(interaction: ChatInputCommandInteraction<'cached'>) {
         const translate = Translator(interaction)
         await interaction.deferReply({ ephemeral: true })
@@ -254,6 +265,7 @@ export default class Poll extends Command {
         }
     }
 
+    @errorCatch(import.meta.url)
     async modal(interaction: ModalSubmitInteraction<'cached'>): Promise<any> {
         const translate = Translator(interaction)
         // const server = client.getServer(interaction.guild)
@@ -320,6 +332,7 @@ export default class Poll extends Command {
     }
 
     // TODO: edit()
+    @errorCatch(import.meta.url)
     async button(interaction: ButtonInteraction<'cached'>) {
         await interaction.deferReply({ ephemeral: true })
         const [, , id] = interaction.customId.split('_')
@@ -363,6 +376,7 @@ export default class Poll extends Command {
         // })
     }
 
+    @errorCatch(import.meta.url)
     async select(interaction: SelectMenuInteraction<'cached'>) {
         await interaction.deferReply()
 
@@ -385,6 +399,7 @@ export default class Poll extends Command {
         return interaction.message.edit({ embeds, components })
     }
 
+    @errorCatch(import.meta.url)
     createEmbed(poll: pollInfo, translate: ReturnType<typeof Translator>) {
         let votes = 0
         poll.options.map(o => (votes += o.votes.length))
@@ -421,6 +436,7 @@ export default class Poll extends Command {
         return embed
     }
 
+    @errorCatch(import.meta.url)
     createButtons(poll: PollDatabaseModel, id: string, _translate: ReturnType<typeof Translator>) {
         return [
             new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([

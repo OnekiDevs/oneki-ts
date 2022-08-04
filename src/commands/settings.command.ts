@@ -22,7 +22,7 @@ import {
 
 import client from '../client.js'
 import { Command, Server } from '../utils/classes.js'
-import { capitalize, checkSend } from '../utils/utils.js'
+import { capitalize, checkSend, errorCatch } from '../utils/utils.js'
 
 export enum logBits {
     messageUpdate = 1 << 0,
@@ -119,6 +119,7 @@ export default class Settings extends Command {
         }
     }
 
+    @errorCatch(import.meta.url)
     mainMenu(pag: string) {
         return new SelectMenuBuilder()
             .addOptions(
@@ -135,6 +136,7 @@ export default class Settings extends Command {
             .setPlaceholder('Seleccione lo que desea configurar')
     }
 
+    @errorCatch(import.meta.url)
     logsMenu(opt: 'set' | 'remove') {
         return new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
             new SelectMenuBuilder()
@@ -196,6 +198,7 @@ export default class Settings extends Command {
         }
     }
 
+    @errorCatch(import.meta.url)
     async interaction(interaction: ChatInputCommandInteraction<'cached'>) {
         // create initial embed
         const embed = new EmbedBuilder().setDescription('Settings').setAuthor({
@@ -209,6 +212,7 @@ export default class Settings extends Command {
         })
     }
 
+    @errorCatch(import.meta.url)
     async select(interaction: SelectMenuInteraction<'cached'>): Promise<any> {
         const [, mn, opt] = interaction.customId.split('_') as
             | ['settings', 'menu']
@@ -285,6 +289,7 @@ export default class Settings extends Command {
         }
     }
 
+    @errorCatch(import.meta.url)
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
         const [, pag, opt] = interaction.customId.split('_') as buttonCustomIdSplit
 
@@ -382,6 +387,7 @@ export default class Settings extends Command {
         }
     }
 
+    @errorCatch(import.meta.url)
     async modal(interaction: ModalSubmitInteraction<'cached'>): Promise<any> {
         const [, pag, opt, arg1] = interaction.customId.split('_') as modalCustomIdSplit
         const server = client.getServer(interaction.guild)

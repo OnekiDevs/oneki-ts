@@ -7,6 +7,7 @@ import {
     PermissionsBitField
 } from 'discord.js'
 import { Command } from '../utils/classes.js'
+import { errorCatch } from '../utils/utils.js'
 
 const logs = ['message_update', 'message_delete', 'message_attachment', 'invites', 'member_update'],
     logsOptions = logs.map(log => ({
@@ -811,6 +812,7 @@ export default class Config extends Command {
         })
     }
 
+    @errorCatch(import.meta.url)
     async interaction(interaction: ChatInputCommandInteraction<'cached'>) {
         const subcommand = interaction.options.getSubcommand()
         const subcommandGroup = interaction.options.getSubcommandGroup()
@@ -819,11 +821,13 @@ export default class Config extends Command {
             .catch(console.error)
     }
 
+    @errorCatch(import.meta.url)
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
         const [, sub] = interaction.customId.split('_')
         import(`./config/autocomplete.js`).then((a: any) => a[sub](interaction)).catch(console.error)
     }
 
+    @errorCatch(import.meta.url)
     async autocomplete(interaction: AutocompleteInteraction<'cached'>) {
         const name = interaction.options.getFocused(true).name
         import(`./config/autocomplete.js`).then((a: any) => a[name](interaction)).catch(console.error)

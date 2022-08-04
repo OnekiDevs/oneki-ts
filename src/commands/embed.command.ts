@@ -14,6 +14,7 @@ import {
     TextInputStyle
 } from 'discord.js'
 import { Command } from '../utils/classes.js'
+import { errorCatch } from '../utils/utils.js'
 
 export default class Embed extends Command {
     constructor() {
@@ -54,6 +55,7 @@ export default class Embed extends Command {
         ])
     ]
 
+    @errorCatch(import.meta.url)
     async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         let image: Attachment | string | null = interaction.options.getAttachment('image')
         const extencion = image?.url.split('.').pop() ?? ''
@@ -71,6 +73,7 @@ export default class Embed extends Command {
         })
     }
 
+    @errorCatch(import.meta.url)
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
         if (interaction.message.interaction?.user.id !== interaction.user.id) return interaction.deferUpdate()
 
@@ -168,6 +171,7 @@ export default class Embed extends Command {
         }
     }
 
+    @errorCatch(import.meta.url)
     async modal(interaction: ModalSubmitInteraction<'cached'>): Promise<any> {
         const embed = new EmbedBuilder(interaction.message?.embeds[0]?.data as APIEmbed)
 

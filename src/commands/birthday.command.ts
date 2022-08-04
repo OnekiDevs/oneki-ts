@@ -3,6 +3,7 @@ import { ApplicationCommandOptionType, ChatInputCommandInteraction } from 'disco
 import { FieldValue } from 'firebase-admin/firestore'
 import client from '../client.js'
 import { Command } from '../utils/classes.js'
+import { errorCatch } from '../utils/utils.js'
 
 export default class Birthday extends Command {
     constructor() {
@@ -57,6 +58,7 @@ export default class Birthday extends Command {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    @errorCatch(import.meta.url)
     async interaction(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         await interaction.deferReply()
         const translate = this.translator(interaction)

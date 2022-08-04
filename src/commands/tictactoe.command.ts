@@ -8,6 +8,7 @@ import {
     ButtonInteraction
 } from 'discord.js'
 import { Command } from '../utils/classes.js'
+import { errorCatch } from '../utils/utils.js'
 
 type mark = 'x' | 'o' | 'v'
 
@@ -26,6 +27,7 @@ export default class Tictactoe extends Command {
         })
     }
 
+    @errorCatch(import.meta.url)
     async interaction(interaction: ChatInputCommandInteraction<'cached'>) {
         // respond with the new table
         interaction.reply({
@@ -37,6 +39,7 @@ export default class Tictactoe extends Command {
         })
     }
 
+    @errorCatch(import.meta.url)
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
         // check if the game is of the same user
         if (interaction.message.interaction?.user.id !== interaction.user.id) return interaction.deferUpdate()
@@ -63,6 +66,8 @@ export default class Tictactoe extends Command {
         if (winner === 'v') interaction.reply({ components: this.createButtons(table) })
         else interaction.reply({ components: this.createButtons(table, true) })
     }
+
+    @errorCatch(import.meta.url)
     checkWinner(table: mark[][]) {
         // check rows
         for (let x = 0; x < table.length; x++) {
@@ -86,6 +91,7 @@ export default class Tictactoe extends Command {
         return 'v'
     }
 
+    @errorCatch(import.meta.url)
     createButtons(table: mark[][], finished: boolean = false) {
         const components: ActionRowBuilder<MessageActionRowComponentBuilder>[] = []
         // set limit of the columns

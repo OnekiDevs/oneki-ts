@@ -1,6 +1,6 @@
 import { ButtonInteraction, ChatInputCommandInteraction, Message } from 'discord.js'
 import { Command, UnoGame, Player } from '../utils/classes.js'
-import { sendError, Translator } from '../utils/utils.js'
+import { errorCatch, sendError, Translator } from '../utils/utils.js'
 import { getAllCards } from '../classes/UnoCards.js'
 import client from '../client.js'
 
@@ -18,7 +18,7 @@ export default class SS extends Command {
         })
     }
 
-    // @errorCatch(import.meta.url)
+    @errorCatch(import.meta.url)
     async interaction(interaction: ChatInputCommandInteraction<'cached'>) {
         try {
             const message = (await interaction.channel?.send('Generando juego...')) as Message<true>
@@ -34,16 +34,13 @@ export default class SS extends Command {
         }
     }
 
+    @errorCatch(import.meta.url)
     async message(message: Message<true>, args: string[]): Promise<any> {
-        try {
-            const cards = await getAllCards()
-            new UnoGame(message, cards)
-        } catch (error) {
-            message.reply('Ha ocurrido un error, reporte genrado')
-            sendError(error as Error, import.meta.url)
-        }
+        const cards = await getAllCards()
+        new UnoGame(message, cards)
     }
 
+    @errorCatch(import.meta.url)
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
         const translate = Translator(interaction)
         const [, id, option] = interaction.customId.split(/_/gi)

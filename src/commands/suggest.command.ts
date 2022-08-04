@@ -7,7 +7,7 @@ import {
     AutocompleteInteraction
 } from 'discord.js'
 import { Command } from '../utils/classes.js'
-import { Translator } from '../utils/utils.js'
+import { errorCatch, Translator } from '../utils/utils.js'
 import { checkSend } from '../utils/utils.js'
 import client from '../client.js'
 
@@ -52,6 +52,7 @@ export default class Suggest extends Command {
         })
     }
 
+    @errorCatch(import.meta.url)
     async interaction(interaction: ChatInputCommandInteraction<'cached'>) {
         const translate = Translator(interaction)
         const server = client.getServer(interaction.guild)
@@ -82,6 +83,7 @@ export default class Suggest extends Command {
         } else return
     }
 
+    @errorCatch(import.meta.url)
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
         const [, m, id] = interaction.customId.split(/_/gi)
         const server = client.getServer(interaction.guild)
@@ -90,6 +92,7 @@ export default class Suggest extends Command {
         return interaction.deferUpdate()
     }
 
+    @errorCatch(import.meta.url)
     async autocomplete(interaction: AutocompleteInteraction<'cached'>): Promise<any> {
         const server = client.getServer(interaction.guild)
         return interaction.respond(
