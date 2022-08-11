@@ -7,8 +7,7 @@ import {
     User,
     resolveColor,
     escapeCodeBlock,
-    codeBlock,
-    AttachmentBuilder
+    codeBlock
 } from 'discord.js'
 import { sendError, checkSend, PunishmentType, Translator } from '../utils/utils.js'
 import { Client, Server } from '../utils/classes.js'
