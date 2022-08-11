@@ -48,6 +48,8 @@ export class Server {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     emojiStatistics: any = {}
     emojiTimeout?: NodeJS.Timer
+    #ytNotificationChannel: string | null = null
+    #ytNotificationMessage: string = '@everyone {channel} ha subido nuevo video\n{url}'
     /**
      * New Server object with information and config for the server
      * @param guild The guild to which the Server object will bind
@@ -99,6 +101,8 @@ export class Server {
                 this.autoroles.set(key, new Set(value))
             }
         }
+        if (data.yt_notification_channel) this.ytNotificationChannel = data.yt_notification_channel
+        if (data.yt_notification_message) this.ytNotificationMessage = data.yt_notification_message
 
         return
     }
@@ -132,8 +136,37 @@ export class Server {
         }
         if (this.keepRoles) obj.keep_roles = this.keepRoles
         if (this.disabledChannels) obj.disabled_channels = this.disabledChannels
+        if (this.ytNotificationChannel) obj.yt_notification_channel = this.ytNotificationChannel
+        if (this.ytNotificationMessage) obj.yt_notification_message = this.ytNotificationMessage
 
         return obj
+    }
+
+    get ytNotificationChannel(): string | null {
+        return this.#ytNotificationChannel
+    }
+
+    set ytNotificationChannel(value: string | null) {
+        if (!value) this.db.update({ yt_notification_channel: FieldValue.delete() }).catch(() => null)
+        else if (/^\d{18,19}$/.test(value)) {
+            this.#ytNotificationChannel = value
+            this.db
+                .update({ yt_notification_channel: value })
+                .catch(() => this.db.set({ yt_notification_channel: value }))
+        } else throw new Error('Invalid youtube notification channel id')
+    }
+
+    get ytNotificationMessage(): string {
+        return this.#ytNotificationMessage
+    }
+
+    set ytNotificationMessage(value: string) {
+        this.#ytNotificationMessage = value
+        this.db.update({ yt_notification_message: value }).catch(() => this.db.set({ yt_notification_message: value }))
+    }
+
+    setDefaultYtNotificationMessage() {
+        this.ytNotificationMessage = '@everyone {channel} ha subido nuevo video\n{url}'
     }
 
     /**

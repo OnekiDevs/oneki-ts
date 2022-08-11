@@ -29,7 +29,9 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
         suggest_channels: [],
         autoroles: {},
         disabled_channels: [],
-        keep_roles: false
+        keep_roles: false,
+        yt_notification_channel: undefined,
+        yt_notification_message: undefined
     }
 
     const file = (type === 'json' ? JSON : YAML).stringify({ ...defaultConfig, ...server.toDBObject() }, null, 4)

@@ -49,7 +49,9 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
         autoroles,
         emoji_analisis_enabled,
         keep_roles,
-        disabled_channels
+        disabled_channels,
+        yt_notification_channel,
+        yt_notification_message
     } = json
 
     if (prefixes) server.prefixes = prefixes
@@ -73,6 +75,10 @@ export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
     if (emoji_analisis_enabled) server.startEmojiAnalisis()
     if (keep_roles) server.setKeepRoles(true)
     disabled_channels?.forEach(c => server.addDisabledChannel(c))
+    if (yt_notification_message) server.ytNotificationMessage = String(yt_notification_message)
+    try {
+        if (yt_notification_channel) server.ytNotificationChannel = yt_notification_channel
+    } catch {}
 
     interaction.reply(translate('config_cmd.import_file.reply'))
 }

@@ -154,13 +154,21 @@ export class Client extends BaseClient<true> {
 
     initializeEventListener(path: string) {
         return Promise.all(
-            readdirSync(path)
-                .filter(f => f.includes('.event.'))
-                .map(async file => {
-                    const event = await import('file:///' + join(path, file))
-                    const [eventName] = file.split('.')
+            readdirSync(path, { withFileTypes: true }).map(async file => {
+                if (file.isDirectory()) {
+                    readdirSync(join(path, file.name))
+                        .filter(f => f.endsWith('.event.js'))
+                        .forEach(async f => {
+                            const event = await import('file:///' + join(path, file.name, f))
+                            const [eventName] = f.split('.')
+                            this.on(eventName, (...args) => event.default(...args))
+                        })
+                } else if (file.name.endsWith('.event.js')) {
+                    const event = await import('file:///' + join(path, file.name))
+                    const [eventName] = file.name.split('.')
                     this.on(eventName, (...args) => event.default(...args))
-                })
+                }
+            })
         )
     }
 

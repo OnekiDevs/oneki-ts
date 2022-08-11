@@ -97,6 +97,8 @@ export interface LogsChannelsDatabaseModel {
 }
 
 export interface GuildDataBaseModel {
+    yt_notification_channel?: string
+    yt_notification_message?: string
     prefixes?: string[]
     suggest_channels?: SuggestChannelObject[]
     last_suggest?: number
