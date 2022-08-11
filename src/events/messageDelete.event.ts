@@ -7,7 +7,8 @@ import {
     User,
     resolveColor,
     escapeCodeBlock,
-    codeBlock
+    codeBlock,
+    AttachmentBuilder
 } from 'discord.js'
 import { sendError, checkSend, PunishmentType, Translator } from '../utils/utils.js'
 import { Client, Server } from '../utils/classes.js'
@@ -80,7 +81,11 @@ export default async function (message: Message<true>) {
                 } catch {}
             }
 
-            channel.send({ embeds: [embed], content: message.author.id })
+            channel.send({
+                embeds: [embed],
+                content: message.author.id,
+                files: message.attachments.map(attachment => attachment.url)
+            })
         } else {
             if (
                 message.guild.publicUpdatesChannel &&
