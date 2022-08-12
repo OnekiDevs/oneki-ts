@@ -50,7 +50,7 @@ export default async function (guild: Guild) {
                 .setTimestamp()
                 .setColor(resolveColor('Random'))
                 .setFooter((guild.client as Client).embedFooter)
-                .setImage(guild.bannerURL() ?? '')
+                .setImage(guild.bannerURL() ?? null)
             channel.send({
                 embeds: [embed]
             })
