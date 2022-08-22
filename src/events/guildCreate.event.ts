@@ -1,5 +1,5 @@
 import { Guild, GuildMember, EmbedBuilder, TextChannel, resolveColor, codeBlock } from 'discord.js'
-import { Client, Server } from '../utils/classes.js'
+import { Server } from '../utils/classes.js'
 import { checkSend, sendError } from '../utils/utils.js'
 import client from '../client.js'
 

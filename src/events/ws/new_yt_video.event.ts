@@ -1,6 +1,6 @@
 import { ChannelType } from 'discord.js'
-import client from '../../client'
-import { checkSend } from '../../utils/utils'
+import client from '../../client.js'
+import { checkSend } from '../../utils/utils.js'
 
 export default async function ({ server: serverid, data }: { server: string; data: any }) {
     const server = client.getServer(client.guilds.cache.get(serverid)!)

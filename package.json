@@ -29,6 +29,7 @@
     "homepage": "https://github.com/OnekiDevs/oneki-ts#readme",
     "dependencies": {
         "@androz2091/discord-invites-tracker": "1.1.0",
+        "@types/node": "^18.7.6",
         "cross-env": "7.0.3",
         "discord.js": "14.1.1",
         "dotenv": "16.0.1",

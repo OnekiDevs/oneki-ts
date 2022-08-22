@@ -110,7 +110,7 @@ export default class Tictactoe extends Command {
                 // create the ButtonBuilder
                 components[x].addComponents(
                     new ButtonBuilder()
-                        .setCustomId(`ttt_${y}_${x}_${cell}`)
+                        .setCustomId(`tictactoe_${y}_${x}_${cell}`)
                         .setStyle(ButtonStyle.Primary)
                         .setEmoji({
                             id:
@@ -124,6 +124,7 @@ export default class Tictactoe extends Command {
                 )
             }
         }
+
         return components
     }
 }
