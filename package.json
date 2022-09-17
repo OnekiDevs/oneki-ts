@@ -1,6 +1,6 @@
 {
     "name": "oneki",
-    "version": "0.17.1",
+    "version": "0.17.2",
     "description": "Module of Oneki Bot in TypeScript",
     "main": "src/index.js",
     "type": "module",
@@ -28,7 +28,7 @@
     },
     "homepage": "https://github.com/OnekiDevs/oneki-ts#readme",
     "dependencies": {
-        "@androz2091/discord-invites-tracker": "1.1.0",
+        "@androz2091/discord-invites-tracker": "1.1.1",
         "@types/node": "^18.7.6",
         "cross-env": "7.0.3",
         "discord.js": "14.1.1",
@@ -42,8 +42,8 @@
         "yaml": "^2.1.1"
     },
     "engines": {
-        "node": "16.16.0",
-        "npm": "8.11.0"
+        "node": "18.8.0",
+        "npm": "8.18.0"
     },
     "devDependencies": {
         "@sapphire/shapeshift": "3.1.0",
