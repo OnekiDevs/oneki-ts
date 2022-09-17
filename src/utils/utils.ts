@@ -260,7 +260,7 @@ export function errorCatch(file: string) {
             ...descriptor,
             value: function (...args: any[]) {
                 try {
-                    descriptor.value.apply(this, args)
+                    return descriptor.value.apply(this, args)
                 } catch (error) {
                     sendError(error as Error, file)
                 }

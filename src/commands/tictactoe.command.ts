@@ -41,51 +41,54 @@ export default class Tictactoe extends Command {
 
     @errorCatch(import.meta.url)
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
+        interaction.deferUpdate()
         // check if the game is of the same user
-        if (interaction.message.interaction?.user.id !== interaction.user.id) return interaction.deferUpdate()
+        if (interaction.message.interaction?.user.id !== interaction.user.id) return
 
         // set the mark of the user
         const table = interaction.message.components.map(row =>
             row.components.map(button =>
-                button.customId == interaction.customId ? 'x' : button.customId!.split('_').at(-2)
+                button.customId === interaction.customId ? 'x' : button.customId!.split('_').at(-1)
             )
         ) as mark[][]
 
+        let winner = this.checkWinner(table)
+
         // set random mark of the bot
-        while (true) {
+        while (true && winner === 'v') {
             const x = Math.floor(Math.random() * 3)
             const y = Math.floor(Math.random() * 3)
-            if (table[x][y] == 'v') {
+            if (table[x][y] === 'v') {
                 table[x][y] = 'o'
                 break
             }
         }
 
         // check if the game is finished
-        const winner = this.checkWinner(table)
-        if (winner === 'v') interaction.reply({ components: this.createButtons(table) })
-        else interaction.reply({ components: this.createButtons(table, true) })
+        winner = this.checkWinner(table)
+        if (winner === 'v') interaction.message.edit({ components: this.createButtons(table) })
+        else interaction.message.edit({ components: this.createButtons(table, true) })
     }
 
     @errorCatch(import.meta.url)
     checkWinner(table: mark[][]) {
         // check rows
         for (let x = 0; x < table.length; x++) {
-            if (table[x][0] == table[x][1] && table[x][1] == table[x][2]) {
+            if (table[x][0] === table[x][1] && table[x][1] === table[x][2]) {
                 return table[x][0]
             }
         }
         // check columns
         for (let y = 0; y < table[0].length; y++) {
-            if (table[0][y] == table[1][y] && table[1][y] == table[2][y]) {
+            if (table[0][y] === table[1][y] && table[1][y] === table[2][y]) {
                 return table[0][y]
             }
         }
         // check diagonals
-        if (table[0][0] == table[1][1] && table[1][1] == table[2][2]) {
+        if (table[0][0] === table[1][1] && table[1][1] === table[2][2]) {
             return table[0][0]
         }
-        if (table[0][2] == table[1][1] && table[1][1] == table[2][0]) {
+        if (table[0][2] === table[1][1] && table[1][1] === table[2][0]) {
             return table[0][2]
         }
         return 'v'
