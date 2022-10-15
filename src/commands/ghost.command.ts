@@ -1,12 +1,5 @@
-import {
-    ChatInputCommandInteraction,
-    ApplicationCommandOptionType,
-    UserFlagsBitField,
-    AttachmentBuilder
-} from 'discord.js'
+import { ChatInputCommandInteraction, ApplicationCommandOptionType } from 'discord.js'
 import { Command } from '../utils/classes.js'
-import Jimp from 'jimp'
-import puppeteer from 'puppeteer'
 import { errorCatch } from '../utils/utils.js'
 import client from '../client.js'
 
