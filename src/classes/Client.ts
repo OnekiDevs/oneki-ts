@@ -320,7 +320,7 @@ function ghost(client: Client) {
             const obj = {
                 [user.id]: FieldValue.increment(points)
             }
-            ref.update(obj).catch(() => ref.set(obj).catch(() => null))
+            ref.update(obj).catch(() => ref.set(obj).catch(console.error))
             message.channel
                 .send(`${points} puntos para <@${user.id}>`)
                 .then(m => sleep(5_000).then(() => m.delete().catch(() => null)))
