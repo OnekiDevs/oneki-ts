@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Client as BaseClient, Collection, TextChannel, Guild } from 'discord.js'
-import { getFirestore, Firestore } from 'firebase-admin/firestore'
+import { Client as BaseClient, Collection, TextChannel, Guild, GuildMember, AttachmentBuilder, User } from 'discord.js'
+import { getFirestore, Firestore, FieldValue } from 'firebase-admin/firestore'
 import InvitesTracker from '@androz2091/discord-invites-tracker'
 import { initializeApp, cert } from 'firebase-admin/app'
 import { EmbedBuilder } from '@discordjs/builders'
-import { sendError } from '../utils/utils.js'
+import { checkSend, sendError } from '../utils/utils.js'
 import { createRequire } from 'module'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -21,6 +21,7 @@ import {
     Server
 } from '../utils/classes.js'
 import i18n from 'i18n'
+import { sleep } from '../utils/utils.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const version = createRequire(import.meta.url)('../../package.json').version
@@ -121,6 +122,7 @@ export class Client extends BaseClient<true> {
 
         await this._checkBirthdays()
         await this.checkBans()
+        ghost(this)
 
         InvitesTracker.init(this, {
             fetchGuilds: true,
@@ -255,4 +257,96 @@ export class Client extends BaseClient<true> {
     getServer(guild: Guild): Server {
         return this.servers.get(guild.id) ?? this.newServer(guild)
     }
+}
+
+function ghost(client: Client) {
+    const getRandomChannelId = () => {
+        const c = [
+            '972563930830483470',
+            '996613158527586354',
+            '972563930830483473',
+            '1009913867998076998',
+            '996612762350387210',
+            '972563931233148980',
+            '972563931233148981',
+            '972563931233148982',
+            '996818789154951189',
+            '972563931233148983',
+            '972563931233148984',
+            '972579441760952340',
+            '996780304956149780',
+            '972591254149922866',
+            '972563931233148978',
+            '1013863203530346566',
+            '1013863331930570772',
+            '999102000375529643'
+        ]
+        return c[Math.floor(Math.random() * c.length)]
+    }
+    const randomTime = () => (Math.floor(Math.random() * 15) + 5) * 60000
+    const calulatePonts = (xp: number, t: number) =>
+        Math.round(150 - (t + Math.pow(Math.round((Math.sqrt(100 * xp + 25) + 50) / 100) - 1, 2) / 2))
+    const caza = async (): Promise<any> => {
+        const channel = client.channels.cache.get(getRandomChannelId()) as TextChannel
+        const member = client.guilds.cache
+            .get('972563929836445778')
+            ?.members.cache.get('901956486064922624') as GuildMember
+        if (!channel || checkSend(channel, member)) return caza()
+        const message = await channel.send({
+            files: [
+                new AttachmentBuilder(
+                    'https://www.kindpng.com/picc/m/392-3922815_cute-kawaii-chibi-ghost-halloween-asthetic-tumblr-cartoon.png'
+                )
+            ]
+        })
+        try {
+            // get reaction
+            const reactions = await message.awaitReactions({ time: 60_000, max: 1, errors: ['time'] })
+            message.delete().catch(() => null)
+            if (!reactions.size) return sleep(randomTime()).then(caza)
+            const reaction = reactions.first()
+            if (!reaction) return sleep(randomTime()).then(caza)
+            const user = reaction.users.cache.first() as User
+            const ref = await client.db
+                .collection('guilds')
+                .doc((message.guild as Guild).id)
+                .collection('events')
+                .doc('ghost2022')
+            const snapshot = await ref.get()
+            // calculate points
+            const points = calulatePonts(
+                snapshot.data()?.[user.id] ?? 0,
+                Math.floor((new Date().getTime() - message.createdTimestamp) / 1000)
+            )
+            // update database and notify
+            const obj = {
+                [user.id]: FieldValue.increment(points)
+            }
+            ref.update(obj).catch(() => ref.set(obj).catch(() => null))
+            message.channel
+                .send(`${points} puntos para <@${user.id}>`)
+                .then(m => sleep(5_000).then(() => m.delete().catch(() => null)))
+            await sleep(randomTime())
+            caza()
+        } catch (error) {
+            message.delete().catch(() => null)
+            await sleep(randomTime())
+            caza()
+        }
+        //!troleo
+        //     if(ch){
+        //         if(ch.id !== '850338969135611926' && (Math.floor(Math.random()*5)+1) > 3){
+        //             const e = ch.guild.emojis.cache.filter(e=>e.available).map(e=>`<${e.animated?'a':''}:${e.name}:${e.id}>`)
+        //             const msg = [
+        //                 'se te perdió algo?',
+        //                 'buscabas algo?',
+        //                 `${e[Math.floor(Math.random()*e.length)]}`
+        //             ]
+        //             const m = await ch.send(msg[Math.floor(Math.random()*msg.length)])
+        //             await util.sleep((Math.floor(Math.random()*30)+20)*1000)
+        //             ch = client.channels.cache.get(channel())
+        //             await m.delete()
+        //         }
+    }
+    caza()
 }

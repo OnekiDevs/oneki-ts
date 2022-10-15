@@ -1,9 +1,10 @@
 import { PermissionsBitField, Message, TextChannel } from 'discord.js'
 import { Client } from '../utils/classes.js'
-import { sendError} from '../utils/utils.js'
+import { sendError } from '../utils/utils.js'
+import client from '../client.js'
+import { checkSend } from '../utils/utils'
 
 export default async function (msg: Message<true>) {
-    const client = msg.client as Client
     const server = client.getServer(msg.guild)
     if (server.disabledChannels.includes(msg.channelId)) return //If it's a disabled channel
 
@@ -31,9 +32,9 @@ export default async function (msg: Message<true>) {
         }
 
         // commands
-        const prefix = server?.prefixes.find(p => msg.content.startsWith(p))
+        const prefix = server.prefixes.find(p => msg.content.startsWith(p))
         if (!prefix) return
-        const args = msg.content.slice(prefix?.length).split(/ /gi)
+        const args = msg.content.slice(prefix.length).split(/ /gi)
         msg.client.emit('command', msg, args.shift(), args)
     } catch (error) {
         sendError(error as Error, import.meta.url)
