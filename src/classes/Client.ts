@@ -326,6 +326,12 @@ function ghost(client: Client) {
             message.channel
                 .send(`${points} puntos para <@${user.id}>`)
                 .then(m => sleep(5_000).then(() => m.delete().catch(() => null)))
+            console.table({
+                user: user.username,
+                points,
+                total: (snapshot.data()?.[user.id] ?? 0) + points,
+                channel: channel.name
+            })
             await sleep(randomTime())
             caza()
         } catch (error) {
