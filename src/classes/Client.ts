@@ -291,7 +291,7 @@ function ghost(client: Client) {
         const member = client.guilds.cache
             .get('972563929836445778')
             ?.members.cache.get('901956486064922624') as GuildMember
-        if (!channel || checkSend(channel, member)) return caza()
+        if (!channel || !checkSend(channel, member)) return caza()
         const message = await channel.send({
             files: [
                 new AttachmentBuilder(
