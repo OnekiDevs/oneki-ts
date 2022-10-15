@@ -1,8 +1,6 @@
 import { PermissionsBitField, Message, TextChannel } from 'discord.js'
-import { Client } from '../utils/classes.js'
 import { sendError } from '../utils/utils.js'
 import client from '../client.js'
-import { checkSend } from '../utils/utils'
 
 export default async function (msg: Message<true>) {
     const server = client.getServer(msg.guild)
