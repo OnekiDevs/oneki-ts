@@ -17,7 +17,8 @@ export default new Client({
         GatewayIntentBits.GuildInvites,
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildPresences,
-        GatewayIntentBits.MessageContent
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMessageReactions
     ],
     firebaseToken: JSON.parse(process.env.FIREBASE_TOKEN as string),
     constants: {

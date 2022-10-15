@@ -262,6 +262,7 @@ export class Client extends BaseClient<true> {
 function ghost(client: Client) {
     const getRandomChannelId = () => {
         const c = [
+            // '1030688845475360879' // test
             '972563930830483470',
             '996613158527586354',
             '972563930830483473',
