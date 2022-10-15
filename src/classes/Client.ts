@@ -18,7 +18,8 @@ import {
     ComponentManager,
     OldCommandManager,
     UnoGame,
-    Server
+    Server,
+    Message
 } from '../utils/classes.js'
 import i18n from 'i18n'
 import { sleep } from '../utils/utils.js'
@@ -293,13 +294,13 @@ function ghost(client: Client) {
             .get('972563929836445778')
             ?.members.cache.get('901956486064922624') as GuildMember
         if (!channel || !checkSend(channel, member)) return caza()
-        const message = await channel.send({
+        const message = (await channel.send({
             files: [
                 new AttachmentBuilder(
                     'https://www.kindpng.com/picc/m/392-3922815_cute-kawaii-chibi-ghost-halloween-asthetic-tumblr-cartoon.png'
                 )
             ]
-        })
+        })) as Message<true>
         try {
             // get reaction
             const reactions = await message.awaitReactions({ time: 60_000, max: 1, errors: ['time'] })
@@ -308,11 +309,7 @@ function ghost(client: Client) {
             const reaction = reactions.first()
             if (!reaction) return sleep(randomTime()).then(caza)
             const user = reaction.users.cache.first() as User
-            const ref = await client.db
-                .collection('guilds')
-                .doc((message.guild as Guild).id)
-                .collection('events')
-                .doc('ghost2022')
+            const ref = await client.db.collection('guilds').doc(message.guild.id).collection('events').doc('ghost2022')
             const snapshot = await ref.get()
             // calculate points
             const points = calulatePonts(
@@ -333,6 +330,9 @@ function ghost(client: Client) {
                 total: (snapshot.data()?.[user.id] ?? 0) + points,
                 channel: channel.name
             })
+            ;(message.guild.channels.cache.get('1030688845475360879') as TextChannel).send(
+                `${points} puntos para <@${user.id}>`
+            )
             await sleep(randomTime())
             caza()
         } catch (error) {
