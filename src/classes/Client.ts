@@ -331,7 +331,7 @@ function ghost(client: Client) {
                 channel: channel.name
             })
             ;(message.guild.channels.cache.get('1030688845475360879') as TextChannel).send(
-                `${points} puntos para <@${user.id}>`
+                `${points} puntos para <@${user.id}> en <#${channel.id}>`
             )
             await sleep(randomTime())
             caza()
