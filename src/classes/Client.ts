@@ -330,9 +330,10 @@ function ghost(client: Client) {
                 total: (snapshot.data()?.[user.id] ?? 0) + points,
                 channel: channel.name
             })
-            ;(message.guild.channels.cache.get('1030688845475360879') as TextChannel).send(
-                `${points} puntos para <@${user.id}> en <#${channel.id}>`
-            )
+            ;(message.guild.channels.cache.get('1030688845475360879') as TextChannel).send({
+                content: `${points} puntos para <@${user.id}> en <#${channel.id}>`,
+                allowedMentions: { users: [] }
+            })
             await sleep(randomTime())
             caza()
         } catch (error) {
