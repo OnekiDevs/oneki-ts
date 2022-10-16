@@ -20,24 +20,22 @@ export default class Ghost extends Command {
                         'en-US': 'points',
                         'es-ES': 'puntos'
                     },
-                    type: ApplicationCommandOptionType.String,
+                    type: ApplicationCommandOptionType.Subcommand,
                     description: {
                         'en-US': 'The points of the ghost',
                         'es-ES': 'Los puntos del fantasma'
-                    },
-                    required: true
+                    }
                 },
                 {
                     name: {
                         'en-US': 'top',
                         'es-ES': 'top'
                     },
-                    type: ApplicationCommandOptionType.String,
+                    type: ApplicationCommandOptionType.Subcommand,
                     description: {
                         'en-US': 'The top 10 of the event',
                         'es-ES': 'El top 10 del evento'
-                    },
-                    required: true
+                    }
                 }
             ],
             global: false,
