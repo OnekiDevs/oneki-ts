@@ -159,7 +159,7 @@ export async function sendError(error: Error, file: string) {
                 process.env.NODE_ENV !== 'production'
                     ? process.env.DEVELOPER_ID
                         ? `<@${process.env.DEVELOPER_ID}>`
-                        : null
+                        : undefined
                     : `<@&${client.constants.jsDiscordRoll}>`,
             embeds: [
                 new EmbedBuilder()

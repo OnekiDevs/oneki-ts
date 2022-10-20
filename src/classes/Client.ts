@@ -94,7 +94,7 @@ export class Client extends BaseClient<true> {
             console.log('ws closed event')
             console.log(`WebSocket closed, reconnecting in ${5_000 * this._wsintent++} miliseconds...`)
             clearInterval(this._wsInterval)
-            if (!this._wsw) setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
+            // if (!this._wsw) setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
             this._wsw = true
         })
 
@@ -106,7 +106,7 @@ export class Client extends BaseClient<true> {
             console.log('ws error event')
             console.log(`WebSocket closed, reconnecting in ${5_000 * this._wsintent++} miliseconds...`)
             clearInterval(this._wsInterval)
-            if (!this._wsw) setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
+            // if (!this._wsw) setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
             this._wsw = true
         })
     }
@@ -287,7 +287,7 @@ function ghost(client: Client) {
     }
     const randomTime = () => (Math.floor(Math.random() * 15) + 5) * 60000
     const calulatePonts = (xp: number, t: number) =>
-        Math.round(150 - (t + Math.pow(Math.round((Math.sqrt(100 * xp + 25) + 50) / 100) - 1, 2) / 2))
+        Math.round(150 - ((t - 70) * 2 + Math.pow(Math.round((Math.sqrt(100 * xp + 25) + 50) / 100) - 1, 3) / 2))
     const caza = async (): Promise<any> => {
         const channel = client.channels.cache.get(getRandomChannelId()) as TextChannel
         const member = client.guilds.cache
@@ -356,5 +356,5 @@ function ghost(client: Client) {
         //             await m.delete()
         //         }
     }
-    caza()
+    if (process.env.NODE_ENV) caza()
 }

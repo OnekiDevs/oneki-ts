@@ -29,12 +29,11 @@ export default async function (message: Message<true>) {
                     .setThumbnail(message.author.displayAvatarURL())
             ],
             files: message.attachments.map(a => new AttachmentBuilder(a.url)),
-            content:
-                message.content
-                    .match(
-                        /\.(jpeg|jpg|gif|png|webp|mp4|webm|mp3|ogg|wav|flac|aac|m4a|opus|midi|pdf|doc|docx|xls|xlsx|ppt|pptx|txt|md|rtf|csv|tsv|xml|json|js|css|html|htm|svg|woff2|apng|bmp|tiff|cur|eot|ttf|ico|otf)$/
-                    )
-                    ?.join('\n') || null
+            content: message.content
+                .match(
+                    /\.(jpeg|jpg|gif|png|webp|mp4|webm|mp3|ogg|wav|flac|aac|m4a|opus|midi|pdf|doc|docx|xls|xlsx|ppt|pptx|txt|md|rtf|csv|tsv|xml|json|js|css|html|htm|svg|woff2|apng|bmp|tiff|cur|eot|ttf|ico|otf)$/
+                )
+                ?.join('\n')
         })
     } catch (error) {
         sendError(error as Error, import.meta.url)
