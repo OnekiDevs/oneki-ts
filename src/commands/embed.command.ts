@@ -59,7 +59,7 @@ export default class Embed extends Command {
     async interacion(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
         let image: Attachment | string | null = interaction.options.getAttachment('image')
         const extencion = image?.url.split('.').pop() ?? ''
-        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extencion ?? '')) image = image?.url as string
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extencion)) image = image?.url as string
         else image = null
 
         interaction.reply({
@@ -77,7 +77,7 @@ export default class Embed extends Command {
     async button(interaction: ButtonInteraction<'cached'>): Promise<any> {
         if (interaction.message.interaction?.user.id !== interaction.user.id) return interaction.deferUpdate()
 
-        const embed = new EmbedBuilder(interaction.message?.embeds[0]?.data as APIEmbed)
+        const embed = new EmbedBuilder(interaction.message.embeds[0]?.data as APIEmbed)
 
         if (interaction.customId === 'embed_edit') {
             const title = new ActionRowBuilder<TextInputBuilder>().addComponents([
