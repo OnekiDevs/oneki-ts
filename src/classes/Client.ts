@@ -312,10 +312,9 @@ function ghost(client: Client) {
             const ref = await client.db.collection('guilds').doc(message.guild.id).collection('events').doc('ghost2022')
             const snapshot = await ref.get()
             // calculate points
-            const points = calulatePonts(
-                snapshot.data()?.[user.id] ?? 0,
-                Math.floor((new Date().getTime() - message.createdTimestamp) / 1000)
-            )
+            const t = Math.floor((new Date().getTime() - message.createdTimestamp) / 1000)
+            const points = calulatePonts(snapshot.data()?.[user.id] ?? 0, t)
+            console.table([points, snapshot.data()?.[user.id] ?? 0, t])
             // update database and notify
             const obj = {
                 [user.id]: FieldValue.increment(points)
