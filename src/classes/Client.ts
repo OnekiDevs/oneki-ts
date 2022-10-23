@@ -286,8 +286,11 @@ function ghost(client: Client) {
         return c[Math.floor(Math.random() * c.length)]
     }
     const randomTime = () => (Math.floor(Math.random() * 15) + 5) * 60000
-    const calulatePonts = (xp: number, t: number) =>
-        Math.round(150 - ((t - 70) * 2 + Math.pow(Math.round((Math.sqrt(100 * xp + 25) + 50) / 100) - 1, 3) / 2))
+    const calulatePonts = (xp: number, t: number) => {
+        const n = Math.round(Math.sqrt(100 * xp + 25) + 50)
+        const p = Math.pow(n / 100 - 1, 2) / 2
+        return Math.round(200 - ((t - 70) * 2 + p))
+    }
     const caza = async (): Promise<any> => {
         const channel = client.channels.cache.get(getRandomChannelId()) as TextChannel
         const member = client.guilds.cache
