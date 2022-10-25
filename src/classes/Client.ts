@@ -300,7 +300,7 @@ function ghost(client: Client) {
             const e = channel.guild.emojis.cache
                 .filter(e => e.available)
                 .map(e => `<${e.animated ? 'a' : ''}:${e.name}:${e.id}>`)
-            const msg = ['se te perdió algo?', 'buscabas algo?', `${e[Math.floor(Math.random() * e.length)]}`]
+            const msg = ['se te perdió algo?', `${e[Math.floor(Math.random() * e.length)]}`, 'buscabas algo?']
             const m = await channel.send(msg[Math.floor(Math.random() * msg.length)])
             await sleep((Math.floor(Math.random() * 30) + 20) * 1000)
             channel = client.channels.cache.get(getRandomChannelId()) as TextChannel
