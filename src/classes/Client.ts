@@ -292,11 +292,22 @@ function ghost(client: Client) {
         return Math.round(200 - ((t - 70) * 2 + p))
     }
     const caza = async (): Promise<any> => {
-        const channel = client.channels.cache.get(getRandomChannelId()) as TextChannel
-        const member = client.guilds.cache
-            .get('972563929836445778')
-            ?.members.cache.get('901956486064922624') as GuildMember
+        let channel = client.channels.cache.get(getRandomChannelId()) as TextChannel
+        const member = channel?.guild.members.cache.get('901956486064922624') as GuildMember
         if (!channel || !checkSend(channel, member)) return caza()
+        // troleo
+        if (Math.floor(Math.random() * 10) + 1 < 3) {
+            const e = channel.guild.emojis.cache
+                .filter(e => e.available)
+                .map(e => `<${e.animated ? 'a' : ''}:${e.name}:${e.id}>`)
+            const msg = ['se te perdió algo?', 'buscabas algo?', `${e[Math.floor(Math.random() * e.length)]}`]
+            const m = await channel.send(msg[Math.floor(Math.random() * msg.length)])
+            await sleep((Math.floor(Math.random() * 30) + 20) * 1000)
+            channel = client.channels.cache.get(getRandomChannelId()) as TextChannel
+            await m.delete()
+            if (!channel || !checkSend(channel, member)) return caza()
+        }
+        // fin troleo
         const message = (await channel.send({
             files: [
                 new AttachmentBuilder(
@@ -343,20 +354,6 @@ function ghost(client: Client) {
             await sleep(randomTime())
             caza()
         }
-        //!troleo
-        //     if(ch){
-        //         if(ch.id !== '850338969135611926' && (Math.floor(Math.random()*5)+1) > 3){
-        //             const e = ch.guild.emojis.cache.filter(e=>e.available).map(e=>`<${e.animated?'a':''}:${e.name}:${e.id}>`)
-        //             const msg = [
-        //                 'se te perdió algo?',
-        //                 'buscabas algo?',
-        //                 `${e[Math.floor(Math.random()*e.length)]}`
-        //             ]
-        //             const m = await ch.send(msg[Math.floor(Math.random()*msg.length)])
-        //             await util.sleep((Math.floor(Math.random()*30)+20)*1000)
-        //             ch = client.channels.cache.get(channel())
-        //             await m.delete()
-        //         }
     }
     if (process.env.NODE_ENV) caza()
 }
