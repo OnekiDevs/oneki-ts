@@ -296,7 +296,7 @@ function ghost(client: Client) {
         const member = channel?.guild.members.cache.get('901956486064922624') as GuildMember
         if (!channel || !checkSend(channel, member)) return caza()
         // troleo
-        if (Math.floor(Math.random() * 10) + 1 < 5) {
+        if (Math.floor(Math.random() * 10) + 1 < 6) {
             const e = channel.guild.emojis.cache
                 .filter(e => e.available)
                 .map(e => `<${e.animated ? 'a' : ''}:${e.name}:${e.id}>`)
