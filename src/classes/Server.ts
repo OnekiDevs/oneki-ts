@@ -10,7 +10,7 @@ import {
     User
 } from 'discord.js'
 import { GuildDataBaseModel, Client, SuggestChannelObject, ApiCommand } from '../utils/classes.js'
-import { FieldValue } from 'firebase-admin/firestore'
+import { FieldValue } from '@google-cloud/firestore'
 import { PunishmentType, PunishUser, sleep } from '../utils/utils.js'
 import ms from 'iblazingx-ms'
 import client from '../client.js'

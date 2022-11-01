@@ -50,7 +50,7 @@ export class Client extends BaseClient<true> {
         this.version = version ?? '1.0.0'
 
         this.db = new Firestore({
-            keyFilename: 'google_credentials.json'
+            keyFilename: './google_credentials.json'
         })
 
         this.constants = options.constants

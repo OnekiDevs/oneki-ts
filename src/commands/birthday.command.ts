@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ApplicationCommandOptionType, ChatInputCommandInteraction } from 'discord.js'
-import { FieldValue } from 'firebase-admin/firestore'
+import { FieldValue } from '@google-cloud/firestore'
 import client from '../client.js'
 import { Command } from '../utils/classes.js'
 import { errorCatch } from '../utils/utils.js'
