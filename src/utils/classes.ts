@@ -122,6 +122,7 @@ export interface ClientConstants {
     imgChannel: string
     errorChannel: string
     jsDiscordRoll: string
+    issuesChannel: string
 }
 
 export interface ClientOptions extends BaseClientOptions {

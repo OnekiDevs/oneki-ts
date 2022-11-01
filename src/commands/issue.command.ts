@@ -13,6 +13,7 @@ import {
 import { Command } from '../utils/classes.js'
 import { errorCatch } from '../utils/utils.js'
 import { EmbedBuilder } from 'discord.js'
+import client from '../client.js'
 
 export default class Feedback extends Command {
     cache = new Collection<string, Attachment>()
@@ -125,7 +126,7 @@ export default class Feedback extends Command {
         if (img) embed.setImage(img.url)
         this.cache.delete(interaction.user.id)
 
-        const channel = (await interaction.client.channels.fetch('CHANNEL_ID')) as TextChannel
+        const channel = (await interaction.client.channels.fetch(client.constants.issuesChannel)) as TextChannel
         channel.send({ embeds: [embed] })
 
         interaction.reply('Thanks for your feedback!')
