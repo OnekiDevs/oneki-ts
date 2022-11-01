@@ -13,7 +13,6 @@ import { WebSocket } from 'ws'
 import {
     CommandManager,
     ClientOptions,
-    ServerManager,
     ClientConstants,
     OldCommandManager,
     UnoGame,
@@ -32,15 +31,15 @@ export class Client extends BaseClient<true> {
     i18n = i18n
     commands: CommandManager
     oldCommands: OldCommandManager
-    servers: ServerManager = new ServerManager(this)
+    servers = new Collection<string, Server>()
     websocket?: WebSocket
     constants: ClientConstants
-    private _wsInterval!: ReturnType<typeof setInterval>
-    private _wsintent = 1
+    #wsInterval!: ReturnType<typeof setInterval>
+    #wsintent = 1
     uno: Collection<string, UnoGame> = new Collection()
     embeds = new Collection<string, { embed: EmbedBuilder; interactionId: string }>()
     reconect = true
-    _wsw = false
+    #wsw = false
 
     constructor(options: ClientOptions) {
         super(options)
@@ -59,9 +58,9 @@ export class Client extends BaseClient<true> {
 
         this.constants = options.constants
 
-        this.once('ready', () => this._onReady({ eventsPath: options.routes?.events ?? join(__dirname, '../events') }))
+        this.once('ready', () => this.#onReady({ eventsPath: options.routes?.events ?? join(__dirname, '../events') }))
 
-        this._initWebSocket()
+        this.#initWebSocket()
     }
 
     get embedFooter() {
@@ -71,9 +70,9 @@ export class Client extends BaseClient<true> {
         }
     }
 
-    private _initWebSocket() {
+    #initWebSocket() {
         console.log('\x1b[36m%s\x1b[0m', 'Iniciando WebSocket...')
-        this._wsw = false
+        this.#wsw = false
         // this.websocket = new WebSocket('ws://localhost:3000')
         this.websocket = new WebSocket('wss://oneki.up.railway.app/')
 
@@ -81,35 +80,48 @@ export class Client extends BaseClient<true> {
             console.time('WebSocket Connection')
             this.websocket?.send(this.token)
             console.log('\x1b[33m%s\x1b[0m', 'Socket Conectado!!!')
-            this._wsInterval = setInterval(() => this.websocket?.ping(() => ''), 20_000)
-            this._wsintent = 1
+            this.#wsInterval = setInterval(() => this.websocket?.ping(() => ''), 20_000)
+            this.#wsintent = 1
         })
 
         this.websocket.on('close', () => {
             if (!this.reconect) return
 
             console.log('ws closed event')
-            console.log(`WebSocket closed, reconnecting in ${5_000 * this._wsintent++} miliseconds...`)
-            clearInterval(this._wsInterval)
-            // if (!this._wsw) setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
-            this._wsw = true
+            console.log(`WebSocket closed, reconnecting in ${5_000 * this.#wsintent++ + 1_000} miliseconds...`)
+            clearInterval(this.#wsInterval)
+            if (!this.#wsw) setTimeout(() => this.#initWebSocket(), 5_000 * this.#wsintent)
+            this.#wsw = true
         })
 
-        this.websocket.on('message', () => this._onWebSocketMessage)
+        this.websocket.on('message', () => this.#onWebSocketMessage)
 
-        this.websocket.on('error', () => {
+        this.websocket.on('error', async () => {
             if (!this.reconect) return
 
             console.log('ws error event')
-            console.log(`WebSocket closed, reconnecting in ${5_000 * this._wsintent++} miliseconds...`)
-            clearInterval(this._wsInterval)
-            // if (!this._wsw) setTimeout(() => this._initWebSocket(), 5_000 * this._wsintent)
-            this._wsw = true
+            await sleep()
+            if (!this.#wsw) {
+                console.log(`WebSocket closed, reconnecting in ${5_000 * this.#wsintent++ + 2_000} miliseconds...`)
+                clearInterval(this.#wsInterval)
+                setTimeout(() => this.#initWebSocket(), 5_000 * this.#wsintent)
+                this.#wsw = true
+            }
         })
     }
 
-    private async _onReady(options: { eventsPath: string }) {
-        await this.servers.initialize()
+    async #initializeServers() {
+        return Promise.all(
+            this.guilds.cache.map(async guild => {
+                const server = new Server(guild)
+                await server.init()
+                return this.servers.set(guild.id, server)
+            })
+        )
+    }
+
+    async #onReady(options: { eventsPath: string }) {
+        await this.#initializeServers()
         console.log('\x1b[34m%s\x1b[0m', 'Servidores Desplegados!!')
 
         await this.commands.deploy()
@@ -118,8 +130,8 @@ export class Client extends BaseClient<true> {
         await this.initializeEventListener(options.eventsPath)
         console.log('\x1b[35m%s\x1b[0m', 'Eventos Cargados!!')
 
-        await this._checkBirthdays()
-        await this.checkBans()
+        await this.#checkBirthdays()
+        await this.#checkBans()
         ghost(this)
 
         InvitesTracker.init(this, {
@@ -139,7 +151,7 @@ export class Client extends BaseClient<true> {
         console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
     }
 
-    private _onWebSocketMessage(message: string): void {
+    #onWebSocketMessage(message: string): void {
         try {
             const data = JSON.parse(message)
             if (data.event === 'error') {
@@ -172,7 +184,7 @@ export class Client extends BaseClient<true> {
         )
     }
 
-    private async checkBans() {
+    async #checkBans() {
         console.log('\x1b[32m%s\x1b[0m', 'Revisando bans...')
         this.servers.map(async server => {
             const bansSnap = await server.db.collection('bans').get()
@@ -189,11 +201,11 @@ export class Client extends BaseClient<true> {
         })
 
         setTimeout(() => {
-            this.checkBans()
+            this.#checkBans()
         }, 900000)
     }
 
-    private async _checkBirthdays() {
+    async #checkBirthdays() {
         console.log('\x1b[34m%s\x1b[0m', 'Revisando cumpleaños...')
         const usersSnap = await this.db.collection('users').get()
         usersSnap.forEach(async user => {
@@ -231,7 +243,7 @@ export class Client extends BaseClient<true> {
         })
 
         setTimeout(() => {
-            this._checkBirthdays()
+            this.#checkBirthdays()
         }, 86400000)
     }
 

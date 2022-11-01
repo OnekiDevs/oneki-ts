@@ -613,7 +613,7 @@ export class Server {
             const emojis = msg.content.match(/<a?:[a-z_]+:\d{18}>/gi)
             if (!emojis) return
 
-            const ids = emojis?.map(e => e.replace(/<a?:[a-z_]+:(?<id>\d{18})>/i, '$<id>'))
+            const ids = emojis.map(e => e.replace(/<a?:[a-z_]+:(?<id>\d{18})>/i, '$<id>'))
 
             for (const id of ids) {
                 const emoji = msg.guild.emojis.cache.get(id)
@@ -638,7 +638,7 @@ export class Server {
         const emojis = msg.content.match(/<a?:[a-z_]+:\d{18}>/gi)
         if (!emojis) return
 
-        const ids = emojis?.map(e => e.replace(/<a?:[a-z_]+:(?<id>\d{18})>/i, '$<id>'))
+        const ids = emojis.map(e => e.replace(/<a?:[a-z_]+:(?<id>\d{18})>/i, '$<id>'))
 
         for (const id of ids) {
             const emoji = msg.guild.emojis.cache.get(id)
@@ -1085,7 +1085,7 @@ export class Server {
                 name: author.username,
                 iconURL: author.displayAvatarURL()
             })
-            .setTitle(this.translate('suggest_cmd.title', { id: this?.lastSuggestId }))
+            .setTitle(this.translate('suggest_cmd.title', { id: this.lastSuggestId }))
             .setColor(16313844)
             .setDescription(sug as string)
             .setFooter(client.embedFooter)
@@ -1098,9 +1098,9 @@ export class Server {
                 msg.react('<:yes:885693508533489694>')
                 msg.react('<:no:885693492632879104>')
                 msg.startThread({
-                    name: this.translate('suggest_cmd.sent', { id: this?.lastSuggestId })
+                    name: this.translate('suggest_cmd.sent', { id: this.lastSuggestId })
                 })
-                this?.db?.collection('suggests').doc(`suggest_${this.lastSuggestId}`).set({
+                this.db?.collection('suggests').doc(`suggest_${this.lastSuggestId}`).set({
                     author: author.id,
                     channel: msg.channel.id,
                     suggest: sug

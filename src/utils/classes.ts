@@ -43,7 +43,6 @@ export * from '../classes/Component.js'
 export * from '../classes/Server.js'
 export * from '../handlers/CommandManager.js'
 export * from '../handlers/OldCommandManager.js'
-export * from '../handlers/ServerManager.js'
 
 export * from '../classes/Player.js'
 export * from '../classes/UnoCards.js'
