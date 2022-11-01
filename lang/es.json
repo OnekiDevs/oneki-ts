@@ -131,6 +131,12 @@
         "user_permissions": "No tienes permisos suficientes para aislar a ese usuario",
         "reply": "{user} ha sido aislado correctamente"
     },
+    "feedback": {
+        "modal_placeholder": "Agregar el idioma chino",
+        "say_feedback": "Dime tu feedback",
+        "describe": "Describe el {label}",
+        "thanks": "Gracias por tu feedback"
+    },
     "------------>>>============ events ============<<<------------": "------------>>>============ events ============<<<------------",
     "invites_event": {
         "default_message": "¡{invited} ha entrado al servidor! *Ha sido invitado por {inviter}*",

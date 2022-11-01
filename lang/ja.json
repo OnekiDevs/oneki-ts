@@ -131,6 +131,12 @@
         "user_permissions": "\u305d\u306e\u30e6\u30fc\u30b6\u30fc\u3092\u5206\u96e2\u3059\u308b\u305f\u3081\u306e\u5341\u5206\u306a\u6a29\u9650\u3092\u6301\u3063\u3066\u3044\u307e\u305b\u3093\u3002",
         "reply": "{\u30e6\u30fc\u30b6\u30fc}\u306f\u6b63\u5e38\u306b\u9694\u96e2\u3055\u308c\u307e\u3057\u305f"
     },
+    "feedback": {
+        "modal_placeholder": "中国語の翻訳を追加",
+        "say_feedback": "ご意見をお聞かせください",
+        "describe": "あなたの{label}を説明してください",
+        "thanks": "ご感想ありがとうございました"
+    },
     "------------>>>============ events ============<<<------------": "------------>>>============ events ============<<<------------",
     "invites_event": {
         "default_message": "{invited}\u304c\u30b5\u30fc\u30d0\u30fc\u306b\u53c2\u52a0\u3057\u307e\u3057\u305f!*\u62db\u5f85\u8005\u3067\u3059\u3002",

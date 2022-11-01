@@ -133,6 +133,12 @@
         "user_permissions": "You do not have sufficient permissions",
         "reply": "{user} has been successfully aislated"
     },
+    "feedback": {
+        "modal_placeholder": "Add the chinese translation",
+        "say_feedback": "Say your feedback",
+        "describe": "Describe your {label}",
+        "thanks": "Thanks for your feedback!"
+    },
     "------------>>>============ events ============<<<------------": "------------>>>============ events ============<<<------------",
     "invites_event": {
         "default_message": "{invited} has joined the server! *He has been by {inviter} **Total invites**: {invites}*",

@@ -11,7 +11,7 @@ import {
     TextChannel
 } from 'discord.js'
 import { Command } from '../utils/classes.js'
-import { errorCatch } from '../utils/utils.js'
+import { errorCatch, Translator } from '../utils/utils.js'
 import { EmbedBuilder } from 'discord.js'
 import client from '../client.js'
 
@@ -87,7 +87,7 @@ export default class Feedback extends Command {
 
     @errorCatch(import.meta.url)
     async interaction(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
-        // const translate = Translator(interaction)
+        const translate = Translator(interaction)
         const label = interaction.options.getString('label', true) as 'bug' | 'feature' | 'feedback' | 'other'
         const img = interaction.options.getAttachment('img')
 
@@ -97,9 +97,13 @@ export default class Feedback extends Command {
             .addComponents(
                 new ActionRowBuilder<TextInputBuilder>().addComponents(
                     new TextInputBuilder()
-                        .setLabel(label === 'feedback' ? 'Say your feedback' : `Describe the ${label}`)
+                        .setLabel(
+                            label === 'feedback'
+                                ? translate('feedback.say_feedback')
+                                : translate('feedback.describe', { label })
+                        )
                         .setCustomId('feedback')
-                        .setPlaceholder('Add the chinese translation')
+                        .setPlaceholder(translate('feedback.modal_placeholder'))
                         .setMinLength(10)
                         .setMaxLength(4000)
                         .setStyle(TextInputStyle.Paragraph)
@@ -113,6 +117,7 @@ export default class Feedback extends Command {
 
     @errorCatch(import.meta.url)
     async modal(interaction: ModalSubmitInteraction<'cached'>): Promise<any> {
+        const translate = Translator(interaction)
         const [, label] = interaction.customId.split(':') as ['feedback', 'bug' | 'feature' | 'feedback' | 'other']
         const text = interaction.fields.getTextInputValue('feedback')
         const img = this.cache.get(interaction.user.id)
@@ -129,6 +134,6 @@ export default class Feedback extends Command {
         const channel = (await interaction.client.channels.fetch(client.constants.issuesChannel)) as TextChannel
         channel.send({ embeds: [embed] })
 
-        interaction.reply('Thanks for your feedback!')
+        interaction.reply(translate('feedback.thanks'))
     }
 }
