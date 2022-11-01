@@ -29,10 +29,10 @@
     "homepage": "https://github.com/OnekiDevs/oneki-ts#readme",
     "dependencies": {
         "@androz2091/discord-invites-tracker": "1.1.1",
+        "@google-cloud/firestore": "6.4.1",
         "cross-env": "7.0.3",
         "discord.js": "14.6.0",
         "dotenv": "16.0.3",
-        "firebase-admin": "10.3.0",
         "i18n": "0.15.1",
         "iblazingx-ms": "2.1.2",
         "jimp": "0.16.2",
@@ -45,9 +45,9 @@
         "npm": "8.19.2"
     },
     "devDependencies": {
-        "@types/node": "18.11.8",
         "@sapphire/shapeshift": "3.7.0",
         "@types/i18n": "0.13.5",
+        "@types/node": "18.11.8",
         "@types/uniqid": "5.3.2",
         "@typescript-eslint/eslint-plugin": "5.42.0",
         "@typescript-eslint/parser": "5.42.0",

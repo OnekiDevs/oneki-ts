@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Client as BaseClient, Collection, TextChannel, Guild, GuildMember, AttachmentBuilder, User } from 'discord.js'
-import { getFirestore, Firestore, FieldValue } from 'firebase-admin/firestore'
+import { Firestore, FieldValue } from '@google-cloud/firestore'
 import InvitesTracker from '@androz2091/discord-invites-tracker'
-import { initializeApp, cert } from 'firebase-admin/app'
 import { EmbedBuilder } from '@discordjs/builders'
 import { checkSend, sendError } from '../utils/utils.js'
 import { createRequire } from 'module'
@@ -50,11 +49,9 @@ export class Client extends BaseClient<true> {
         this.i18n.configure(options.i18n)
         this.version = version ?? '1.0.0'
 
-        this.db = getFirestore(
-            initializeApp({
-                credential: cert(options.firebaseToken)
-            })
-        )
+        this.db = new Firestore({
+            keyFilename: 'google_credentials.json'
+        })
 
         this.constants = options.constants
 
