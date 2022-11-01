@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, Message, resolveColor } from 'discord.js'
 import { Command } from '../utils/classes.js'
 import { errorCatch } from '../utils/utils.js'
+import { Translator } from '../utils/utils'
 
 export default class Hangman extends Command {
     constructor() {
@@ -19,10 +20,13 @@ export default class Hangman extends Command {
 
     @errorCatch(import.meta.url)
     async interaction(interaction: ChatInputCommandInteraction<'cached'>) {
+        const translate = Translator(interaction)
         await interaction.deferReply()
 
-        const word = await import('../utils/wordslist.json', { assert: { type: 'json' } }).then(
-            words => words.default[Math.floor(Math.random() * words.default.length)]
+        let lcl = interaction.locale.substring(0, 2) as 'es' | 'en'
+        if (!['en', 'es'].includes(lcl)) lcl = 'en'
+        const word: string = await import('../utils/wordslist.json', { assert: { type: 'json' } }).then(
+            words => words.default[lcl][Math.floor(Math.random() * words.default[lcl].length)]
         )
         const letters = word.split('')
         const guessed = new Set<string>()
@@ -31,29 +35,29 @@ export default class Hangman extends Command {
         let guessedCount = 0
 
         const embed = new EmbedBuilder()
-            .setTitle('Hangman')
-            .setDescription('Guess the word!')
+            .setTitle(translate('hangman.name'))
+            .setDescription(translate('hangman.description'))
             .addFields(
                 {
-                    name: 'Word',
+                    name: translate('word'),
                     value: '```' + letters.map(letter => (guessed.has(letter) ? letter : '_')).join(' ') + '```'
                 },
-                { name: 'Life', value: '❤️❤️❤️❤️❤️❤️' }
+                { name: translate('life'), value: '❤️❤️❤️❤️❤️❤️' }
             )
             .setFooter({
-                text: 'You have 1 minute to guess the word'
+                text: translate('hangman.footer')
             })
             .setColor(resolveColor('Random'))
         const message = await interaction.editReply({ embeds: [embed] })
         const filter = (m: Message) => m.author.id === interaction.user.id
         const onErrorInSend = (error: Error) => {
             if (error.message === 'Missing Permissions')
-                interaction.editReply({ content: 'I need the `Send Messages` permission to play hangman' })
+                interaction.editReply({ content: translate('hangman.send_permissiions') })
             else console.log(error)
         }
         const onErrorInDelete = (error: Error) => {
             if (error.message === 'Missing Permissions')
-                interaction.editReply({ content: 'I need the `Manage Messages` permission to play hangman correctly' })
+                interaction.editReply({ content: translate('hangman.manage_permissions') })
             else console.log(error)
         }
         const gameloop = () => {
@@ -67,19 +71,19 @@ export default class Hangman extends Command {
                     .replace(/[^a-z]/g, '')
                     .substring(0, 1)
                 if (guessed.has(letter) || wrong.has(letter)) {
-                    await m.reply('You already guessed that letter!').catch(onErrorInSend)
+                    await m.reply(translate('hangman.already_guessed')).catch(onErrorInSend)
                 }
                 if (letters.includes(letter)) guessed.add(letter)
                 else wrong.add(letter)
 
                 embed.setFields(
                     {
-                        name: 'Word',
+                        name: translate('word'),
                         value: '```' + letters.map(letter => (guessed.has(letter) ? letter : '_')).join(' ') + '```'
                     },
-                    { name: 'Life', value: '❤️'.repeat(6 - wrong.size) || '0' },
+                    { name: translate('life'), value: '❤️'.repeat(6 - wrong.size) || '0' },
                     {
-                        name: 'letters used',
+                        name: translate('hangman.used'),
                         value: '```' + [...guessed, ...wrong].join('') + '```'
                     }
                 )
@@ -91,21 +95,22 @@ export default class Hangman extends Command {
                 console.log(reason)
 
                 if (guessedCount === letters.length) {
-                    embed.setTitle('You won!').setDescription('You guessed the word!').setColor(resolveColor('Green'))
+                    embed
+                        .setTitle(translate('hangman.won'))
+                        .setDescription(translate('hangman.won_message'))
+                        .setColor(resolveColor('Green'))
                     await interaction.editReply({ embeds: [embed] })
                 } else if (wrong.size === maxWrong) {
                     embed
-                        .setTitle('You lost!')
-                        .setDescription("You didn't guess the word!")
+                        .setTitle(translate('hangman.lost'))
+                        .setDescription(translate('hangman.lost_message'))
                         .setColor(resolveColor('Red'))
-                        .setFooter({ text: 'Game Over' })
                     await interaction.editReply({ embeds: [embed] })
                 } else if (reason === 'time') {
                     embed
-                        .setTitle('Time out!')
-                        .setDescription("You didn't guess the word!")
+                        .setTitle(translate('hangman.timeout'))
+                        .setDescription(translate('hangman.lost_message'))
                         .setColor(resolveColor('Red'))
-                        .setFooter({ text: 'Game Over' })
                     await interaction.editReply({ embeds: [embed] })
                 } else gameloop()
             })

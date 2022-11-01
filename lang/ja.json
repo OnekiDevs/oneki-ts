@@ -137,6 +137,20 @@
         "describe": "あなたの{label}を説明してください",
         "thanks": "ご感想ありがとうございました"
     },
+    "hangman": {
+        "name": "Ahorcado",
+        "description": "Guess the english word!",
+        "footer": "You have 1 minute to guess the word",
+        "send_permissiions": "I need the `Send Messages` permission to play hangman",
+        "manage_permissions": "I need the `Manage Messages` permission to play hangman correctly",
+        "already_guessed": "You already guessed that letter!",
+        "used": "letters used",
+        "won": "You won!",
+        "won_message": "You guessed the word!",
+        "lost": "You lost!",
+        "lost_message": "You didn't guess the word!",
+        "timeout": "Time out!"
+    },
     "------------>>>============ events ============<<<------------": "------------>>>============ events ============<<<------------",
     "invites_event": {
         "default_message": "{invited}\u304c\u30b5\u30fc\u30d0\u30fc\u306b\u53c2\u52a0\u3057\u307e\u3057\u305f!*\u62db\u5f85\u8005\u3067\u3059\u3002",
@@ -202,5 +216,7 @@
     "option": "\u30aa\u30d7\u30b7\u30e7\u30f3",
     "before": "\u524d",
     "after": "\u305d\u306e\u5f8c",
-    "channel": "チャンネル"
+    "channel": "チャンネル",
+    "word": "Word",
+    "life": "Life"
 }

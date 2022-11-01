@@ -137,6 +137,20 @@
         "describe": "Describe el {label}",
         "thanks": "Gracias por tu feedback"
     },
+    "hangman": {
+        "name": "Ahorcado",
+        "description": "Encuentra la palabra en espaniol!",
+        "footer": "Tienes un minuto para adivinar la palabra",
+        "send_permissiions": "Nesesito el permiiso `Send Messages` para el juego",
+        "manage_permissions": "Nesesito el permiiso `Manage Messages` para funcionar correctamente",
+        "already_guessed": "Ya has intentado con esa letra!",
+        "used": "Letras usadas",
+        "won": "Ganaste!",
+        "won_message": "Encontraste la palabre!",
+        "lost": "Perdiste!",
+        "lost_message": "No encontraste la palabra!",
+        "timeout": "Se acabo el tiempo!"
+    },
     "------------>>>============ events ============<<<------------": "------------>>>============ events ============<<<------------",
     "invites_event": {
         "default_message": "¡{invited} ha entrado al servidor! *Ha sido invitado por {inviter}*",
@@ -202,5 +216,7 @@
     "option": "option",
     "before": "Antes",
     "after": "Después",
-    "channel": "Canal"
+    "channel": "Canal",
+    "word": "Palabra",
+    "life": "Vida"
 }

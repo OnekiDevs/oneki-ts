@@ -139,6 +139,20 @@
         "describe": "Describe your {label}",
         "thanks": "Thanks for your feedback!"
     },
+    "hangman": {
+        "name": "Ahorcado",
+        "description": "Guess the english word!",
+        "footer": "You have 1 minute to guess the word",
+        "send_permissiions": "I need the `Send Messages` permission to play hangman",
+        "manage_permissions": "I need the `Manage Messages` permission to play hangman correctly",
+        "already_guessed": "You already guessed that letter!",
+        "used": "letters used",
+        "won": "You won!",
+        "won_message": "You guessed the word!",
+        "lost": "You lost!",
+        "lost_message": "You didn't guess the word!",
+        "timeout": "Time out!"
+    },
     "------------>>>============ events ============<<<------------": "------------>>>============ events ============<<<------------",
     "invites_event": {
         "default_message": "{invited} has joined the server! *He has been by {inviter} **Total invites**: {invites}*",
@@ -204,5 +218,7 @@
     "option": "option",
     "before": "Before",
     "after": "After",
-    "channel": "Channel"
+    "channel": "Channel",
+    "word": "Word",
+    "life": "Life"
 }
