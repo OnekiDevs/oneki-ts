@@ -10,7 +10,6 @@ import { fileURLToPath } from 'url'
 import { readdirSync } from 'fs'
 import { WebSocket } from 'ws'
 import {
-    CommandManager,
     ClientOptions,
     ClientConstants,
     OldCommandManager,

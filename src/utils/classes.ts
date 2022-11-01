@@ -40,7 +40,6 @@ export * from '../classes/Client.js'
 export * from '../classes/Command.js'
 export * from '../classes/OldCommand.js'
 export * from '../classes/Server.js'
-export * from '../handlers/CommandManager.js'
 export * from '../handlers/OldCommandManager.js'
 
 export * from '../classes/Player.js'
