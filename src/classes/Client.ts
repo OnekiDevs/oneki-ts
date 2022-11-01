@@ -1,25 +1,16 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Client as BaseClient, Collection, TextChannel, Guild, GuildMember, AttachmentBuilder, User } from 'discord.js'
-import { Firestore, FieldValue } from '@google-cloud/firestore'
+import { ClientOptions, ClientConstants, UnoGame, Server, Message, Command, OldCommand } from '../utils/classes.js'
 import InvitesTracker from '@androz2091/discord-invites-tracker'
+import { Firestore, FieldValue } from '@google-cloud/firestore'
+import { checkSend, sendError, sleep } from '../utils/utils.js'
 import { EmbedBuilder } from '@discordjs/builders'
-import { checkSend, sendError } from '../utils/utils.js'
 import { createRequire } from 'module'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { readdirSync } from 'fs'
 import { WebSocket } from 'ws'
-import {
-    ClientOptions,
-    ClientConstants,
-    OldCommandManager,
-    UnoGame,
-    Server,
-    Message,
-    Command
-} from '../utils/classes.js'
 import i18n from 'i18n'
-import { sleep } from '../utils/utils.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const version = createRequire(import.meta.url)('../../package.json').version
@@ -29,7 +20,7 @@ export class Client extends BaseClient<true> {
     version: string
     i18n = i18n
     commands = new Collection<string, Command>()
-    oldCommands: OldCommandManager
+    oldCommands = new Collection<string, OldCommand>()
     servers = new Collection<string, Server>()
     websocket?: WebSocket
     constants: ClientConstants
@@ -44,7 +35,6 @@ export class Client extends BaseClient<true> {
     constructor(options: ClientOptions) {
         super(options)
 
-        this.oldCommands = new OldCommandManager(this, options.routes.oldCommands)
         this.cr = options.routes.commands
 
         this.i18n.configure(options.i18n)
@@ -59,6 +49,13 @@ export class Client extends BaseClient<true> {
         this.once('ready', () => this.#onReady({ eventsPath: options.routes?.events ?? join(__dirname, '../events') }))
 
         this.#initWebSocket()
+
+        for (const file of readdirSync(options.routes.oldCommands).filter(f => f.includes('.oldCommand.'))) {
+            import('file:///' + join(options.routes.oldCommands, file)).then(command => {
+                const cmd: OldCommand = new command.default(this)
+                this.oldCommands.set(cmd.name, cmd)
+            })
+        }
     }
 
     get embedFooter() {
