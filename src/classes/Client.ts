@@ -16,7 +16,8 @@ import {
     OldCommandManager,
     UnoGame,
     Server,
-    Message
+    Message,
+    Command
 } from '../utils/classes.js'
 import i18n from 'i18n'
 import { sleep } from '../utils/utils.js'
@@ -28,7 +29,7 @@ export class Client extends BaseClient<true> {
     db: Firestore
     version: string
     i18n = i18n
-    commands: CommandManager
+    commands = new Collection<string, Command>()
     oldCommands: OldCommandManager
     servers = new Collection<string, Server>()
     websocket?: WebSocket
@@ -39,12 +40,13 @@ export class Client extends BaseClient<true> {
     embeds = new Collection<string, { embed: EmbedBuilder; interactionId: string }>()
     reconect = true
     #wsw = false
+    cr: string
 
     constructor(options: ClientOptions) {
         super(options)
 
         this.oldCommands = new OldCommandManager(this, options.routes.oldCommands)
-        this.commands = new CommandManager(this, options.routes.commands)
+        this.cr = options.routes.commands
 
         this.i18n.configure(options.i18n)
         this.version = version ?? '1.0.0'
@@ -117,11 +119,31 @@ export class Client extends BaseClient<true> {
         )
     }
 
+    async #initializeCommands(path: string) {
+        return Promise.all(
+            readdirSync(path)
+                .filter(f => f.endsWith('.command.js'))
+                .map(file => {
+                    import('file:///' + join(path, file)).then(command => {
+                        const cmd: Command = new command.default(this)
+                        this.commands.set(cmd.name, cmd)
+                    })
+                })
+        )
+    }
+
+    async #deployCommands(guild?: Guild) {
+        if (process.env.DEPLOY_COMMANDS == 'true')
+            return Promise.all(this.commands.map(command => command.deploy(guild)))
+        else return Promise.resolve()
+    }
+
     async #onReady(options: { eventsPath: string }) {
         await this.#initializeServers()
         console.log('\x1b[34m%s\x1b[0m', 'Servidores Desplegados!!')
 
-        await this.commands.deploy()
+        await this.#initializeCommands(this.cr)
+        await this.#deployCommands()
         console.log('\x1b[32m%s\x1b[0m', 'Comandos Desplegados!!')
 
         await this.initializeEventListener(options.eventsPath)
