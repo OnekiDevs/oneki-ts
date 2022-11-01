@@ -1,6 +1,6 @@
 {
     "name": "oneki",
-    "version": "0.17.2",
+    "version": "0.17.3",
     "description": "Module of Oneki Bot in TypeScript",
     "main": "src/index.js",
     "type": "module",

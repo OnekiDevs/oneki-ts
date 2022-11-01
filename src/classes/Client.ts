@@ -15,7 +15,6 @@ import {
     ClientOptions,
     ServerManager,
     ClientConstants,
-    ComponentManager,
     OldCommandManager,
     UnoGame,
     Server,
@@ -33,7 +32,6 @@ export class Client extends BaseClient<true> {
     i18n = i18n
     commands: CommandManager
     oldCommands: OldCommandManager
-    components: ComponentManager
     servers: ServerManager = new ServerManager(this)
     websocket?: WebSocket
     constants: ClientConstants
@@ -49,7 +47,6 @@ export class Client extends BaseClient<true> {
 
         this.oldCommands = new OldCommandManager(this, options.routes.oldCommands)
         this.commands = new CommandManager(this, options.routes.commands)
-        this.components = new ComponentManager(this, options.routes.components)
 
         this.i18n.configure(options.i18n)
         this.version = version ?? '1.0.0'

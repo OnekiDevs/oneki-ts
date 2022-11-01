@@ -17,12 +17,10 @@ export default async function (interaction: Interaction) {
                 .get(interaction.commandName)
                 ?.interaction(interaction as ChatInputCommandInteraction<'cached'>)
 
-        if (interaction.isButton()) {
-            client.components.find(btn => btn.regex.test(interaction.customId))?.button(interaction)
+        if (interaction.isButton())
             client.commands
                 .find(cmd => interaction.customId.startsWith(cmd.name))
                 ?.button(interaction as ButtonInteraction<'cached'>)
-        }
 
         if (interaction.type === InteractionType.ModalSubmit)
             client.commands
