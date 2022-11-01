@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, Message, resolveColor } from 'discord.js'
 import { Command } from '../utils/classes.js'
 import { errorCatch } from '../utils/utils.js'
-import { Translator } from '../utils/utils'
+import { Translator } from '../utils/utils.js'
 
 export default class Hangman extends Command {
     constructor() {
