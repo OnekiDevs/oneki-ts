@@ -6,8 +6,7 @@ export default class Emoji extends OldCommand {
         super({
             name: 'emoji',
             description: 'Get the emoji as a URL',
-            alias: ['emote', 'emogi'],
-            client
+            alias: ['emote', 'emogi']
         })
     }
 

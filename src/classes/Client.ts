@@ -131,7 +131,7 @@ export class Client extends BaseClient<true> {
         )
     }
 
-    async #deployCommands(guild?: Guild) {
+    async deployCommands(guild?: Guild) {
         if (process.env.DEPLOY_COMMANDS == 'true')
             return Promise.all(this.commands.map(command => command.deploy(guild)))
         else return Promise.resolve()
@@ -142,7 +142,7 @@ export class Client extends BaseClient<true> {
         console.log('\x1b[34m%s\x1b[0m', 'Servidores Desplegados!!')
 
         await this.#initializeCommands(this.cr)
-        await this.#deployCommands()
+        await this.deployCommands()
         console.log('\x1b[32m%s\x1b[0m', 'Comandos Desplegados!!')
 
         await this.initializeEventListener(options.eventsPath)

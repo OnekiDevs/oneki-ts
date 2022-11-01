@@ -7,8 +7,7 @@ export default class Help extends OldCommand {
         super({
             name: 'emote_analize',
             description: 'Start an analysis of emojis from the server',
-            alias: ['emoteanalize', 'emojianalize', 'emoji_analize'],
-            client
+            alias: ['emoteanalize', 'emojianalize', 'emoji_analize']
         })
     }
 

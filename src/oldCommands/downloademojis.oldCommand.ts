@@ -8,8 +8,7 @@ export default class DownloadEmojis extends OldCommand {
         super({
             name: 'downloademojis',
             description: 'Get the emojis in a zip file',
-            alias: ['download_emojis', 'descargaremojis', 'descargar_emojis'],
-            client
+            alias: ['download_emojis', 'descargaremojis', 'descargar_emojis']
         })
     }
 

@@ -7,8 +7,8 @@ export default async function (guild: Guild) {
     try {
         if (!client.servers.has(guild.id)) client.servers.set(guild.id, new Server(guild))
         console.log('\x1b[34m%s\x1b[0m', `Nuevo Servidor Desplegado!! ${guild.name} (${guild.id})`)
-        client.commands
-            .deploy(guild)
+        client
+            .deployCommands(guild)
             .then(() => console.log('\x1b[32m%s\x1b[0m', 'Comandos Desplegados para ' + guild.name))
         const channel = client.channels.cache.get(client.constants.newServerLogChannel ?? '') as TextChannel
         if (channel && checkSend(channel, guild.members.me as GuildMember)) {
