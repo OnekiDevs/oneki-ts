@@ -11,5 +11,18 @@ export default class BastaGame {
 
     start() {
         this.message.edit({ content: 'coming soon', embeds: [], components: [] })
+        // TODO: implement game logic
+        // generate random letter
+        // show letter
+        // wait for reactions
+        // timeout 10s for others players
+        // consensus?
+        // apply points
+        // continue question
+        // if end show points
+    }
+
+    generateRandomLetter() {
+        return 'a'
     }
 }

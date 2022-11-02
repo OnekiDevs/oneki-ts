@@ -147,7 +147,7 @@ export class Client extends BaseClient<true> {
 
         await this.#checkBirthdays()
         await this.#checkBans()
-        ghost(this)
+        // ghost(this)
 
         InvitesTracker.init(this, {
             fetchGuilds: true,
