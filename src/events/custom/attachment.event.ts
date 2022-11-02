@@ -1,5 +1,5 @@
-import { checkSend, sendError, Translator } from '../utils/utils.js'
-import { Client } from '../utils/classes.js'
+import { checkSend, sendError, Translator } from '../../utils/utils.js'
+import { Client } from '../../utils/classes.js'
 import { AttachmentBuilder, EmbedBuilder, GuildMember, Message, TextChannel } from 'discord.js'
 
 export default async function (message: Message<true>) {
