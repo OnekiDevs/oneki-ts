@@ -1,10 +1,12 @@
-import { Collection, Guild } from 'discord.js'
+import { Collection, Guild, TextChannel } from 'discord.js'
 import { Client as BaseClient } from 'offdjs'
 import { ClientConstants, ClientOptions } from '../utils/classes.js'
 import Server from './Server.js'
 import { WebSocket } from 'ws'
 import { sleep } from '../utils/utils.js'
 import { Firestore } from '@google-cloud/firestore'
+import InvitesTracker from '@androz2091/discord-invites-tracker'
+import { join } from 'path'
 export default class Client extends BaseClient {
     servers = new Collection<string, Server>()
     constants: ClientConstants
@@ -18,6 +20,7 @@ export default class Client extends BaseClient {
     constructor(options: ClientOptions) {
         super(options)
         this.constants = options.constants
+        this.once('ready', () => this.#onReady())
     }
 
     /**
@@ -39,6 +42,104 @@ export default class Client extends BaseClient {
         const server = new Server(guild)
         this.servers.set(guild.id, server)
         return server
+    }
+
+    async #initializeServers() {
+        return Promise.all(
+            this.guilds.cache.map(async guild => {
+                const server = new Server(guild)
+                await server.init()
+                return this.servers.set(guild.id, server)
+            })
+        )
+    }
+
+    async #checkBans() {
+        console.log('\x1b[32m%s\x1b[0m', 'Revisando bans...')
+        this.servers.map(async server => {
+            const bansSnap = await server.db.collection('bans').get()
+            bansSnap.forEach(async bannedUser => {
+                const bannedDate = bannedUser.data().date
+                const timeSinceBanned = new Date().getTime() - bannedDate
+                const banDuration = bannedUser.data().duration
+                if (timeSinceBanned > banDuration) {
+                    server.guild.members.unban(bannedUser.id)
+                    server.db.collection('bans').doc(bannedUser.id).delete()
+                }
+                console.log(`El usuario ${bannedUser.id} ha sido desbaneado de ${server.guild.id}`)
+            })
+        })
+
+        setTimeout(() => {
+            this.#checkBans()
+        }, 900000)
+    }
+
+    async #checkBirthdays() {
+        console.log('\x1b[34m%s\x1b[0m', 'Revisando cumpleaños...')
+        const usersSnap = await this.db.collection('users').get()
+        usersSnap.forEach(async user => {
+            const birthday = user.data().birthday
+            if (!birthday) return
+            const [month, day, year] = birthday.split('/')
+
+            //Check if it's the user's birthday
+            if (year > new Date().getFullYear()) return
+            if (month > new Date().getMonth() + 1 || day > new Date().getDate()) return
+            //Celebrate user's birthday
+            this.servers.map(async server => {
+                const birthdayChannel = server.birthday.channel
+                if (!birthdayChannel) return
+
+                /* Revisar si el usuario está en el servidor */
+                let member = server.guild.members.cache.get(user.id)
+                if (!member) member = await server.guild.members.fetch(user.id)
+                if (!member) return //Si no está tampoco en la API retornamos
+
+                /* Revisar si el canal sigue existiendo y obtenerlo */
+                let channel = server.guild.channels.cache.get(birthdayChannel) as TextChannel
+                if (!channel) channel = (await server.guild.channels.fetch(birthdayChannel)) as TextChannel
+                if (!channel) return server.removeBirthdayChannel() //Si no está tampoco en la API lo borramos de la base de datos
+
+                channel.send(
+                    server.birthday.message?.replaceAll('{username}', `<@${user.id}>`) ??
+                        server.translate('birthday_cmd.default_message', { username: `<@${user.id}>` })
+                )
+            })
+
+            //Update user's birthday
+            const newBirthday = `${month}/${day}/${parseInt(year) + 1}`
+            this.db.collection('users').doc(user.id).update({ birthday: newBirthday })
+        })
+
+        setTimeout(() => {
+            this.#checkBirthdays()
+        }, 86400000)
+    }
+
+    async #onReady() {
+        await this.#initializeServers()
+        console.log('\x1b[34m%s\x1b[0m', 'Servidores Desplegados!!')
+
+        await this.#checkBirthdays()
+        await this.#checkBans()
+        // ghost(this)
+
+        InvitesTracker.init(this, {
+            fetchGuilds: true,
+            fetchVanity: true,
+            fetchAuditLogs: true,
+            exemptGuild: guild => {
+                const server = this.getServer(guild)
+                return !(server.logsChannels.invite && server.premium)
+            }
+        }).on('guildMemberAdd', (...args) => this.emit('inviteTrack', ...args))
+
+        for (const command of this.application?.commands.cache.values() ?? []) {
+            await command.delete()
+        }
+
+        console.log('\x1b[31m%s\x1b[0m', `${this.user?.username} ${this.version} Lista y Atenta!!!`)
     }
 
     #initWebSocket() {
