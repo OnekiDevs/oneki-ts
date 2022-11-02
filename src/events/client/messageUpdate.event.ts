@@ -1,13 +1,13 @@
-import { Client } from '../utils/classes.js'
+import { Client } from '../../utils/classes.js'
 import { EmbedBuilder, Message, TextChannel, GuildMember, resolveColor, escapeCodeBlock, codeBlock } from 'discord.js'
-import { checkSend, sendError, Translator } from '../utils/utils.js'
+import { checkSend, sendError, Translator } from '../../utils/utils.js'
 
 export default async function (old: Message<true>, message: Message<true>) {
     try {
         if (message.author.bot) return
         if (!message.guild) return
 
-        if (!(message.client as Client).servers.has(message.guild?.id ?? '')) return
+        if (!(message.client as Client).servers.has(message.guild.id)) return
         const server = (message.client as Client).getServer(message.guild)
 
         const translate = Translator(message)
@@ -63,7 +63,7 @@ export default async function (old: Message<true>, message: Message<true>) {
                             : escapeCodeBlock(message.content)
                     )
                 })
-            embed.setFooter((message.client as Client).embedFooter)
+            // embed.setFooter((message.client as Client).embedFooter)
 
             if (message.reference) {
                 try {
