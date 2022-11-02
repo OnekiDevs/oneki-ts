@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
     EmbedBuilder,
     Message,
@@ -9,8 +8,8 @@ import {
     escapeCodeBlock,
     codeBlock
 } from 'discord.js'
-import { sendError, checkSend, PunishmentType, Translator } from '../utils/utils.js'
-import { Client, Server } from '../utils/classes.js'
+import { sendError, checkSend, PunishmentType, Translator } from '../../utils/utils.js'
+import { Client, Server } from '../../utils/classes.js'
 
 export default async function (message: Message<true>) {
     try {
@@ -48,7 +47,7 @@ export default async function (message: Message<true>) {
                         inline: true
                     }
                 )
-                .setFooter((message.client as Client).embedFooter)
+            // .setFooter((message.client as Client).embedFooter)
 
             if (message.content)
                 embed.setDescription(
@@ -115,7 +114,7 @@ async function checkGhostPing(server: Server, msg: Message<true>) {
     if (!regex.test(msg.content)) return
 
     const user = msg.mentions.users.first()
-    if (!user || user === msg.author || user?.bot) return
+    if (!user || user === msg.author || user.bot) return
 
     const timeBeforeDeletion = new Date().getTime() - msg.createdTimestamp
     const timeBeforeDeletioninSecs = timeBeforeDeletion / 1000
@@ -126,7 +125,7 @@ async function checkGhostPing(server: Server, msg: Message<true>) {
     channel.send({
         content: translate('ghost_ping_event.realized', {
             ghostingUser: msg.member?.toString(),
-            ghostedUser: user?.toString()
+            ghostedUser: user.toString()
         }),
         allowedMentions: { users: [] }
     })
