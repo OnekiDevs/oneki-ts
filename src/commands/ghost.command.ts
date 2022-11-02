@@ -68,11 +68,9 @@ export default class Ghost extends Command {
         const snapshot = await server.db.collection('events').doc('ghost2022').get()
         if (!snapshot.exists) return interaction.editReply("the event isn't active in this server")
         const data = snapshot.data() as { [key: string]: number }
-        const top = Object.entries(data)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 10)
+        const top = Object.entries(data).sort((a, b) => b[1] - a[1])
         const embed = new EmbedBuilder()
-            .setTitle('Top 10')
+            .setTitle('Top top')
             .setDescription(top.map((v, i) => `${i + 1}. <@${v[0]}>: \`${v[1]}\``).join('\n'))
             .setThumbnail(
                 'https://www.kindpng.com/picc/m/392-3922815_cute-kawaii-chibi-ghost-halloween-asthetic-tumblr-cartoon.png'
