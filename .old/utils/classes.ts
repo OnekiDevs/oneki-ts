@@ -1,4 +1,5 @@
 import {
+    ClientOptions as BaseClientOptions,
     GuildMember,
     PermissionResolvable,
     GatewayIntentBits,
@@ -13,13 +14,12 @@ import {
     LocaleString
 } from 'discord.js'
 
-import { ClientOptions as BaseClientOptions } from 'offdjs'
-
-import Client from '../classes/Client.js'
-import Server from '../classes/Server.js'
+import { Client } from '../classes/Client.js'
+import { Server } from '../classes/Server.js'
 export default Client
 export {
     PermissionsBitField,
+    Client,
     GatewayIntentBits,
     Guild,
     GuildMember,
@@ -28,9 +28,7 @@ export {
     ButtonBuilder,
     ActionRowBuilder,
     ButtonStyle,
-    Colors,
-    Client,
-    Server
+    Colors
 }
 
 export interface Local extends Partial<Record<LocaleString, string>> {
@@ -39,14 +37,14 @@ export interface Local extends Partial<Record<LocaleString, string>> {
 }
 
 export * from '../classes/Client.js'
-// export * from '../classes/Command.js'
-// export * from '../classes/OldCommand.js'
+export * from '../classes/Command.js'
+export * from '../classes/OldCommand.js'
 export * from '../classes/Server.js'
 
-// export * from '../classes/Player.js'
-// export * from '../classes/UnoCards.js'
-// export * from '../classes/Players.js'
-// export * from '../classes/UnoGame.js'
+export * from '../classes/Player.js'
+export * from '../classes/UnoCards.js'
+export * from '../classes/Players.js'
+export * from '../classes/UnoGame.js'
 
 export interface oldCommandData {
     name: string
@@ -124,8 +122,29 @@ export interface ClientConstants {
 
 export interface ClientOptions extends BaseClientOptions {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // firebaseToken?: any
+    firebaseToken?: any
     constants: ClientConstants
+    routes: {
+        commands: string
+        oldCommands: string
+        events: string
+        components: string
+    }
+    i18n: {
+        fallbacks: { [locale: string]: string }
+        locales: string[]
+        directory: string
+        defaultLocale: string
+        retryInDefaultLocale: boolean
+        objectNotation: boolean
+        logWarnFn: (msg: string) => void
+        logErrorFn: (msg: string) => void
+        missingKeyFn?: (locale: string, value: string) => string
+        mustacheConfig: {
+            tags: [string, string]
+            disable: boolean
+        }
+    }
 }
 
 export interface GuildMemberOptions {

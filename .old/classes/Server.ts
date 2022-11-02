@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
     ChatInputCommandInteraction,
     Collection,
@@ -8,13 +9,13 @@ import {
     TextChannel,
     User
 } from 'discord.js'
-import { GuildDataBaseModel, Client, SuggestChannelObject } from '../utils/classes.js'
+import { GuildDataBaseModel, Client, SuggestChannelObject, ApiCommand } from '../utils/classes.js'
 import { FieldValue } from '@google-cloud/firestore'
-import { PunishmentType, PunishUser } from '../utils/utils.js'
+import { PunishmentType, PunishUser, sleep } from '../utils/utils.js'
 import ms from 'iblazingx-ms'
 import client from '../client.js'
 
-export default class Server {
+export class Server {
     autoroles: Collection<string, Set<string>> = new Collection()
     rejectSug(id: string) {
         throw new Error('Method not implemented.' + id)
@@ -56,7 +57,7 @@ export default class Server {
      */
     constructor(guild: Guild) {
         this.guild = guild
-        this.db = client.db.collection('guilds').doc(guild.id)
+        this.db = (guild.client as Client).db.collection('guilds').doc(guild.id)
     }
 
     async init() {
@@ -97,7 +98,7 @@ export default class Server {
         if (data.emoji_analisis_enabled && data.premium) this.startEmojiAnalisis()
         if (data.autoroles) {
             for (const [key, value] of Object.entries(data.autoroles)) {
-                this.autoroles.set(key, new Set([String(value)]))
+                this.autoroles.set(key, new Set(value))
             }
         }
         if (data.yt_notification_channel) this.ytNotificationChannel = data.yt_notification_channel
@@ -118,8 +119,8 @@ export default class Server {
             if (messageUpdate) obj.logs_channels.message_update = messageUpdate
             if (messageDelete) obj.logs_channels.message_delete = messageDelete
             if (Attachment) obj.logs_channels.message_attachment = Attachment
-            if (invite) obj.logs_channels.invite = invite
-            if (memberUpdate) obj.logs_channels.member_update = memberUpdate
+            if (invite) this.logsChannels.invite = invite
+            if (memberUpdate) this.logsChannels.memberUpdate = memberUpdate
         }
         obj.birthday = {}
         if (this.birthday?.channel) obj.birthday.channel = this.birthday.channel
@@ -1087,7 +1088,7 @@ export default class Server {
             .setTitle(this.translate('suggest_cmd.title', { id: this.lastSuggestId }))
             .setColor(16313844)
             .setDescription(sug as string)
-            // .setFooter(client.embedFooter)
+            .setFooter(client.embedFooter)
             .setTimestamp()
         channel
             .send({
@@ -1107,18 +1108,18 @@ export default class Server {
             })
     }
 
-    // async createCommands(commands: ApiCommand[]) {
-    //     for (const command of commands) {
-    //         fetch(`https://discord.com/api/v10/guilds/${this.guild.id}/commands`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 Authorization: `Bot ${client.token}`,
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify(command)
-    //         }).catch(console.error)
-    //         await sleep()
-    //     }
-    //     return Promise.resolve()
-    // }
+    async createCommands(commands: ApiCommand[]) {
+        for (const command of commands) {
+            fetch(`https://discord.com/api/v10/guilds/${this.guild.id}/commands`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bot ${client.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(command)
+            }).catch(console.error)
+            await sleep()
+        }
+        return Promise.resolve()
+    }
 }
