@@ -1,16 +1,14 @@
 import { Guild, GuildMember, EmbedBuilder, TextChannel, resolveColor, codeBlock } from 'discord.js'
-import { Server } from '../utils/classes.js'
-import { checkSend, sendError } from '../utils/utils.js'
-import client from '../client.js'
+import { Server } from '../../utils/classes.js'
+import { checkSend, sendError } from '../../utils/utils.js'
+import client from '../../client.js'
 
 export default async function (guild: Guild) {
     try {
         if (!client.servers.has(guild.id)) client.servers.set(guild.id, new Server(guild))
         console.log('\x1b[34m%s\x1b[0m', `Nuevo Servidor Desplegado!! ${guild.name} (${guild.id})`)
-        client
-            .deployCommands(guild)
-            .then(() => console.log('\x1b[32m%s\x1b[0m', 'Comandos Desplegados para ' + guild.name))
-        const channel = client.channels.cache.get(client.constants.newServerLogChannel ?? '') as TextChannel
+
+        const channel = client.channels.cache.get(client.constants.newServerLogChannel) as TextChannel
         if (channel && checkSend(channel, guild.members.me as GuildMember)) {
             const [u, b] = guild.members.cache.partition(m => !m.user.bot)!
             const owner = await client.users.fetch(guild.ownerId)
@@ -47,7 +45,7 @@ export default async function (guild: Guild) {
                 )
                 .setTimestamp()
                 .setColor(resolveColor('Random'))
-                .setFooter(client.embedFooter)
+                // .setFooter(client.embedFooter)
                 .setImage(guild.bannerURL() ?? null)
             channel.send({
                 embeds: [embed]

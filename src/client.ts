@@ -1,4 +1,5 @@
-import { IntentsBitField } from 'discord.js'
+import './utils/writeCredentials.js'
+import { GatewayIntentBits } from 'discord.js'
 import { join } from 'path'
 import Client from './classes/Client.js'
 
@@ -8,7 +9,17 @@ export default new Client({
         commands: join(process.cwd(), 'build', 'commands'),
         interactions: join(process.cwd(), 'build', 'interactions')
     },
-    intents: [IntentsBitField.Flags.Guilds],
+    intents: [
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildBans,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildInvites,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMessageReactions
+    ],
     i18n: {
         locales: ['en', 'es', 'ja', 'ru'],
         directory: join(process.cwd(), 'lang'),

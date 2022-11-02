@@ -152,7 +152,7 @@ export async function sendError(error: Error, file: string) {
         '\n\x1b[31m***************************************************************************\x1b[0m'
     )
 
-    const channel = await client.channels.fetch(client.constants.errorChannel as string)
+    const channel = await client.channels.fetch(client.constants.errorChannel)
     if (channel)
         (channel as TextChannel).send({
             content:

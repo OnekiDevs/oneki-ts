@@ -6,7 +6,6 @@ import { WebSocket } from 'ws'
 import { sleep } from '../utils/utils.js'
 import { Firestore } from '@google-cloud/firestore'
 import InvitesTracker from '@androz2091/discord-invites-tracker'
-import { join } from 'path'
 export default class Client extends BaseClient {
     servers = new Collection<string, Server>()
     constants: ClientConstants
