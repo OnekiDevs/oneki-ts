@@ -1,6 +1,6 @@
 import { EmbedBuilder, GuildMember, resolveColor, TextChannel } from 'discord.js'
-import { GuildMemberOptions } from '../utils/classes.js'
-import { checkSend } from '../utils/utils.js'
+import { GuildMemberOptions } from '../../utils/classes.js'
+import { checkSend } from '../../utils/utils.js'
 
 export default async function ({ server, oldMember, newMember }: GuildMemberOptions) {
     //If the channel ID is saved in the database
