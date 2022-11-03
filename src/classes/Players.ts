@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { sleep } from '../utils/utils.js'
 import { Player } from './Player.js'
 import { UnoGame } from './UnoGame.js'

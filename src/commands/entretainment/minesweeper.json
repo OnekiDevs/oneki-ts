@@ -1,5 +1,4 @@
 {
-    "$schema": "https://raw.githubusercontent.com/OnekiDevs/offdjs/master/commandSchema.json",
     "type": 1,
     "name": "minesweeper",
     "description": "Play minesweeper",

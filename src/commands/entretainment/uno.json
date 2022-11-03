@@ -1,0 +1,13 @@
+{
+    "$schema": "https://raw.githubusercontent.com/OnekiDevs/offdjs/master/commandSchema.json",
+    "name": "uno",
+    "description": "Generates a UNO game",
+    "name_localizations": {
+        "es-ES": "uno",
+        "en-US": "uno"
+    },
+    "description_localizations": {
+        "es-ES": "Genera un juego de UNO",
+        "en-US": "Generates a UNO game"
+    }
+}

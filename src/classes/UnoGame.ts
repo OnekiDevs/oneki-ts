@@ -1,17 +1,16 @@
-import { ButtonInteraction, ButtonStyle, MessageActionRowComponentBuilder } from 'discord.js'
-import { randomId, imgToLink, Translator } from '../utils/utils.js'
-import EventEmitter from 'node:events'
-import client from '../client.js'
 import {
-    Player,
-    Players,
-    UnoCard,
-    Server,
+    ButtonInteraction,
+    ButtonStyle,
+    MessageActionRowComponentBuilder,
     ActionRowBuilder,
     EmbedBuilder,
     ButtonBuilder,
     Message
-} from '../utils/classes.js'
+} from 'discord.js'
+import { randomId, imgToLink, Translator } from '../utils/utils.js'
+import EventEmitter from 'node:events'
+import client from '../client.js'
+import { Player, Players, UnoCard, Server } from '../utils/classes.js'
 
 export class UnoGame extends EventEmitter {
     host: Player

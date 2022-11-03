@@ -1,4 +1,4 @@
-import { GuildMember, PermissionResolvable, LocaleString } from 'discord.js'
+import { GuildMember, PermissionResolvable } from 'discord.js'
 
 import { ClientOptions as BaseClientOptions } from 'offdjs'
 
@@ -10,10 +10,10 @@ export { Client, Server }
 export * from '../classes/Client.js'
 export * from '../classes/Server.js'
 
-// export * from '../classes/Player.js'
-// export * from '../classes/UnoCards.js'
-// export * from '../classes/Players.js'
-// export * from '../classes/UnoGame.js'
+export * from '../classes/Player.js'
+export * from '../classes/UnoCards.js'
+export * from '../classes/Players.js'
+export * from '../classes/UnoGame.js'
 
 export interface oldCommandData {
     name: string
