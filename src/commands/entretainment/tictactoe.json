@@ -1,0 +1,13 @@
+{
+    "name": "tictactoe",
+    "name_localizations": {
+        "es-ES": "gato",
+        "en-US": "tictactoe"
+    },
+    "description": "Generate a tictactoe game",
+    "description_localizations": {
+        "es-ES": "Genera un juego del gato",
+        "en-US": "Generate a tictactoe game"
+    },
+    "type": 1
+}
