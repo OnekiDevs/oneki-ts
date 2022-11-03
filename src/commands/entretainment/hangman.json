@@ -1,0 +1,14 @@
+{
+    "$schema": "../../../../offdjs/commandSchema.json",
+    "name": "hangman",
+    "type": 1,
+    "name_localizations": {
+        "es-ES": "hangman",
+        "en-US": "ahorcado"
+    },
+    "description": "Play hangman",
+    "description_localizations": {
+        "en-US": "Play hangman",
+        "es-ES": "Juega al ahorcado"
+    }
+}

@@ -1,46 +1,13 @@
-import {
-    GuildMember,
-    PermissionResolvable,
-    GatewayIntentBits,
-    Guild,
-    Message,
-    EmbedBuilder,
-    ButtonBuilder,
-    ActionRowBuilder,
-    ButtonStyle,
-    PermissionsBitField,
-    Colors,
-    LocaleString
-} from 'discord.js'
+import { GuildMember, PermissionResolvable, LocaleString } from 'discord.js'
 
 import { ClientOptions as BaseClientOptions } from 'offdjs'
 
 import Client from '../classes/Client.js'
 import Server from '../classes/Server.js'
 export default Client
-export {
-    PermissionsBitField,
-    GatewayIntentBits,
-    Guild,
-    GuildMember,
-    Message,
-    EmbedBuilder,
-    ButtonBuilder,
-    ActionRowBuilder,
-    ButtonStyle,
-    Colors,
-    Client,
-    Server
-}
-
-export interface Local extends Partial<Record<LocaleString, string>> {
-    'en-US': string
-    'es-ES': string
-}
+export { Client, Server }
 
 export * from '../classes/Client.js'
-// export * from '../classes/Command.js'
-// export * from '../classes/OldCommand.js'
 export * from '../classes/Server.js'
 
 // export * from '../classes/Player.js'

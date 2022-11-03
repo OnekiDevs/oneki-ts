@@ -1,14 +1,15 @@
-import { ButtonInteraction } from 'discord.js'
 import {
     ChatInputCommandInteraction,
     MessageActionRowComponentBuilder,
     ActionRowBuilder,
     ButtonBuilder,
-    ButtonStyle
+    ButtonStyle,
+    ButtonInteraction
 } from 'discord.js'
+
 export function chatInputCommandInteraction(interaction: ChatInputCommandInteraction<'cached'>) {
     interaction.reply({
-        components: this.createButtons([
+        components: createButtons([
             ['v', 'v', 'v'],
             ['v', 'v', 'v'],
             ['v', 'v', 'v']
@@ -66,7 +67,7 @@ export function buttonInteraction(interaction: ButtonInteraction<'cached'>) {
         )
     ) as mark[][]
 
-    let winner = this.checkWinner(table)
+    let winner = checkWinner(table)
 
     // set random mark of the bot
     while (true && winner === 'v') {
@@ -79,9 +80,9 @@ export function buttonInteraction(interaction: ButtonInteraction<'cached'>) {
     }
 
     // check if the game is finished
-    winner = this.checkWinner(table)
-    if (winner === 'v') interaction.message.edit({ components: this.createButtons(table) })
-    else interaction.message.edit({ components: this.createButtons(table, true) })
+    winner = checkWinner(table)
+    if (winner === 'v') interaction.message.edit({ components: createButtons(table) })
+    else interaction.message.edit({ components: createButtons(table, true) })
 }
 
 function checkWinner(table: mark[][]) {
