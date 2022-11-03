@@ -29,6 +29,7 @@
         "iblazingx-ms": "2.1.2",
         "jimp": "0.16.2",
         "offdjs": "0.11.0",
+        "puppeteer": "19.2.2",
         "ws": "8.10.0"
     },
     "devDependencies": {

@@ -1,0 +1,13 @@
+{
+    "type": 1,
+    "name": "ss",
+    "description": "Send a fake screenshot of a message",
+    "name_localizations": {
+        "en": "ss",
+        "es": "ss"
+    },
+    "description_localizations": {
+        "en-US": "Send a fake screenshot of a message",
+        "es-ES": "Envía una captura falsa de un mensaje"
+    }
+}
