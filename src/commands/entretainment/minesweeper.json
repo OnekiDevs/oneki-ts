@@ -1,0 +1,14 @@
+{
+    "$schema": "https://raw.githubusercontent.com/OnekiDevs/offdjs/master/commandSchema.json",
+    "type": 1,
+    "name": "minesweeper",
+    "description": "Play minesweeper",
+    "name_localizations": {
+        "en-US": "minesweeper",
+        "es-ES": "buscaminas"
+    },
+    "description_localizations": {
+        "en-US": "Play minesweeper",
+        "es-ES": "Juega al buscaminas"
+    }
+}
