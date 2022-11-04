@@ -1,0 +1,76 @@
+{
+    "$schema": "../../../node_modules/offdjs/commandSchema.json",
+    "type": 1,
+    "name": "feedback",
+    "description": "Send feedback to the bot team developer",
+    "name_localizations": {
+        "en-US": "feedback",
+        "es-ES": "feedback"
+    },
+    "description_localizations": {
+        "en-US": "Send feedback to the bot team developer",
+        "es-ES": "Envía un feedback al equipo de desarrolladores del bot"
+    },
+    "options": [
+        {
+            "type": 3,
+            "name": "label",
+            "description": "select a label",
+            "name_localizations": {
+                "en-US": "label",
+                "es-ES": "etiqueta"
+            },
+            "description_localizations": {
+                "en-US": "select a label",
+                "es-ES": "selecciona una etiqueta"
+            },
+            "choices": [
+                {
+                    "name": "Bug",
+                    "name_localizations": {
+                        "en-US": "Bug",
+                        "es-ES": "Bug"
+                    },
+                    "value": "bug"
+                },
+                {
+                    "name": "Feature",
+                    "name_localizations": {
+                        "en-US": "Feature",
+                        "es-ES": "Sugerencia"
+                    },
+                    "value": "feature"
+                },
+                {
+                    "name": "Feedback",
+                    "name_localizations": {
+                        "en-US": "Feedback",
+                        "es-ES": "Feedback"
+                    },
+                    "value": "feedback"
+                },
+                {
+                    "name": "Other",
+                    "name_localizations": {
+                        "en-US": "Other",
+                        "es-ES": "Otro"
+                    },
+                    "value": "other"
+                }
+            ]
+        },
+        {
+            "name": "img",
+            "description": "Add a image if is possible",
+            "name_localizations": {
+                "en-US": "img",
+                "es-ES": "img"
+            },
+            "description_localizations": {
+                "en-US": "Add a image if is possible",
+                "es-ES": "Añade una imagen si es posible"
+            },
+            "type": 11
+        }
+    ]
+}
