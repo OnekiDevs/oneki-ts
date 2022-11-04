@@ -1,0 +1,56 @@
+{
+    "name": "emoji_analize",
+    "description": "Analysis of emojis from the server",
+    "name_localizations": {
+        "en-US": "emoji_analize",
+        "es-ES": "analisis_de_emojis"
+    },
+    "description_localizations": {
+        "en-US": "Start an analysis of emojis from the guild",
+        "es-ES": "Inicia un analisis de los emojis del gremio"
+    },
+    "dm_permission": false,
+    "type": 1,
+    "default_member_permissions": 0,
+    "options": [
+        {
+            "name": "start",
+            "type": 1,
+            "description": "Start an analysis of emojis from the guild",
+            "name_localizations": {
+                "en-US": "start",
+                "es-ES": "iniciar"
+            },
+            "description_localizations": {
+                "en-US": "Start an analysis of emojis from the guild",
+                "es-ES": "Inicia un analisis de los emojis del gremio"
+            }
+        },
+        {
+            "type": 1,
+            "name": "stop",
+            "description": "Stop the analysis of emojis from the guild",
+            "name_localizations": {
+                "en-US": "stop",
+                "es-ES": "parar"
+            },
+            "description_localizations": {
+                "en-US": "Stop the analysis of emojis from the guild",
+                "es-ES": "Para el analisis de los emojis del gremio"
+            }
+        },
+        {
+            "type": 1,
+            "name": "show",
+            "description": "Show the results of the analisis",
+            "name_localizations": {
+                "en-US": "show",
+                "es-ES": "mostrar"
+            },
+            "description_localizations": {
+                "en-US": "Show the results of the analisis",
+                "es-ES": "Muestra los resultados del analisis"
+            }
+        }
+    ]
+}
