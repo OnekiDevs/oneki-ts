@@ -15,19 +15,6 @@ export * from '../classes/UnoCards.js'
 export * from '../classes/Players.js'
 export * from '../classes/UnoGame.js'
 
-export interface oldCommandData {
-    name: string
-    description: string
-    category: string
-    alias: string[]
-    user_permisions: PermissionResolvable[]
-    bot_permisions: PermissionResolvable[]
-    use: string
-    example: string
-    module: 'mts' | 'mpy' | 'mrs'
-    type: 'slash' | 'command'
-}
-
 export interface SuggestChannelObject {
     channel: string
     default: boolean

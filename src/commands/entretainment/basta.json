@@ -1,0 +1,14 @@
+{
+    "type": 1,
+    "name": "basta",
+    "description": "Play basta",
+    "name_localizations": {
+        "en-US": "basta",
+        "es-ES": "basta"
+    },
+    "description_localizations": {
+        "es-ES": "Juega basta",
+        "en-US": "Play basta"
+    },
+    "dm_permission": false
+}

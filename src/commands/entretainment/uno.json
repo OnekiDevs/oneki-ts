@@ -8,5 +8,6 @@
     "description_localizations": {
         "es-ES": "Genera un juego de UNO",
         "en-US": "Generates a UNO game"
-    }
+    },
+    "dm_permission": false
 }
