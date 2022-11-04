@@ -1,0 +1,15 @@
+{
+    "type": 1,
+    "name": "settings",
+    "name_localizations": {
+        "en-US": "settings",
+        "es-ES": "configuraciones"
+    },
+    "description": "Config the bot",
+    "description_localizations": {
+        "en-US": "Config the bot",
+        "es-ES": "Configura el bot"
+    },
+    "default_member_permissions": 0,
+    "dm_permission": false
+}
