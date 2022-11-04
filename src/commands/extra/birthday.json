@@ -1,0 +1,59 @@
+{
+    "$schema": "https://raw.githubusercontent.com/OnekiDevs/offdjs/master/commandSchema.json",
+    "type": 1,
+    "name": "birthday",
+    "description": "Set your birthday reminder",
+    "name_localizations": {
+        "en-US": "birthday",
+        "es-ES": "cumpleaños"
+    },
+    "description_localizations": {
+        "en-US": "Set your birthday reminder",
+        "es-ES": "Establece tu recordatorio de cumpleaños"
+    },
+    "dm_permission": false,
+    "options": [
+        {
+            "type": 1,
+            "name": "set",
+            "description": "Set your birthday's date",
+            "name_localizations": {
+                "en-US": "set",
+                "es-ES": "establecer"
+            },
+            "description_localizations": {
+                "en-US": "Set your birthday's date",
+                "es-ES": "Establece la fecha de tu cumpleaños"
+            },
+            "options": [
+                {
+                    "type": 3,
+                    "name": "date",
+                    "description": "Your birthday's date FORM: MONTH/DAY",
+                    "name_localizations": {
+                        "en-US": "date",
+                        "es-ES": "fecha"
+                    },
+                    "description_localizations": {
+                        "en-US": "Your birthday's date FORM: MONTH/DAY",
+                        "es-ES": "La fecha de tu cumpleaños COMO: MES/DIA"
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "type": 1,
+            "name": "remove",
+            "description": "Remove your birthday's date",
+            "name_localizations": {
+                "en-US": "remove",
+                "es-ES": "eliminar"
+            },
+            "description_localizations": {
+                "en-US": "Remove your birthday's date",
+                "es-ES": "Elimina la fecha de tu cumpleaños"
+            }
+        }
+    ]
+}
