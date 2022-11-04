@@ -1,5 +1,4 @@
 {
-    "$schema": "../../../../offdjs/commandSchema.json",
     "name": "hangman",
     "type": 1,
     "name_localizations": {

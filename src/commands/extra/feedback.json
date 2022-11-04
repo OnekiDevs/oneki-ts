@@ -1,5 +1,4 @@
 {
-    "$schema": "../../../node_modules/offdjs/commandSchema.json",
     "type": 1,
     "name": "feedback",
     "description": "Send feedback to the bot team developer",

@@ -1,0 +1,15 @@
+{
+    "type": 1,
+    "name": "download_emojis",
+    "description": "Get the emojis in a zip file",
+    "name_localizations": {
+        "en-US": "download_emojis",
+        "es-ES": "descargar_emojis"
+    },
+    "description_localizations": {
+        "en-US": "Get the emojis in a zip file",
+        "es-ES": "obten los emojis en un archivo zip"
+    },
+    "default_member_permissions": 0,
+    "dm_permission": false
+}
