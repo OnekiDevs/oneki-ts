@@ -1,0 +1,103 @@
+{
+    "$schema": "https://raw.githubusercontent.com/OnekiDevs/offdjs/master/commandSchema.json",
+    "type": 1,
+    "name": "poll",
+    "description": "Create a poll",
+    "name_localizations": {
+        "es-ES": "encuesta",
+        "en-US": "poll"
+    },
+    "description_localizations": {
+        "es-ES": "Crea una encuesta",
+        "en-US": "Create a poll"
+    },
+    "dm_permission": false,
+    "options": [
+        {
+            "name": "make",
+            "description": "Make a poll",
+            "type": 1,
+            "name_localizations": {
+                "es-ES": "crear",
+                "en-US": "make"
+            },
+            "description_localizations": {
+                "es-ES": "Crea una encuesta",
+                "en-US": "Create a poll"
+            },
+            "options": [
+                {
+                    "name": "block_choice",
+                    "description": "Block the choice of the user",
+                    "type": 5,
+                    "name_localizations": {
+                        "es-ES": "bloquear_eleccion",
+                        "en-US": "block_choice"
+                    },
+                    "description_localizations": {
+                        "es-ES": "Bloquea la elección del usuario",
+                        "en-US": "Block the choice of the user"
+                    }
+                },
+                {
+                    "name": "show_results",
+                    "description": "Show the results of the poll in real time",
+                    "type": 5,
+                    "name_localizations": {
+                        "es-ES": "mostrar_resultados",
+                        "en-US": "show_results"
+                    },
+                    "description_localizations": {
+                        "es-ES": "Muestra los resultados de la encuesta en tiempo real",
+                        "en-US": "Show the results of the poll in real time"
+                    }
+                },
+                {
+                    "name": "multiple_choices",
+                    "description": "Allow multiple choices",
+                    "type": 5,
+                    "name_localizations": {
+                        "es-ES": "elecciones_multiples",
+                        "en-US": "multiple_choices"
+                    },
+                    "description_localizations": {
+                        "es-ES": "Permite elecciones múltiples",
+                        "en-US": "Allow multiple choices"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "finalize",
+            "description": "Finalize a poll",
+            "type": 1,
+            "name_localizations": {
+                "es-ES": "finalizar",
+                "en-US": "finalize"
+            },
+            "description_localizations": {
+                "es-ES": "Finaliza una encuesta",
+                "en-US": "Finalize a poll"
+            },
+            "options": [
+                {
+                    "name": "id",
+                    "description": "The id of the poll",
+                    "type": 3,
+                    "name_localizations": {
+                        "es-ES": "id_encuesta",
+                        "en-US": "poll_id"
+                    },
+                    "description_localizations": {
+                        "es-ES": "El id de la encuesta a finalizar",
+                        "en-US": "The id of the poll to finalize"
+                    },
+                    "required": true,
+                    "max_length": 100,
+                    "min_length": 1,
+                    "autocomplete": true
+                }
+            ]
+        }
+    ]
+}

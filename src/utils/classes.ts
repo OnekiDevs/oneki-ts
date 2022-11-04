@@ -28,23 +28,6 @@ export interface oldCommandData {
     type: 'slash' | 'command'
 }
 
-export interface PollDatabaseModel {
-    guild: string
-    options: {
-        name: string
-        value: string
-        votes: string[]
-    }[]
-    show_results: boolean
-    title: string
-    context: string
-    multiple_choices: boolean
-    author: string
-    block_choices: boolean
-    message: string
-    channel: string
-}
-
 export interface SuggestChannelObject {
     channel: string
     default: boolean
