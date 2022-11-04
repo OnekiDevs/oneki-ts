@@ -1,0 +1,45 @@
+{
+    "type": 1,
+    "name": "suggest",
+    "description": "Suggest something in the server",
+    "name_localizations": {
+        "en-US": "suggest",
+        "es-ES": "sugerencia"
+    },
+    "description_localizations": {
+        "es-ES": "Sugiere algo en el servidor",
+        "en-US": "Suggest something in the server"
+    },
+    "dm_permission": false,
+    "options": [
+        {
+            "type": 3,
+            "name": "suggestion",
+            "description": "The suggestion",
+            "name_localizations": {
+                "en-US": "suggestion",
+                "es-ES": "sugerencia"
+            },
+            "description_localizations": {
+                "en-US": "The suggestion",
+                "es-ES": "La sugerencia"
+            },
+            "required": true
+        },
+        {
+            "type": 3,
+            "name": "channel",
+            "description": "The channel where the suggestion will be sent",
+            "name_localizations": {
+                "en-US": "channel",
+                "es-ES": "canal"
+            },
+            "description_localizations": {
+                "en-US": "The channel where the suggestion will be sent",
+                "es-ES": "El canal donde se enviará la sugerencia"
+            },
+            "required": true,
+            "autocomplete": true
+        }
+    ]
+}

@@ -1,4 +1,4 @@
-import { GuildMember, PermissionResolvable } from 'discord.js'
+import { GuildMember } from 'discord.js'
 
 import { ClientOptions as BaseClientOptions } from 'offdjs'
 
