@@ -1,6 +1,6 @@
 import { sleep } from 'offdjs'
 import { WebSocket } from 'ws'
-import client from '../client.js'
+import client from 'offdjs'
 
 export default function initWebSocket() {
     let wsInterval: NodeJS.Timeout,
@@ -39,7 +39,7 @@ export default function initWebSocket() {
                 // sendError(new Error(data.message), import.meta.url)
             } else if (data.event) client.emit(data.event, data.data)
         } catch (error) {
-            if ((error as string).startsWith('SyntaxError')) console.error('SyntaxError on socket', message)
+            if ((error as Error).message.startsWith('SyntaxError')) console.error('SyntaxError on socket', message)
         }
     })
 

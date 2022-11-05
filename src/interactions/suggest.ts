@@ -5,9 +5,8 @@ import {
     ButtonInteraction,
     AutocompleteInteraction
 } from 'discord.js'
-import { Translator, checkSend } from 'offdjs'
+import client, { Translator, checkSend } from 'offdjs'
 import { getServer } from '../cache/servers.js'
-import client from '../client.js'
 
 export async function chatInputCommandInteraction(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)

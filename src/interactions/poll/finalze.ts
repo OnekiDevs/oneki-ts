@@ -1,6 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, TextChannel } from 'discord.js'
-import { filledBar, Translator } from 'offdjs'
-import client from '../../client.js'
+import client, { filledBar, Translator } from 'offdjs'
 import { PollDatabaseModel } from '../../cache/polls.js'
 import { pollEmojis as emojis } from '../../utils/utils.js'
 import db from '../../cache/db.js'

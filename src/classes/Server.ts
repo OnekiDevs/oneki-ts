@@ -11,7 +11,7 @@ import {
 import { FieldValue } from '@google-cloud/firestore'
 import { PunishmentType, PunishUser } from '../utils/utils.js'
 import ms from 'iblazingx-ms'
-import client from '../client.js'
+import client from 'offdjs'
 import db, { GuildDataBaseModel, SuggestChannelObject } from '../cache/db.js'
 import ws from '../cache/ws.js'
 

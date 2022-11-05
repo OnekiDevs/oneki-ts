@@ -1,4 +1,3 @@
-import Client from '../classes/Client.js'
 import { fileURLToPath } from 'url'
 import {
     PermissionResolvable,
@@ -17,7 +16,7 @@ import {
     BaseInteraction
 } from 'discord.js'
 
-import client from '../client.js'
+import client, { Client } from 'offdjs'
 import constants from '../cache/constants.js'
 
 export { Utils }

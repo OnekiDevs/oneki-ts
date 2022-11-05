@@ -9,7 +9,7 @@ import {
 } from 'discord.js'
 import { randomId, imgToLink, Translator } from '../utils/utils.js'
 import EventEmitter from 'node:events'
-import client from '../client.js'
+import client from 'offdjs'
 import { Player, Players, UnoCard, Server } from '../utils/classes.js'
 import uno from '../cache/uno.js'
 import { getServer } from '../cache/servers.js'

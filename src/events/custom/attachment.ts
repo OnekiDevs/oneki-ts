@@ -1,6 +1,6 @@
 import { checkSend, sendError, Translator } from '../../utils/utils.js'
 import { AttachmentBuilder, EmbedBuilder, GuildMember, Message, TextChannel } from 'discord.js'
-import client from '../../client.js'
+import client from 'offdjs'
 import { getServer } from '../../cache/servers.js'
 
 export default async function (message: Message<true>) {

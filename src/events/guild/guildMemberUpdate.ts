@@ -1,6 +1,6 @@
 import { GuildMember } from 'discord.js'
 import { getServer } from '../../cache/servers.js'
-import client from '../../client.js'
+import client from 'offdjs'
 
 export default async function (oldMember: GuildMember, newMember: GuildMember) {
     const server = getServer(newMember.guild)

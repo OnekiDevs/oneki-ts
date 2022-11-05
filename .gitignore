@@ -8,3 +8,4 @@ scripts/lang
 commands.json
 .vscode
 google_credentials.json
+build

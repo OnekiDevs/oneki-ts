@@ -12,9 +12,8 @@ import {
     SelectMenuOptionBuilder,
     SelectMenuInteraction
 } from 'discord.js'
-import { filledBar, Translator } from 'offdjs'
+import client, { filledBar, Translator } from 'offdjs'
 import polls, { PollDatabaseModel } from '../cache/polls.js'
-import client from '../client.js'
 import { createModalComponent, pollEmojis as emojis } from '../utils/utils.js'
 import {
     GuildMember,

@@ -1,6 +1,6 @@
 import { ChannelType } from 'discord.js'
 import { getServer } from '../../cache/servers.js'
-import client from '../../client.js'
+import client from 'offdjs'
 import { checkSend } from '../../utils/utils.js'
 
 export default async function ({ server: serverid, data }: { server: string; data: any }) {

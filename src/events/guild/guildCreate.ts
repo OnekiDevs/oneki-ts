@@ -1,7 +1,7 @@
 import { Guild, GuildMember, EmbedBuilder, TextChannel, resolveColor, codeBlock } from 'discord.js'
 import { Server } from '../../utils/classes.js'
 import { checkSend, sendError } from '../../utils/utils.js'
-import client from '../../client.js'
+import client from 'offdjs'
 import servers from '../../cache/servers.js'
 import constants from '../../cache/constants.js'
 

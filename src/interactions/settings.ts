@@ -4,12 +4,14 @@ import {
     SelectMenuOptionBuilder,
     SelectMenuBuilder,
     ActionRowBuilder,
+    ButtonBuilder,
     EmbedBuilder,
-    inlineCode
+    inlineCode,
+    GuildMember,
+    ButtonStyle
 } from 'discord.js'
-import Server from '../classes/Server'
-import { GuildMember, ButtonBuilder, ButtonStyle } from 'discord.js'
-import client from '../client.js'
+import Server from '../classes/Server.js'
+import client from 'offdjs'
 
 export async function chatInputCommandInteraction(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
     // create initial embed

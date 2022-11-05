@@ -1,7 +1,6 @@
 import { Message, PermissionsBitField, TextChannel } from 'discord.js'
 import { getServer } from '../../cache/servers.js'
-import client from '../../client.js'
-
+import client from 'offdjs'
 export default function (message: Message<true>) {
     const server = getServer(message.guild)
     if (server.disabledChannels.includes(message.channelId)) return //If it's a disabled channel
