@@ -5,9 +5,10 @@ import {
     MessageActionRowComponentBuilder,
     ButtonStyle
 } from 'discord.js'
-import { UnoCard, UnoGame } from '../utils/classes.js'
 import { randomId } from '../utils/utils.js'
 import Jimp from 'jimp'
+import { UnoCard } from './UnoCards.js'
+import { UnoGame } from './UnoGame.js'
 
 export class Player {
     id: string

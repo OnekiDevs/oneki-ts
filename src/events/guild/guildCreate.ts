@@ -1,13 +1,12 @@
 import { Guild, GuildMember, EmbedBuilder, TextChannel, resolveColor, codeBlock } from 'discord.js'
-import { Server } from '../../utils/classes.js'
 import { checkSend, sendError } from '../../utils/utils.js'
 import client from 'offdjs'
-import servers from '../../cache/servers.js'
 import constants from '../../cache/constants.js'
+import { getServer } from '../../cache/servers.js'
 
 export default async function (guild: Guild) {
     try {
-        if (!servers.has(guild.id)) servers.set(guild.id, new Server(guild))
+        getServer(guild)
         console.log('\x1b[34m%s\x1b[0m', `Nuevo Servidor Desplegado!! ${guild.name} (${guild.id})`)
 
         const channel = client.channels.cache.get(constants.newServerLogChannel) as TextChannel

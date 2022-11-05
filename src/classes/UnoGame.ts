@@ -10,9 +10,12 @@ import {
 import { randomId, imgToLink, Translator } from '../utils/utils.js'
 import EventEmitter from 'node:events'
 import client from 'offdjs'
-import { Player, Players, UnoCard, Server } from '../utils/classes.js'
 import uno from '../cache/uno.js'
 import { getServer } from '../cache/servers.js'
+import Server from './Server.js'
+import { Players } from './Players.js'
+import { Player } from './Player.js'
+import { UnoCard } from './UnoCards.js'
 
 export class UnoGame extends EventEmitter {
     host: Player

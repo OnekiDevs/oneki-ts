@@ -9,7 +9,6 @@ import {
     codeBlock
 } from 'discord.js'
 import { sendError, checkSend, PunishmentType, Translator } from '../../utils/utils.js'
-import { Server } from '../../utils/classes.js'
 import { getServer } from '../../cache/servers.js'
 
 export default async function (message: Message<true>) {
@@ -19,7 +18,7 @@ export default async function (message: Message<true>) {
         if (!message.guild) return
         const translate = Translator(message)
 
-        await checkGhostPing(server, message)
+        await checkGhostPing(message)
 
         if (!server.logsChannels.messageDelete) return
         const channel: TextChannel = message.client.channels.cache.get(server.logsChannels.messageDelete) as TextChannel
@@ -108,7 +107,8 @@ export default async function (message: Message<true>) {
     }
 }
 
-async function checkGhostPing(server: Server, msg: Message<true>) {
+async function checkGhostPing(msg: Message<true>) {
+    const server = getServer(msg.guild)
     const translate = Translator(msg)
     const regex = /<@!?\d{18}>/
     if (!regex.test(msg.content)) return
@@ -130,12 +130,12 @@ async function checkGhostPing(server: Server, msg: Message<true>) {
         allowedMentions: { users: [] }
     })
     const ghosterSnap = (await server.db.collection('users').doc(msg.author.id).get()).data()
-    if (!ghosterSnap) return warnUser(server, channel, msg, user)
+    if (!ghosterSnap) return warnUser(channel, msg, user)
     const ghostSanctions = ghosterSnap.sanctions?.filter(
         (sanction: { reason: string }) => sanction.reason === 'Ghost pinging'
     )
 
-    if (!ghostSanctions?.length) return warnUser(server, channel, msg, user)
+    if (!ghostSanctions?.length) return warnUser(channel, msg, user)
 
     server
         .punishUser({
@@ -165,9 +165,9 @@ async function checkGhostPing(server: Server, msg: Message<true>) {
         })
 }
 
-function warnUser(server: Server, channel: TextChannel, msg: Message<true>, user: User) {
+function warnUser(channel: TextChannel, msg: Message<true>, user: User) {
     const translate = Translator(msg)
-    server
+    getServer(msg.guild)
         .punishUser({
             userId: msg.author.id,
             type: PunishmentType.WARN,

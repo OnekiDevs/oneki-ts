@@ -18,6 +18,7 @@ import {
 
 import client, { Client } from 'offdjs'
 import constants from '../cache/constants.js'
+import Server from '../classes/Server.js'
 
 export { Utils }
 
@@ -267,4 +268,10 @@ export function errorCatch(file: string) {
             }
         }
     }
+}
+
+export interface GuildMemberOptions {
+    server: Server
+    oldMember: GuildMember
+    newMember: GuildMember
 }
