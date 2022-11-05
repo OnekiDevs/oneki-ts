@@ -24,6 +24,7 @@ import {
     ButtonStyle,
     TextChannel
 } from 'discord.js'
+import db from '../cache/db.js'
 
 // TODO: edit()
 export async function buttonInteraction(interaction: ButtonInteraction<'cached'>) {
@@ -31,7 +32,7 @@ export async function buttonInteraction(interaction: ButtonInteraction<'cached'>
     const [, , id] = interaction.customId.split('_')
     const translate = Translator(interaction)
 
-    const snap = await client.db.collection('polls').doc(id).get()
+    const snap = await db.collection('polls').doc(id).get()
     if (!snap.exists) return interaction.editReply({ content: 'Poll finalized' })
 
     const modal = _getModal(id, translate)
@@ -62,7 +63,7 @@ export async function buttonInteraction(interaction: ButtonInteraction<'cached'>
     //     components: buttons
     // })
 
-    // const db = client.db.collection('polls').doc(id)
+    // const db = db.collection('polls').doc(id)
     // db.set({ ...data, options: data.options })
     // interaction.editReply({
     //     content: translate('poll_cmd.buttons.success')
@@ -71,7 +72,7 @@ export async function buttonInteraction(interaction: ButtonInteraction<'cached'>
 
 export async function modalSubmitInteraction(interaction: ModalSubmitInteraction<'cached'>): Promise<any> {
     const translate = Translator(interaction)
-    // const server = client.getServer(interaction.guild)
+    // const server = getServer(interaction.guild)
 
     const [, id] = interaction.customId.split('_')
     const title = interaction.fields.getTextInputValue('title')
@@ -105,7 +106,7 @@ export async function modalSubmitInteraction(interaction: ModalSubmitInteraction
         })
 
     let snap = polls.get(id) as PollDatabaseModel
-    const snapshot = await client.db.collection('polls').doc(id).get()
+    const snapshot = await db.collection('polls').doc(id).get()
     if (snapshot.exists) snap = { ...snap, ...snapshot.data() }
 
     const member = interaction.member
@@ -141,7 +142,7 @@ export async function selectMenuInteraction(interaction: SelectMenuInteraction<'
     const [, , id] = interaction.customId.split('_')
     const translate = Translator(interaction)
 
-    const snap = await client.db.collection('polls').doc(id).get()
+    const snap = await db.collection('polls').doc(id).get()
     if (!snap.exists) return interaction.editReply({ content: 'Poll finalized' })
     let data = snap.data() as PollDatabaseModel
 

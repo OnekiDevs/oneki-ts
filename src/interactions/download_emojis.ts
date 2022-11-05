@@ -22,6 +22,6 @@ export async function chatInputCommandInteraction(interaction: ChatInputCommandI
     const zipGenerated = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' })
 
     interaction.editReply({
-        files: [new AttachmentBuilder(zipGenerated, { name: `${msg.guild.name}_emojis.zip` })]
+        files: [new AttachmentBuilder(zipGenerated, { name: `${interaction.guild.name}_emojis.zip` })]
     })
 }

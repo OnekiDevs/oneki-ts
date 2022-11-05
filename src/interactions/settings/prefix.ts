@@ -7,9 +7,9 @@ import {
     ButtonInteraction
 } from 'discord.js'
 import { capitalize } from 'offdjs'
-import client from '../../client.js'
 import { _embeds } from '../settings.js'
 import { _components } from '../settings'
+import { getServer } from '../../cache/servers.js'
 
 export async function buttonInteraction(interaction: ButtonInteraction<'cached'>) {
     const [, , opt] = interaction.customId.split('_') // as ['settings', 'prefix', 'add' | 'remove' | 'set']
@@ -36,7 +36,7 @@ export async function buttonInteraction(interaction: ButtonInteraction<'cached'>
 
 export async function modalSubmitInteraction(interaction: ModalSubmitInteraction<'cached'>) {
     const [, pag, opt] = interaction.customId.split('_') as ['settings', 'prefix', 'add' | 'remove' | 'set']
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     // check if is the same user
     if (interaction.message?.embeds[0].author?.name !== interaction.member.displayName)
         return interaction.reply({

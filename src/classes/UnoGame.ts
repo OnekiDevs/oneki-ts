@@ -11,6 +11,8 @@ import { randomId, imgToLink, Translator } from '../utils/utils.js'
 import EventEmitter from 'node:events'
 import client from '../client.js'
 import { Player, Players, UnoCard, Server } from '../utils/classes.js'
+import uno from '../cache/uno.js'
+import { getServer } from '../cache/servers.js'
 
 export class UnoGame extends EventEmitter {
     host: Player
@@ -28,7 +30,7 @@ export class UnoGame extends EventEmitter {
     constructor(msg: Message<true>, cards: UnoCard[]) {
         super()
 
-        this.server = client.getServer(msg.guild)
+        this.server = getServer(msg.guild)
 
         this.host = new Player(msg.author.id, cards)
         this.allCards = cards
@@ -37,7 +39,7 @@ export class UnoGame extends EventEmitter {
         msg.reply(this.embed).then(message => (this.message = message))
         this.actualCard = this.rc()
 
-        client.uno.set(this.id, this)
+        uno.set(this.id, this)
 
         this.on('join', player => {
             this.players.add(player)
@@ -197,7 +199,7 @@ export class UnoGame extends EventEmitter {
                     inline: true
                 }
             ])
-            .setFooter(client.embedFooter)
+        // .setFooter(client.embedFooter)
         const buttons = new ActionRowBuilder<MessageActionRowComponentBuilder>()
         if (this.status == 'waiting')
             buttons.addComponents([

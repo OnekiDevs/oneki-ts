@@ -1,10 +1,10 @@
 import { ChatInputCommandInteraction, EmbedBuilder } from 'discord.js'
-import client from '../../client.js'
+import { getServer } from '../../cache/servers.js'
 
 export async function chatInputCommandInteraction(interaction: ChatInputCommandInteraction<'cached'>) {
     if (!(interaction.replied || interaction.deferred)) interaction.deferReply()
 
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     const embeds = [new EmbedBuilder().setDescription('Emojis uses')]
     let j = 0,
         t = '',

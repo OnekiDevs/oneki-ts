@@ -1,4 +1,4 @@
-import { Client } from './classes.js'
+import Client from '../classes/Client.js'
 import { fileURLToPath } from 'url'
 import {
     PermissionResolvable,
@@ -18,6 +18,7 @@ import {
 } from 'discord.js'
 
 import client from '../client.js'
+import constants from '../cache/constants.js'
 
 export { Utils }
 
@@ -122,7 +123,7 @@ export function randomId() {
  */
 export function imgToLink(img: Buffer, client: Client): Promise<string> {
     return new Promise((resolve, reject) => {
-        const channel = client.channels.cache.get(client.constants.imgChannel)
+        const channel = client.channels.cache.get(constants.imgChannel)
 
         if (channel)
             (channel as TextChannel)
@@ -152,7 +153,7 @@ export async function sendError(error: Error, file: string) {
         '\n\x1b[31m***************************************************************************\x1b[0m'
     )
 
-    const channel = await client.channels.fetch(client.constants.errorChannel)
+    const channel = await client.channels.fetch(constants.errorChannel)
     if (channel)
         (channel as TextChannel).send({
             content:
@@ -160,7 +161,7 @@ export async function sendError(error: Error, file: string) {
                     ? process.env.DEVELOPER_ID
                         ? `<@${process.env.DEVELOPER_ID}>`
                         : undefined
-                    : `<@&${client.constants.jsDiscordRoll}>`,
+                    : `<@&${constants.jsDiscordRoll}>`,
             embeds: [
                 new EmbedBuilder()
                     .setColor(Colors.Yellow)

@@ -6,6 +6,8 @@
     "type": "module",
     "scripts": {
         "start": "node build/index.js",
+        "watch": "nodemon -e ts --exec \"npm run build\"",
+        "dev": "nodemon -e ts --exec \"npm run build && npm start\"",
         "build": "tsc"
     },
     "repository": {
@@ -28,11 +30,13 @@
         "@google-cloud/firestore": "6.4.1",
         "iblazingx-ms": "2.1.2",
         "jimp": "0.16.2",
-        "offdjs": "0.11.1",
+        "jszip": "3.10.1",
+        "offdjs": "0.11.2",
         "puppeteer": "19.2.2",
         "ws": "8.10.0"
     },
     "devDependencies": {
+        "nodemon": "2.0.20",
         "typescript": "4.8.4"
     }
 }

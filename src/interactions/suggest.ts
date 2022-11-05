@@ -6,11 +6,12 @@ import {
     AutocompleteInteraction
 } from 'discord.js'
 import { Translator, checkSend } from 'offdjs'
+import { getServer } from '../cache/servers.js'
 import client from '../client.js'
 
 export async function chatInputCommandInteraction(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
 
     if (!server.suggestChannels.length)
         return interaction.reply({
@@ -40,14 +41,14 @@ export async function chatInputCommandInteraction(interaction: ChatInputCommandI
 
 export async function buttonInteraction(interaction: ButtonInteraction<'cached'>): Promise<any> {
     const [, m, id] = interaction.customId.split(/_/gi)
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     if (m === 'a') server.aceptSug(id)
     else server.rejectSug(id)
     return interaction.deferUpdate()
 }
 
 export async function autocompleteInteraction(interaction: AutocompleteInteraction<'cached'>): Promise<any> {
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     return interaction.respond(
         server.suggestChannels.map(c => ({
             name: c.default ? 'default' : c.alias!,

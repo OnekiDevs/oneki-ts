@@ -9,7 +9,7 @@ import {
 import { Translator } from 'offdjs'
 import feedback from '../cache/feedback.js'
 import { EmbedBuilder, TextChannel } from 'discord.js'
-import client from '../client.js'
+import constants from '../cache/constants.js'
 
 export async function chatInputCommandInteraction(interaction: ChatInputCommandInteraction<'cached'>): Promise<any> {
     const translate = Translator(interaction)
@@ -55,7 +55,7 @@ export async function modalSubmitInteraction(interaction: ModalSubmitInteraction
     if (img) embed.setImage(img.url)
     feedback.delete(interaction.user.id)
 
-    const channel = (await interaction.client.channels.fetch(client.constants.issuesChannel)) as TextChannel
+    const channel = (await interaction.client.channels.fetch(constants.issuesChannel)) as TextChannel
     channel.send({ embeds: [embed] })
 
     interaction.reply(translate('feedback.thanks'))

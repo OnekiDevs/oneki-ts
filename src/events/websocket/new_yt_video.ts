@@ -1,9 +1,10 @@
 import { ChannelType } from 'discord.js'
+import { getServer } from '../../cache/servers.js'
 import client from '../../client.js'
 import { checkSend } from '../../utils/utils.js'
 
 export default async function ({ server: serverid, data }: { server: string; data: any }) {
-    const server = client.getServer(client.guilds.cache.get(serverid)!)
+    const server = getServer(client.guilds.cache.get(serverid)!)
 
     if (server.ytNotificationChannel) {
         const channel = client.channels.cache.get(server.ytNotificationChannel)

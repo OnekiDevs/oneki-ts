@@ -2,7 +2,7 @@ import { AutocompleteInteraction } from 'discord.js'
 import client from '../../client.js'
 
 export function group(interacion: AutocompleteInteraction<'cached'>) {
-    const server = client.getServer(interacion.guild)
+    const server = getServer(interacion.guild)
 
     if (!server.autoroles.size) return interacion.respond([])
     const r = [...server.autoroles.keys()].map(v => ({
@@ -13,7 +13,7 @@ export function group(interacion: AutocompleteInteraction<'cached'>) {
 }
 
 export function prefix(interaction: AutocompleteInteraction<'cached'>) {
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
 
     return interaction.respond(
         server.getPrefixes(true).map(p => ({
@@ -24,7 +24,7 @@ export function prefix(interaction: AutocompleteInteraction<'cached'>) {
 }
 
 export function channel(interaction: AutocompleteInteraction<'cached'>) {
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
 
     return interaction.respond(
         server.suggestChannels.map(c => ({

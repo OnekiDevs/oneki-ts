@@ -12,7 +12,7 @@ import client from '../../../client.js'
 export function message_update(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const channel = interaction.options.getChannel('channel') as TextChannel
@@ -23,7 +23,7 @@ export function message_update(interaction: ChatInputCommandInteraction<'cached'
 export function message_delete(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const channel = interaction.options.getChannel('channel') as TextChannel
@@ -34,7 +34,7 @@ export function message_delete(interaction: ChatInputCommandInteraction<'cached'
 export function message_attachment(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const channel = interaction.options.getChannel('channel') as TextChannel
@@ -45,7 +45,7 @@ export function message_attachment(interaction: ChatInputCommandInteraction<'cac
 export async function auto(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply()
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
 
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
@@ -105,7 +105,7 @@ export async function auto(interaction: ChatInputCommandInteraction<'cached'>) {
 export async function invites(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply()
     const translate = Translator(interaction)
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
 
     if (!server.premium) return interaction.editReply(translate('premium'))
 
@@ -121,7 +121,7 @@ export async function invites(interaction: ChatInputCommandInteraction<'cached'>
 export async function member_update(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     await interaction.deferReply()
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
 
     if (!server.premium) return interaction.editReply(translate('premium'))
 
@@ -137,7 +137,7 @@ export async function member_update(interaction: ChatInputCommandInteraction<'ca
 export async function sanction(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     await interaction.deferReply()
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
 
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))

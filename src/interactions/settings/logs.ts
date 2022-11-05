@@ -11,12 +11,12 @@ import {
     BitField
 } from 'discord.js'
 import { capitalize, checkSend } from 'offdjs'
-import client from '../../client.js'
 import { _components, _embeds } from '../settings.js'
 import { ChannelType } from 'discord.js'
+import { getServer } from '../../cache/servers.js'
 
 export async function selectMenuInteraction(interaction: SelectMenuInteraction<'cached'>) {
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     const [, , opt] = interaction.customId.split('_') as ['settings', 'logs', 'remove' | 'set']
     // get the original embed
     const mr = await interaction.message.fetchReference()
@@ -77,7 +77,7 @@ export async function modalSubmitInteraction(interaction: ModalSubmitInteraction
     const [, pag, opt, arg1] = interaction.customId.split('_') as
         | ['settings', 'logs', 'auto']
         | ['settings', 'logs', 'set', string]
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
 
     if (opt === 'auto') {
         // get the original embed

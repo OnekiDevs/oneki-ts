@@ -4,7 +4,7 @@ import polls from '../../cache/polls.js'
 import { _getModal } from '../poll.js'
 export async function chatInputCommandInteraction(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
-    // const server = client.getServer(interaction.guild)
+    // const server = getServer(interaction.guild)
     //TODO: Check if the guild has the permission to make a poll (premium)
 
     if (!checkSend(interaction.channel as TextChannel, interaction.guild.members.me as GuildMember))

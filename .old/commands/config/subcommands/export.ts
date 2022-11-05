@@ -6,7 +6,7 @@ import client from '../../../client.js'
 
 export async function file(interaction: ChatInputCommandInteraction<'cached'>) {
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     await interaction.deferReply()

@@ -112,7 +112,7 @@ export const _embeds = {
 export const _components = {
     logs: (server: Server) => {
         return [
-            new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(this.mainMenu('logs')),
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(_mainMenu('logs')),
             new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
                 new ButtonBuilder()
                     .setCustomId('settings_logs_set')
@@ -131,7 +131,7 @@ export const _components = {
     },
     prefix: (server: Server) => {
         return [
-            new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(this.mainMenu('prefix')),
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(_mainMenu('prefix')),
             new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
                 new ButtonBuilder()
                     .setCustomId('settings_prefix_set')

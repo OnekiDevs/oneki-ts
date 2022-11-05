@@ -1,10 +1,10 @@
 import { GuildMember } from 'discord.js'
-import client from '../../client.js'
+import { getServer } from '../../cache/servers.js'
 
 export default function (member: GuildMember) {
     if (member.user.bot) return
 
-    const server = client.getServer(member.guild)
+    const server = getServer(member.guild)
 
     if (!server.keepRoles || !server.premium) return
 

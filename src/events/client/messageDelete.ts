@@ -9,12 +9,12 @@ import {
     codeBlock
 } from 'discord.js'
 import { sendError, checkSend, PunishmentType, Translator } from '../../utils/utils.js'
-import { Client, Server } from '../../utils/classes.js'
+import { Server } from '../../utils/classes.js'
+import { getServer } from '../../cache/servers.js'
 
 export default async function (message: Message<true>) {
     try {
-        if (!(message.client as Client).servers.has(message.guild.id)) return
-        const server = (message.client as Client).getServer(message.guild)
+        const server = getServer(message.guild)
         if (message.author.bot) return
         if (!message.guild) return
         const translate = Translator(message)
@@ -47,7 +47,7 @@ export default async function (message: Message<true>) {
                         inline: true
                     }
                 )
-            // .setFooter((message.client as Client).embedFooter)
+            // .setFooter(client.embedFooter)
 
             if (message.content)
                 embed.setDescription(

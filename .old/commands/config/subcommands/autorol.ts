@@ -16,7 +16,7 @@ export async function create(interaction: ChatInputCommandInteraction<'cached'>)
     await interaction.deferReply()
     const translate = Translator(interaction)
     const name = (interaction.options.getString('name') as string).split(/ +/gi).join('_')
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     await server.newAutorol(name)
     console.log(client.commands.get('config'))
     interaction.editReply(translate('config_cmd.autoroles.create', { name }))
@@ -27,7 +27,7 @@ export async function add(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const name = (interaction.options.getString('group') as string).split(/ +/gi).join('_')
     const rol = interaction.options.getRole('role') as Role
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     if (!server.autoroles.has(name)) return interaction.editReply(translate('config_cmd.autoroles.not_found'))
     await server.addAutorol(name, rol.id)
     return interaction.editReply(translate('config_cmd.autoroles.added', { group: name, roll: rol.toString() }))
@@ -38,7 +38,7 @@ export async function remove(interaction: ChatInputCommandInteraction<'cached'>)
     const translate = Translator(interaction)
     const name = (interaction.options.getString('group') as string).split(/ +/gi).join('_')
     const rol = interaction.options.getRole('rol') as Role
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     if (!server.autoroles.has(name)) return interaction.editReply(translate('config_cmd.autoroles.not_found'))
     await server.removeAutorolRol(name, rol.id)
     return interaction.editReply(translate('config_cmd.autoroles.remove', { roll: rol.toString(), group: name }))
@@ -48,7 +48,7 @@ export async function remove_group(interaction: ChatInputCommandInteraction<'cac
     await interaction.deferReply()
     const translate = Translator(interaction)
     const name = (interaction.options.getString('group') as string).split(/ +/gi).join('_')
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     await server.removeAutorol(name)
     interaction.editReply(translate('config_cmd.autoroles.remove_group'))
 }
@@ -58,7 +58,7 @@ export async function display(interaction: ChatInputCommandInteraction<'cached'>
     const name = (interaction.options.getString('group') as string).split(/ +/gi).join('_')
     const message = interaction.options.getString('message') ?? 'Choice yout role'
     const channel = (interaction.options.getChannel('channel') ?? interaction.channel) as TextChannel
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     if (server.autoroles.has(name))
         await interaction.reply({
             content: translate('config_cmd.autoroles.displaying'),

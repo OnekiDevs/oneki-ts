@@ -3,6 +3,7 @@ import { filledBar, Translator } from 'offdjs'
 import client from '../../client.js'
 import { PollDatabaseModel } from '../../cache/polls.js'
 import { pollEmojis as emojis } from '../../utils/utils.js'
+import db from '../../cache/db.js'
 
 export async function chatInputCommandInteraction(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
@@ -10,12 +11,12 @@ export async function chatInputCommandInteraction(interaction: ChatInputCommandI
 
     const id = interaction.options.getString('id') as string
 
-    const snap = await client.db.collection('polls').doc(id).get()
+    const snap = await db.collection('polls').doc(id).get()
 
     if (snap.exists) {
         const data = snap.data() as PollDatabaseModel
 
-        await client.db
+        await db
             .collection('finalized-polls')
             .doc(id)
             .set(data)

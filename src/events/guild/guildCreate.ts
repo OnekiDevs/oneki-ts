@@ -2,13 +2,15 @@ import { Guild, GuildMember, EmbedBuilder, TextChannel, resolveColor, codeBlock 
 import { Server } from '../../utils/classes.js'
 import { checkSend, sendError } from '../../utils/utils.js'
 import client from '../../client.js'
+import servers from '../../cache/servers.js'
+import constants from '../../cache/constants.js'
 
 export default async function (guild: Guild) {
     try {
-        if (!client.servers.has(guild.id)) client.servers.set(guild.id, new Server(guild))
+        if (!servers.has(guild.id)) servers.set(guild.id, new Server(guild))
         console.log('\x1b[34m%s\x1b[0m', `Nuevo Servidor Desplegado!! ${guild.name} (${guild.id})`)
 
-        const channel = client.channels.cache.get(client.constants.newServerLogChannel) as TextChannel
+        const channel = client.channels.cache.get(constants.newServerLogChannel) as TextChannel
         if (channel && checkSend(channel, guild.members.me as GuildMember)) {
             const [u, b] = guild.members.cache.partition(m => !m.user.bot)!
             const owner = await client.users.fetch(guild.ownerId)

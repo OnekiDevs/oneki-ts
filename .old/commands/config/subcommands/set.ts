@@ -6,7 +6,7 @@ import client from '../../../client.js'
 export function prefix(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const prefix = interaction.options.getString('prefix') as string
@@ -18,7 +18,7 @@ export function prefix(interaction: ChatInputCommandInteraction<'cached'>) {
 export async function suggest_channel(interaction: ChatInputCommandInteraction<'cached'>) {
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
     const channel = interaction.options.getChannel('channel') as TextChannel
@@ -38,7 +38,7 @@ export async function birthday_channel(interaction: ChatInputCommandInteraction<
     await interaction.deferReply()
     const translate = Translator(interaction)
     const member = interaction.guild?.members.cache.get(interaction.user.id)
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
 
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
         return permissionsError(interaction, PermissionsBitField.Flags.Administrator)
@@ -52,7 +52,7 @@ export async function birthday_channel(interaction: ChatInputCommandInteraction<
 export async function birthday_message(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply()
     const translate = Translator(interaction)
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
 
     const member = interaction.guild?.members.cache.get(interaction.user.id)
     if (!member?.permissions.has(PermissionsBitField.Flags.Administrator))
@@ -65,7 +65,7 @@ export async function birthday_message(interaction: ChatInputCommandInteraction<
 
 export async function keep_roles(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply()
-    const server = client.getServer(interaction.guild)
+    const server = getServer(interaction.guild)
 
     const translate = Translator(interaction)
     if (!server.premium) return interaction.editReply(translate('premium'))
